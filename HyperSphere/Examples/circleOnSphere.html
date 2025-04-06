@@ -63,6 +63,7 @@
 			circle.lookAt(sphere.position);  // Смотрим в центр сферы
 			scene.add(circle);
 */
+/*			
 			//DeepSeek. Окружность на сфере на языке javascript
 			function getCirclePoints(center, radius, numPoints = 36) {
 			    const { lat, lng } = center; // в градусах
@@ -99,49 +100,67 @@
 			const center = { lat: 55.751244, lng: 37.618423 }; // Москва
 			const radius = 10000; // 10 км
 			const circlePoints = getCirclePoints(center, radius);
-			
-			console.log(circlePoints); // Массив точек окружности	
+*/			
 
 			/**
 			 * DeepSeek: Окружность на сфере (расчеты в радианах) — JavaScript
 			 * Генерирует точки окружности на сфере (в радианах)
 			 * @param {Array} center - Центр окружности [ 0 широта (рад), 1 долгота (рад) ]
-			 * @param {number=0.5} radius - Радиус
-			 * @param {number=36} numPoints - Количество точек
+			 * @param {object} [options] options.
+			 * @param {number} [options.radius=0.5] - Радиус
+			 * @param {number} [options.numPoints=36] - Количество точек
+			 * @param {number} [options.points=[]] - points array
 			 * @returns {Array} Массив точек [ 0 широта (рад), 1 долгота (рад) ]
 			 */
-			function getCirclePointsRadians(center, radius = 0.5, numPoints = 36) {
-//			    const R = 6371000; // Радиус Земли в метрах
+			const getCirclePointsRadians = (center, options) =>
+//			function getCirclePointsRadians(center, radius = 0.5, numPoints = 36)
+			{
+
+				options ||= {};
+				if (options.radius === undefined) options.radius = 0.5;
+				const radius = options.radius;
+				if (options.numPoints === undefined) options.numPoints = 36;
+				const numPoints = options.numPoints;
 			    const R = 1;
 			    const angularDistance = radius / R; // Угловое расстояние в радианах
 			
-			    const points = [];
+				options.points ||= [];
+			    const points = options.points;
+				
 			    for (let i = 0; i < numPoints; i++) {
 			        const angle = (2 * Math.PI * i) / numPoints; // Текущий угол в радианах
 			
 			        // Формулы сферической тригонометрии
 			        const newLat = Math.asin(
-/*
 			            Math.sin(center.lat) * Math.cos(angularDistance) +
 			            Math.cos(center.lat) * Math.sin(angularDistance) * Math.cos(angle)
-*/
+/*
 			            Math.sin(center[0]) * Math.cos(angularDistance) +
 			            Math.cos(center[0]) * Math.sin(angularDistance) * Math.cos(angle)
+*/						
 			        );
 
-/*					
 			        const newLng = center.lng + Math.atan2(
 			            Math.sin(angle) * Math.sin(angularDistance) * Math.cos(center.lat),
 			            Math.cos(angularDistance) - Math.sin(center.lat) * Math.sin(newLat)
 			        );
-*/					
+/*					
 			        const newLng = center[1] + Math.atan2(
 			            Math.sin(angle) * Math.sin(angularDistance) * Math.cos(center[0]),
 			            Math.cos(angularDistance) - Math.sin(center[0]) * Math.sin(newLat)
 			        );
-			
-//			        points.push({ lat: newLat, lng: newLng });
-			        points.push([ newLat, newLng ]);
+*/					
+
+//					const point = { lat: newLat, lng: newLng };
+					const point = [ newLat, newLng ];
+					if (options.pointId === undefined) points.push(point);
+					else {
+						
+						points[options.pointId] = point;
+						options.pointId++;
+
+					}
+					
 			    }
 			
 			    return points;
@@ -238,12 +257,12 @@
 
 			const setAngles = () => {
 				
-				const circlePointsRad = getCirclePointsRadians(params.center, params.radius);
+				const circlePointsRad = getCirclePointsRadians(params.center, { radius: params.radius });
 				if (circlePointsRad.length != sphere.angles.length) console.error('Invalid circlePointsRad.length = ' + circlePointsRad.length);
 				circlePointsRad.forEach((circlePoint, id) => sphere.angles[id] = circlePoint);
 				
 			}
-
+/*
 			const Circle = (radius) => {
 				
 				const circlePointsRad = getCirclePointsRadians(params.center, radius);
@@ -253,15 +272,13 @@
 	
 					onAddControllers: (gui) => {
 
-/*						
 						//radius
-						gui.add( params, 'radius', 0, Math.PI, 0.01 );
+						//gui.add( params, 'radius', 0, Math.PI, 0.01 );
 			//			dat.controllerNameAndTitle( controllerPrecision, lang.precision, lang.precisionTitle );
 			
 						//center
-						gui.add( params.center, 'lat', -Math.PI / 2, Math.PI / 2, 0.001 );
-						gui.add( params.center, 'lng', -Math.PI, Math.PI, 0.001 );
-*/						
+						//gui.add( params.center, 'lat', -Math.PI / 2, Math.PI / 2, 0.001 );
+						//gui.add( params.center, 'lng', -Math.PI, Math.PI, 0.001 );
 						
 					},
 					edges: {
@@ -306,9 +323,11 @@
 				});
 	
 			}
+*/			
 			const spheresCount = 100, d = Math.PI / (spheresCount - 1);
 			
 			//Deepseek Вычислить a, d, c в уравнении y=a/(x+b)+c точностью до 8 знаков при условии:
+			//Эта формула нужна для вычисления радиуса окружности radius
 
 			//найти элементарную функцию для массива точек (0.1,0.0033995189605183543),(0.5,0.11673555173106497),(1,0.8759691969420544),(1.5,15.890654938344866)
 			//10*(x^3)-10*(x^2)+x залазит в отрицательный y
@@ -356,25 +375,93 @@
 			
 			//////////////////////////////////////////Deepseek
 
-			const circles = [],
+//			const circles = [],
+			let circlesSphere, circlesPointsOptions = {};
+			const circlesPoints = [],
 				setCircles = () => {
 				
-				setAbc();
-				for (let radiusId = 0; radiusId < spheresCount; radiusId++) {
+					setAbc();
+					for (let radiusId = 0; radiusId < spheresCount; radiusId++) {
+		
+						const x = radiusId * d, radius = b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
+							a/(x+b)+c;
+	/*					
+						if (circles.length > radiusId) {
 	
-					const x = radiusId * d, radius = b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
-						a/(x+b)+c;
-					if (circles.length > radiusId) {
-
-						const circle = circles[radiusId], circlePointsRad = getCirclePointsRadians(params.center, radius);
-						circle.angles = circlePointsRad;
-						continue;
+							const circle = circles[radiusId], circlePointsRad = getCirclePointsRadians(params.center, radius);
+							circle.angles = circlePointsRad;
+							continue;
+						}
+						circles.push(Circle(radius));
+	*/				
+						if (circlesSphere) circlesPointsOptions.points = circlesSphere.angles;
+						else circlesPointsOptions.points = circlesPoints;
+						circlesPointsOptions.radius = radius;
+						getCirclePointsRadians(params.center, circlesPointsOptions);
+						
 					}
-					circles.push(Circle(radius));
-	
+					circlesPointsOptions.pointId = 0;
+					if (!circlesSphere)
+						circlesSphere = new Sphere(options,
+						{
+
+							/*
+							onAddControllers: (gui) => {
+		
+								//radius
+								gui.add( params, 'radius', 0, Math.PI, 0.01 );
+					//			dat.controllerNameAndTitle( controllerPrecision, lang.precision, lang.precisionTitle );
+					
+								//center
+								gui.add( params.center, 'lat', -Math.PI / 2, Math.PI / 2, 0.001 );
+								gui.add( params.center, 'lng', -Math.PI, Math.PI, 0.001 );
+								
+							},
+							*/
+							/*
+							edges: {
+			
+								project: false,//Doesn't project edges onto canvas
+								//creationMethod: Sphere.edgesCreationMethod.Random,
+								
+							},
+							*/
+							edges: false,
+							randomArc: true,
+							projectParams:{
+								
+								scene: scene,
+								
+							},
+							//r: 0.5,
+							debug: {
+			
+								probabilityDensity: false,
+								middleVertice: false,
+								log: false,
+								
+							},
+							//debug: false,
+							settings: {
+								
+								object: {
+				
+									name: 'circles',// + radius,
+									//color: 'white',
+									geometry: {
+			
+										angles: circlesPoints,
+									
+									}
+			
+								}
+							
+							},
+							
+							
+						});
+		
 				}
-	
-			}
 			setCircles();
 
 		}, {
