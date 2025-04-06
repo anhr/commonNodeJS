@@ -45,7 +45,6 @@
 			 * @returns {Array} Массив точек [ 0 широта (рад), 1 долгота (рад) ]
 			 */
 			const getCirclePointsRadians = (center, options) =>
-//			function getCirclePointsRadians(center, radius = 0.5, numPoints = 36)
 			{
 
 				options ||= {};
@@ -125,7 +124,8 @@
 				set: (radius) => {
 
 					params.r = radius;
-					setAngles();
+//					setAngles();
+					setCircles();
 					return true;
 
 				},
@@ -137,7 +137,8 @@
 				set: (lat) => {
 
 					params.center[0] = lat;
-					setAngles();
+//					setAngles();
+					setCircles();
 					return true;
 
 				},
@@ -149,7 +150,8 @@
 				set: (lng) => {
 
 					params.center[1] = lng;
-					setAngles();
+//					setAngles();
+					setCircles();
 					return true;
 
 				},
@@ -177,16 +179,15 @@
 
 			//arc
 			gui.add( params, 'arc', 0, pi / 2, 0.001 );
-/*
+
 			//radius
-			gui.add( params, 'radius', 0, pi, 0.01 );
-//			dat.controllerNameAndTitle( controllerPrecision, lang.precision, lang.precisionTitle );
+//			gui.add( params, 'radius', 0, pi, 0.01 );
 
 			//center
 			gui.add( params.center, 'lat', -pi / 2, pi / 2, 0.001 );
 			gui.add( params.center, 'lng', 0, 2 * pi, 0.001 );
-*/			
 
+/*			
 			const setAngles = () => {
 				
 				const circlePointsRad = getCirclePointsRadians(params.center, { radius: params.radius });
@@ -194,6 +195,7 @@
 				circlePointsRad.forEach((circlePoint, id) => sphere.angles[id] = circlePoint);
 				
 			}
+*/			
 			const spheresCount = 100, d = Math.PI / (spheresCount - 1);
 			
 			//Deepseek Вычислить a, d, c в уравнении y=a/(x+b)+c точностью до 8 знаков при условии:
