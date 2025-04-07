@@ -167,7 +167,7 @@
 				set: (random) => {
 
 					params.rnd = random;
-					setSpheresCount();
+					setCirclesCount();
 					setCircles();
 					return true;
 
@@ -197,9 +197,9 @@
 
 			//////////////////////////////////////////GUI
 
-			let spheresCount, d;
-			const setSpheresCount = () => { spheresCount = (params.random ? 36 : 1 ) * 100; d = pi / (spheresCount - 1); }
-			setSpheresCount();
+			let circlesCount, d;
+			const setCirclesCount = () => { circlesCount = (params.random ? 36 : 1 ) * 100; d = pi / (circlesCount - 1); }
+			setCirclesCount();
 			
 			//Deepseek Вычислить a, d, c в уравнении y=a/(x+b)+c точностью до 8 знаков при условии:
 			//Эта формула нужна для вычисления радиуса окружности radius
@@ -255,7 +255,7 @@
 				setCircles = () => {
 				
 					setAbc();
-					for (let radiusId = 0; radiusId < spheresCount; radiusId++) {
+					for (let radiusId = 0; radiusId < circlesCount; radiusId++) {
 		
 						const x = radiusId * d,
 
