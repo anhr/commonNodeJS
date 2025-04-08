@@ -34,8 +34,8 @@
 		new MyThree( function ( scene, options ) {
 
 			const pi = Math.PI,
-				R = 0.5;//Hypersphere radius
-			const np = 36,//numPoints
+				R = 1;//0.5;//Hypersphere radius
+			const np = 100,//36,//numPoints
 				l = 2 * pi / np;//длинна дуги между точками окружности для гиперсферы радиусом 1. Нужна для вычисления количества точек на окружности numPoints при равномерном распределении точек
 
 			/**
@@ -100,8 +100,10 @@
 			//Параметры, которые может менять пользователь
 			const params = {
 
+/*				
 //				radius: 2,//see appropriate getter and setter
 				r: pi / 2,//радиус текущей окружности, пересекающей сферу
+*/				
 				center: [ 0, 0 ],//центр окружности, пересекающей сферу или вершина гиперсферы, вокруг которой будет облако вероятностей
 //				arc: 0.5,//see appropriate getter and setter
 
@@ -113,6 +115,7 @@
 				rnd: false,//random
 				
 			}
+/*			
 			Object.defineProperty(params, 'radius', {
 				
 				get: () => { return params.r; },
@@ -125,6 +128,7 @@
 				},
 				
 			});
+*/			
 			Object.defineProperty(params.center, 'lat', {
 				
 				get: () => { return params.center[0]; },
@@ -198,7 +202,13 @@
 			//////////////////////////////////////////GUI
 
 			let circlesCount, d;
-			const setCirclesCount = () => { circlesCount = (params.random ? 36 : 1 ) * 100; d = pi / (circlesCount - 1); }
+			const setCirclesCount = () => {
+				
+				circlesCount = (params.random ? np : 1 ) *
+					np;//100;//если количество окружностей равно количеству точек на окружности, то точки будут равномерно располагаться на гиперсфере
+				d = pi / (circlesCount - 1);
+			
+			}
 			setCirclesCount();
 			
 			//Deepseek Вычислить a, d, c в уравнении y=a/(x+b)+c точностью до 8 знаков при условии:
@@ -259,7 +269,7 @@
 		
 						const x = radiusId * d,
 
-							//радиус окружности для гиперсферы радиусом 1
+							//уголовое расстояние для окружности для гиперсферы радиусом 1
 							radius1 = b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
 								a / (x + b) + c,
 							
@@ -267,7 +277,12 @@
 						if (circlesSphere) circlesPointsOptions.points = circlesSphere.angles;
 						else circlesPointsOptions.points = circlesPoints;
 						circlesPointsOptions.radius = radius;
-						circlesPointsOptions.numPoints = params.random ? 1 : parseInt(radius1 / l);//np;
+//						circlesPointsOptions.numPoints = params.random ? 1 : parseInt(radius1 / l);//np;
+						circlesPointsOptions.numPoints = params.random ? 1 :
+							parseInt(
+								2 * pi * Math.sin(radius1)//длинна окружности для гиперсферы радиусом 1
+								/ l//длинна дуги между точками окружности для гиперсферы радиусом 1.
+							);//np;
 console.log('radiusId = ' + radiusId + ', radius1 = ' + radius1 + ', numPoints = ' + circlesPointsOptions.numPoints)
 						getCirclePointsRadians(params.center, circlesPointsOptions);
 						
