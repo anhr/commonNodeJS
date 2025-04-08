@@ -34,7 +34,7 @@
 		new MyThree( function ( scene, options ) {
 
 			const pi = Math.PI,
-				R = 1;//0.5;//Hypersphere radius
+				R = 1;//Hypersphere radius
 			const np = 100;//36;//numPoints
 				//l = 2 * pi / np;//длинна дуги между точками окружности для гиперсферы радиусом 1. Нужна для вычисления количества точек на окружности numPoints при равномерном распределении точек
 
@@ -43,7 +43,7 @@
 			 * Генерирует точки окружности на сфере (в радианах)
 			 * @param {Array} center - Центр окружности [ 0 широта (рад), 1 долгота (рад) ]
 			 * @param {object} [options] options.
-			 * @param {number} [options.radius=0.5] - Радиус
+			 * @param {number} [options.circleDistance=0.5] - Расстояние до окружности по дуге в радианах для гиперсферы радиусом 1
 			 * @param {number} [options.numPoints=36] - Количество точек
 			 * @param {number} [options.points=[]] - points array
 			 * @returns {Array} Массив точек [ 0 широта (рад), 1 долгота (рад) ]
@@ -52,11 +52,11 @@
 			{
 
 				options ||= {};
-				if (options.radius === undefined) options.radius = 0.5;
-				const radius = options.radius;
+				if (options.circleDistance === undefined) options.circleDistance = 0.5;
+				//const circleDistance = options.circleDistance;
 				if (options.numPoints === undefined) options.numPoints = np;
 				const numPoints = options.numPoints;
-			    const angularDistance = radius / R; // Угловое расстояние в радианах
+				const circleDistance = options.circleDistance / R; // Расстояние до окружности по дуге в радианах
 			
 				options.points ||= [];
 				const points = options.points;
@@ -68,13 +68,13 @@
 			
 					// Формулы сферической тригонометрии
 					const newLat = Math.asin(
-						Math.sin(center.lat) * Math.cos(angularDistance) +
-						Math.cos(center.lat) * Math.sin(angularDistance) * Math.cos(angle)
+						Math.sin(center.lat) * Math.cos(circleDistance) +
+						Math.cos(center.lat) * Math.sin(circleDistance) * Math.cos(angle)
 					);
 
 					const newLng = center.lng + Math.atan2(
-						Math.sin(angle) * Math.sin(angularDistance) * Math.cos(center.lat),
-						Math.cos(angularDistance) - Math.sin(center.lat) * Math.sin(newLat)
+						Math.sin(angle) * Math.sin(circleDistance) * Math.cos(center.lat),
+						Math.cos(circleDistance) - Math.sin(center.lat) * Math.sin(newLat)
 					);
 
 					const point = [ newLat, newLng ];
@@ -265,33 +265,33 @@
 				setCircles = () => {
 				
 					setAbc();
-					let radius1Prev = 0;//Положение предыдущего кольца
-					for (let radiusId = 0; radiusId < circlesCount; radiusId++) {
+					let circleDistance1Prev = 0;//Положение предыдущего кольца
+					for (let circleId = 0; circleId < circlesCount; circleId++) {
 		
-						const x = radiusId * d,
+						const x = circleId * d,
 
 							//уголовое расстояние для окружности для гиперсферы радиусом 1
-							radius1 = b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
+							circleDistance1 = b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
 								a / (x + b) + c,
 							
-							radius = radius1 * R;
+							circleDistance = circleDistance1 * R;
 						if (circlesSphere) circlesPointsOptions.points = circlesSphere.angles;
 						else circlesPointsOptions.points = circlesPoints;
-						circlesPointsOptions.radius = radius;
-//						circlesPointsOptions.numPoints = params.random ? 1 : parseInt(radius1 / l);//np;
+						circlesPointsOptions.circleDistance = circleDistance;
+//						circlesPointsOptions.numPoints = params.random ? 1 : parseInt(circleDistance1 / l);//np;
 						circlesPointsOptions.numPoints = params.random ? 1 :
 							parseInt(
-								2 * pi * Math.sin(radius1)//длинна окружности для гиперсферы радиусом 1
-								/ (radius1 - radius1Prev)
+								2 * pi * Math.sin(circleDistance1)//длинна окружности для гиперсферы радиусом 1
+								/ (circleDistance1 - circleDistance1Prev)
 /*								
-								2 * pi * Math.sin(radius1)//длинна окружности для гиперсферы радиусом 1
+								2 * pi * Math.sin(circleDistance1)//длинна окружности для гиперсферы радиусом 1
 								/ l//длинна дуги между точками окружности для гиперсферы радиусом 1.
 */								
 							);//np;
-						radius1Prev = radius1;
+						circleDistance1Prev = circleDistance1;
 						if (!isNaN(circlesPointsOptions.numPoints)) {//не рисовать окружность с бесконечным числом точек
 							
-//console.log('radiusId = ' + radiusId + ', radius1 = ' + radius1 + ', numPoints = ' + circlesPointsOptions.numPoints)
+//console.log('circleId = ' + circleId + ', circleDistance1 = ' + circleDistance1 + ', numPoints = ' + circlesPointsOptions.numPoints)
 							getCirclePointsRadians(params.center, circlesPointsOptions);
 
 						}
@@ -306,8 +306,8 @@
 							/*
 							onAddControllers: (gui) => {
 		
-								//radius
-								gui.add( params, 'radius', 0, pi, 0.01 );
+								//circleDistance
+								gui.add( params, 'circleDistance', 0, pi, 0.01 );
 					//			dat.controllerNameAndTitle( controllerPrecision, lang.precision, lang.precisionTitle );
 					
 								//center
@@ -344,7 +344,7 @@
 								
 								object: {
 				
-									name: 'circles',// + radius,
+									name: 'circles',// + circleDistance,
 									//color: 'white',
 									geometry: {
 			
