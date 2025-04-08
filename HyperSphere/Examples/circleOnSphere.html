@@ -35,8 +35,8 @@
 
 			const pi = Math.PI,
 				R = 1;//0.5;//Hypersphere radius
-			const np = 100,//36,//numPoints
-				l = 2 * pi / np;//длинна дуги между точками окружности для гиперсферы радиусом 1. Нужна для вычисления количества точек на окружности numPoints при равномерном распределении точек
+			const np = 100;//36;//numPoints
+				//l = 2 * pi / np;//длинна дуги между точками окружности для гиперсферы радиусом 1. Нужна для вычисления количества точек на окружности numPoints при равномерном распределении точек
 
 			/**
 			 * DeepSeek: Окружность на сфере (расчеты в радианах) — JavaScript
@@ -265,6 +265,7 @@
 				setCircles = () => {
 				
 					setAbc();
+					let radius1Prev = 0;//Положение предыдущего кольца
 					for (let radiusId = 0; radiusId < circlesCount; radiusId++) {
 		
 						const x = radiusId * d,
@@ -281,10 +282,19 @@
 						circlesPointsOptions.numPoints = params.random ? 1 :
 							parseInt(
 								2 * pi * Math.sin(radius1)//длинна окружности для гиперсферы радиусом 1
+								/ (radius1 - radius1Prev)
+/*								
+								2 * pi * Math.sin(radius1)//длинна окружности для гиперсферы радиусом 1
 								/ l//длинна дуги между точками окружности для гиперсферы радиусом 1.
+*/								
 							);//np;
-console.log('radiusId = ' + radiusId + ', radius1 = ' + radius1 + ', numPoints = ' + circlesPointsOptions.numPoints)
-						getCirclePointsRadians(params.center, circlesPointsOptions);
+						radius1Prev = radius1;
+						if (!isNaN(circlesPointsOptions.numPoints)) {//не рисовать окружность с бесконечным числом точек
+							
+//console.log('radiusId = ' + radiusId + ', radius1 = ' + radius1 + ', numPoints = ' + circlesPointsOptions.numPoints)
+							getCirclePointsRadians(params.center, circlesPointsOptions);
+
+						}
 						
 					}
 					circlesPointsOptions.pointId = 0;
