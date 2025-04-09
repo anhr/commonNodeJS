@@ -37,6 +37,7 @@
 				R = 1;//Hypersphere radius
 			const np = 100;//36;//numPoints
 				//l = 2 * pi / np;//длинна дуги между точками окружности для гиперсферы радиусом 1. Нужна для вычисления количества точек на окружности numPoints при равномерном распределении точек
+			let circlesPointsCount;//for debug
 
 			/**
 			 * DeepSeek: Окружность на сфере (расчеты в радианах) — JavaScript
@@ -80,11 +81,16 @@
 					const point = [ newLat, newLng ];
 					if (options.pointId === undefined) points.push(point);
 					else {
-						
-						points[options.pointId] = point;
-						options.pointId++;
+
+						if (points.length > options.pointId) {
+							
+							points[options.pointId] = point;
+							options.pointId++;
+
+						} else console.error('getCirclePointsRadians: Invalid options.pointId = ' + options.pointId);
 
 					}
+					circlesPointsCount++;//for debug
 					
 			    }
 			
@@ -108,9 +114,9 @@
 //				arc: 0.5,//see appropriate getter and setter
 
 				//Длинна дуги, соединяющей две вершины гиперсферы
-				a: pi / 2,//Вершины гиперсферы расположены на противоположных концах гиперсферы. Длинна дуги максимальная. Окружности вокруг вершины расположены равномерно по всей гиперсферы.
+				a: //pi / 2,//Вершины гиперсферы расположены на противоположных концах гиперсферы. Длинна дуги максимальная. Окружности вокруг вершины расположены равномерно по всей гиперсферы.
 					//0,//Вершины гиперсферы совпадают. Длинна дуги равна нулю. Окружности вокруг вершины превращаются в точки, которые совпадают с вершиной.
-					//0.5,//По умолчанию
+					0.5,//По умолчанию
 					//1.5,//Для вычисления коэффициента k
 				rnd: false,//random
 				
@@ -261,11 +267,12 @@
 			//////////////////////////////////////////Deepseek
 
 			let circlesSphere, circlesPointsOptions = {};
-			const circlesPoints = [],
+			const circlesPoints = [],//точки всех окружностей
 				setCircles = () => {
 				
 					setAbc();
 					let circleDistance1Prev = 0;//Положение предыдущего кольца
+					circlesPointsCount = 0;//for debug
 					for (let circleId = 0; circleId < circlesCount; circleId++) {
 		
 						const x = circleId * d,
@@ -291,12 +298,13 @@
 						circleDistance1Prev = circleDistance1;
 						if (!isNaN(circlesPointsOptions.numPoints)) {//не рисовать окружность с бесконечным числом точек
 							
-//console.log('circleId = ' + circleId + ', circleDistance1 = ' + circleDistance1 + ', numPoints = ' + circlesPointsOptions.numPoints)
+							//console.log('circleId = ' + circleId + ', circleDistance1 = ' + circleDistance1 + ', numPoints = ' + circlesPointsOptions.numPoints)
 							getCirclePointsRadians(params.center, circlesPointsOptions);
 
 						}
 						
 					}
+					console.log('circlesPointsCount = ' + circlesPointsCount);
 					circlesPointsOptions.pointId = 0;
 					if (!circlesSphere)
 						circlesSphere = new Sphere(options,
