@@ -266,7 +266,7 @@
 			
 			//////////////////////////////////////////Deepseek
 
-			let circlesSphere, circlesPointsOptions = {};
+			let circlesSphere, circlesPointsOptions = {}, isCreateCirclesPoints;
 			const circlesPoints = [],//точки всех окружностей
 				setCircles = () => {
 				
@@ -306,7 +306,7 @@
 					}
 					console.log('circlesPointsCount = ' + circlesPointsCount);
 					circlesPointsOptions.pointId = 0;
-					if (!circlesSphere)
+					if (!circlesSphere && !isCreateCirclesPoints)
 						circlesSphere = new Sphere(options,
 						{
 
@@ -360,15 +360,35 @@
 									
 									}
 			
-								}
+								},
+								overriddenProperties: { setDrawRange: (start, count) => {
+									
+										if (circlesSphere) circlesSphere.bufferGeometry.setDrawRange(start, count);
+									
+									}
+													  
+								},
 							
 							},
 							
 							
 						});
+					if (circlesSphere) circlesSphere.setVerticesRange(0, circlesPointsCount);
 		
 				}
-			setCircles();
+			const arc = params.arc;
+			if (arc != pi / 2) {
+
+				//создать максимально возможный массив точек всех окружностей
+				isCreateCirclesPoints = true;
+				params.arc = pi / 2;
+
+				//создать окружности
+				isCreateCirclesPoints = false;
+				params.arc = arc;
+
+			}
+			else setCircles();
 
 		}, {
 
