@@ -35,7 +35,7 @@
 
 			const pi = Math.PI,
 				R = 1;//Hypersphere radius
-			const np = 100;//36;//numPoints
+			const np = 36;//numPoints
 				//l = 2 * pi / np;//длинна дуги между точками окружности для гиперсферы радиусом 1. Нужна для вычисления количества точек на окружности numPoints при равномерном распределении точек
 			let circlesPointsCount;//for debug
 
@@ -63,22 +63,27 @@
 				const points = options.points;
 				
 				for (let i = 0; i < numPoints; i++) {
-					
-					const angle = 2 * pi * (params.random ? Math.random() : i / numPoints); // Текущий угол в радианах
-//					const angle = 2 * pi * ( i / numPoints); // Текущий угол в радианах
-			
-					// Формулы сферической тригонометрии
-					const newLat = Math.asin(
-						Math.sin(center.lat) * Math.cos(circleDistance) +
-						Math.cos(center.lat) * Math.sin(circleDistance) * Math.cos(angle)
-					);
 
-					const newLng = center.lng + Math.atan2(
-						Math.sin(angle) * Math.sin(circleDistance) * Math.cos(center.lat),
-						Math.cos(circleDistance) - Math.sin(center.lat) * Math.sin(newLat)
-					);
+					let point;
+					if (!isCreateCirclesPoints) {
+						
+						const angle = 2 * pi * (params.random ? Math.random() : i / numPoints); // Текущий угол в радианах
+	//					const angle = 2 * pi * ( i / numPoints); // Текущий угол в радианах
+				
+						// Формулы сферической тригонометрии
+						const newLat = Math.asin(
+							Math.sin(center.lat) * Math.cos(circleDistance) +
+							Math.cos(center.lat) * Math.sin(circleDistance) * Math.cos(angle)
+						);
+	
+						const newLng = center.lng + Math.atan2(
+							Math.sin(angle) * Math.sin(circleDistance) * Math.cos(center.lat),
+							Math.cos(circleDistance) - Math.sin(center.lat) * Math.sin(newLat)
+						);
+	
+						point = [ newLat, newLng ];
 
-					const point = [ newLat, newLng ];
+					} else point = [0, 0];//создается пустой массив максимального размера
 					if (options.pointId === undefined) points.push(point);
 					else {
 
