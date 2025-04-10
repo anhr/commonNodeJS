@@ -22,8 +22,8 @@ const sSphere = 'Sphere',
 	π = Math.PI;
 
 /**
-* 2 dimensional [hypersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
-* All the vertices form a sphere.
+ * 2 dimensional [hypersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
+ * All the vertices form a sphere.
  * @class
  * @extends Circle
  */
