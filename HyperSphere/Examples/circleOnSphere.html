@@ -89,7 +89,7 @@
 						if (edges) {
 
 							const pointsLength = points.length;
-							if (pointsLength > 1) edges.push([pointsLength - 1, pointsLength - 2]);
+							if (pointsLength > 1) edges.push([pointsLength - 2, pointsLength - 1]);
 
 						}
 
@@ -375,8 +375,9 @@
 									geometry: {
 			
 										angles: circlesPoints,
+										indices: { edges: edges },
 									
-									}
+									},
 			
 								},
 								overriddenProperties: { setDrawRange: (start, count) => {
