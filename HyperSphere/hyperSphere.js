@@ -340,12 +340,13 @@ class HyperSphere extends MyObject {
 		
 		this.classSettings = classSettings;
 
-		const cookieOptions = {};
-		if (options.dat) options.dat.cookie.getObject(this.cookieName, cookieOptions);
-
-		if (classSettings.edges != false) {//Если в настройках запрещены ребра, то на брать настройки ребер из cookie
+		let edgesOld;
+		if (classSettings.edges != false) {//Если в настройках запрещены ребра, то не брать настройки ребер из cookie
 			
-			let edgesOld = cookieOptions.edgesOld || { project: true, };
+			const cookieOptions = {};
+			if (options.dat) options.dat.cookie.getObject(this.cookieName, cookieOptions);
+			
+			edgesOld = cookieOptions.edgesOld || { project: true, };
 			if (classSettings.overriddenProperties && !classSettings.overriddenProperties.edges) classSettings.overriddenProperties.edges = () => { return false; };
 			classSettings.edges = cookieOptions.edges === false ? classSettings.overriddenProperties.edges() : cookieOptions.edges || classSettings.edges;
 			classSettings.edges = classSettings.edges === false ? classSettings.overriddenProperties.edges() : classSettings.edges;
@@ -3038,6 +3039,7 @@ this.object = () => {
 				if (boEdges) {
 
 					classSettings.edges = edgesOld;
+					if (!classSettings.edges) classSettings.edges = { project: false, }
 					cProject.setValue(classSettings.edges.project);
 
 				} else {
