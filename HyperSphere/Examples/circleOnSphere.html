@@ -300,20 +300,32 @@
 								a / (x + b) + c,
 							
 							circleDistance = circleDistance1 * R;
+
+						//prev point
+						if (circleId > 0) {
+							
+							const xPrev = (circleId - 1) * d;
+							circleDistance1Prev = b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
+								a / (xPrev + b) + c;
+
+						}
 						if (circlesSphere) circlesPointsOptions.points = circlesSphere.angles;
 						else circlesPointsOptions.points = circlesPoints;
 						circlesPointsOptions.circleDistance = circleDistance;
+//						const dCircleDistance = 0.904043351081012/circleId;
+						const dCircleDistance = circleDistance1 - circleDistance1Prev;
 //						circlesPointsOptions.numPoints = params.random ? 1 :
 						circlesPointsOptions.numPoints = 
 							parseInt(
 								2 * pi * Math.sin(circleDistance1)//длинна окружности для гиперсферы радиусом 1
-								/ (circleDistance1 - circleDistance1Prev)
+								/ dCircleDistance
 /*								
 								2 * pi * Math.sin(circleDistance1)//длинна окружности для гиперсферы радиусом 1
 								/ l//длинна дуги между точками окружности для гиперсферы радиусом 1.
 */								
 							);//np;
-						circleDistance1Prev = circleDistance1;
+						console.log('circleId = ' + circleId + ', dCircleDistance = ' + dCircleDistance);
+//						circleDistance1Prev = circleDistance1;
 						if (!isNaN(circlesPointsOptions.numPoints)) {//не рисовать окружность с бесконечным числом точек
 							
 							//console.log('circleId = ' + circleId + ', circleDistance1 = ' + circleDistance1 + ', numPoints = ' + circlesPointsOptions.numPoints)
