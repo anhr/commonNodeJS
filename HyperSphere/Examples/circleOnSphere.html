@@ -83,7 +83,17 @@
 	
 						point = [ newLat, newLng ];
 
-					} else point = [0, 0];//создается пустой массив максимального размера
+					} else {
+						
+						point = [0, 0];//создается пустой массив максимального размера
+						if (edges) {
+
+							const pointsLength = points.length;
+							if (pointsLength > 1) edges.push([pointsLength - 1, pointsLength - 2]);
+
+						}
+
+					}
 					if (options.pointId === undefined) points.push(point);
 					else {
 
@@ -215,7 +225,8 @@
 			let circlesCount, d;
 			const setCirclesCount = () => {
 				
-				circlesCount = (params.random ? np : 1 ) *
+				//circlesCount = (params.random ? np : 1) *
+				circlesCount = 1 *
 					np;//100;//если количество окружностей равно количеству точек на окружности, то точки будут равномерно располагаться на гиперсфере
 				d = pi / (circlesCount - 1);
 			
@@ -230,7 +241,8 @@
 			//(0.027*exp(3*x)+2.718*(x^4))*0.8
 			const exp = Math.exp, pow = Math.pow,
 				k = 15.890654938344866/16.163337545114086;//Умножить b на этот множитель что бы b = 15.890654938344866 при arc = 1.5
-			let a, b, c;
+			let a, b, c;//коэфициенты для формулы circleDistance1 = a / (x + b) + c, уголовое расстояние для окружности для гиперсферы радиусом 1
+
 			const setAbc = () => {
 					
 					b = (0.027*(exp(3*params.arc)
@@ -272,6 +284,7 @@
 			//////////////////////////////////////////Deepseek
 
 			let circlesSphere, circlesPointsOptions = {}, isCreateCirclesPoints;
+			const debug = true, edges = debug ? [] : undefined;
 			const circlesPoints = [],//точки всех окружностей
 				setCircles = () => {
 				
@@ -290,8 +303,8 @@
 						if (circlesSphere) circlesPointsOptions.points = circlesSphere.angles;
 						else circlesPointsOptions.points = circlesPoints;
 						circlesPointsOptions.circleDistance = circleDistance;
-//						circlesPointsOptions.numPoints = params.random ? 1 : parseInt(circleDistance1 / l);//np;
-						circlesPointsOptions.numPoints = params.random ? 1 :
+//						circlesPointsOptions.numPoints = params.random ? 1 :
+						circlesPointsOptions.numPoints = 
 							parseInt(
 								2 * pi * Math.sin(circleDistance1)//длинна окружности для гиперсферы радиусом 1
 								/ (circleDistance1 - circleDistance1Prev)
@@ -345,13 +358,13 @@
 								
 							},
 							//r: 0.5,
-							debug: {
+							debug: debug ? {
 			
 								probabilityDensity: false,
 								middleVertice: false,
 								log: false,
 								
-							},
+							} : false,
 							//debug: false,
 							settings: {
 								
@@ -378,6 +391,7 @@
 							
 							
 						});
+					
 					if (circlesSphere) circlesSphere.setVerticesRange(0, circlesPointsCount);
 		
 				}

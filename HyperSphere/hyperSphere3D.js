@@ -22,11 +22,15 @@ import FibonacciSphereGeometry from '../FibonacciSphere/FibonacciSphereGeometry.
 const sHyperSphere3D = 'HyperSphere3D',
 	π = Math.PI;
 
+/**
+ * 3 dimensional [hypersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
+ * All the vertices form a [hypersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
+ * @class
+ * @extends Sphere
+ */
 class HyperSphere3D extends Sphere {
 
 	/**
-	 * 3 dimensional [hypersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
-	 * All the vertices form a [hypersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
 	 * @param {Options} options See <a href="../../../master/jsdoc/Options/Options.html" target="_blank">Options</a>.
 	 * @param {object} [classSettings] <b>Circle</b> class settings. See <a href="./module-HyperSphere-HyperSphere.html" target="_blank">HyperSphere classSettings</a>.
 	 **/

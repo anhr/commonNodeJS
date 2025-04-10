@@ -20,11 +20,15 @@ import three from '../three.js'
 
 const sCircle = 'Circle';
 
+/**
+ * 1 dimensional [hypersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
+ * All the vertices form a circle.
+ * @class
+ * @extends HyperSphere
+ */
 class Circle extends HyperSphere {
 
 	/**
-	 * 1 dimensional [hypersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
-	 * All the vertices form a circle.
 	 * @param {Options} options See <a href="../../../master/jsdoc/Options/Options.html" target="_blank">Options</a>.
 	 * @param {object} [classSettings] <b>Circle</b> class settings. See <a href="./module-HyperSphere-HyperSphere.html" target="_blank">HyperSphere classSettings</a>.
 	 **/

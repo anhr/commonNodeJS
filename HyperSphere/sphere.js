@@ -21,11 +21,15 @@ import three from '../three.js'
 const sSphere = 'Sphere',
 	π = Math.PI;
 
+/**
+* 2 dimensional [hypersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
+* All the vertices form a sphere.
+ * @class
+ * @extends Circle
+ */
 class Sphere extends Circle {
 
 	/**
-	 * 2 dimensional [hypersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
-	 * All the vertices form a sphere.
 	 * @param {Options} options See <a href="../../../master/jsdoc/Options/Options.html" target="_blank">Options</a>.
 	 * @param {object} [classSettings] <b>Circle</b> class settings. See <a href="./module-HyperSphere-HyperSphere.html" target="_blank">HyperSphere classSettings</a>.
 	 **/
