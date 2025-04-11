@@ -34,7 +34,7 @@
 		new MyThree( function ( scene, options ) {
 
 			const pi = Math.PI,
-				R = 1;//Hypersphere radius
+				R = 0.5;//Hypersphere radius
 			const np = 100;//36;//numPoints
 				//l = 2 * pi / np;//длинна дуги между точками окружности для гиперсферы радиусом 1. Нужна для вычисления количества точек на окружности numPoints при равномерном распределении точек
 			let circlesPointsCount;//for debug
@@ -68,7 +68,8 @@
 						const angle = 2 * pi * (params.random ? Math.random() : i / numPoints); // Текущий угол в радианах
 	//					const angle = 2 * pi * ( i / numPoints); // Текущий угол в радианах
 						
-						const circleDistance = (params.random ? (options.circleDistance - circleDistance1Prev) * Math.random() + circleDistance1Prev : options.circleDistance) / R; // Расстояние до окружности по дуге в радианах
+						const circleDistancePrev = circleDistance1Prev * R;
+						const circleDistance = (params.random ? (options.circleDistance - circleDistancePrev) * Math.random() + circleDistancePrev : options.circleDistance) / R; // Расстояние до окружности по дуге в радианах
 				
 						// Формулы сферической тригонометрии
 						const newLat = Math.asin(
@@ -222,7 +223,8 @@
 
 			//////////////////////////////////////////GUI
 
-			let circlesCount, d;
+			let circlesCount,
+				d;//расттояние между окружностями в радианах при условии, что окружности равномерно расположены на сфере
 			const setCirclesCount = () => {
 				
 				//circlesCount = (params.random ? np : 1) *
