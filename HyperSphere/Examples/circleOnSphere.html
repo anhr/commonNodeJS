@@ -39,6 +39,44 @@
 				//l = 2 * pi / np;//длинна дуги между точками окружности для гиперсферы радиусом 1. Нужна для вычисления количества точек на окружности numPoints при равномерном распределении точек
 			let circlesPointsCount;//for debug
 
+			const getCirclePoint = (center, options) => {
+				
+				const angle = 2 * pi * (params.random ? Math.random() : options.i / options.numPoints); // Текущий угол в радианах
+				
+				const circleDistancePrev = circleDistance1Prev * R;
+				const circleDistance = (params.random ? (options.circleDistance - circleDistancePrev) * Math.random() + circleDistancePrev : options.circleDistance) / R; // Расстояние до окружности по дуге в радианах
+		
+				// Формулы сферической тригонометрии
+				const newLat = Math.asin(
+					Math.sin(center.lat) * Math.cos(circleDistance) +
+					Math.cos(center.lat) * Math.sin(circleDistance) * Math.cos(angle)
+				);
+
+				const newLng = center.lng + Math.atan2(
+					Math.sin(angle) * Math.sin(circleDistance) * Math.cos(center.lat),
+					Math.cos(circleDistance) - Math.sin(center.lat) * Math.sin(newLat)
+				);
+
+				return [ newLat, newLng ];
+				
+			}
+			const editPoints = (points, point, options) => {
+				
+				options ||= {};
+				if (options.pointId === undefined) {
+					
+					points.push(point || [0, 0]);
+					return;
+
+				}
+				if (points.length > options.pointId) {
+					
+					points[options.pointId] = point;
+					options.pointId++;
+
+				} else console.error('getCirclePointsRadians: Invalid options.pointId = ' + options.pointId);
+
+			}
 			/**
 			 * DeepSeek: Окружность на сфере (расчеты в радианах) — JavaScript
 			 * Генерирует точки окружности на сфере (в радианах)
@@ -64,9 +102,10 @@
 
 					let point;
 					if (!isCreateCirclesPoints) {
-						
+
+						point = getCirclePoint(center, { i: i, numPoints: numPoints, circleDistance: options.circleDistance, });
+/*						
 						const angle = 2 * pi * (params.random ? Math.random() : i / numPoints); // Текущий угол в радианах
-	//					const angle = 2 * pi * ( i / numPoints); // Текущий угол в радианах
 						
 						const circleDistancePrev = circleDistance1Prev * R;
 						const circleDistance = (params.random ? (options.circleDistance - circleDistancePrev) * Math.random() + circleDistancePrev : options.circleDistance) / R; // Расстояние до окружности по дуге в радианах
@@ -83,6 +122,7 @@
 						);
 	
 						point = [ newLat, newLng ];
+*/						
 
 					} else {
 						
@@ -95,6 +135,8 @@
 						}
 
 					}
+					editPoints(points, point, options);
+/*					
 					if (options.pointId === undefined) points.push(point);
 					else {
 
@@ -106,6 +148,7 @@
 						} else console.error('getCirclePointsRadians: Invalid options.pointId = ' + options.pointId);
 
 					}
+*/					
 					circlesPointsCount++;
 					
 				}
@@ -134,9 +177,10 @@
 					//0,//Вершины гиперсферы совпадают. Длинна дуги равна нулю. Окружности вокруг вершины превращаются в точки, которые совпадают с вершиной.
 					0.5,//По умолчанию
 					//1.5,//Для вычисления коэффициента k
+					//0,
 				
 				rnd: false,//random
-				op: false,//onePoint. true - получить одну случайную точку не вычисляя остальные случайные точки
+				op: true,//onePoint. true - получить одну случайную точку не вычисляя остальные случайные точки
 				
 			}
 /*			
@@ -242,6 +286,13 @@
 
 				}
 
+				if (isCreateCirclesPoints) {
+
+					editPoints(circlesPoints);
+					return;
+					
+				}
+
 				//вычислить одну случайную точку без необходимости вычисления всех остальных случайных точек
 				//Нужно для сокращения времени вычислений, когда надо всего одну случайную точку
 				
@@ -250,15 +301,18 @@
 				setAbc();
 				circleDistance1Prev = 0;//Положение предыдущего кольца
 				circlesPointsCount = 0;
+				
+				if (circlesSphere) circlesPoints = circlesSphere.angles;
+				
 				for (let circleId = 0; circleId < circlesCount; circleId++) {
 
 					const x = circleId * d,
 	
 						//уголовое расстояние для окружности для гиперсферы радиусом 1
 						circleDistance1 = b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
-							a / (x + b) + c;
+							a / (x + b) + c,
 						
-//						circleDistance = circleDistance1 * R;
+						circleDistance = circleDistance1 * R;
 
 					//prev point
 					if (circleId > 0) {
@@ -277,17 +331,27 @@
 					if (!isNaN(numPoints)) {//не рисовать окружность с бесконечным числом точек
 						
 						circlesPointsCount += numPoints;
-						aNumPoints.push(circlesPointsCount);
+//						aNumPoints.push(circlesPointsCount);
+						aNumPoints.push({ circlesPointsCount: circlesPointsCount, circleDistance: circleDistance, });
 
 					}
 					
 				}
 				const randomPointId = Math.round(Math.random() * circlesPointsCount);//Идентификатор случайной точки
+				const editPointsOptions = { pointId: 0, }
 				//Найти окружность, в которую попадает случайная точка randomPointId
 				for (let circleId = 0; circleId < circlesCount; circleId++) {
 
-					if(aNumPoints[circleId] >= randomPointId) {
+					const circleParams = aNumPoints[circleId];
+if (circleParams === undefined)
+	console.error('circleParams === undefined')
+					if(circleParams.circlesPointsCount >= randomPointId) {
 
+						params.rnd = true;
+						const point = getCirclePoint(params.center, { circleDistance: circleParams.circleDistance, });
+						editPoints(circlesPoints, point, editPointsOptions);
+						circlesPointsCount = editPointsOptions.pointId;
+						createCirclesSphere();
 						break;
 						
 					}
@@ -358,11 +422,80 @@
 			
 			//////////////////////////////////////////Deepseek
 
+			const createCirclesSphere = () => {
+				
+				circlesPointsOptions.pointId = 0;
+				if (!circlesSphere && !isCreateCirclesPoints)
+					circlesSphere = new Sphere(options,
+					{
+
+						r: R,
+						//onAddControllers: (gui) => {
+		
+							//circleDistance
+						//	gui.add( params, 'circleDistance', 0, pi, 0.01 );
+				
+							//center
+						//	gui.add( params.center, 'lat', -pi / 2, pi / 2, 0.001 );
+						//	gui.add( params.center, 'lng', -pi, pi, 0.001 );
+							
+						//},
+						//edges: {
+		
+						//	project: false,//Doesn't project edges onto canvas
+							//creationMethod: Sphere.edgesCreationMethod.Random,
+							
+						//},
+						edges: false,
+						randomArc: true,
+						projectParams:{
+							
+							scene: scene,
+							
+						},
+						//r: 0.5,
+						debug: debug ? {
+		
+							probabilityDensity: false,
+							middleVertice: false,
+							log: false,
+							
+						} : false,
+						//debug: false,
+						settings: {
+							
+							object: {
+			
+								name: 'circles',// + circleDistance,
+								//color: 'white',
+								geometry: {
+		
+									angles: circlesPoints,
+									indices: { edges: edges },
+								
+								},
+		
+							},
+							overriddenProperties: { setDrawRange: (start, count) => {
+								
+									if (circlesSphere) circlesSphere.bufferGeometry.setDrawRange(start, count);
+								
+								}
+												  
+							},
+						
+						},
+						
+						
+					});
+				
+				if (circlesSphere) circlesSphere.setVerticesRange(0, circlesPointsCount);
+			}
 			let circlesSphere, circlesPointsOptions = {}, isCreateCirclesPoints;
 			let circleDistance1Prev;//Положение предыдущего кольца
 			const debug = true, edges = debug ? [] : undefined;
-			const circlesPoints = [],//точки всех окружностей
-				setCircles = () => {
+			let circlesPoints = [];//точки всех окружностей
+			const setCircles = () => {
 				
 					setAbc();
 					circleDistance1Prev = 0;//Положение предыдущего кольца
@@ -411,33 +544,30 @@
 						
 					}
 					console.log('circlesPointsCount = ' + circlesPointsCount);
+					createCirclesSphere();
+/*					
 					circlesPointsOptions.pointId = 0;
 					if (!circlesSphere && !isCreateCirclesPoints)
 						circlesSphere = new Sphere(options,
 						{
 
 							r: R,
-							/*
-							onAddControllers: (gui) => {
-		
+							//onAddControllers: (gui) => {
+			
 								//circleDistance
-								gui.add( params, 'circleDistance', 0, pi, 0.01 );
-					//			dat.controllerNameAndTitle( controllerPrecision, lang.precision, lang.precisionTitle );
+							//	gui.add( params, 'circleDistance', 0, pi, 0.01 );
 					
 								//center
-								gui.add( params.center, 'lat', -pi / 2, pi / 2, 0.001 );
-								gui.add( params.center, 'lng', -pi, pi, 0.001 );
+							//	gui.add( params.center, 'lat', -pi / 2, pi / 2, 0.001 );
+							//	gui.add( params.center, 'lng', -pi, pi, 0.001 );
 								
-							},
-							*/
-							/*
-							edges: {
+							//},
+							//edges: {
 			
-								project: false,//Doesn't project edges onto canvas
+							//	project: false,//Doesn't project edges onto canvas
 								//creationMethod: Sphere.edgesCreationMethod.Random,
 								
-							},
-							*/
+							//},
 							edges: false,
 							randomArc: true,
 							projectParams:{
@@ -482,6 +612,7 @@
 						});
 					
 					if (circlesSphere) circlesSphere.setVerticesRange(0, circlesPointsCount);
+*/					
 		
 				}
 			const arc = params.arc;
