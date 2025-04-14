@@ -2754,7 +2754,11 @@ this.object = () => {
 				const count = position.count === undefined ? this.verticesCountMin : position.count;
 				if (count < 2) {
 
-					console.error(sHyperSphere + ': Invalid classSettings.settings.object.geometry.position.count < 2');
+					//Сюда попадает когда вычисляется единичная случайная точка
+					//Для проверки в файле http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/circleOnSphere.html
+					//установить params.op = true - создать одну случайную точку
+					//Запустить http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/circleOnSphere.html
+					//console.error(sHyperSphere + ': Invalid classSettings.settings.object.geometry.position.count < 2');
 					//return;
 
 				}
