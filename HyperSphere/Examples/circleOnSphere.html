@@ -192,7 +192,7 @@
 					//0,
 				
 				rnd: true,//random
-				op: true,//onePoint. true - получить одну случайную точку не вычисляя остальные случайные точки
+				op: false,//onePoint. true - получить одну случайную точку не вычисляя остальные случайные точки
 				
 			}
 /*			
@@ -275,6 +275,8 @@
 						
 					}
 					
+					setCirclesPoints(arc);
+/*
 					//заполнить circlesPoints максимально возможный массив точек всех окружностей 
 					isCreateCirclesPoints = true;
 					params.arc = pi / 2;
@@ -282,6 +284,7 @@
 					//создать окружности
 					isCreateCirclesPoints = false;
 					params.arc = arc;
+*/
 					
 //					onChangeParams();
 					return true;
@@ -654,16 +657,30 @@ if (circleParams === undefined)
 */					
 		
 				}
-			const arc = params.arc;
-			if (arc != pi / 2) {
+			const setCirclesPoints = (arc) => {
 
-				//создать максимально возможный массив точек всех окружностей
+				//заполнить circlesPoints максимально возможный массив точек всех окружностей 
 				isCreateCirclesPoints = true;
 				params.arc = pi / 2;
 
 				//создать окружности
 				isCreateCirclesPoints = false;
 				params.arc = arc;
+
+			}
+			const arc = params.arc;
+			if (arc != pi / 2) {
+
+				setCirclesPoints(arc);
+/*
+				//заполнить circlesPoints максимально возможный массив точек всех окружностей 
+				isCreateCirclesPoints = true;
+				params.arc = pi / 2;
+
+				//создать окружности
+				isCreateCirclesPoints = false;
+				params.arc = arc;
+*/
 
 			}
 			else setCircles();
