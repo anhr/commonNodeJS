@@ -45,6 +45,9 @@
 				
 				const circleDistancePrev = circleDistance1Prev * R;
 				const circleDistance = (params.random ? (options.circleDistance - circleDistancePrev) * Math.random() + circleDistancePrev : options.circleDistance) / R; // Расстояние до окружности по дуге в радианах
+
+				if (circleDistance === 0)
+					console.log('circleDistance === 0')
 		
 				// Формулы сферической тригонометрии
 				const newLat = Math.asin(
@@ -52,10 +55,14 @@
 					Math.cos(center.lat) * Math.sin(circleDistance) * Math.cos(angle)
 				);
 
-				const newLng = center.lng + Math.atan2(
+				let newLng = center.lng + Math.atan2(
 					Math.sin(angle) * Math.sin(circleDistance) * Math.cos(center.lat),
 					Math.cos(circleDistance) - Math.sin(center.lat) * Math.sin(newLat)
 				);
+
+				//Normalise angles
+				if (newLng > pi) newLng -= 2 * pi;
+				else if (newLng < -pi) newLng += 2 * pi;
 
 				return [ newLat, newLng ];
 				
@@ -169,7 +176,12 @@
 //				radius: 2,//see appropriate getter and setter
 				r: pi / 2,//радиус текущей окружности, пересекающей сферу
 */				
-				center: [ 0, 0 ],//центр окружности, пересекающей сферу или вершина гиперсферы, вокруг которой будет облако вероятностей
+				//центр окружности, пересекающей сферу или вершина гиперсферы, вокруг которой будет облако вероятностей
+				center: [
+					pi/4,//lat
+					-pi/10,//0,//lng
+				],
+				
 //				arc: 0.5,//see appropriate getter and setter
 
 				//arc Длинна дуги, соединяющей две вершины гиперсферы
@@ -179,7 +191,7 @@
 					//1.5,//Для вычисления коэффициента k
 					//0,
 				
-				rnd: false,//random
+				rnd: true,//random
 				op: true,//onePoint. true - получить одну случайную точку не вычисляя остальные случайные точки
 				
 			}
@@ -252,6 +264,18 @@
 				set: (onePoint) => {
 
 					params.op = onePoint;
+
+					const arc = params.arc; 
+					circlesPoints.length = 0;
+					
+					//заполнить circlesPoints максимально возможный массив точек всех окружностей 
+					isCreateCirclesPoints = true;
+					params.arc = pi / 2;
+	
+					//создать окружности
+					isCreateCirclesPoints = false;
+					params.arc = arc;
+					
 					onChangeParams();
 					return true;
 
@@ -270,7 +294,7 @@
 
 			//center
 			gui.add(params.center, 'lat', -pi / 2, pi / 2, 0.001);
-			gui.add(params.center, 'lng', 0, 2 * pi, 0.001);
+			gui.add(params.center, 'lng', -pi, pi, 0.001);
 
 			gui.add(params, 'random');
 			gui.add(params, 'onePoint');
@@ -342,9 +366,17 @@
 				//Найти окружность, в которую попадает случайная точка randomPointId
 				for (let circleId = 0; circleId < circlesCount; circleId++) {
 
-					const circleParams = aNumPoints[circleId];
+//					const circleParams = aNumPoints[circleId];
+					const circleParams = aNumPoints.length > 0 ? aNumPoints[circleId] :
+					
+						//params.arc = 0. Все окружности стянуты в одну точку params.center и имеют диаметр равный нулю
+						//Так же получается, что randomPointId = 0 потому что circlesPointsCount = 0
+						//Поэтому circleParams делаем таким, что бы случайная точка point оказалась равной params.center
+						{ circlesPointsCount: 1, circleDistance: 0 };
+/*					
 if (circleParams === undefined)
 	console.error('circleParams === undefined')
+*/	
 					if(circleParams.circlesPointsCount >= randomPointId) {
 
 						params.rnd = true;
