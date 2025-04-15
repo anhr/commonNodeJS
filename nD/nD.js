@@ -3445,7 +3445,8 @@ class ND extends MyObject {
 	 */
 	positionOffset(position, positionId) { return positionId * position.itemSize; }
 	/**
-	 * Sets an opacity of the graphical object. Opacity is range from 0 is transparent to 1 is opacity. Default is 1.
+	 * Sets an [opacity]{@link https://threejs.org/docs/#api/en/materials/Material.opacity} of the graphical object. Opacity is range from 0 is transparent to 1 is opacity. Default is 1.
+	 * @param {number} opacity Material [opacity]{@link https://threejs.org/docs/#api/en/materials/Material.opacity}.
 	 */
 	set object3Dopacity(opacity) {
 

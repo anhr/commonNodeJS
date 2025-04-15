@@ -1464,7 +1464,8 @@ this.object = () => {
 			this.opacity = (transparent = true, opacity = this.objectOpacity) => {
 
 				if (!nd) myPoints.userData.opacity(transparent ? opacity : 1);
-				else nd.opacity(nd.object3D, transparent, opacity);
+//				else nd.opacity(nd.object3D, transparent, opacity);
+				else nd.object3Dopacity = opacity;
 
 			}
 
