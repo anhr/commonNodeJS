@@ -46,19 +46,27 @@
 				const circleDistancePrev = circleDistance1Prev * R;
 				const circleDistance = (params.random ? (options.circleDistance - circleDistancePrev) * Math.random() + circleDistancePrev : options.circleDistance) / R; // Расстояние до окружности по дуге в радианах
 
-				if (circleDistance === 0)
-					console.log('circleDistance === 0')
-		
-				// Формулы сферической тригонометрии
-				const newLat = Math.asin(
-					Math.sin(center.lat) * Math.cos(circleDistance) +
-					Math.cos(center.lat) * Math.sin(circleDistance) * Math.cos(angle)
-				);
+				let newLat, newLng;
+				if (circleDistance === 0) {
 
-				let newLng = center.lng + Math.atan2(
-					Math.sin(angle) * Math.sin(circleDistance) * Math.cos(center.lat),
-					Math.cos(circleDistance) - Math.sin(center.lat) * Math.sin(newLat)
-				);
+					//длинна дуги равна нулю. Координаты точки окружности противоположны координатам центра окружности
+					newLat = - center.lat;
+					newLng = center.lng + pi;
+
+				} else {
+		
+					// Формулы сферической тригонометрии
+					newLat = Math.asin(
+						Math.sin(center.lat) * Math.cos(circleDistance) +
+						Math.cos(center.lat) * Math.sin(circleDistance) * Math.cos(angle)
+					);
+	
+					newLng = center.lng + Math.atan2(
+						Math.sin(angle) * Math.sin(circleDistance) * Math.cos(center.lat),
+						Math.cos(circleDistance) - Math.sin(center.lat) * Math.sin(newLat)
+					);
+
+				}
 
 				//Normalise angles
 				if (newLng > pi) newLng -= 2 * pi;
@@ -185,14 +193,14 @@
 //				arc: 0.5,//see appropriate getter and setter
 
 				//arc Длинна дуги, соединяющей две вершины гиперсферы
-				a: //pi / 2,//Вершины гиперсферы расположены на противоположных концах гиперсферы. Длинна дуги максимальная. Окружности вокруг вершины расположены равномерно по всей гиперсферы.
+				a: //pi / 2,//Вершины дуги расположены на противоположных концах гиперсферы. Длинна дуги максимальная. Окружности вокруг вершины расположены равномерно по всей гиперсферы.
 					//0,//Вершины гиперсферы совпадают. Длинна дуги равна нулю. Окружности вокруг вершины превращаются в точки, которые совпадают с вершиной.
-					0.5,//По умолчанию
+					//0.5,//По умолчанию
 					//1.5,//Для вычисления коэффициента k
-					//0,
+					0,
 				
 				rnd: true,//random
-				op: false,//onePoint. true - получить одну случайную точку не вычисляя остальные случайные точки
+				op: true,//onePoint. true - получить одну случайную точку не вычисляя остальные случайные точки
 				
 			}
 /*			
