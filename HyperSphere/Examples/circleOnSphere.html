@@ -70,7 +70,7 @@
 			const editPoints = (points, point, options) => {
 				
 				options ||= {};
-				if (options.pointId === undefined) {
+				if ((options.pointId === undefined) || isCreateCirclesPoints) {
 					
 					points.push(point || [0, 0]);
 					return;
@@ -267,6 +267,13 @@
 
 					const arc = params.arc; 
 					circlesPoints.length = 0;
+					if (circlesSphere) {
+
+						options.guiSelectPoint.removeMesh(circlesSphere.object3D);
+						circlesSphere.object3D.parent.remove(circlesSphere.object3D);
+						circlesSphere = undefined;
+						
+					}
 					
 					//заполнить circlesPoints максимально возможный массив точек всех окружностей 
 					isCreateCirclesPoints = true;
@@ -276,7 +283,7 @@
 					isCreateCirclesPoints = false;
 					params.arc = arc;
 					
-					onChangeParams();
+//					onChangeParams();
 					return true;
 
 				},
