@@ -348,8 +348,8 @@ class HyperSphere extends MyObject {
 			
 			edgesOld = cookieOptions.edgesOld || { project: true, };
 			if (classSettings.overriddenProperties && !classSettings.overriddenProperties.edges) classSettings.overriddenProperties.edges = () => { return false; };
-			classSettings.edges = cookieOptions.edges === false ? classSettings.overriddenProperties.edges() : cookieOptions.edges || classSettings.edges;
-			classSettings.edges = classSettings.edges === false ? classSettings.overriddenProperties.edges() : classSettings.edges;
+			classSettings.edges = ((cookieOptions.edges === false) && classSettings.overriddenProperties) ? classSettings.overriddenProperties.edges() : cookieOptions.edges || classSettings.edges;
+//			classSettings.edges = classSettings.edges === false ? classSettings.overriddenProperties.edges() : classSettings.edges;
 			if (classSettings.edges != false) classSettings.edges = classSettings.edges || {};
 			if ((classSettings.edges != false) && (classSettings.edges.project === undefined)) classSettings.edges.project = true;
 
