@@ -146,4 +146,23 @@ class Sphere extends Circle {
 	get verticesCountMin() { return 4; }
 
 }
+
+class RandomVertices extends Circle.RandomVertices {
+
+	constructor(scene, options, randomVerticesSettings){
+
+		super(scene, options, randomVerticesSettings);
+		
+	}
+	getHyperSphere(options, classSettings) {
+
+		let circlesSphere;
+		circlesSphere = new Sphere(options, classSettings);
+		return circlesSphere;
+
+	}
+	
+}
+Sphere.RandomVertices = RandomVertices;
+
 export default Sphere;
