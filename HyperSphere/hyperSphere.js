@@ -3580,7 +3580,7 @@ class RandomVertices {
 	/**
 	 * Random vertices
 	 * @param {THREE.Group} scene [group]{@link https://threejs.org/docs/index.html?q=Gro#api/en/objects/Group} of objects to which a new <b>random vertices</b> object will be added
-	 * @param {Options} options See <a href="../jsdoc/Options/index.html" target="_blank">Options</a>.
+	 * @param {Options} options See <a href="../../jsdoc/Options/index.html" target="_blank">Options</a>.
 	 * @param {object} [randomVerticesSettings={}] The following settings are available
 	 * @param {number} [randomVerticesSettings.R=1] Hypersphere radius
 	 * @param {number} [randomVerticesSettings.np=36] numPoints. Number of vertices on a circle
@@ -3588,7 +3588,7 @@ class RandomVertices {
 	 * @param {array} [randomVerticesSettings.params.center=[]] центр окружности, пересекающей сферу или вершина гиперсферы, вокруг которой будет облако вероятностей
 	 * @param {float} [randomVerticesSettings.params.center[0]=0] Latitude
 	 * @param {float} [randomVerticesSettings.params.center[1]=0] Longitude
-	 * @param {float} [randomVerticesSettings.params.a=0.5] arc - длинна дуги, соединяющей две вершины гиперсферы
+	 * @param {float} [randomVerticesSettings.params.a=0.5] arc - длинна дуги, соединяющей две вершины гиперсферы в радианах
 	 * @param {boolean} [randomVerticesSettings.params.rnd=true] random arrangement of circles vertices
 	 * @param {boolean} [randomVerticesSettings.params.op=false] onePoint. true - получить одну случайную точку не вычисляя остальные случайные точки
 	 * @param {boolean} [randomVerticesSettings.params.opa=false] true - array of the one points
