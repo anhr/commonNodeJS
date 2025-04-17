@@ -3583,7 +3583,7 @@ class RandomVertices {
 	 * @param {Options} options See <a href="../jsdoc/Options/index.html" target="_blank">Options</a>.
 	 * @param {object} [randomVerticesSettings={}] The following settings are available
 	 * @param {number} [randomVerticesSettings.R=1] Hypersphere radius
-	 * @param {number} [randomVerticesSettings.np=36] Number of vertices on a circle
+	 * @param {number} [randomVerticesSettings.np=36] numPoints. Number of vertices on a circle
 	 * @param {object} [randomVerticesSettings.params={}] The following parameters are available
 	 * @param {array} [randomVerticesSettings.params.center=[]] центр окружности, пересекающей сферу или вершина гиперсферы, вокруг которой будет облако вероятностей
 	 * @param {float} [randomVerticesSettings.params.center[0]=0] Latitude
@@ -3794,6 +3794,18 @@ class RandomVertices {
 			set: (onePointArray) => {
 
 				params.opa = onePointArray;
+				circlesPoints.length = 0;
+				if (circlesSphere) {
+
+					options.guiSelectPoint.removeMesh(circlesSphere.object3D);
+					circlesSphere.object3D.parent.remove(circlesSphere.object3D);
+					circlesSphere = undefined;
+
+				}
+				isCreateCirclesPoints = true;
+				onChangeParams();
+				isCreateCirclesPoints = false;
+				onChangeParams();
 				return true;
 
 			},
@@ -3811,76 +3823,85 @@ class RandomVertices {
 
 			if (isCreateCirclesPoints) {
 
-				editPoints(circlesPoints);
+				//размер circlesPoints массива всех точек окружностей
+				const pointsCount = params.onePointArray ? circlesCount * np ://если надо содать массив из единично создаваемых точек
+					1;//массив состоит из одной точки
+				for (let i = 0; i < pointsCount; i++) editPoints(circlesPoints);
 				return;
 
 			}
 
+			const editPointsOptions = { pointId: 0, }
+			
 			//вычислить одну случайную точку без необходимости вычисления всех остальных случайных точек
 			//Нужно для сокращения времени вычислений, когда надо всего одну случайную точку
+			const getOnePoint = () => {
 
-			const aNumPoints = [];//массив с количеством точек numPoints для каждой окружности. Нужен для того, что бы случайно выбрать окружность при вычислении одиночной случайной точки
-			setAbc();
-			circleDistance1Prev = 0;//Положение предыдущего кольца
-			circlesPointsCount = 0;
+				const aNumPoints = [];//массив с количеством точек numPoints для каждой окружности. Нужен для того, что бы случайно выбрать окружность при вычислении одиночной случайной точки
+				setAbc();
+				circleDistance1Prev = 0;//Положение предыдущего кольца
+				circlesPointsCount = 0;
 
-			if (circlesSphere) circlesPoints = circlesSphere.angles;
+				if (circlesSphere) circlesPoints = circlesSphere.angles;
 
-			for (let circleId = 0; circleId < circlesCount; circleId++) {
+				//заполнить aNumPoints
+				for (let circleId = 0; circleId < circlesCount; circleId++) {
 
-				const x = circleId * d,
+					const x = circleId * d,
 
-					//уголовое расстояние для окружности для гиперсферы радиусом 1
-					circleDistance1 = b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
-						a / (x + b) + c,
+						//уголовое расстояние для окружности для гиперсферы радиусом 1
+						circleDistance1 = b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
+							a / (x + b) + c,
 
-					circleDistance = circleDistance1 * R;
+						circleDistance = circleDistance1 * R;
 
-				//prev point
-				if (circleId > 0) {
+					//prev point
+					if (circleId > 0) {
 
-					const xPrev = (circleId - 1) * d;
-					circleDistance1Prev = b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
-						a / (xPrev + b) + c;
+						const xPrev = (circleId - 1) * d;
+						circleDistance1Prev = b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
+							a / (xPrev + b) + c;
+
+					}
+
+					const dCircleDistance = circleDistance1 - circleDistance1Prev;
+					const numPoints = parseInt(
+						2 * pi * Math.sin(circleDistance1)//длинна окружности для гиперсферы радиусом 1
+						/ dCircleDistance
+					);
+					if (!isNaN(numPoints)) {//не рисовать окружность с бесконечным числом точек
+
+						circlesPointsCount += numPoints;
+						aNumPoints.push({ circlesPointsCount: circlesPointsCount, circleDistance: circleDistance, });
+
+					}
 
 				}
+				const randomPointId = Math.round(Math.random() * circlesPointsCount);//Идентификатор случайной точки
+				//Найти окружность, в которую попадает случайная точка randomPointId
+				for (let circleId = 0; circleId < circlesCount; circleId++) {
 
-				const dCircleDistance = circleDistance1 - circleDistance1Prev;
-				const numPoints = parseInt(
-					2 * pi * Math.sin(circleDistance1)//длинна окружности для гиперсферы радиусом 1
-					/ dCircleDistance
-				);
-				if (!isNaN(numPoints)) {//не рисовать окружность с бесконечным числом точек
+					const circleParams = aNumPoints.length > 0 ? aNumPoints[circleId] :
 
-					circlesPointsCount += numPoints;
-					aNumPoints.push({ circlesPointsCount: circlesPointsCount, circleDistance: circleDistance, });
+						//params.arc = 0. Все окружности стянуты в одну точку params.center и имеют диаметр равный нулю
+						//Так же получается, что randomPointId = 0 потому что circlesPointsCount = 0
+						//Поэтому circleParams делаем таким, что бы случайная точка point оказалась равной params.center
+						{ circlesPointsCount: 1, circleDistance: 0 };
+					if (circleParams.circlesPointsCount >= randomPointId) {
+
+						params.rnd = true;
+						const point = getCirclePoint(params.center, { circleDistance: circleParams.circleDistance, });
+						editPoints(circlesPoints, point, editPointsOptions);
+						if (!params.onePointArray) circlesPointsCount = editPointsOptions.pointId;
+						break;
+
+					}
 
 				}
 
 			}
-			const randomPointId = Math.round(Math.random() * circlesPointsCount);//Идентификатор случайной точки
-			const editPointsOptions = { pointId: 0, }
-			//Найти окружность, в которую попадает случайная точка randomPointId
-			for (let circleId = 0; circleId < circlesCount; circleId++) {
-
-				const circleParams = aNumPoints.length > 0 ? aNumPoints[circleId] :
-
-					//params.arc = 0. Все окружности стянуты в одну точку params.center и имеют диаметр равный нулю
-					//Так же получается, что randomPointId = 0 потому что circlesPointsCount = 0
-					//Поэтому circleParams делаем таким, что бы случайная точка point оказалась равной params.center
-					{ circlesPointsCount: 1, circleDistance: 0 };
-				if (circleParams.circlesPointsCount >= randomPointId) {
-
-					params.rnd = true;
-					const point = getCirclePoint(params.center, { circleDistance: circleParams.circleDistance, });
-					editPoints(circlesPoints, point, editPointsOptions);
-					circlesPointsCount = editPointsOptions.pointId;
-					createCirclesSphere();
-					break;
-
-				}
-
-			}
+			for (let i = 0; i < circlesPoints.length; i++) getOnePoint();
+			createCirclesSphere();
 
 		}
 
