@@ -3802,10 +3802,13 @@ class RandomVertices {
 					circlesSphere = undefined;
 
 				}
+				setCirclesOnePoints();
+/*
 				isCreateCirclesPoints = true;
 				onChangeParams();
 				isCreateCirclesPoints = false;
 				onChangeParams();
+*/
 				return true;
 
 			},
@@ -3865,16 +3868,21 @@ class RandomVertices {
 					}
 
 					const dCircleDistance = circleDistance1 - circleDistance1Prev;
-					const numPoints = parseInt(
+					let numPoints = parseInt(
 						2 * pi * Math.sin(circleDistance1)//длинна окружности для гиперсферы радиусом 1
 						/ dCircleDistance
 					);
+					if (isNaN(numPoints)) numPoints = 1;//у окружности с бесконечным числом точек делаем одну точку
+					circlesPointsCount += numPoints;
+					aNumPoints.push({ circlesPointsCount: circlesPointsCount, circleDistance: circleDistance, });
+/*					
 					if (!isNaN(numPoints)) {//не рисовать окружность с бесконечным числом точек
 
 						circlesPointsCount += numPoints;
 						aNumPoints.push({ circlesPointsCount: circlesPointsCount, circleDistance: circleDistance, });
 
 					}
+*/					
 
 				}
 				const randomPointId = Math.round(Math.random() * circlesPointsCount);//Идентификатор случайной точки
@@ -3891,6 +3899,8 @@ class RandomVertices {
 
 						params.rnd = true;
 						const point = getCirclePoint(params.center, { circleDistance: circleParams.circleDistance, });
+//						const point = getCirclePoint(params.center, { circleDistance: circleId <= 9 ? circleParams.circleDistance : aNumPoints[circleId - 10].circleDistance, });
+//						const point = getCirclePoint(params.center, { circleDistance: circleId >= (aNumPoints.length - 1) ? circleParams.circleDistance : aNumPoints[circleId + 1].circleDistance, });
 						editPoints(circlesPoints, point, editPointsOptions);
 						if (!params.onePointArray) circlesPointsCount = editPointsOptions.pointId;
 						break;
@@ -4075,8 +4085,7 @@ class RandomVertices {
 						2 * pi * Math.sin(circleDistance1)//длинна окружности для гиперсферы радиусом 1
 						/ dCircleDistance
 					);//np;
-				console.log('circleId = ' + circleId + ', dCircleDistance = ' + dCircleDistance);
-				//						circleDistance1Prev = circleDistance1;
+				//console.log('circleId = ' + circleId + ', dCircleDistance = ' + dCircleDistance);
 				if (!isNaN(circlesPointsOptions.numPoints)) {//не рисовать окружность с бесконечным числом точек
 
 					//console.log('circleId = ' + circleId + ', circleDistance1 = ' + circleDistance1 + ', numPoints = ' + circlesPointsOptions.numPoints)
@@ -4100,6 +4109,14 @@ class RandomVertices {
 			params.arc = arc;
 
 		}
+		const setCirclesOnePoints = () => {
+
+			isCreateCirclesPoints = true;
+			onChangeParams();
+			isCreateCirclesPoints = false;
+			onChangeParams();
+
+		}
 		const arc = params.arc;
 //		this.setCircles = () => {
 			
@@ -4109,7 +4126,8 @@ class RandomVertices {
 				setCirclesPoints(arc);
 	
 			}
-			else setCircles();
+//			else setCircles();
+			else setCirclesOnePoints();
 
 //		}
 		
