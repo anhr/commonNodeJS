@@ -3601,8 +3601,9 @@ class RandomVertices {
 		const getCirclePoint = (center, options) => {
 
 			const angle = 2 * pi * (params.random ? Math.random() : options.i / options.numPoints); // Текущий угол в радианах
+//const angle = 2 * pi * (params.random ? 0.5 : options.i / options.numPoints); // Текущий угол в радианах
 
-			const circleDistancePrev = circleDistance1Prev * R;
+			const circleDistancePrev = (options.circleDistance1Prev != undefined ? options.circleDistance1Prev : circleDistance1Prev) * R;
 			const circleDistance = (params.random ? (options.circleDistance - circleDistancePrev) * Math.random() + circleDistancePrev : options.circleDistance) / R; // Расстояние до окружности по дуге в радианах
 
 			let newLat, newLng;
@@ -3836,56 +3837,70 @@ class RandomVertices {
 
 			const editPointsOptions = { pointId: 0, }
 			
+			const aNumPoints = [];//массив с количеством точек numPoints для каждой окружности. Нужен для того, что бы случайно выбрать окружность при вычислении одиночной случайной точки
 			//вычислить одну случайную точку без необходимости вычисления всех остальных случайных точек
 			//Нужно для сокращения времени вычислений, когда надо всего одну случайную точку
 			const getOnePoint = () => {
 
-				const aNumPoints = [];//массив с количеством точек numPoints для каждой окружности. Нужен для того, что бы случайно выбрать окружность при вычислении одиночной случайной точки
 				setAbc();
 				circleDistance1Prev = 0;//Положение предыдущего кольца
-				circlesPointsCount = 0;
 
 				if (circlesSphere) circlesPoints = circlesSphere.angles;
 
 				//заполнить aNumPoints
-				for (let circleId = 0; circleId < circlesCount; circleId++) {
-
-					const x = circleId * d,
-
-						//уголовое расстояние для окружности для гиперсферы радиусом 1
-						circleDistance1 = b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
-							a / (x + b) + c,
-
-						circleDistance = circleDistance1 * R;
-
-					//prev point
-					if (circleId > 0) {
-
-						const xPrev = (circleId - 1) * d;
-						circleDistance1Prev = b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
-							a / (xPrev + b) + c;
-
-					}
-
-					const dCircleDistance = circleDistance1 - circleDistance1Prev;
-					let numPoints = parseInt(
-						2 * pi * Math.sin(circleDistance1)//длинна окружности для гиперсферы радиусом 1
-						/ dCircleDistance
-					);
-					if (isNaN(numPoints)) numPoints = 1;//у окружности с бесконечным числом точек делаем одну точку
-					circlesPointsCount += numPoints;
-					aNumPoints.push({ circlesPointsCount: circlesPointsCount, circleDistance: circleDistance, });
-/*					
-					if (!isNaN(numPoints)) {//не рисовать окружность с бесконечным числом точек
-
+				if (aNumPoints.length === 0)
+				{
+					
+					circlesPointsCount = 0;
+					for (let circleId = 0; circleId < circlesCount; circleId++) {
+	
+						const x = circleId * d,
+	
+							//уголовое расстояние для окружности для гиперсферы радиусом 1
+							circleDistance1 = b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
+								a / (x + b) + c,
+	
+							circleDistance = circleDistance1 * R;
+	
+						//prev point
+						if (circleId > 0) {
+	
+							const xPrev = (circleId - 1) * d;
+							circleDistance1Prev = b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
+								a / (xPrev + b) + c;
+	
+						}
+	
+						const dCircleDistance = circleDistance1 - circleDistance1Prev;
+						let numPoints = parseInt(
+							2 * pi * Math.sin(circleDistance1)//длинна окружности для гиперсферы радиусом 1
+							/ dCircleDistance
+						);
+						if (isNaN(numPoints)) numPoints = 1;//у окружности с бесконечным числом точек делаем одну точку
 						circlesPointsCount += numPoints;
-						aNumPoints.push({ circlesPointsCount: circlesPointsCount, circleDistance: circleDistance, });
-
+						const numPoint = { circlesPointsCount: circlesPointsCount, circleDistance: circleDistance, circleDistance1Prev: circleDistance1Prev }
+						if (debug) {
+	
+							numPoint.numPoints = numPoints;
+							//console.log('circleId = ' + circleId + ', numPoint' + JSON.stringify(numPoint));
+							
+						}
+						aNumPoints.push(numPoint);
+	/*					
+						if (!isNaN(numPoints)) {//не рисовать окружность с бесконечным числом точек
+	
+							circlesPointsCount += numPoints;
+							aNumPoints.push(numPoint);
+	
+						}
+	*/					
+	
 					}
-*/					
 
 				}
+				if (debug) console.log('circlesPointsCount = ' + circlesPointsCount)
 				const randomPointId = Math.round(Math.random() * circlesPointsCount);//Идентификатор случайной точки
+//const randomPointId = Math.round(0.5 * circlesPointsCount);//Идентификатор случайной точки
 				//Найти окружность, в которую попадает случайная точка randomPointId
 				for (let circleId = 0; circleId < circlesCount; circleId++) {
 
@@ -3898,7 +3913,7 @@ class RandomVertices {
 					if (circleParams.circlesPointsCount >= randomPointId) {
 
 						params.rnd = true;
-						const point = getCirclePoint(params.center, { circleDistance: circleParams.circleDistance, });
+						const point = getCirclePoint(params.center, { circleDistance: circleParams.circleDistance, circleDistance1Prev: circleParams.circleDistance1Prev });
 //						const point = getCirclePoint(params.center, { circleDistance: circleId <= 9 ? circleParams.circleDistance : aNumPoints[circleId - 10].circleDistance, });
 //						const point = getCirclePoint(params.center, { circleDistance: circleId >= (aNumPoints.length - 1) ? circleParams.circleDistance : aNumPoints[circleId + 1].circleDistance, });
 						editPoints(circlesPoints, point, editPointsOptions);
@@ -4051,7 +4066,7 @@ class RandomVertices {
 		}
 		let circlesSphere, circlesPointsOptions = {}, isCreateCirclesPoints;
 		let circleDistance1Prev;//Положение предыдущего кольца
-		const debug = false, edges = debug ? [] : undefined;
+		const debug = randomVerticesSettings.debug || false, edges = debug ? [] : undefined;
 		let circlesPoints = [];//точки всех окружностей
 		const setCircles = () => {
 
