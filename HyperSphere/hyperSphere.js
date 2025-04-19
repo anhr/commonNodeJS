@@ -3879,12 +3879,6 @@ class RandomVertices {
 						if (isNaN(numPoints)) numPoints = 1;//у окружности с бесконечным числом точек делаем одну точку
 						circlesPointsCount += numPoints;
 						const numPoint = { circlesPointsCount: circlesPointsCount, circleDistance: circleDistance, circleDistance1Prev: circleDistance1Prev }
-						if (debug) {
-	
-							numPoint.numPoints = numPoints;
-							//console.log('circleId = ' + circleId + ', numPoint' + JSON.stringify(numPoint));
-							
-						}
 						aNumPoints.push(numPoint);
 	/*					
 						if (!isNaN(numPoints)) {//не рисовать окружность с бесконечным числом точек
@@ -3898,7 +3892,6 @@ class RandomVertices {
 					}
 
 				}
-				if (debug) console.log('circlesPointsCount = ' + circlesPointsCount)
 				const randomPointId = Math.round(Math.random() * circlesPointsCount);//Идентификатор случайной точки
 //const randomPointId = Math.round(0.5 * circlesPointsCount);//Идентификатор случайной точки
 				//Найти окружность, в которую попадает случайная точка randomPointId
