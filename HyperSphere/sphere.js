@@ -149,11 +149,14 @@ class Sphere extends Circle {
 
 class RandomVertices extends Circle.RandomVertices {
 
-	constructor(scene, options, randomVerticesSettings){
+	constructor(/*scene, options, */randomVerticesSettings){
 
-		super(scene, options, randomVerticesSettings);
+		super(/*scene, options, */randomVerticesSettings);
 		
 	}
+
+	//overridden methods
+	
 	getHyperSphere(options, classSettings) {
 
 		let circlesSphere;
@@ -161,6 +164,8 @@ class RandomVertices extends Circle.RandomVertices {
 		return circlesSphere;
 
 	}
+	
+	/////////////////////////////overridden methods
 	
 }
 Sphere.RandomVertices = RandomVertices;

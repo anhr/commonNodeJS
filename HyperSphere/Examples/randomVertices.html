@@ -48,10 +48,10 @@
 					],
 					
 					//arc Длинна дуги, соединяющей две вершины гиперсферы
-					a: pi / 2,//Вершины дуги расположены на противоположных концах гиперсферы. Длинна дуги максимальная. Окружности вокруг вершины расположены равномерно по всей гиперсфере.
+					a: //pi / 2,//Вершины дуги расположены на противоположных концах гиперсферы. Длинна дуги максимальная. Окружности вокруг вершины расположены равномерно по всей гиперсфере.
 						//1.571,
 						//0,//Вершины гиперсферы совпадают. Длинна дуги равна нулю. Окружности вокруг вершины превращаются в точки, которые совпадают с вершиной.
-						//0.5,//По умолчанию
+						0.5,//По умолчанию
 						//1.5,//Для вычисления коэффициента k
 						//0,
 					
@@ -62,13 +62,18 @@
 				}
 			
 			};
-			new Sphere.RandomVertices(scene, options, randomVerticesSettings);
+			const randomVertices = new Sphere.RandomVertices(/*scene, options, */randomVerticesSettings);
 			const params = randomVerticesSettings.params;
 			
 			//GUI
 
 			const gui = options.dat.gui;
-			gui.add(params, 'arc', 0, pi / 2, 0.0001);
+			gui.add(params, 'arc', 0, pi / 2, 0.0001);/*.onChange((arc) => {
+				
+				onChange();
+				
+			});
+*/			
 //			gui.add(params, 'radius', 0, pi, 0.01);
 
 			//center
@@ -80,6 +85,94 @@
 			gui.add(params, 'onePointArray');
 
 			//////////////////////////////////////////GUI
+/*
+			let circlesSphere;
+			const onChange = () => {
+				
+				if (!params.onePoint) {
+	
+					console.error('params.onePoint = ' + params.onePoint + '. Under constraction.');
+					return;
+	
+				}
+				if (params.onePointArray) {
+					
+					console.error('params.onePointArray = ' + params.onePointArray + '. Under constraction.');
+					return;
+	
+				}
+
+				if (circlesSphere.angles.length != randomVertice.length) console.error('Invalid randomVertice.length = ' + randomVertice.length);
+				randomVertice.forEach((anglesNew, anglesId) => {
+
+					const angles = circlesSphere.angles[anglesId];
+					if (angles.length != anglesNew.length) console.error('Invalid anglesNew.length = ' + anglesNew.length);
+					anglesNew.forEach((angle, angleId) => {
+					
+						angles[angleId] = angle;
+							
+					});
+						
+				});
+				circlesSphere.bufferGeometry.attributes.position.needsUpdate = true;
+
+			}
+//			onChange();
+*/
+			if (!params.onePoint) {
+
+				console.error('params.onePoint = ' + params.onePoint + '. Under constraction.');
+				return;
+
+			}
+			if (params.onePointArray) {
+				
+				console.error('params.onePointArray = ' + params.onePointArray + '. Under constraction.');
+				return;
+
+			}
+			const randomVertice = randomVertices.randomVertice;
+			randomVertices.circlesSphere = randomVertices.getHyperSphere(options, {
+
+					edges: false,
+					randomArc: true,
+					projectParams: { scene: scene, },
+					r: randomVerticesSettings.R,//0.5,
+					debug: randomVerticesSettings.debug ? {
+
+						probabilityDensity: false,
+						middleVertice: false,
+						log: false,
+
+					} : false,
+					//debug: false,
+					settings: {
+
+						object: {
+
+							name: 'Random vertice',
+							//color: 'white',
+							geometry: {
+
+								angles: randomVertice,
+								//indices: { edges: edges },
+
+							},
+
+						},
+						overriddenProperties: {
+							setDrawRange: (start, count) => {
+
+								if (randomVertices.circlesSphere) randomVertices.circlesSphere.bufferGeometry.setDrawRange(start, count);
+
+							}
+
+						},
+
+					},
+
+
+				});
 
 		}, {
 

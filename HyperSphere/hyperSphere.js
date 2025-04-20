@@ -44,7 +44,7 @@ import PositionController from '../PositionController.js';
 import MyObject from '../myObject.js'
 
 const sHyperSphere = 'HyperSphere', sOverride = sHyperSphere + ': Please override the %s method in your child class.',
-	π = Math.PI;
+	π = Math.PI, pi = Math.PI;
 
 /**
  * Base class for n dimensional [hypersphere]{@link https://en.wikipedia.org/wiki/N-sphere}. Extends <a href="../../jsdoc/MyObject/module-myObject-MyObject.html" target="_blank">MyObject</a>.
@@ -3577,10 +3577,14 @@ HyperSphere.randomAngle = randomArc.randomAngle;
  */
 class RandomVertices {
 
-	/**
-	 * Random vertices
+	sRandomVertices = 'RandomVertices';
+	/*
 	 * @param {THREE.Group} scene [group]{@link https://threejs.org/docs/index.html?q=Gro#api/en/objects/Group} of objects to which a new <b>random vertices</b> object will be added
 	 * @param {Options} options See <a href="../../jsdoc/Options/index.html" target="_blank">Options</a>.
+	 */
+
+	/**
+	 * Random vertices
 	 * @param {object} [randomVerticesSettings={}] The following settings are available
 	 * @param {number} [randomVerticesSettings.R=1] Hypersphere radius
 	 * @param {number} [randomVerticesSettings.np=36] numPoints. Number of vertices on a circle
@@ -3593,10 +3597,11 @@ class RandomVertices {
 	 * @param {boolean} [randomVerticesSettings.params.op=false] onePoint. true - получить одну случайную точку не вычисляя остальные случайные точки
 	 * @param {boolean} [randomVerticesSettings.params.opa=false] true - array of the one points
 	 */
-	constructor(scene, options, randomVerticesSettings = {}){
+	constructor(/*scene, options, */randomVerticesSettings = {}){
 
+//		this.randomVerticesSettings = randomVerticesSettings;
 		const R = randomVerticesSettings.R === undefined ? 1 : randomVerticesSettings.R, np = randomVerticesSettings.np === undefined ? 36 : randomVerticesSettings.np;
-		const pi = Math.PI;
+//		const pi = Math.PI;
 		let circlesPointsCount;
 		const getCirclePoint = (center, options) => {
 
@@ -3638,9 +3643,10 @@ class RandomVertices {
 		const editPoints = (points, point, options) => {
 
 			options ||= {};
-			if ((options.pointId === undefined) || isCreateCirclesPoints) {
+			point ||= [0, 0];
+			if (((options.pointId === undefined) || isCreateCirclesPoints) && (options.pointsCount != undefined) && (points.length < options.pointsCount)) {
 
-				points.push(point || [0, 0]);
+				points.push(point);
 				return;
 
 			}
@@ -3829,8 +3835,9 @@ class RandomVertices {
 
 				//размер circlesPoints массива всех точек окружностей
 				const pointsCount = params.onePointArray ? circlesCount * np ://если надо содать массив из единично создаваемых точек
-					1;//массив состоит из одной точки
-				for (let i = 0; i < pointsCount; i++) editPoints(circlesPoints);
+						1,//массив состоит из одной точки
+					options = pointsCount === 1 ? { pointId: 0, pointsCount: pointsCount } : undefined;
+				for (let i = 0; i < pointsCount; i++) editPoints(circlesPoints, undefined, options);
 				return;
 
 			}
@@ -3907,8 +3914,6 @@ class RandomVertices {
 
 						params.rnd = true;
 						const point = getCirclePoint(params.center, { circleDistance: circleParams.circleDistance, circleDistance1Prev: circleParams.circleDistance1Prev });
-//						const point = getCirclePoint(params.center, { circleDistance: circleId <= 9 ? circleParams.circleDistance : aNumPoints[circleId - 10].circleDistance, });
-//						const point = getCirclePoint(params.center, { circleDistance: circleId >= (aNumPoints.length - 1) ? circleParams.circleDistance : aNumPoints[circleId + 1].circleDistance, });
 						editPoints(circlesPoints, point, editPointsOptions);
 						if (!params.onePointArray) circlesPointsCount = editPointsOptions.pointId;
 						break;
@@ -3919,7 +3924,7 @@ class RandomVertices {
 
 			}
 			for (let i = 0; i < circlesPoints.length; i++) getOnePoint();
-			createCirclesSphere();
+//			createCirclesSphere();
 
 		}
 
@@ -4058,9 +4063,22 @@ class RandomVertices {
 			if (circlesSphere) circlesSphere.setVerticesRange(0, circlesPointsCount);
 		}
 		let circlesSphere, circlesPointsOptions = {}, isCreateCirclesPoints;
+//		this.setCirclesSphere = (circlesSphereNew) => { circlesSphere = circlesSphereNew; }
+		Object.defineProperties(this, {
+			circlesSphere: {
+				get: () => { return circlesSphere; },
+				set: (circlesSphereNew) => {
+
+					circlesSphere = circlesSphereNew;
+					return true;
+
+				}
+			}
+		});
 		let circleDistance1Prev;//Положение предыдущего кольца
 		const debug = randomVerticesSettings.debug || false, edges = debug ? [] : undefined;
 		let circlesPoints = [];//точки всех окружностей
+//		this.circlesPoints = circlesPoints;
 		const setCircles = () => {
 
 			setAbc();
@@ -4117,6 +4135,7 @@ class RandomVertices {
 			params.arc = arc;
 
 		}
+//		this.setCirclesPoints = setCirclesPoints;
 		const setCirclesOnePoints = () => {
 
 			isCreateCirclesPoints = true;
@@ -4125,22 +4144,39 @@ class RandomVertices {
 			onChangeParams();
 
 		}
+//		this.setCirclesOnePoints = setCirclesOnePoints;
+/*		
 		const arc = params.arc;
-//		this.setCircles = () => {
-			
-//this.getHyperSphere();
-			if (arc != pi / 2) {
-	
-				setCirclesPoints(arc);
-	
-			}
-//			else setCircles();
-			else setCirclesOnePoints();
+		if (arc != pi / 2) {
 
-//		}
+			setCirclesPoints(arc);
+
+		}
+//			else setCircles();
+		else setCirclesOnePoints();
+*/		
+		Object.defineProperties(this, {
+			randomVertice: {
+
+				get: () => {
+
+					const arc = randomVerticesSettings.params.arc;
+					if (arc != pi / 2) setCirclesPoints(arc);
+					else setCirclesOnePoints();
+					return circlesPoints;
+
+				},
+
+			}
+
+		});
 		
 	}
-	getHyperSphere() {}
+	//overridden methods
+	
+	getHyperSphere() { console.error(this.sRandomVertices + ': Please, override getHyperSphere method in your ' + this.sRandomVertices + ' child class.') }
+
+	////////////////////////////////////////overridden methods
 	
 }
 HyperSphere.RandomVertices = RandomVertices;
