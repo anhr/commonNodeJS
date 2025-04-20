@@ -149,9 +149,9 @@ class Sphere extends Circle {
 
 class RandomVertices extends Circle.RandomVertices {
 
-	constructor(/*scene, options, */randomVerticesSettings){
+	constructor(scene, options, randomVerticesSettings){
 
-		super(/*scene, options, */randomVerticesSettings);
+		super(scene, options, randomVerticesSettings);
 		
 	}
 

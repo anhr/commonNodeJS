@@ -3578,13 +3578,11 @@ HyperSphere.randomAngle = randomArc.randomAngle;
 class RandomVertices {
 
 	sRandomVertices = 'RandomVertices';
-	/*
-	 * @param {THREE.Group} scene [group]{@link https://threejs.org/docs/index.html?q=Gro#api/en/objects/Group} of objects to which a new <b>random vertices</b> object will be added
-	 * @param {Options} options See <a href="../../jsdoc/Options/index.html" target="_blank">Options</a>.
-	 */
 
 	/**
 	 * Random vertices
+	 * @param {THREE.Group} scene [group]{@link https://threejs.org/docs/index.html?q=Gro#api/en/objects/Group} of objects to which a new <b>random vertices</b> object will be added
+	 * @param {Options} options See <a href="../../jsdoc/Options/index.html" target="_blank">Options</a>.
 	 * @param {object} [randomVerticesSettings={}] The following settings are available
 	 * @param {number} [randomVerticesSettings.R=1] Hypersphere radius
 	 * @param {number} [randomVerticesSettings.np=36] numPoints. Number of vertices on a circle
@@ -3597,7 +3595,7 @@ class RandomVertices {
 	 * @param {boolean} [randomVerticesSettings.params.op=false] onePoint. true - получить одну случайную точку не вычисляя остальные случайные точки
 	 * @param {boolean} [randomVerticesSettings.params.opa=false] true - array of the one points
 	 */
-	constructor(/*scene, options, */randomVerticesSettings = {}){
+	constructor(scene, options, randomVerticesSettings = {}){
 
 //		this.randomVerticesSettings = randomVerticesSettings;
 		const R = randomVerticesSettings.R === undefined ? 1 : randomVerticesSettings.R, np = randomVerticesSettings.np === undefined ? 36 : randomVerticesSettings.np;
@@ -3644,7 +3642,9 @@ class RandomVertices {
 
 			options ||= {};
 			point ||= [0, 0];
-			if (((options.pointId === undefined) || isCreateCirclesPoints) && (options.pointsCount != undefined) && (points.length < options.pointsCount)) {
+//			if (((options.pointId === undefined) || isCreateCirclesPoints) && (options.pointsCount != undefined) && (points.length < options.pointsCount))
+			if ((options.pointId === undefined) || isCreateCirclesPoints)
+			{
 
 				points.push(point);
 				return;
@@ -3816,6 +3816,7 @@ class RandomVertices {
 				isCreateCirclesPoints = false;
 				onChangeParams();
 */
+				createCirclesSphere();
 				return true;
 
 			},
@@ -4170,6 +4171,7 @@ class RandomVertices {
 			}
 
 		});
+		this.createRandomVertices = () => { params.onePointArray = true; }
 		
 	}
 	//overridden methods

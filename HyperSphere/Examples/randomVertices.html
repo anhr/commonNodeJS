@@ -57,12 +57,12 @@
 					
 					rnd: true,//random
 					op: true,//onePoint
-					opa: false,//onePointArray. Have effect only if params.op = true
+					opa: true,//onePointArray. Have effect only if params.op = true
 
 				}
 			
 			};
-			const randomVertices = new Sphere.RandomVertices(/*scene, options, */randomVerticesSettings);
+			const randomVertices = new Sphere.RandomVertices(scene, options, randomVerticesSettings);
 			const params = randomVerticesSettings.params;
 			
 			//GUI
@@ -127,7 +127,7 @@
 			}
 			if (params.onePointArray) {
 				
-				console.error('params.onePointArray = ' + params.onePointArray + '. Under constraction.');
+				randomVertices.createRandomVertices();
 				return;
 
 			}
