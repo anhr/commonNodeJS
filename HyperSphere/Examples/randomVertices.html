@@ -34,47 +34,71 @@
 		new MyThree((scene, options) => {
 
 			const pi = Math.PI;
+
+			//params
+			
+			const params = {
+				
+				//центр окружности, пересекающей сферу или вершина гиперсферы, вокруг которой будет облако вероятностей
+				center: [
+					pi/4,//lat
+					-pi/10,//0,//lng
+				],
+				
+				//arc Длинна дуги, соединяющей две вершины гиперсферы
+				arc: pi / 2,//Вершины дуги расположены на противоположных концах гиперсферы. Длинна дуги максимальная. Окружности вокруг вершины расположены равномерно по всей гиперсфере.
+					//1.571,
+					//0,//Вершины гиперсферы совпадают. Длинна дуги равна нулю. Окружности вокруг вершины превращаются в точки, которые совпадают с вершиной.
+					//0.5,//По умолчанию
+					//1.5,//Для вычисления коэффициента k
+					//0,
+				
+				random: true,//random
+				onePoint: true,//onePoint
+				onePointArray: false,//onePointArray. Have effect only if params.op = true
+
+			}
+			Object.defineProperty(params.center, 'lat', {
+	
+				get: () => { return params.center[0]; },
+				set: (lat) => {
+	
+					params.center[0] = lat;
+					randomVertices.onChangeParams();
+					return true;
+	
+				},
+	
+			});
+			Object.defineProperty(params.center, 'lng', {
+	
+				get: () => { return params.center[1]; },
+				set: (lng) => {
+	
+					params.center[1] = lng;
+					randomVertices.onChangeParams();
+					return true;
+	
+				},
+	
+			});
+
+			///////////////////////////////////////////////params
+			
 			const randomVerticesSettings = {
 
 				//np: 360,
 				//R: 1,
 				debug: true,
-				params: {
-					
-					//центр окружности, пересекающей сферу или вершина гиперсферы, вокруг которой будет облако вероятностей
-					center: [
-						pi/4,//lat
-						-pi/10,//0,//lng
-					],
-					
-					//arc Длинна дуги, соединяющей две вершины гиперсферы
-					a: //pi / 2,//Вершины дуги расположены на противоположных концах гиперсферы. Длинна дуги максимальная. Окружности вокруг вершины расположены равномерно по всей гиперсфере.
-						//1.571,
-						//0,//Вершины гиперсферы совпадают. Длинна дуги равна нулю. Окружности вокруг вершины превращаются в точки, которые совпадают с вершиной.
-						0.5,//По умолчанию
-						//1.5,//Для вычисления коэффициента k
-						//0,
-					
-					rnd: true,//random
-					op: true,//onePoint
-					opa: true,//onePointArray. Have effect only if params.op = true
-
-				}
 			
 			};
 			const randomVertices = new Sphere.RandomVertices(scene, options, randomVerticesSettings);
-			const params = randomVerticesSettings.params;
+//			const params = randomVerticesSettings.params;
 			
 			//GUI
 
 			const gui = options.dat.gui;
-			gui.add(params, 'arc', 0, pi / 2, 0.0001);/*.onChange((arc) => {
-				
-				onChange();
-				
-			});
-*/			
-//			gui.add(params, 'radius', 0, pi, 0.01);
+			gui.add(params, 'arc', 0, pi / 2, 0.0001).onChange(() => { randomVertices.onChangeParams(); });
 
 			//center
 			gui.add(params.center, 'lat', -pi / 2, pi / 2, 0.001);
@@ -82,43 +106,10 @@
 
 			gui.add(params, 'random');
 			gui.add(params, 'onePoint');
-			gui.add(params, 'onePointArray');
+			gui.add(params, 'onePointArray').onChange(() => { randomVertices.createRandomVertices(); });
 
 			//////////////////////////////////////////GUI
-/*
-			let circlesSphere;
-			const onChange = () => {
-				
-				if (!params.onePoint) {
-	
-					console.error('params.onePoint = ' + params.onePoint + '. Under constraction.');
-					return;
-	
-				}
-				if (params.onePointArray) {
-					
-					console.error('params.onePointArray = ' + params.onePointArray + '. Under constraction.');
-					return;
-	
-				}
-
-				if (circlesSphere.angles.length != randomVertice.length) console.error('Invalid randomVertice.length = ' + randomVertice.length);
-				randomVertice.forEach((anglesNew, anglesId) => {
-
-					const angles = circlesSphere.angles[anglesId];
-					if (angles.length != anglesNew.length) console.error('Invalid anglesNew.length = ' + anglesNew.length);
-					anglesNew.forEach((angle, angleId) => {
-					
-						angles[angleId] = angle;
-							
-					});
-						
-				});
-				circlesSphere.bufferGeometry.attributes.position.needsUpdate = true;
-
-			}
-//			onChange();
-*/
+			
 			if (!params.onePoint) {
 
 				console.error('params.onePoint = ' + params.onePoint + '. Under constraction.');
@@ -131,7 +122,7 @@
 				return;
 
 			}
-			const randomVertice = randomVertices.randomVertice;
+			const randomVertice = randomVertices.randomVertice(params);
 			randomVertices.circlesSphere = randomVertices.getHyperSphere(options, {
 
 					edges: false,

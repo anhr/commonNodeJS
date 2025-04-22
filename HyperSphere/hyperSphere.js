@@ -3704,6 +3704,8 @@ class RandomVertices {
 		}
 
 		//Параметры, которые может менять пользователь
+		let params;
+/*
 		randomVerticesSettings.params ||= {};
 		const params = randomVerticesSettings.params;
 
@@ -3810,18 +3812,13 @@ class RandomVertices {
 
 				}
 				setCirclesOnePoints();
-/*
-				isCreateCirclesPoints = true;
-				onChangeParams();
-				isCreateCirclesPoints = false;
-				onChangeParams();
-*/
 				createCirclesSphere();
 				return true;
 
 			},
 
 		});
+*/		
 
 		const onChangeParams = () => {
 
@@ -3913,7 +3910,7 @@ class RandomVertices {
 						{ circlesPointsCount: 1, circleDistance: 0 };
 					if (circleParams.circlesPointsCount >= randomPointId) {
 
-						params.rnd = true;
+//						params.rnd = true;
 						const point = getCirclePoint(params.center, { circleDistance: circleParams.circleDistance, circleDistance1Prev: circleParams.circleDistance1Prev });
 						editPoints(circlesPoints, point, editPointsOptions);
 						if (!params.onePointArray) circlesPointsCount = editPointsOptions.pointId;
@@ -4130,10 +4127,12 @@ class RandomVertices {
 			//заполнить circlesPoints максимально возможный массив точек всех окружностей 
 			isCreateCirclesPoints = true;
 			params.arc = pi / 2;
+			onChangeParams();
 
 			//создать окружности
 			isCreateCirclesPoints = false;
 			params.arc = arc;
+			onChangeParams();
 
 		}
 //		this.setCirclesPoints = setCirclesPoints;
@@ -4145,17 +4144,7 @@ class RandomVertices {
 			onChangeParams();
 
 		}
-//		this.setCirclesOnePoints = setCirclesOnePoints;
 /*		
-		const arc = params.arc;
-		if (arc != pi / 2) {
-
-			setCirclesPoints(arc);
-
-		}
-//			else setCircles();
-		else setCirclesOnePoints();
-*/		
 		Object.defineProperties(this, {
 			randomVertice: {
 
@@ -4171,7 +4160,46 @@ class RandomVertices {
 			}
 
 		});
-		this.createRandomVertices = () => { params.onePointArray = true; }
+*/
+		this.randomVertice = (paramsNew) => {
+
+			params ||= paramsNew;
+			const arc = params.arc;
+			if (arc != pi / 2) setCirclesPoints(arc);
+			else setCirclesOnePoints();
+			return circlesPoints;
+			
+		}
+		this.createRandomVertices = () => {
+			
+//			params.onePointArray = true;
+			if (params.onePointArray) {
+				
+				circlesPoints.length = 0;
+				if (circlesSphere) {
+	
+					options.guiSelectPoint.removeMesh(circlesSphere.object3D);
+					circlesSphere.object3D.parent.remove(circlesSphere.object3D);
+					circlesSphere = undefined;
+	
+				}
+				setCirclesOnePoints();
+				createCirclesSphere();
+				return;
+
+			}
+			if (params.onePoint){
+
+				circlesPoints.length = 0;
+				this.randomVertice();
+				createCirclesSphere();
+				return;
+				
+			}
+			console.error(sRandomVertices + ': createRandomVertices under constraction.')
+		
+		}
+		this.onChangeParams = () => { onChangeParams(); }
 		
 	}
 	//overridden methods
