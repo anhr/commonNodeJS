@@ -3571,13 +3571,12 @@ class RandomArc {
 const randomArc = new RandomArc();
 HyperSphere.randomAngle = randomArc.randomAngle;
 
+const sRandomVertices = 'RandomVertices';
 /**
  * Random vertices
  * @class
  */
 class RandomVertices {
-
-	sRandomVertices = 'RandomVertices';
 
 	/**
 	 * Random vertices
@@ -3991,7 +3990,7 @@ class RandomVertices {
 		const createCirclesSphere = () => {
 
 			circlesPointsOptions.pointId = 0;
-			if (!circlesSphere && !isCreateCirclesPoints) {
+			if (!circlesSphere && !isCreateCirclesPoints && (circlesPoints.length != 0)) {
 
 				circlesSphere = this.getHyperSphere(options, {
 
@@ -4118,7 +4117,7 @@ class RandomVertices {
 				}
 
 			}
-			console.log('circlesPointsCount = ' + circlesPointsCount);
+			//console.log('circlesPointsCount = ' + circlesPointsCount);
 			createCirclesSphere();
 
 		}
@@ -4161,42 +4160,63 @@ class RandomVertices {
 
 		});
 */
-		this.randomVertice = (paramsNew) => {
+		this.determinedVertices = (paramsNew) => { 
 
 			params ||= paramsNew;
+			if (params.onePoint) {
+
+				console.warn(sRandomVertices + ': Please, define params.onePoint = false');
+				params.onePoint = false;
+				
+			}
 			const arc = params.arc;
 			if (arc != pi / 2) setCirclesPoints(arc);
 			else setCirclesOnePoints();
 			return circlesPoints;
 			
 		}
-		this.createRandomVertices = () => {
+		this.randomVertice = (paramsNew) => { this.determinedVertices(paramsNew); }
+		const removeCirclesSphere = () => {
 			
-//			params.onePointArray = true;
+//			circlesPoints.length = 0;
+			circlesPoints = [];
+			if (!circlesSphere) return;
+			options.guiSelectPoint.removeMesh(circlesSphere.object3D);
+			circlesSphere.object3D.parent.remove(circlesSphere.object3D);
+			circlesSphere = undefined;
+			
+		}
+		this.onChangeRandom = (paramsNew) => {
+			
+			params ||= paramsNew;
+			removeCirclesSphere();
+			setCirclesPoints(params.arc);
+			createCirclesSphere();
+		
+		}
+		this.onChangeOnePoint = (paramsNew) => {
+			
+			params ||= paramsNew;
+			this.onChangeRandom();
+		
+		}
+		this.onChangeOnePointArray = (paramsNew) => {
+			
+			params ||= paramsNew;
+			removeCirclesSphere();
 			if (params.onePointArray) {
-				
-				circlesPoints.length = 0;
-				if (circlesSphere) {
-	
-					options.guiSelectPoint.removeMesh(circlesSphere.object3D);
-					circlesSphere.object3D.parent.remove(circlesSphere.object3D);
-					circlesSphere = undefined;
-	
+
+				if (!params.onePoint) {
+
+					console.warn(sRandomVertices + ': Please, define params.onePoint = true');
+					params.onePoint = true;
+					
 				}
 				setCirclesOnePoints();
-				createCirclesSphere();
-				return;
 
 			}
-			if (params.onePoint){
-
-				circlesPoints.length = 0;
-				this.randomVertice();
-				createCirclesSphere();
-				return;
-				
-			}
-			console.error(sRandomVertices + ': createRandomVertices under constraction.')
+			else if (params.onePoint) this.randomVertice();
+			createCirclesSphere();
 		
 		}
 		this.onChangeParams = () => { onChangeParams(); }
@@ -4204,7 +4224,7 @@ class RandomVertices {
 	}
 	//overridden methods
 	
-	getHyperSphere() { console.error(this.sRandomVertices + ': Please, override getHyperSphere method in your ' + this.sRandomVertices + ' child class.') }
+	getHyperSphere() { console.error(sRandomVertices + ': Please, override getHyperSphere method in your ' + sRandomVertices + ' child class.') }
 
 	////////////////////////////////////////overridden methods
 	

@@ -53,9 +53,9 @@
 					//1.5,//Для вычисления коэффициента k
 					//0,
 				
-				random: true,//random
-				onePoint: true,//onePoint
-				onePointArray: false,//onePointArray. Have effect only if params.op = true
+				random: false,
+				onePoint: false,//Have effect only if params.random = true
+				onePointArray: false,//Have effect only if params.onePoint = true
 
 			}
 			Object.defineProperty(params.center, 'lat', {
@@ -104,21 +104,60 @@
 			gui.add(params.center, 'lat', -pi / 2, pi / 2, 0.001);
 			gui.add(params.center, 'lng', -pi, pi, 0.001);
 
-			gui.add(params, 'random');
-			gui.add(params, 'onePoint');
-			gui.add(params, 'onePointArray').onChange(() => { randomVertices.createRandomVertices(); });
+			const cbParamsRandom = gui.add(params, 'random').onChange(() => { randomVertices.onChangeRandom(); });
+			const cbParamsOnePoint = gui.add(params, 'onePoint').onChange(() => {
+
+				if (!params.random && params.onePoint) cbParamsRandom.setValue(true);
+				randomVertices.onChangeOnePoint(params);
+			
+			});
+			const cbParamsOnePointArray = gui.add(params, 'onePointArray').onChange(() => {
+				
+				if (params.onePointArray && !params.onePoint) {
+					
+					if (!params.onePoint) cbParamsOnePoint.setValue(true);
+					randomVertices.onChangeOnePointArray(params);
+
+				} else randomVertices.onChangeOnePoint(params);
+			
+			});
 
 			//////////////////////////////////////////GUI
 			
+			if (!params.random) {
+
+				if (params.onePoint) {
+
+					console.warn('Please, define params.onePoint = false');
+					cbParamsOnePoint.setValue(false);
+					
+				}
+				if (params.onePointArray) {
+
+					console.warn('Please, define params.onePointArray = false');
+					cbParamsOnePointArray.setValue(false);
+					
+				}
+				randomVertices.determinedVertices(params);
+				return;
+
+			}
 			if (!params.onePoint) {
 
-				console.error('params.onePoint = ' + params.onePoint + '. Under constraction.');
+//				console.error('Please define params.onePoint = true or params.random = false.');
+				if (params.onePointArray) {
+
+					console.warn('Please, define params.onePointArray = false');
+					cbParamsOnePointArray.setValue(false);
+					
+				}
+				randomVertices.onChangeRandom(params);
 				return;
 
 			}
 			if (params.onePointArray) {
 				
-				randomVertices.createRandomVertices();
+				randomVertices.onChangeOnePointArray(params);
 				return;
 
 			}
