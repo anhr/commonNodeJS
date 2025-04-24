@@ -1981,43 +1981,7 @@ this.object = () => {
 													} else arcAngles.push(verticeAngles);
 
 												},
-												arcVerticesCount = 2,
-												d = π / arcVerticesCount,
-												cd = 1 / Math.sin(d),//Поправка для координат вершин что бы они равномерно располагались по дуге
-												vertice = position[aAngleControls.verticeId],// oppositeVertice = position[aAngleControls.oppositeVerticeId],
-/*													
-												const randomAngle = (arcValue) => { return arcValue * (Math.random() * 2 - 1); }
-												let dArc = randomAngle(arcValue), randomArcValue = arcValue + dArc;
-*/														
-//												randomAngle = (arcValue) => { return Math.PI * Math.sin(arcValue / 2) * Math.random() * 2; },
-												//дуга между вершинами
-												arcTo = (verticeTo, vertice) => {
-				
-													//Calculate the arc length between two points over a hyper-sphere
-													//Reference: https://www.physicsforums.com/threads/calculate-the-arc-length-between-two-points-over-a-hyper-sphere.658661/post-4196208
-													const a = vertice, b = verticeTo, R = 1, acos = Math.acos;
-													let ab = 0;//dot product
-													for (let i = 0; i < a.length; i++) ab += a[i] * b[i];
-//													return R * acos(ab / (R * R));
-													const arcValue = R * acos(ab / (R * R));
-													if (!classSettings.randomArc) return arcValue;
-													let randomArcValue = randomAngle(arcValue);
-													/*
-													if (classSettings.debug) {
-
-														console.log(sHyperSphere + ': arcTo. arcValue = ' + arcValue);
-														for (let i = 0; i < 10; i++) {
-															
-															randomArcValue = randomAngle(arcValue);
-															console.log('  randomArcValue = ' + randomArcValue);
-
-														}
-
-													}
-													*/
-													return randomArcValue;
-				
-												};
+												vertice = position[aAngleControls.verticeId];// oppositeVertice = position[aAngleControls.oppositeVerticeId],
 											if (classSettings.randomArc) {
 
 												const arcVerticeAngles = this.normalizeVerticeAngles(oppositeVertice.angles.returnSub(vertice.angles)),//Приводим разность углов в допустимый диапазон
@@ -2079,7 +2043,38 @@ this.object = () => {
 												return;
 												
 											}
-											const distance = arcTo(oppositeVertice, vertice),
+											const arcVerticesCount = 2,
+												d = π / arcVerticesCount,
+												cd = 1 / Math.sin(d),//Поправка для координат вершин что бы они равномерно располагались по дуге
+												//дуга между вершинами
+												arcTo = (verticeTo, vertice) => {
+				
+													//Calculate the arc length between two points over a hyper-sphere
+													//Reference: https://www.physicsforums.com/threads/calculate-the-arc-length-between-two-points-over-a-hyper-sphere.658661/post-4196208
+													const a = vertice, b = verticeTo, R = 1, acos = Math.acos;
+													let ab = 0;//dot product
+													for (let i = 0; i < a.length; i++) ab += a[i] * b[i];
+//													return R * acos(ab / (R * R));
+													const arcValue = R * acos(ab / (R * R));
+													if (!classSettings.randomArc) return arcValue;
+													let randomArcValue = randomAngle(arcValue);
+													/*
+													if (classSettings.debug) {
+
+														console.log(sHyperSphere + ': arcTo. arcValue = ' + arcValue);
+														for (let i = 0; i < 10; i++) {
+															
+															randomArcValue = randomAngle(arcValue);
+															console.log('  randomArcValue = ' + randomArcValue);
+
+														}
+
+													}
+													*/
+													return randomArcValue;
+				
+												},
+												distance = arcTo(oppositeVertice, vertice),
 												arcCount = distance * (aAngleControls.MAX_POINTS - 1) / π;
 											//Не получилось равномерно разделить дугу на части.
 											//Если начало и конец дуги расположены напротив друг друга на окружности или на сфере или на 4D hypersphere
