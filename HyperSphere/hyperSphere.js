@@ -1898,6 +1898,13 @@ this.object = () => {
 								});
 								dat.controllerNameAndTitle(aAngleControls.cRadius, lang.radius, lang.radiusTitle);
 								readOnly.readOnlyEl(aAngleControls.cRadius, true);
+								const randomVertices = this.newRandomVertices(scene, options, {
+					
+									//np: 360,
+									//R: 1,
+									debug: true,
+								
+								});
 									
 								//Edges
 
@@ -1970,62 +1977,56 @@ this.object = () => {
 												vertice = position[aAngleControls.verticeId];
 											if (classSettings.randomArc) {
 
+												randomVertices.onChangeOnePointArray({
+
+													arc: 0.5,
+													center: oppositeVertice.angles,
+													
+												});
+/*												
 												const arcVerticeAngles = this.normalizeVerticeAngles(oppositeVertice.angles.returnSub(vertice.angles)),//Приводим разность углов в допустимый диапазон
 													arc = aAngleControls.arc;
-//												for (let angleId = 0; angleId < vertice.angles.length; angleId++)
-												{
+												for (let i = 0; i < 1000; i++) {
 
-//													const arcValue = arcVerticeAngles[angleId];
-														
-													for (let i = 0; i < 1000; i++) {
+													const arcVerticeAngle = [];
+													arcVerticeAngles.forEach((arcValue, angleId) => arcVerticeAngle.push(vertice.angles[angleId] + HyperSphere.randomAngle(arcValue)));
+													const angles = this.normalizeVerticeAngles(arcVerticeAngle);//Приводим углы в допустимый диапазон
+													if (arc) {
 
-														const arcVerticeAngle = [];
-														arcVerticeAngles.forEach((arcValue, angleId) => arcVerticeAngle.push(vertice.angles[angleId] + HyperSphere.randomAngle(arcValue)));
-														const angles = this.normalizeVerticeAngles(arcVerticeAngle);//Приводим углы в допустимый диапазон
-/*														
-														const distance = HyperSphere.randomAngle(arcValue);
-														const angles = this.normalizeVerticeAngles([vertice.angles[angleId] + distance]);//Приводим углы в допустимый диапазон
-*/														
-														if (arc) {
-
-															const arcAngles = arc.angles[i];
-															if (classSettings.debug && (arcAngles.length != angles.length)) console.error(sHyperSphere + ': aAngleControls.createArc. Invalid angles.length = ' + angles.length);
-															angles.forEach((angle, angleId) => { arcAngles[angleId] = angle; });
+														const arcAngles = arc.angles[i];
+														if (classSettings.debug && (arcAngles.length != angles.length)) console.error(sHyperSphere + ': aAngleControls.createArc. Invalid angles.length = ' + angles.length);
+														angles.forEach((angle, angleId) => { arcAngles[angleId] = angle; });
 															
-														}
-														else arcAngles.push(angles);
-
 													}
-													if (!arc) aAngleControls.arc = this.line({
-													
-															cookieName: 'arc',//если не задать cookieName, то настройки дуги будут браться из настроек гиперсферы
-															//edges: false,
-															randomArc: classSettings.randomArc,
-															object: {
-														
-																name: lang.arc,
-																color: 'magenta',
-																geometry: {
-														
-																	//MAX_POINTS: aAngleControls.MAX_POINTS,
-																	angles: arcAngles,
-																	//opacity: 0.3,
-	/*																
-																	indices: {
-														
-																		edges: arcEdges,
-														
-																	}
-	*/																
-														
-																}
-														
-															},
-														
-														});
-													
+													else arcAngles.push(angles);
+
 												}
-//												else console.error(sHyperSphere + ': aAngleControls.createArc. this.dimension = ' + this.dimension + ' Under constraction')
+												if (!arc) aAngleControls.arc = this.line({
+													
+														cookieName: 'arc',//если не задать cookieName, то настройки дуги будут браться из настроек гиперсферы
+														//edges: false,
+														randomArc: classSettings.randomArc,
+														object: {
+														
+															name: lang.arc,
+															color: 'magenta',
+															geometry: {
+														
+																//MAX_POINTS: aAngleControls.MAX_POINTS,
+																angles: arcAngles,
+																//opacity: 0.3,
+//																indices: {
+//														
+//																	edges: arcEdges,
+//														
+//																}
+														
+															}
+														
+														},
+														
+													});
+*/												
 												return;
 												
 											}
@@ -3144,6 +3145,14 @@ this.object = () => {
 	 */
 	name() { console.error(sOverride.replace('%s', 'name')); }
 	/**
+	 * Base method that returns a RandomVertices child class.
+	 * @returns a console error if your call this method directly.
+	 */
+	newRandomVertices() { console.error(sOverride.replace('%s', 'newRandomVertices')); }
+
+	/////////////////////////////////////base methods
+
+	/**
 	 * Writes to console an important information about hyper sphere, that can help you for debugging.
 	 */
 	logHyperSphere() {
@@ -4198,6 +4207,8 @@ class RandomVertices {
 		this.onChangeOnePointArray = (paramsNew) => {
 			
 			params ||= paramsNew;
+			if (params.onePoint === undefined) params.onePoint = true;
+			if (params.onePointArray === undefined) params.onePointArray = true;
 			removeCirclesSphere();
 			if (params.onePointArray) {
 
