@@ -1966,22 +1966,8 @@ this.object = () => {
 										//Create arc between edge's vertices i.e between vertice and opposite vertice.
 										aAngleControls.createArc = () => {
 
-											let verticeId = 0;
 											const arcAngles = [],//массив вершин в полярной системе координат, которые образуют дугу
-												//если не копировать каждый угол в отделности, то в новой вершине останутся старые ребра
-												copyVertice = (vertice) => {
-
-													const verticeAngles = _this.vertice2angles(vertice)
-													if (aAngleControls.arc) {
-
-														aAngleControls.arc.classSettings.settings.object.geometry.angles[verticeId] = verticeAngles;
-														aAngleControls.arc.object3D.geometry.drawRange.type = this.bufferGeometry.drawRange.types.edges;//строка выше портит drawRange.type
-														verticeId++;
-
-													} else arcAngles.push(verticeAngles);
-
-												},
-												vertice = position[aAngleControls.verticeId];// oppositeVertice = position[aAngleControls.oppositeVerticeId],
+												vertice = position[aAngleControls.verticeId];
 											if (classSettings.randomArc) {
 
 												const arcVerticeAngles = this.normalizeVerticeAngles(oppositeVertice.angles.returnSub(vertice.angles)),//Приводим разность углов в допустимый диапазон
@@ -2043,7 +2029,21 @@ this.object = () => {
 												return;
 												
 											}
-											const arcVerticesCount = 2,
+											let verticeId = 0;
+												//если не копировать каждый угол в отделности, то в новой вершине останутся старые ребра
+											const copyVertice = (vertice) => {
+
+													const verticeAngles = _this.vertice2angles(vertice)
+													if (aAngleControls.arc) {
+
+														aAngleControls.arc.classSettings.settings.object.geometry.angles[verticeId] = verticeAngles;
+														aAngleControls.arc.object3D.geometry.drawRange.type = this.bufferGeometry.drawRange.types.edges;//строка выше портит drawRange.type
+														verticeId++;
+
+													} else arcAngles.push(verticeAngles);
+
+												},
+												arcVerticesCount = 2,
 												d = π / arcVerticesCount,
 												cd = 1 / Math.sin(d),//Поправка для координат вершин что бы они равномерно располагались по дуге
 												//дуга между вершинами
