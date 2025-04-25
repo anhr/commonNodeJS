@@ -4248,7 +4248,7 @@ RandomVertices.params = (params) => {
 		set: (lat) => {
 
 			params.center[0] = lat;
-			params.randomVertices.onChangeParams();
+			if (params.randomVertices) params.randomVertices.onChangeParams();
 			return true;
 
 		},
@@ -4260,12 +4260,21 @@ RandomVertices.params = (params) => {
 		set: (lng) => {
 
 			params.center[1] = lng;
-			randomVertices.onChangeParams();
+			if (params.randomVertices) params.randomVertices.onChangeParams();
 			return true;
 
 		},
 
 	});
+
+	//если вершина находится на полюсах, то случайное распределение вершин получается не случайным непонятно по какой причине
+	//Для этого немного отклоняю вершину от полюса
+	const precision = 1e-14;
+	if (params.center.lat > 0) {
+		
+		if ((pi / 2 - params.center.lat) <= precision) params.center.lat -= precision;
+
+	} else if ((pi / 2 + params.center.lat) <= precision) params.center.lat += precision;
 	
 }
 HyperSphere.RandomVertices = RandomVertices;
