@@ -1977,7 +1977,7 @@ this.object = () => {
 												vertice = position[aAngleControls.verticeId];
 											if (classSettings.randomArc) {
 
-												randomVertices.onChangeOnePointArray({
+												randomVertices.createOnePointArray({
 
 													arc: 0.5,
 													center: oppositeVertice.angles,
@@ -4204,7 +4204,7 @@ class RandomVertices {
 			this.onChangeRandom();
 		
 		}
-		this.onChangeOnePointArray = (paramsNew) => {
+		this.createOnePointArray = (paramsNew) => {
 			
 			params ||= paramsNew;
 			if (params.random === undefined) params.random = true;
