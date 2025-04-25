@@ -3593,10 +3593,10 @@ class RandomVertices {
 	 * @param {array} [randomVerticesSettings.params.center=[]] центр окружности, пересекающей сферу или вершина гиперсферы, вокруг которой будет облако вероятностей
 	 * @param {float} [randomVerticesSettings.params.center[0]=0] Latitude
 	 * @param {float} [randomVerticesSettings.params.center[1]=0] Longitude
-	 * @param {float} [randomVerticesSettings.params.a=0.5] arc - длинна дуги, соединяющей две вершины гиперсферы в радианах
-	 * @param {boolean} [randomVerticesSettings.params.rnd=true] random arrangement of circles vertices
-	 * @param {boolean} [randomVerticesSettings.params.op=false] onePoint. true - получить одну случайную точку не вычисляя остальные случайные точки
-	 * @param {boolean} [randomVerticesSettings.params.opa=false] true - array of the one points
+	 * @param {float} [randomVerticesSettings.params.arc=0.5] длинна дуги, соединяющей две вершины гиперсферы в радианах
+	 * @param {boolean} [randomVerticesSettings.params.random=true] random arrangement of circles vertices
+	 * @param {boolean} [randomVerticesSettings.params.onePoint=false] true - получить одну случайную точку не вычисляя остальные случайные точки
+	 * @param {boolean} [randomVerticesSettings.params.onePointArray=false] true - array of the one points
 	 */
 	constructor(scene, options, randomVerticesSettings = {}){
 
@@ -4207,8 +4207,10 @@ class RandomVertices {
 		this.onChangeOnePointArray = (paramsNew) => {
 			
 			params ||= paramsNew;
+			if (params.random === undefined) params.random = true;
 			if (params.onePoint === undefined) params.onePoint = true;
 			if (params.onePointArray === undefined) params.onePointArray = true;
+			if ((params.center.lat === undefined) || (params.center.lng === undefined)) RandomVertices.params(params);
 			removeCirclesSphere();
 			if (params.onePointArray) {
 
@@ -4233,6 +4235,34 @@ class RandomVertices {
 	getHyperSphere() { console.error(sRandomVertices + ': Please, override getHyperSphere method in your ' + sRandomVertices + ' child class.') }
 
 	////////////////////////////////////////overridden methods
+	
+}
+RandomVertices.params = (params) => {
+	
+	Object.defineProperty(params.center, 'lat', {
+
+		get: () => { return params.center[0]; },
+		set: (lat) => {
+
+			params.center[0] = lat;
+			randomVertices.onChangeParams();
+			return true;
+
+		},
+
+	});
+	Object.defineProperty(params.center, 'lng', {
+
+		get: () => { return params.center[1]; },
+		set: (lng) => {
+
+			params.center[1] = lng;
+			randomVertices.onChangeParams();
+			return true;
+
+		},
+
+	});
 	
 }
 HyperSphere.RandomVertices = RandomVertices;
