@@ -1898,10 +1898,10 @@ this.object = () => {
 								});
 								dat.controllerNameAndTitle(aAngleControls.cRadius, lang.radius, lang.radiusTitle);
 								readOnly.readOnlyEl(aAngleControls.cRadius, true);
-								const randomVertices = this.newRandomVertices(scene, options, {
+								const randomVertices = this.newRandomVertices(this.object3D, options, {
 					
 									//np: 360,
-									//R: 1,
+									R: this.classSettings.r,
 									debug: true,
 								
 								});
