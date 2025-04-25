@@ -1922,6 +1922,7 @@ this.object = () => {
 
 										if (aAngleControls.cross) classSettings.projectParams.scene.remove(aAngleControls.cross);
 										aAngleControls.cross = undefined;
+										randomVertices.removeOnePointArray();
 
 									}
 									let boTransparent;
@@ -4204,6 +4205,7 @@ class RandomVertices {
 			this.onChangeRandom();
 		
 		}
+		this.removeOnePointArray = () => { removeCirclesSphere(); }
 		this.createOnePointArray = (paramsNew) => {
 			
 			params ||= paramsNew;
@@ -4211,6 +4213,7 @@ class RandomVertices {
 			if (params.onePoint === undefined) params.onePoint = true;
 			if (params.onePointArray === undefined) params.onePointArray = true;
 			if ((params.center.lat === undefined) || (params.center.lng === undefined)) RandomVertices.params(params);
+			params.randomVertices = this;
 			removeCirclesSphere();
 			if (params.onePointArray) {
 
@@ -4245,7 +4248,7 @@ RandomVertices.params = (params) => {
 		set: (lat) => {
 
 			params.center[0] = lat;
-			randomVertices.onChangeParams();
+			params.randomVertices.onChangeParams();
 			return true;
 
 		},
