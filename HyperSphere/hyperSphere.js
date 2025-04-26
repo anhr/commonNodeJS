@@ -1841,7 +1841,9 @@ this.object = () => {
 									position = geometry.position,
 									edges = geometry.indices.edges,
 									dat = three.dat,
-									fAdvansed = fParent.addFolder(lang.advansed);
+									fAdvansed = fParent.addFolder(lang.advansed),
+									arcColor = 'magenta';
+;
 
 								//Angles
 
@@ -1902,6 +1904,7 @@ this.object = () => {
 					
 									//np: 360,
 									R: this.classSettings.r,
+									color: arcColor,
 									debug: true,
 								
 								});
@@ -4037,7 +4040,7 @@ class RandomVertices {
 							object: {
 
 								name: 'circles',// + circleDistance,
-								//color: 'white',
+								color: randomVerticesSettings.color,
 								geometry: {
 
 									angles: circlesPoints,
