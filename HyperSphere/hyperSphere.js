@@ -1898,7 +1898,7 @@ this.object = () => {
 								});
 								dat.controllerNameAndTitle(aAngleControls.cRadius, lang.radius, lang.radiusTitle);
 								readOnly.readOnlyEl(aAngleControls.cRadius, true);
-								const randomVertices = this.newRandomVertices(this.object3D, options, {
+								const randomVertices = !classSettings.randomArc ? undefined : this.newRandomVertices(this.object3D, options, {
 					
 									//np: 360,
 									R: this.classSettings.r,
@@ -1922,7 +1922,7 @@ this.object = () => {
 
 										if (aAngleControls.cross) classSettings.projectParams.scene.remove(aAngleControls.cross);
 										aAngleControls.cross = undefined;
-										randomVertices.removeOnePointArray();
+										if (randomVertices) randomVertices.removeOnePointArray();
 
 									}
 									let boTransparent;
