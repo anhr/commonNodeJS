@@ -2195,7 +2195,7 @@ this.object = () => {
 																		object: {
 																	
 																			name: lang.arc,
-																			color: 'magenta',
+																			color: arcColor,
 																			geometry: {
 																	
 																				MAX_POINTS: aAngleControls.MAX_POINTS,
