@@ -1983,8 +1983,8 @@ this.object = () => {
 
 												randomVertices.createOnePointArray({
 
-													arc: 0.5,
-													center: oppositeVertice.angles,
+//													arc: 0.5,
+//													center: oppositeVertice.angles,
 													
 												});
 /*												
@@ -4215,7 +4215,8 @@ class RandomVertices {
 			if (params.random === undefined) params.random = true;
 			if (params.onePoint === undefined) params.onePoint = true;
 			if (params.onePointArray === undefined) params.onePointArray = true;
-			if ((params.center.lat === undefined) || (params.center.lng === undefined)) RandomVertices.params(params);
+//			if ((params.center.lat === undefined) || (params.center.lng === undefined)) RandomVertices.params(params);
+			RandomVertices.params(params);
 			params.randomVertices = this;
 			removeCirclesSphere();
 			if (params.onePointArray) {
@@ -4244,31 +4245,37 @@ class RandomVertices {
 	
 }
 RandomVertices.params = (params) => {
+
+	params.center ||= [];
+	if (params.center.length < 1) params.center.push(0);
+	if (params.center.length < 2) params.center.push(0);
+	if (params.center.lat === undefined)
+		Object.defineProperty(params.center, 'lat', {
 	
-	Object.defineProperty(params.center, 'lat', {
-
-		get: () => { return params.center[0]; },
-		set: (lat) => {
-
-			params.center[0] = lat;
-			if (params.randomVertices) params.randomVertices.onChangeParams();
-			return true;
-
-		},
+			get: () => { return params.center[0]; },
+			set: (lat) => {
+	
+				params.center[0] = lat;
+				if (params.randomVertices) params.randomVertices.onChangeParams();
+				return true;
+	
+			},
+	
+		});
+	if (params.center.lng === undefined)
+		Object.defineProperty(params.center, 'lng', {
+	
+			get: () => { return params.center[1]; },
+			set: (lng) => {
+	
+				params.center[1] = lng;
+				if (params.randomVertices) params.randomVertices.onChangeParams();
+				return true;
+	
+			},
 
 	});
-	Object.defineProperty(params.center, 'lng', {
-
-		get: () => { return params.center[1]; },
-		set: (lng) => {
-
-			params.center[1] = lng;
-			if (params.randomVertices) params.randomVertices.onChangeParams();
-			return true;
-
-		},
-
-	});
+	if (params.arc === undefined) params.arc = 0.5;
 
 	//если вершина находится на полюсах, то случайное распределение вершин получается не случайным непонятно по какой причине
 	//Для этого немного отклоняю вершину от полюса
