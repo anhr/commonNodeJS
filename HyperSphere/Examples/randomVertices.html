@@ -59,32 +59,6 @@
 
 			}
 			Sphere.RandomVertices.params(params);
-/*			
-			Object.defineProperty(params.center, 'lat', {
-	
-				get: () => { return params.center[0]; },
-				set: (lat) => {
-	
-					params.center[0] = lat;
-					randomVertices.onChangeParams();
-					return true;
-	
-				},
-	
-			});
-			Object.defineProperty(params.center, 'lng', {
-	
-				get: () => { return params.center[1]; },
-				set: (lng) => {
-	
-					params.center[1] = lng;
-					randomVertices.onChangeParams();
-					return true;
-	
-				},
-	
-			});
-*/			
 
 			///////////////////////////////////////////////params
 			
@@ -101,7 +75,7 @@
 			//GUI
 
 			const gui = options.dat.gui;
-			gui.add(params, 'arc', 0, pi / 2, 0.0001).onChange(() => { randomVertices.onChangeParams(); });
+            gui.add(params, 'arc', 0, pi / 2, 0.0001).onChange(() => { randomVertices.changeCirclesPoints(); });
 
 			//center
 			gui.add(params.center, 'lat', -pi / 2, pi / 2, 0.001);

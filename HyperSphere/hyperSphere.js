@@ -3651,8 +3651,8 @@ class RandomVertices {
 
 			options ||= {};
 			point ||= [0, 0];
-//			if (((options.pointId === undefined) || isCreateCirclesPoints) && (options.pointsCount != undefined) && (points.length < options.pointsCount))
-			if ((options.pointId === undefined) || isCreateCirclesPoints)
+//			if (((options.pointId === undefined) || boCreateCirclesPoints) && (options.pointsCount != undefined) && (points.length < options.pointsCount))
+			if ((options.pointId === undefined) || boCreateCirclesPoints)
 			{
 
 				points.push(point);
@@ -3689,7 +3689,7 @@ class RandomVertices {
 			for (let i = 0; i < numPoints; i++) {
 
 				let point;
-				if (!isCreateCirclesPoints) {
+				if (!boCreateCirclesPoints) {
 
 					point = getCirclePoint(center, { i: i, numPoints: numPoints, circleDistance: options.circleDistance, });
 
@@ -3740,7 +3740,7 @@ class RandomVertices {
 			set: (lat) => {
 
 				params.center[0] = lat;
-				onChangeParams();
+				changeCirclesPoints();
 				return true;
 
 			},
@@ -3752,7 +3752,7 @@ class RandomVertices {
 			set: (lng) => {
 
 				params.center[1] = lng;
-				onChangeParams();
+				changeCirclesPoints();
 				return true;
 
 			},
@@ -3764,7 +3764,7 @@ class RandomVertices {
 			set: (arc) => {
 
 				params.a = arc;
-				onChangeParams();
+				changeCirclesPoints();
 				return true;
 
 			},
@@ -3777,7 +3777,7 @@ class RandomVertices {
 
 				params.rnd = random;
 				setCirclesCount();
-				onChangeParams();
+				changeCirclesPoints();
 				return true;
 
 			},
@@ -3829,7 +3829,7 @@ class RandomVertices {
 		});
 */		
 
-		const onChangeParams = () => {
+		const changeCirclesPoints = () => {
 
 			if (!params.onePoint) {
 
@@ -3838,7 +3838,7 @@ class RandomVertices {
 
 			}
 
-			if (isCreateCirclesPoints) {
+			if (boCreateCirclesPoints) {
 
 				//размер circlesPoints массива всех точек окружностей
 				const pointsCount = params.onePointArray ? circlesCount * np ://если надо содать массив из единично создаваемых точек
@@ -4000,7 +4000,7 @@ class RandomVertices {
 		const createCirclesSphere = () => {
 
 			circlesPointsOptions.pointId = 0;
-			if (!circlesSphere && !isCreateCirclesPoints && (circlesPoints.length != 0)) {
+			if (!circlesSphere && !boCreateCirclesPoints && (circlesPoints.length != 0)) {
 
 				circlesSphere = this.getHyperSphere(options, {
 
@@ -4069,7 +4069,7 @@ class RandomVertices {
 
 			if (circlesSphere) circlesSphere.setVerticesRange(0, circlesPointsCount);
 		}
-		let circlesSphere, circlesPointsOptions = {}, isCreateCirclesPoints;
+		let circlesSphere, circlesPointsOptions = {}, boCreateCirclesPoints;
 //		this.setCirclesSphere = (circlesSphereNew) => { circlesSphere = circlesSphereNew; }
 		Object.defineProperties(this, {
 			circlesSphere: {
@@ -4134,23 +4134,23 @@ class RandomVertices {
 		const setCirclesPoints = (arc) => {
 
 			//заполнить circlesPoints максимально возможный массив точек всех окружностей 
-			isCreateCirclesPoints = true;
+			boCreateCirclesPoints = true;
 			params.arc = pi / 2;
-			onChangeParams();
+			changeCirclesPoints();
 
 			//создать окружности
-			isCreateCirclesPoints = false;
+			boCreateCirclesPoints = false;
 			params.arc = arc;
-			onChangeParams();
+			changeCirclesPoints();
 
 		}
 //		this.setCirclesPoints = setCirclesPoints;
 		const setCirclesOnePoints = () => {
 
-			isCreateCirclesPoints = true;
-			onChangeParams();
-			isCreateCirclesPoints = false;
-			onChangeParams();
+			boCreateCirclesPoints = true;
+			changeCirclesPoints();
+			boCreateCirclesPoints = false;
+			changeCirclesPoints();
 
 		}
 /*		
@@ -4236,7 +4236,7 @@ class RandomVertices {
 			createCirclesSphere();
 		
 		}
-		this.onChangeParams = () => { onChangeParams(); }
+		this.changeCirclesPoints = () => { changeCirclesPoints(); }
 		
 	}
 	//overridden methods
@@ -4284,7 +4284,7 @@ RandomVertices.params = (params) => {
 			set: (lat) => {
 	
 				params.center[0] = lat;
-				if (params.randomVertices) params.randomVertices.onChangeParams();
+				if (params.randomVertices) params.randomVertices.changeCirclesPoints();
 				return true;
 	
 			},
@@ -4297,7 +4297,7 @@ RandomVertices.params = (params) => {
 			set: (lng) => {
 	
 				params.center[1] = lng;
-				if (params.randomVertices) params.randomVertices.onChangeParams();
+				if (params.randomVertices) params.randomVertices.changeCirclesPoints();
 				return true;
 	
 			},
