@@ -1983,6 +1983,8 @@ this.object = () => {
 
 												randomVertices.createOnePointArray({
 
+													vertice: vertice.angles,
+													oppositeVertice: oppositeVerticeAngles,
 //													arc: 0.5,
 //													center: oppositeVertice.angles,
 													
@@ -4246,6 +4248,32 @@ class RandomVertices {
 }
 RandomVertices.params = (params) => {
 
+	if (params.vertice) {
+
+		Object.defineProperty(params, 'arc', {
+	
+			get: () => {
+				
+//				return 0.5;
+				const vertice = params.vertice, oppositeVertice = params.oppositeVertice;
+				//DeepSeek. вычислить угол между двумя точками на поверхности шара
+				//векторы
+				//A=(R,ϕ1,λ1 )
+				const ϕ1 = vertice[0], λ1 = vertice[1];
+				//B=(R,ϕ2,λ2 ) - oppositeVertice
+				const ϕ2 = oppositeVertice[0], λ2 = oppositeVertice[1];
+				//где
+				//ϕ — широта (от −90° до 90°),
+				//λ — долгота (от −180° до 180°),
+				const arccos = Math.acos, sin = Math.sin, cos = Math.cos;
+				const θ = arccos(sin(ϕ1) * sin(ϕ2) + cos(ϕ1) * cos(ϕ2) * cos(λ1 - λ2));
+				return θ;
+			
+			},
+	
+		});
+		
+	}
 	params.center ||= [];
 	if (params.center.length < 1) params.center.push(0);
 	if (params.center.length < 2) params.center.push(0);
@@ -4274,7 +4302,7 @@ RandomVertices.params = (params) => {
 	
 			},
 
-	});
+		});
 	if (params.arc === undefined) params.arc = 0.5;
 
 	//если вершина находится на полюсах, то случайное распределение вершин получается не случайным непонятно по какой причине
