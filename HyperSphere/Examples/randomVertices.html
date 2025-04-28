@@ -53,9 +53,9 @@
 					//1.5,//Для вычисления коэффициента k
 					//0,
 				
-				random: true,
-				onePoint: true,//Have effect only if params.random = true
-				onePointArray: true,//Have effect only if params.onePoint = true
+				random: false,
+				onePoint: false,//Have effect only if params.random = true
+				onePointArray: false,//Have effect only if params.onePoint = true
 
 			}
 			Sphere.RandomVertices.params(params);
@@ -75,7 +75,7 @@
 			//GUI
 
 			const gui = options.dat.gui;
-            gui.add(params, 'arc', 0, pi / 2, 0.0001).onChange(() => { randomVertices.changeCirclesPoints(); });
+            gui.add(params, 'arc', 0, pi, 0.0001).onChange(() => { randomVertices.changeCirclesPoints(); });
 
 			//center
 			gui.add(params.center, 'lat', -pi / 2, pi / 2, 0.001);

@@ -3714,120 +3714,6 @@ class RandomVertices {
 
 		//Параметры, которые может менять пользователь
 		let params;
-/*
-		randomVerticesSettings.params ||= {};
-		const params = randomVerticesSettings.params;
-
-		//центр окружности, пересекающей сферу или вершина гиперсферы, вокруг которой будет облако вероятностей
-		params.center ||= [];
-		if (params.center[0] === undefined) params.center[0] = 0;//lat
-		if (params.center[1] === undefined) params.center[1] = 0;//lng
-
-		//arc Длинна дуги, соединяющей две вершины гиперсферы
-		if (params.a === undefined) params.a = //pi / 2;//Вершины дуги расположены на противоположных концах гиперсферы. Длинна дуги максимальная. Окружности вокруг вершины расположены равномерно по всей гиперсферы.
-			//0;//Вершины гиперсферы совпадают. Длинна дуги равна нулю. Окружности вокруг вершины превращаются в точки, которые совпадают с вершиной.
-			0.5;//По умолчанию
-			//1.5;//Для вычисления коэффициента k
-			//0;
-
-		if (params.rnd === undefined) params.rnd = true;//random
-		if (params.op === undefined) params.op = false;//onePoint. true - получить одну случайную точку не вычисляя остальные случайные точки
-		if (params.opa === undefined) params.opa = false;//onePointArray. true - array of the one points
-
-		Object.defineProperty(params.center, 'lat', {
-
-			get: () => { return params.center[0]; },
-			set: (lat) => {
-
-				params.center[0] = lat;
-				changeCirclesPoints();
-				return true;
-
-			},
-
-		});
-		Object.defineProperty(params.center, 'lng', {
-
-			get: () => { return params.center[1]; },
-			set: (lng) => {
-
-				params.center[1] = lng;
-				changeCirclesPoints();
-				return true;
-
-			},
-
-		});
-		Object.defineProperty(params, 'arc', {
-
-			get: () => { return params.a; },
-			set: (arc) => {
-
-				params.a = arc;
-				changeCirclesPoints();
-				return true;
-
-			},
-
-		});
-		Object.defineProperty(params, 'random', {
-
-			get: () => { return params.rnd; },
-			set: (random) => {
-
-				params.rnd = random;
-				setCirclesCount();
-				changeCirclesPoints();
-				return true;
-
-			},
-
-		});
-		Object.defineProperty(params, 'onePoint', {
-
-			get: () => { return params.op; },
-			set: (onePoint) => {
-
-				params.op = onePoint;
-
-				const arc = params.arc;
-				circlesPoints.length = 0;
-				if (circlesSphere) {
-
-					options.guiSelectPoint.removeMesh(circlesSphere.object3D);
-					circlesSphere.object3D.parent.remove(circlesSphere.object3D);
-					circlesSphere = undefined;
-
-				}
-
-				setCirclesPoints(arc);
-				return true;
-
-			},
-
-		});
-		Object.defineProperty(params, 'onePointArray', {
-
-			get: () => { return params.opa; },
-			set: (onePointArray) => {
-
-				params.opa = onePointArray;
-				circlesPoints.length = 0;
-				if (circlesSphere) {
-
-					options.guiSelectPoint.removeMesh(circlesSphere.object3D);
-					circlesSphere.object3D.parent.remove(circlesSphere.object3D);
-					circlesSphere = undefined;
-
-				}
-				setCirclesOnePoints();
-				createCirclesSphere();
-				return true;
-
-			},
-
-		});
-*/		
 
 		const changeCirclesPoints = () => {
 
@@ -3935,6 +3821,7 @@ class RandomVertices {
 
 		}
 
+/*
 		let circlesCount,
 			d;//расттояние между окружностями в радианах при условии, что окружности равномерно расположены на сфере
 		const setCirclesCount = () => {
@@ -3946,6 +3833,9 @@ class RandomVertices {
 
 		}
 		setCirclesCount();
+*/
+		const circlesCount = np,//если количество окружностей равно количеству точек на окружности, то точки будут равномерно располагаться на гиперсфере
+			d = pi / (circlesCount - 1);//расттояние между окружностями в радианах при условии, что окружности равномерно расположены на сфере
 
 		//Deepseek Вычислить a, d, c в уравнении y=a/(x+b)+c точностью до 8 знаков при условии:
 		//Эта формула нужна для вычисления радиуса окружности radius
@@ -4274,6 +4164,30 @@ RandomVertices.params = (params) => {
 		});
 		
 	}
+/*	
+	if (params.arc != undefined) {
+
+		params.a = params.arc;
+//		params.arc = undefined;
+		
+	}
+	Object.defineProperty(params, 'arc', {
+
+		get: () => {
+			
+			return params.a;
+		
+		},
+		set: (arc) => {
+
+			params.a = arc;
+			return true;
+
+		},
+
+	});
+*/	
+	
 	params.center ||= [];
 	if (params.center.length < 1) params.center.push(0);
 	if (params.center.length < 2) params.center.push(0);
