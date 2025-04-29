@@ -433,6 +433,9 @@ class HyperSphere extends MyObject {
 						
 					}
 					const length = _this.dimension - 1;
+					const sLongitude = 'longitude', longitudeShift = 1,
+						sLatitude = 'latitude', latitudeShift = 2,
+						sAltitude = 'altitude', altitudeShift = 3;
 					return new Proxy(angles[verticeId], {
 
 						get: (verticeAngles, name) => {
@@ -447,7 +450,10 @@ class HyperSphere extends MyObject {
 							}
 							switch (name) {
 
-								case 'length': return length;//_this.dimension - 1;
+								case sLongitude: return verticeAngles[verticeAngles.length - longitudeShift];
+								case sLatitude: return verticeAngles[verticeAngles.length - latitudeShift];
+								case sAltitude: return verticeAngles[verticeAngles.length - altitudehift];
+								case 'length': return length;
 								case 'forEach': return (item) => {
 								
 									for (let axisId = 0; axisId < length; axisId++) item(verticeAngles[axisId] != undefined ? verticeAngles[axisId] : 0, axisId);
@@ -500,7 +506,18 @@ class HyperSphere extends MyObject {
 
 								}
 
-							} else verticeAngles[name] = value;
+							} else {
+
+								switch (name) {
+
+									case sLongitude: verticeAngles[verticeAngles.length - longitudeShift] = value; return true;
+									case sLatitude: verticeAngles[verticeAngles.length - latitudeShift] = value; return true;
+									case sAltitude: verticeAngles[verticeAngles.length - altitudeShift] = value; return true;
+										
+								}
+								verticeAngles[name] = value;
+
+							}
 							return true;
 
 						}
@@ -4025,7 +4042,8 @@ class RandomVertices {
 
 			//заполнить circlesPoints максимально возможный массив точек всех окружностей 
 			boCreateCirclesPoints = true;
-			params.arc = pi / 2;
+//			params.arc = pi / 2;
+			params.arc = pi;
 			changeCirclesPoints();
 
 			//создать окружности
@@ -4157,7 +4175,41 @@ RandomVertices.params = (params) => {
 				//λ — долгота (от −180° до 180°),
 				const arccos = Math.acos, sin = Math.sin, cos = Math.cos;
 				const θ = arccos(sin(ϕ1) * sin(ϕ2) + cos(ϕ1) * cos(ϕ2) * cos(λ1 - λ2));
-				return θ;
+				return θ / 2;//Поделил на 2 потому что ошибочно сделал равномерное распределение случайных точек по сфере при arc = pi / 2
+					//хотя нужно arc = pi, то есть когда вершины дуги расположены на противоположных точках сферы.
+					//Хотел исправить, но это оказалось достаточно сложно
+			
+			},
+	
+		});
+		Object.defineProperty(params, 'center', {
+	
+			get: () => {
+
+/*				
+				//DeepSeek. Вычислить противоположную точку сферы в радианах
+				const θ = params.oppositeVertice.latitude - π / 2,//полярный угол (от 0 до π)
+					ϕ = params.oppositeVertice.longitude - π,//азимутальный угол (от 0 до 2π)
+					mod = Math.mod
+				return [π−θ,ϕ+π (mod 2π)];
+*/				
+				//center is antipode of the opposite vertice
+				//Центр окружностей случайных точек center находится с противоположной от params.oppositeVertice стороны сферы
+				const center = [-params.oppositeVertice.latitude, params.oppositeVertice.longitude - π];
+				
+				Object.defineProperty(center, 'lat', {
+					
+					get: () => { return center[0]; },
+					set: (lat) => {
+			
+						params.oppositeVertice.latitude = -lat;
+						return true;
+			
+					},
+				
+				});
+				Object.defineProperty(center, 'lng', { get: () => { return center[1]; }, });
+				return center;
 			
 			},
 	
@@ -4189,15 +4241,16 @@ RandomVertices.params = (params) => {
 */	
 	
 	params.center ||= [];
+	const center = params.center;
 	if (params.center.length < 1) params.center.push(0);
 	if (params.center.length < 2) params.center.push(0);
-	if (params.center.lat === undefined)
-		Object.defineProperty(params.center, 'lat', {
+	if (center.lat === undefined)
+		Object.defineProperty(center, 'lat', {
 	
-			get: () => { return params.center[0]; },
+			get: () => { return center[0]; },
 			set: (lat) => {
 	
-				params.center[0] = lat;
+				center[0] = lat;
 				if (params.randomVertices) params.randomVertices.changeCirclesPoints();
 				return true;
 	
