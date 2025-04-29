@@ -1998,7 +1998,7 @@ this.object = () => {
 												vertice = position[aAngleControls.verticeId];
 											if (classSettings.randomArc) {
 
-												randomVertices.createOnePointArray({
+												aAngleControls.arc = randomVertices.createOnePointArray({
 
 													vertice: vertice.angles,
 													oppositeVertice: oppositeVerticeAngles,
@@ -3929,6 +3929,7 @@ class RandomVertices {
 			}
 
 			if (circlesSphere) circlesSphere.setVerticesRange(0, circlesPointsCount);
+			
 		}
 		let circlesSphere, circlesPointsOptions = {}, boCreateCirclesPoints;
 //		this.setCirclesSphere = (circlesSphereNew) => { circlesSphere = circlesSphereNew; }
@@ -4096,6 +4097,7 @@ class RandomVertices {
 			}
 			else if (params.onePoint) this.randomVertice();
 			createCirclesSphere();
+			return circlesSphere;
 		
 		}
 		this.changeCirclesPoints = () => { changeCirclesPoints(); }
