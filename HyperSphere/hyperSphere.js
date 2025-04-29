@@ -2002,59 +2002,13 @@ this.object = () => {
 
 													vertice: vertice.angles,
 													oppositeVertice: oppositeVerticeAngles,
-//													arc: 0.5,
-//													center: oppositeVertice.angles,
 													
 												});
-/*												
-												const arcVerticeAngles = this.normalizeVerticeAngles(oppositeVertice.angles.returnSub(vertice.angles)),//Приводим разность углов в допустимый диапазон
-													arc = aAngleControls.arc;
-												for (let i = 0; i < 1000; i++) {
-
-													const arcVerticeAngle = [];
-													arcVerticeAngles.forEach((arcValue, angleId) => arcVerticeAngle.push(vertice.angles[angleId] + HyperSphere.randomAngle(arcValue)));
-													const angles = this.normalizeVerticeAngles(arcVerticeAngle);//Приводим углы в допустимый диапазон
-													if (arc) {
-
-														const arcAngles = arc.angles[i];
-														if (classSettings.debug && (arcAngles.length != angles.length)) console.error(sHyperSphere + ': aAngleControls.createArc. Invalid angles.length = ' + angles.length);
-														angles.forEach((angle, angleId) => { arcAngles[angleId] = angle; });
-															
-													}
-													else arcAngles.push(angles);
-
-												}
-												if (!arc) aAngleControls.arc = this.line({
-													
-														cookieName: 'arc',//если не задать cookieName, то настройки дуги будут браться из настроек гиперсферы
-														//edges: false,
-														randomArc: classSettings.randomArc,
-														object: {
-														
-															name: lang.arc,
-															color: 'magenta',
-															geometry: {
-														
-																//MAX_POINTS: aAngleControls.MAX_POINTS,
-																angles: arcAngles,
-																//opacity: 0.3,
-//																indices: {
-//														
-//																	edges: arcEdges,
-//														
-//																}
-														
-															}
-														
-														},
-														
-													});
-*/												
 												return;
 												
 											}
 											let verticeId = 0;
-												//если не копировать каждый угол в отделности, то в новой вершине останутся старые ребра
+											//если не копировать каждый угол в отделности, то в новой вершине останутся старые ребра
 											const copyVertice = (vertice) => {
 
 													const verticeAngles = _this.vertice2angles(vertice)
