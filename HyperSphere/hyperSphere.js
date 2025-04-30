@@ -4063,6 +4063,9 @@ class RandomVertices {
 			circlesSphere = undefined;
 			
 		}
+		/**
+		 * Сall this method for the <b>randomVerticesSettings.params.random</b> change to take effect.
+		 */
 		this.onChangeRandom = (paramsNew) => {
 			
 			params ||= paramsNew;
@@ -4071,6 +4074,11 @@ class RandomVertices {
 			createCirclesSphere();
 		
 		}
+		/**
+		 * Сall this method for the <b>randomVerticesSettings.params.onePoint</b> change to take effect
+		 * or if <b>randomVerticesSettings.params.onePointArray</b> was changed to false.
+		 * @param {Object} paramsNew See <b>randomVerticesSettings.params</b> of the constructor for details.
+		 */
 		this.onChangeOnePoint = (paramsNew) => {
 			
 			params ||= paramsNew;
@@ -4078,6 +4086,14 @@ class RandomVertices {
 		
 		}
 		this.removeOnePointArray = () => { removeCirclesSphere(); }
+		/**
+		 * Creates an array of the random points from one random point.
+		 * @param {Object} paramsNew See <b>randomVerticesSettings.params</b> of the constructor for details.
+		 * You can set <b>vertice</b> and <b>oppositeVertice</b> parameters instead <b>arc</b> and <b>center</b>. See below:
+		 * @param {Array} [paramsNew.vertice] First vertice of the <b>arc</b>.
+		 * @param {Array} [paramsNew.oppositeVertice] Second vertice of the <b>arc</b>.
+		 * @returns <a href="../jsdoc/module-HyperSphere-HyperSphere.html" target="_blank">HyperSphere</a>, what contains created points array.
+		 */
 		this.createOnePointArray = (paramsNew) => {
 			
 			params ||= paramsNew;
@@ -4104,6 +4120,9 @@ class RandomVertices {
 			return circlesSphere;
 		
 		}
+		/**
+		 * Сall this method for the <b>randomVerticesSettings.params.arc</b> change to take effect.
+		 */
 		this.changeCirclesPoints = () => { changeCirclesPoints(); }
 		
 	}
