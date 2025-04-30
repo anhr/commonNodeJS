@@ -4116,6 +4116,20 @@ class RandomVertices {
 }
 RandomVertices.params = (params) => {
 
+	//если вершина находится на полюсах, то случайное распределение вершин получается не случайным непонятно по какой причине
+	//Для этого немного отклоняю вершину от полюса
+	const inaccurateLatitude = (lat) => {
+	
+		const precision = 1e-14;
+		if (lat > 0) {
+			
+			if ((pi / 2 - lat) <= precision) lat -= precision;
+	
+		} else if ((pi / 2 + lat) <= precision) lat += precision;
+		return lat;
+	
+	}
+	
 	if (params.vertice) {
 
 		Object.defineProperty(params, 'arc', {
@@ -4174,6 +4188,8 @@ RandomVertices.params = (params) => {
 					
 					get: () => {
 						
+						return inaccurateLatitude(-params.oppositeVertice.latitude);
+/*						
 						//если вершина находится на полюсах, то случайное распределение вершин получается не случайным непонятно по какой причине
 						//Для этого немного отклоняю вершину от полюса
 						const precision = 1e-14;
@@ -4185,6 +4201,7 @@ RandomVertices.params = (params) => {
 						} else if ((pi / 2 + lat) <= precision) lat += precision;
 						
 						return lat;
+*/						
 					
 					},
 				
@@ -4251,15 +4268,15 @@ RandomVertices.params = (params) => {
 
 		});
 	if (params.arc === undefined) params.arc = 0.5;
-
-	//если вершина находится на полюсах, то случайное распределение вершин получается не случайным непонятно по какой причине
-	//Для этого немного отклоняю вершину от полюса
+	params.center.lat = inaccurateLatitude(params.center.lat);
+/*
 	const precision = 1e-14;
 	if (params.center.lat > 0) {
 		
 		if ((pi / 2 - params.center.lat) <= precision) params.center.lat -= precision;
 
 	} else if ((pi / 2 + params.center.lat) <= precision) params.center.lat += precision;
+*/	
 	
 }
 HyperSphere.RandomVertices = RandomVertices;
