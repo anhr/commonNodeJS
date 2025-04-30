@@ -1998,7 +1998,8 @@ this.object = () => {
 												vertice = position[aAngleControls.verticeId];
 											if (classSettings.randomArc) {
 
-												aAngleControls.arc = randomVertices.createOnePointArray({
+												if (aAngleControls.arc) randomVertices.changeCirclesPoints();
+												else aAngleControls.arc = randomVertices.createOnePointArray({
 
 													vertice: vertice.angles,
 													oppositeVertice: oppositeVerticeAngles,
@@ -3590,23 +3591,24 @@ class RandomVertices {
 			const circleDistance = (params.random ? (options.circleDistance - circleDistancePrev) * Math.random() + circleDistancePrev : options.circleDistance) / R; // Расстояние до окружности по дуге в радианах
 
 			let newLat, newLng;
+			const lat = center.lat, lng = center.lng;
 			if (circleDistance === 0) {
 
 				//длинна дуги равна нулю. Координаты точки окружности противоположны координатам центра окружности
-				newLat = - center.lat;
-				newLng = center.lng + pi;
+				newLat = - lat;
+				newLng = lng + pi;
 
 			} else {
 
 				// Формулы сферической тригонометрии
 				newLat = Math.asin(
-					Math.sin(center.lat) * Math.cos(circleDistance) +
-					Math.cos(center.lat) * Math.sin(circleDistance) * Math.cos(angle)
+					Math.sin(lat) * Math.cos(circleDistance) +
+					Math.cos(lat) * Math.sin(circleDistance) * Math.cos(angle)
 				);
 
-				newLng = center.lng + Math.atan2(
-					Math.sin(angle) * Math.sin(circleDistance) * Math.cos(center.lat),
-					Math.cos(circleDistance) - Math.sin(center.lat) * Math.sin(newLat)
+				newLng = lng + Math.atan2(
+					Math.sin(angle) * Math.sin(circleDistance) * Math.cos(lat),
+					Math.cos(circleDistance) - Math.sin(lat) * Math.sin(newLat)
 				);
 
 			}
@@ -3688,6 +3690,8 @@ class RandomVertices {
 
 		const changeCirclesPoints = () => {
 
+//if (params.center.lat === pi/2)
+//	console.log(params.center.lat);
 			if (!params.onePoint) {
 
 				setCircles();
@@ -4059,9 +4063,6 @@ class RandomVertices {
 			circlesSphere = undefined;
 			
 		}
-		/**
-		 * Сall this method for the <b>randomVerticesSettings.params.random</b> change to take effect.
-		 */
 		this.onChangeRandom = (paramsNew) => {
 			
 			params ||= paramsNew;
@@ -4070,11 +4071,6 @@ class RandomVertices {
 			createCirclesSphere();
 		
 		}
-		/**
-		 * Сall this method for the <b>randomVerticesSettings.params.onePoint</b> change to take effect
-		 * or if <b>randomVerticesSettings.params.onePointArray</b> was changed to false.
-		 * @param {Object} paramsNew See <b>randomVerticesSettings.params</b> of the constructor for details.
-		 */
 		this.onChangeOnePoint = (paramsNew) => {
 			
 			params ||= paramsNew;
@@ -4082,14 +4078,6 @@ class RandomVertices {
 		
 		}
 		this.removeOnePointArray = () => { removeCirclesSphere(); }
-		/**
-		 * Creates an array of the random points from one random point.
-		 * @param {Object} paramsNew See <b>randomVerticesSettings.params</b> of the constructor for details.
-		 * You can set <b>vertice</b> and <b>oppositeVertice</b> parameters instead <b>arc</b> and <b>center</b>. See below:
-		 * @param {Array} [paramsNew.vertice] First vertice of the <b>arc</b>.
-		 * @param {Array} [paramsNew.oppositeVertice] Second vertice of the <b>arc</b>.
-		 * @returns <a href="../jsdoc/module-HyperSphere-HyperSphere.html" target="_blank">HyperSphere</a>, what contains created points array.
-		 */
 		this.createOnePointArray = (paramsNew) => {
 			
 			params ||= paramsNew;
@@ -4116,9 +4104,6 @@ class RandomVertices {
 			return circlesSphere;
 		
 		}
-		/**
-		 * Сall this method for the <b>randomVerticesSettings.params.arc</b> change to take effect.
-		 */
 		this.changeCirclesPoints = () => { changeCirclesPoints(); }
 		
 	}
@@ -4178,12 +4163,32 @@ RandomVertices.params = (params) => {
 					set: (lat) => {
 			
 						params.oppositeVertice.latitude = -lat;
+//						center[0] = lat;
 						return true;
 			
 					},
 				
 				});
 				Object.defineProperty(center, 'lng', { get: () => { return center[1]; }, });
+				Object.defineProperty(center, '0', {
+					
+					get: () => {
+						
+						//если вершина находится на полюсах, то случайное распределение вершин получается не случайным непонятно по какой причине
+						//Для этого немного отклоняю вершину от полюса
+						const precision = 1e-14;
+						let lat = -params.oppositeVertice.latitude;
+						if (lat > 0) {
+							
+							if ((pi / 2 - lat) <= precision) lat -= precision;
+					
+						} else if ((pi / 2 + lat) <= precision) lat += precision;
+						
+						return lat;
+					
+					},
+				
+				});
 				return center;
 			
 			},
