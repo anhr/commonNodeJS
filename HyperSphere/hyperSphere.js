@@ -4184,25 +4184,20 @@ RandomVertices.params = (params) => {
 				
 				});
 				Object.defineProperty(center, 'lng', { get: () => { return center[1]; }, });
+				let lat = -params.oppositeVertice.latitude;
 				Object.defineProperty(center, '0', {
 					
 					get: () => {
 						
-						return inaccurateLatitude(-params.oppositeVertice.latitude);
-/*						
-						//если вершина находится на полюсах, то случайное распределение вершин получается не случайным непонятно по какой причине
-						//Для этого немного отклоняю вершину от полюса
-						const precision = 1e-14;
-						let lat = -params.oppositeVertice.latitude;
-						if (lat > 0) {
-							
-							if ((pi / 2 - lat) <= precision) lat -= precision;
+//						return inaccurateLatitude(-params.oppositeVertice.latitude);
+						return inaccurateLatitude(lat);
 					
-						} else if ((pi / 2 + lat) <= precision) lat += precision;
-						
-						return lat;
-*/						
-					
+					},
+					set: (latNew) => {
+			
+						lat = latNew;
+						return true;
+			
 					},
 				
 				});
