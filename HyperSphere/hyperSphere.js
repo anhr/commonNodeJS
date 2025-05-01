@@ -1942,7 +1942,7 @@ this.object = () => {
 
 										if (aAngleControls.cross) classSettings.projectParams.scene.remove(aAngleControls.cross);
 										aAngleControls.cross = undefined;
-										if (randomVertices) randomVertices.removeOnePointArray();
+//										if (randomVertices) randomVertices.removeOnePointArray();
 
 									}
 									let boTransparent;
@@ -1998,13 +1998,14 @@ this.object = () => {
 												vertice = position[aAngleControls.verticeId];
 											if (classSettings.randomArc) {
 
-												if (aAngleControls.arc) randomVertices.changeCirclesPoints();
-												else aAngleControls.arc = randomVertices.createOnePointArray({
+												const params = {
 
 													vertice: vertice.angles,
 													oppositeVertice: oppositeVerticeAngles,
 													
-												});
+												}
+												if (aAngleControls.arc) randomVertices.changeCirclesPoints(params);
+												else aAngleControls.arc = randomVertices.createOnePointArray(params);
 												return;
 												
 											}
@@ -3690,10 +3691,14 @@ class RandomVertices {
 		//Параметры, которые может менять пользователь
 		let params;
 
-		const changeCirclesPoints = () => {
+		const changeCirclesPoints = (paramsNew) => {
 
-//if (params.center.lat === pi/2)
-//	console.log(params.center.lat);
+			if (paramsNew) {
+				
+				params = paramsNew;
+				RandomVertices.params(params);
+
+			}
 			if (!params.onePoint) {
 
 				setCircles();
@@ -4099,10 +4104,11 @@ class RandomVertices {
 		this.createOnePointArray = (paramsNew) => {
 			
 			params ||= paramsNew;
+/*
 			if (params.random === undefined) params.random = true;
 			if (params.onePoint === undefined) params.onePoint = true;
 			if (params.onePointArray === undefined) params.onePointArray = true;
-//			if ((params.center.lat === undefined) || (params.center.lng === undefined)) RandomVertices.params(params);
+*/
 			RandomVertices.params(params);
 			params.randomVertices = this;
 			removeCirclesSphere();
@@ -4124,8 +4130,9 @@ class RandomVertices {
 		}
 		/**
 		 * Сall this method for the <b>randomVerticesSettings.params.arc</b> change to take effect.
+		 * @param {Object} paramsNew See <b>paramsNew</b> of the <b>createOnePointArray</b> method for details.
 		 */
-		this.changeCirclesPoints = () => { changeCirclesPoints(); }
+		this.changeCirclesPoints = (params) => { changeCirclesPoints(params); }
 		
 	}
 	//overridden methods
@@ -4136,6 +4143,10 @@ class RandomVertices {
 	
 }
 RandomVertices.params = (params) => {
+
+	if (params.random === undefined) params.random = true;
+	if (params.onePoint === undefined) params.onePoint = true;
+	if (params.onePointArray === undefined) params.onePointArray = true;
 
 	//если вершина находится на полюсах, то случайное распределение вершин получается не случайным непонятно по какой причине
 	//Для этого немного отклоняю вершину от полюса
