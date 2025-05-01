@@ -4192,15 +4192,15 @@ RandomVertices.params = (params) => {
 			get: () => {
 
 				//center is antipode of the opposite vertice
-				//Центр окружностей случайных точек center находится с противоположной от params.oppositeVertice стороны сферы
-				const center = [-params.oppositeVertice.latitude, params.oppositeVertice.longitude - π];
+				//Центр окружностей случайных точек center находится с противоположной от params.oppositeVertice стороны гиперсферы
+				const antipodeLatitude = (latitude) => { return -latitude; }, center = [antipodeLatitude(params.oppositeVertice.latitude), params.oppositeVertice.longitude - π];
 				
 				Object.defineProperty(center, 'lat', {
 					
 					get: () => { return center[0]; },
 					set: (lat) => {
 			
-						params.oppositeVertice.latitude = -lat;
+						params.oppositeVertice.latitude = antipodeLatitude(lat);
 						return true;
 			
 					},
