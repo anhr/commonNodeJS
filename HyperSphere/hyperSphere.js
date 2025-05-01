@@ -4154,15 +4154,10 @@ RandomVertices.params = (params) => {
 		let latitude = params.oppositeVertice.latitude;
 		Object.defineProperty(params.oppositeVertice, '0', {
 
-			get: () => {
-				
-				return latitude;
-			
-			},
+			get: () => { return latitude; },
 			set: (latitudeNew) => {
 	
 				latitude = inaccurateLatitude(latitudeNew);
-//				params.oppositeVertice.latitude = latitudeNew;
 				return true;
 	
 			},
@@ -4173,7 +4168,6 @@ RandomVertices.params = (params) => {
 	
 			get: () => {
 				
-//				return 0.5;
 				const vertice = params.vertice, oppositeVertice = params.oppositeVertice;
 				//DeepSeek. вычислить угол между двумя точками на поверхности шара
 				//векторы
@@ -4197,13 +4191,6 @@ RandomVertices.params = (params) => {
 	
 			get: () => {
 
-/*				
-				//DeepSeek. Вычислить противоположную точку сферы в радианах
-				const θ = params.oppositeVertice.latitude - π / 2,//полярный угол (от 0 до π)
-					ϕ = params.oppositeVertice.longitude - π,//азимутальный угол (от 0 до 2π)
-					mod = Math.mod
-				return [π−θ,ϕ+π (mod 2π)];
-*/				
 				//center is antipode of the opposite vertice
 				//Центр окружностей случайных точек center находится с противоположной от params.oppositeVertice стороны сферы
 				const center = [-params.oppositeVertice.latitude, params.oppositeVertice.longitude - π];
@@ -4214,33 +4201,19 @@ RandomVertices.params = (params) => {
 					set: (lat) => {
 			
 						params.oppositeVertice.latitude = -lat;
-//						center[0] = lat;
 						return true;
 			
 					},
 				
 				});
 				Object.defineProperty(center, 'lng', { get: () => { return center[1]; }, });
-//				let lat = -params.oppositeVertice.latitude;
+/*				
 				Object.defineProperty(center, '0', {
 					
-					get: () => {
-
-						return latitude;
-//						return inaccurateLatitude(-params.oppositeVertice.latitude);
-//						return inaccurateLatitude(lat);
-					
-					},
-/*					
-					set: (latNew) => {
-			
-						lat = latNew;
-						return true;
-			
-					},
-*/					
+					get: () => { return latitude; },
 				
 				});
+*/				
 				return center;
 			
 			},
@@ -4248,29 +4221,6 @@ RandomVertices.params = (params) => {
 		});
 		
 	}
-/*	
-	if (params.arc != undefined) {
-
-		params.a = params.arc;
-//		params.arc = undefined;
-		
-	}
-	Object.defineProperty(params, 'arc', {
-
-		get: () => {
-			
-			return params.a;
-		
-		},
-		set: (arc) => {
-
-			params.a = arc;
-			return true;
-
-		},
-
-	});
-*/	
 	
 	params.center ||= [];
 	const center = params.center;
@@ -4304,14 +4254,6 @@ RandomVertices.params = (params) => {
 		});
 	if (params.arc === undefined) params.arc = 0.5;
 	params.center.lat = inaccurateLatitude(params.center.lat);
-/*
-	const precision = 1e-14;
-	if (params.center.lat > 0) {
-		
-		if ((pi / 2 - params.center.lat) <= precision) params.center.lat -= precision;
-
-	} else if ((pi / 2 + params.center.lat) <= precision) params.center.lat += precision;
-*/	
 	
 }
 HyperSphere.RandomVertices = RandomVertices;
