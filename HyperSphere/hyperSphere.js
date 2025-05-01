@@ -3582,9 +3582,9 @@ class RandomVertices {
 		const R = randomVerticesSettings.R === undefined ? 1 : randomVerticesSettings.R, np = randomVerticesSettings.np === undefined ? 36 : randomVerticesSettings.np;
 //		const pi = Math.PI;
 		let circlesPointsCount;
-		const getCirclePoint = (center, options) => {
+		const getCirclePoint = (options) => {
 
-			const angle = 2 * pi * (params.random ? Math.random() : options.i / options.numPoints); // Текущий угол в радианах
+			const center = params.center, angle = 2 * pi * (params.random ? Math.random() : options.i / options.numPoints); // Текущий угол в радианах
 //const angle = 2 * pi * (params.random ? 0.5 : options.i / options.numPoints); // Текущий угол в радианах
 
 			const circleDistancePrev = (options.circleDistance1Prev != undefined ? options.circleDistance1Prev : circleDistance1Prev) * R;
@@ -3640,17 +3640,19 @@ class RandomVertices {
 			} else console.error('getCirclePointsRadians: Invalid options.pointId = ' + options.pointId);
 
 		}
+
+		//* @param { Array } center - Центр окружности[0 широта(рад), 1 долгота(рад) ]
+
 		/**
 		 * DeepSeek: Окружность на сфере (расчеты в радианах) — JavaScript
 		 * Генерирует точки окружности на сфере (в радианах)
-		 * @param {Array} center - Центр окружности [ 0 широта (рад), 1 долгота (рад) ]
 		 * @param {object} [options] options.
 		 * @param {number} [options.circleDistance=0.5] - Расстояние до окружности по дуге в радианах для гиперсферы радиусом 1
 		 * @param {number} [options.numPoints=36] - Количество точек
 		 * @param {number} [options.points=[]] - points array
 		 * @returns {Array} Массив точек [ 0 широта (рад), 1 долгота (рад) ]
 		 */
-		const getCirclePointsRadians = (center, options) => {
+		const getCirclePointsRadians = (options) => {
 
 			options ||= {};
 			if (options.circleDistance === undefined) options.circleDistance = 0.5;
@@ -3664,7 +3666,7 @@ class RandomVertices {
 				let point;
 				if (!boCreateCirclesPoints) {
 
-					point = getCirclePoint(center, { i: i, numPoints: numPoints, circleDistance: options.circleDistance, });
+					point = getCirclePoint(/*center, */{ i: i, numPoints: numPoints, circleDistance: options.circleDistance, });
 
 				} else {
 
@@ -3781,7 +3783,7 @@ class RandomVertices {
 					if (circleParams.circlesPointsCount >= randomPointId) {
 
 //						params.rnd = true;
-						const point = getCirclePoint(params.center, { circleDistance: circleParams.circleDistance, circleDistance1Prev: circleParams.circleDistance1Prev });
+						const point = getCirclePoint(/*params.center, */{ circleDistance: circleParams.circleDistance, circleDistance1Prev: circleParams.circleDistance1Prev });
 						editPoints(circlesPoints, point, editPointsOptions);
 						if (!params.onePointArray) circlesPointsCount = editPointsOptions.pointId;
 						break;
@@ -3988,7 +3990,7 @@ class RandomVertices {
 				if (!isNaN(circlesPointsOptions.numPoints)) {//не рисовать окружность с бесконечным числом точек
 
 					//console.log('circleId = ' + circleId + ', circleDistance1 = ' + circleDistance1 + ', numPoints = ' + circlesPointsOptions.numPoints)
-					getCirclePointsRadians(params.center, circlesPointsOptions);
+					getCirclePointsRadians(/*params.center, */circlesPointsOptions);
 
 				}
 
