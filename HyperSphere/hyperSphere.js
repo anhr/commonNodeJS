@@ -4151,6 +4151,24 @@ RandomVertices.params = (params) => {
 	
 	if (params.vertice) {
 
+		let latitude = params.oppositeVertice.latitude;
+		Object.defineProperty(params.oppositeVertice, '0', {
+
+			get: () => {
+				
+				return latitude;
+			
+			},
+			set: (latitudeNew) => {
+	
+				latitude = inaccurateLatitude(latitudeNew);
+//				params.oppositeVertice.latitude = latitudeNew;
+				return true;
+	
+			},
+	
+		});
+		
 		Object.defineProperty(params, 'arc', {
 	
 			get: () => {
@@ -4203,21 +4221,24 @@ RandomVertices.params = (params) => {
 				
 				});
 				Object.defineProperty(center, 'lng', { get: () => { return center[1]; }, });
-				let lat = -params.oppositeVertice.latitude;
+//				let lat = -params.oppositeVertice.latitude;
 				Object.defineProperty(center, '0', {
 					
 					get: () => {
-						
+
+						return latitude;
 //						return inaccurateLatitude(-params.oppositeVertice.latitude);
-						return inaccurateLatitude(lat);
+//						return inaccurateLatitude(lat);
 					
 					},
+/*					
 					set: (latNew) => {
 			
 						lat = latNew;
 						return true;
 			
 					},
+*/					
 				
 				});
 				return center;
