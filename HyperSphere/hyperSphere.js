@@ -4224,8 +4224,8 @@ RandomVertices.params = (params) => {
 	
 	params.center ||= [];
 	const center = params.center;
-	if (params.center.length < 1) params.center.push(0);
-	if (params.center.length < 2) params.center.push(0);
+	if (center.length < 1) center.push(0);
+	if (center.length < 2) center.push(0);
 	if (center.lat === undefined)
 		Object.defineProperty(center, 'lat', {
 	
@@ -4253,7 +4253,7 @@ RandomVertices.params = (params) => {
 
 		});
 	if (params.arc === undefined) params.arc = 0.5;
-	params.center.lat = inaccurateLatitude(params.center.lat);
+	center.lat = inaccurateLatitude(center.lat);
 	
 }
 HyperSphere.RandomVertices = RandomVertices;
