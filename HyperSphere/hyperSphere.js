@@ -4067,8 +4067,8 @@ class RandomVertices {
 //			circlesPoints.length = 0;
 			circlesPoints = [];
 			if (!circlesSphere) return;
-			options.guiSelectPoint.removeMesh(circlesSphere.object3D);
-			circlesSphere.object3D.parent.remove(circlesSphere.object3D);
+//			options.guiSelectPoint.removeMesh(circlesSphere.object3D);
+			if (circlesSphere.object3D) circlesSphere.object3D.parent.remove(circlesSphere.object3D);
 			circlesSphere = undefined;
 			
 		}
@@ -4178,62 +4178,57 @@ RandomVertices.params = (params) => {
 			},
 	
 		});
-		
-		Object.defineProperty(params, 'arc', {
-	
-			get: () => {
-				
-				const vertice = params.vertice, oppositeVertice = params.oppositeVertice;
-				//DeepSeek. вычислить угол между двумя точками на поверхности шара
-				//векторы
-				//A=(R,ϕ1,λ1 )
-				const ϕ1 = vertice[0], λ1 = vertice[1];
-				//B=(R,ϕ2,λ2 ) - oppositeVertice
-				const ϕ2 = oppositeVertice[0], λ2 = oppositeVertice[1];
-				//где
-				//ϕ — широта (от −90° до 90°),
-				//λ — долгота (от −180° до 180°),
-				const arccos = Math.acos, sin = Math.sin, cos = Math.cos;
-				const θ = arccos(sin(ϕ1) * sin(ϕ2) + cos(ϕ1) * cos(ϕ2) * cos(λ1 - λ2));
-				return θ / 2;//Поделил на 2 потому что ошибочно сделал равномерное распределение случайных точек по сфере при arc = pi / 2
-					//хотя нужно arc = pi, то есть когда вершины дуги расположены на противоположных точках сферы.
-					//Хотел исправить, но это оказалось достаточно сложно
-			
-			},
-	
-		});
-		Object.defineProperty(params, 'center', {
-	
-			get: () => {
 
-				//center is antipode of the opposite vertice
-				//Центр окружностей случайных точек center находится с противоположной от params.oppositeVertice стороны гиперсферы
-				const antipodeLatitude = (latitude) => { return -latitude; }, center = [antipodeLatitude(params.oppositeVertice.latitude), params.oppositeVertice.longitude - π];
-				
-				Object.defineProperty(center, 'lat', {
+		if (params.arc === undefined)
+			Object.defineProperty(params, 'arc', {
+		
+				get: () => {
 					
-					get: () => { return center[0]; },
-					set: (lat) => {
-			
-						params.oppositeVertice.latitude = antipodeLatitude(lat);
-						return true;
-			
-					},
+					const vertice = params.vertice, oppositeVertice = params.oppositeVertice;
+					//DeepSeek. вычислить угол между двумя точками на поверхности шара
+					//векторы
+					//A=(R,ϕ1,λ1 )
+					const ϕ1 = vertice[0], λ1 = vertice[1];
+					//B=(R,ϕ2,λ2 ) - oppositeVertice
+					const ϕ2 = oppositeVertice[0], λ2 = oppositeVertice[1];
+					//где
+					//ϕ — широта (от −90° до 90°),
+					//λ — долгота (от −180° до 180°),
+					const arccos = Math.acos, sin = Math.sin, cos = Math.cos;
+					const θ = arccos(sin(ϕ1) * sin(ϕ2) + cos(ϕ1) * cos(ϕ2) * cos(λ1 - λ2));
+					return θ / 2;//Поделил на 2 потому что ошибочно сделал равномерное распределение случайных точек по сфере при arc = pi / 2
+						//хотя нужно arc = pi, то есть когда вершины дуги расположены на противоположных точках сферы.
+						//Хотел исправить, но это оказалось достаточно сложно
 				
-				});
-				Object.defineProperty(center, 'lng', { get: () => { return center[1]; }, });
-/*				
-				Object.defineProperty(center, '0', {
-					
-					get: () => { return latitude; },
-				
-				});
-*/				
-				return center;
-			
-			},
+				},
+		
+			});
+		if (params.center === undefined)
+			Object.defineProperty(params, 'center', {
+		
+				get: () => {
 	
-		});
+					//center is antipode of the opposite vertice
+					//Центр окружностей случайных точек center находится с противоположной от params.oppositeVertice стороны гиперсферы
+					const antipodeLatitude = (latitude) => { return -latitude; }, center = [antipodeLatitude(params.oppositeVertice.latitude), params.oppositeVertice.longitude - π];
+					
+					Object.defineProperty(center, 'lat', {
+						
+						get: () => { return center[0]; },
+						set: (lat) => {
+				
+							params.oppositeVertice.latitude = antipodeLatitude(lat);
+							return true;
+				
+						},
+					
+					});
+					Object.defineProperty(center, 'lng', { get: () => { return center[1]; }, });
+					return center;
+				
+				},
+		
+			});
 		
 	}
 	
