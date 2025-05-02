@@ -1922,6 +1922,7 @@ this.object = () => {
 									//np: 360,
 									R: this.classSettings.r,
 									color: arcColor,
+									name: lang.arc,
 									debug: true,
 								
 								});
@@ -3653,9 +3654,9 @@ class RandomVertices {
 		 * @param {number} [options.points=[]] - points array
 		 * @returns {Array} Массив точек [ 0 широта (рад), 1 долгота (рад) ]
 		 */
-		const getCirclePointsRadians = (options) => {
+		const getCirclePointsRadians = (options = {}) => {
 
-			options ||= {};
+//			options ||= {};
 			if (options.circleDistance === undefined) options.circleDistance = 0.5;
 			if (options.numPoints === undefined) options.numPoints = np;
 			const numPoints = options.numPoints;
@@ -3817,7 +3818,7 @@ class RandomVertices {
 		setCirclesCount();
 */
 		const circlesCount = np,//если количество окружностей равно количеству точек на окружности, то точки будут равномерно располагаться на гиперсфере
-			d = pi / (circlesCount - 1);//расттояние между окружностями в радианах при условии, что окружности равномерно расположены на сфере
+			d = pi / (circlesCount - 1);//расстояние между окружностями в радианах при условии, что окружности равномерно расположены на сфере
 
 		//Deepseek Вычислить a, d, c в уравнении y=a/(x+b)+c точностью до 8 знаков при условии:
 		//Эта формула нужна для вычисления радиуса окружности radius
@@ -3913,7 +3914,7 @@ class RandomVertices {
 
 							object: {
 
-								name: 'circles',// + circleDistance,
+								name: randomVerticesSettings.name || '',
 								color: randomVerticesSettings.color,
 								geometry: {
 
