@@ -324,6 +324,20 @@ class MyPoints extends MyObject {
 
 			}
 			setRotations();
+			
+			let parent = null;
+			Object.defineProperty(points, 'parent', {
+	
+				get: () => { return parent; },
+				set: (group) => {
+
+					parent = group;
+					if ( ( group === null ) && options.guiSelectPoint ) options.guiSelectPoint.removeMesh( points );
+				
+				},
+	
+			});
+			
 			group.add(points);
 
 			points.userData.myObject = _this;
