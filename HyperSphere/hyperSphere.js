@@ -3564,19 +3564,20 @@ class RandomVertices {
 
 	/**
 	 * Random vertices
-	 * @param {THREE.Group} scene [group]{@link https://threejs.org/docs/index.html?q=Gro#api/en/objects/Group} of objects to which a new <b>random vertices</b> object will be added
+	 * @param {THREE.Group} scene [group]{@link https://threejs.org/docs/index.html?q=Gro#api/en/objects/Group} of objects to which a new <b>random vertices</b> object will be added.
 	 * @param {Options} options See <a href="../../jsdoc/Options/index.html" target="_blank">Options</a>.
-	 * @param {object} [randomVerticesSettings={}] The following settings are available
-	 * @param {number} [randomVerticesSettings.R=1] Hypersphere radius
-	 * @param {number} [randomVerticesSettings.np=36] numPoints. Number of vertices on a circle
-	 * @param {object} [randomVerticesSettings.params={}] The following parameters are available
-	 * @param {array} [randomVerticesSettings.params.center=[]] центр окружности, пересекающей сферу или вершина гиперсферы, вокруг которой будет облако вероятностей
-	 * @param {float} [randomVerticesSettings.params.center[0]=0] Latitude
-	 * @param {float} [randomVerticesSettings.params.center[1]=0] Longitude
-	 * @param {float} [randomVerticesSettings.params.arc=0.5] длинна дуги, соединяющей две вершины гиперсферы в радианах
-	 * @param {boolean} [randomVerticesSettings.params.random=true] random arrangement of circles vertices
-	 * @param {boolean} [randomVerticesSettings.params.onePoint=false] true - получить одну случайную точку не вычисляя остальные случайные точки
-	 * @param {boolean} [randomVerticesSettings.params.onePointArray=false] true - array of the one points
+	 * @param {object} [randomVerticesSettings={}] The following settings are available.
+	 * @param {number} [randomVerticesSettings.R=1] Hypersphere radius.
+	 * @param {number} [randomVerticesSettings.np=36] numPoints. Number of vertices on a circle.
+	 * @param {number} [randomVerticesSettings.name=''] Name of random vertices.
+	 * @param {object} [randomVerticesSettings.params={}] The following parameters are available.
+	 * @param {array} [randomVerticesSettings.params.center=[]] центр окружности, пересекающей сферу или вершина гиперсферы, вокруг которой будет облако вероятностей.
+	 * @param {float} [randomVerticesSettings.params.center[0]=0] Latitude.
+	 * @param {float} [randomVerticesSettings.params.center[1]=0] Longitude.
+	 * @param {float} [randomVerticesSettings.params.arc=0.5] длинна дуги, соединяющей две вершины гиперсферы в радианах.
+	 * @param {boolean} [randomVerticesSettings.params.random=true] random arrangement of circles vertices.
+	 * @param {boolean} [randomVerticesSettings.params.onePoint=false] true - получить одну случайную точку не вычисляя остальные случайные точки.
+	 * @param {boolean} [randomVerticesSettings.params.onePointArray=false] true - array of the one points.
 	 */
 	constructor(scene, options, randomVerticesSettings = {}){
 

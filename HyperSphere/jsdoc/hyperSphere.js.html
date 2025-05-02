@@ -1950,6 +1950,7 @@ this.object = () => {
 									//np: 360,
 									R: this.classSettings.r,
 									color: arcColor,
+									name: lang.arc,
 									debug: true,
 								
 								});
@@ -1970,7 +1971,7 @@ this.object = () => {
 
 										if (aAngleControls.cross) classSettings.projectParams.scene.remove(aAngleControls.cross);
 										aAngleControls.cross = undefined;
-										if (randomVertices) randomVertices.removeOnePointArray();
+//										if (randomVertices) randomVertices.removeOnePointArray();
 
 									}
 									let boTransparent;
@@ -2026,13 +2027,14 @@ this.object = () => {
 												vertice = position[aAngleControls.verticeId];
 											if (classSettings.randomArc) {
 
-												if (aAngleControls.arc) randomVertices.changeCirclesPoints();
-												else aAngleControls.arc = randomVertices.createOnePointArray({
+												const params = {
 
 													vertice: vertice.angles,
 													oppositeVertice: oppositeVerticeAngles,
 													
-												});
+												}
+												if (aAngleControls.arc) randomVertices.changeCirclesPoints(params);
+												else aAngleControls.arc = randomVertices.createOnePointArray(params);
 												return;
 												
 											}
@@ -3590,19 +3592,20 @@ class RandomVertices {
 
 	/**
 	 * Random vertices
-	 * @param {THREE.Group} scene [group]{@link https://threejs.org/docs/index.html?q=Gro#api/en/objects/Group} of objects to which a new &lt;b>random vertices&lt;/b> object will be added
+	 * @param {THREE.Group} scene [group]{@link https://threejs.org/docs/index.html?q=Gro#api/en/objects/Group} of objects to which a new &lt;b>random vertices&lt;/b> object will be added.
 	 * @param {Options} options See &lt;a href="../../jsdoc/Options/index.html" target="_blank">Options&lt;/a>.
-	 * @param {object} [randomVerticesSettings={}] The following settings are available
-	 * @param {number} [randomVerticesSettings.R=1] Hypersphere radius
-	 * @param {number} [randomVerticesSettings.np=36] numPoints. Number of vertices on a circle
-	 * @param {object} [randomVerticesSettings.params={}] The following parameters are available
-	 * @param {array} [randomVerticesSettings.params.center=[]] центр окружности, пересекающей сферу или вершина гиперсферы, вокруг которой будет облако вероятностей
-	 * @param {float} [randomVerticesSettings.params.center[0]=0] Latitude
-	 * @param {float} [randomVerticesSettings.params.center[1]=0] Longitude
-	 * @param {float} [randomVerticesSettings.params.arc=0.5] длинна дуги, соединяющей две вершины гиперсферы в радианах
-	 * @param {boolean} [randomVerticesSettings.params.random=true] random arrangement of circles vertices
-	 * @param {boolean} [randomVerticesSettings.params.onePoint=false] true - получить одну случайную точку не вычисляя остальные случайные точки
-	 * @param {boolean} [randomVerticesSettings.params.onePointArray=false] true - array of the one points
+	 * @param {object} [randomVerticesSettings={}] The following settings are available.
+	 * @param {number} [randomVerticesSettings.R=1] Hypersphere radius.
+	 * @param {number} [randomVerticesSettings.np=36] numPoints. Number of vertices on a circle.
+	 * @param {number} [randomVerticesSettings.name=''] Name of random vertices.
+	 * @param {object} [randomVerticesSettings.params={}] The following parameters are available.
+	 * @param {array} [randomVerticesSettings.params.center=[]] центр окружности, пересекающей сферу или вершина гиперсферы, вокруг которой будет облако вероятностей.
+	 * @param {float} [randomVerticesSettings.params.center[0]=0] Latitude.
+	 * @param {float} [randomVerticesSettings.params.center[1]=0] Longitude.
+	 * @param {float} [randomVerticesSettings.params.arc=0.5] длинна дуги, соединяющей две вершины гиперсферы в радианах.
+	 * @param {boolean} [randomVerticesSettings.params.random=true] random arrangement of circles vertices.
+	 * @param {boolean} [randomVerticesSettings.params.onePoint=false] true - получить одну случайную точку не вычисляя остальные случайные точки.
+	 * @param {boolean} [randomVerticesSettings.params.onePointArray=false] true - array of the one points.
 	 */
 	constructor(scene, options, randomVerticesSettings = {}){
 
@@ -3610,9 +3613,9 @@ class RandomVertices {
 		const R = randomVerticesSettings.R === undefined ? 1 : randomVerticesSettings.R, np = randomVerticesSettings.np === undefined ? 36 : randomVerticesSettings.np;
 //		const pi = Math.PI;
 		let circlesPointsCount;
-		const getCirclePoint = (center, options) => {
+		const getCirclePoint = (options) => {
 
-			const angle = 2 * pi * (params.random ? Math.random() : options.i / options.numPoints); // Текущий угол в радианах
+			const center = params.center, angle = 2 * pi * (params.random ? Math.random() : options.i / options.numPoints); // Текущий угол в радианах
 //const angle = 2 * pi * (params.random ? 0.5 : options.i / options.numPoints); // Текущий угол в радианах
 
 			const circleDistancePrev = (options.circleDistance1Prev != undefined ? options.circleDistance1Prev : circleDistance1Prev) * R;
@@ -3668,19 +3671,21 @@ class RandomVertices {
 			} else console.error('getCirclePointsRadians: Invalid options.pointId = ' + options.pointId);
 
 		}
+
+		//* @param { Array } center - Центр окружности[0 широта(рад), 1 долгота(рад) ]
+
 		/**
 		 * DeepSeek: Окружность на сфере (расчеты в радианах) — JavaScript
 		 * Генерирует точки окружности на сфере (в радианах)
-		 * @param {Array} center - Центр окружности [ 0 широта (рад), 1 долгота (рад) ]
 		 * @param {object} [options] options.
 		 * @param {number} [options.circleDistance=0.5] - Расстояние до окружности по дуге в радианах для гиперсферы радиусом 1
 		 * @param {number} [options.numPoints=36] - Количество точек
 		 * @param {number} [options.points=[]] - points array
 		 * @returns {Array} Массив точек [ 0 широта (рад), 1 долгота (рад) ]
 		 */
-		const getCirclePointsRadians = (center, options) => {
+		const getCirclePointsRadians = (options = {}) => {
 
-			options ||= {};
+//			options ||= {};
 			if (options.circleDistance === undefined) options.circleDistance = 0.5;
 			if (options.numPoints === undefined) options.numPoints = np;
 			const numPoints = options.numPoints;
@@ -3692,7 +3697,7 @@ class RandomVertices {
 				let point;
 				if (!boCreateCirclesPoints) {
 
-					point = getCirclePoint(center, { i: i, numPoints: numPoints, circleDistance: options.circleDistance, });
+					point = getCirclePoint(/*center, */{ i: i, numPoints: numPoints, circleDistance: options.circleDistance, });
 
 				} else {
 
@@ -3716,10 +3721,14 @@ class RandomVertices {
 		//Параметры, которые может менять пользователь
 		let params;
 
-		const changeCirclesPoints = () => {
+		const changeCirclesPoints = (paramsNew) => {
 
-//if (params.center.lat === pi/2)
-//	console.log(params.center.lat);
+			if (paramsNew) {
+				
+				params = paramsNew;
+				RandomVertices.params(params);
+
+			}
 			if (!params.onePoint) {
 
 				setCircles();
@@ -3809,7 +3818,7 @@ class RandomVertices {
 					if (circleParams.circlesPointsCount >= randomPointId) {
 
 //						params.rnd = true;
-						const point = getCirclePoint(params.center, { circleDistance: circleParams.circleDistance, circleDistance1Prev: circleParams.circleDistance1Prev });
+						const point = getCirclePoint(/*params.center, */{ circleDistance: circleParams.circleDistance, circleDistance1Prev: circleParams.circleDistance1Prev });
 						editPoints(circlesPoints, point, editPointsOptions);
 						if (!params.onePointArray) circlesPointsCount = editPointsOptions.pointId;
 						break;
@@ -3838,7 +3847,7 @@ class RandomVertices {
 		setCirclesCount();
 */
 		const circlesCount = np,//если количество окружностей равно количеству точек на окружности, то точки будут равномерно располагаться на гиперсфере
-			d = pi / (circlesCount - 1);//расттояние между окружностями в радианах при условии, что окружности равномерно расположены на сфере
+			d = pi / (circlesCount - 1);//расстояние между окружностями в радианах при условии, что окружности равномерно расположены на сфере
 
 		//Deepseek Вычислить a, d, c в уравнении y=a/(x+b)+c точностью до 8 знаков при условии:
 		//Эта формула нужна для вычисления радиуса окружности radius
@@ -3934,7 +3943,7 @@ class RandomVertices {
 
 							object: {
 
-								name: 'circles',// + circleDistance,
+								name: randomVerticesSettings.name || '',
 								color: randomVerticesSettings.color,
 								geometry: {
 
@@ -4016,7 +4025,7 @@ class RandomVertices {
 				if (!isNaN(circlesPointsOptions.numPoints)) {//не рисовать окружность с бесконечным числом точек
 
 					//console.log('circleId = ' + circleId + ', circleDistance1 = ' + circleDistance1 + ', numPoints = ' + circlesPointsOptions.numPoints)
-					getCirclePointsRadians(params.center, circlesPointsOptions);
+					getCirclePointsRadians(/*params.center, */circlesPointsOptions);
 
 				}
 
@@ -4125,10 +4134,11 @@ class RandomVertices {
 		this.createOnePointArray = (paramsNew) => {
 			
 			params ||= paramsNew;
+/*
 			if (params.random === undefined) params.random = true;
 			if (params.onePoint === undefined) params.onePoint = true;
 			if (params.onePointArray === undefined) params.onePointArray = true;
-//			if ((params.center.lat === undefined) || (params.center.lng === undefined)) RandomVertices.params(params);
+*/
 			RandomVertices.params(params);
 			params.randomVertices = this;
 			removeCirclesSphere();
@@ -4150,8 +4160,9 @@ class RandomVertices {
 		}
 		/**
 		 * Сall this method for the &lt;b>randomVerticesSettings.params.arc&lt;/b> change to take effect.
+		 * @param {Object} paramsNew See &lt;b>paramsNew&lt;/b> of the &lt;b>createOnePointArray&lt;/b> method for details.
 		 */
-		this.changeCirclesPoints = () => { changeCirclesPoints(); }
+		this.changeCirclesPoints = (params) => { changeCirclesPoints(params); }
 		
 	}
 	//overridden methods
@@ -4162,6 +4173,10 @@ class RandomVertices {
 	
 }
 RandomVertices.params = (params) => {
+
+	if (params.random === undefined) params.random = true;
+	if (params.onePoint === undefined) params.onePoint = true;
+	if (params.onePointArray === undefined) params.onePointArray = true;
 
 	//если вершина находится на полюсах, то случайное распределение вершин получается не случайным непонятно по какой причине
 	//Для этого немного отклоняю вершину от полюса
@@ -4179,11 +4194,23 @@ RandomVertices.params = (params) => {
 	
 	if (params.vertice) {
 
+		let latitude = params.oppositeVertice.latitude;
+		Object.defineProperty(params.oppositeVertice, '0', {
+
+			get: () => { return latitude; },
+			set: (latitudeNew) => {
+	
+				latitude = inaccurateLatitude(latitudeNew);
+				return true;
+	
+			},
+	
+		});
+		
 		Object.defineProperty(params, 'arc', {
 	
 			get: () => {
 				
-//				return 0.5;
 				const vertice = params.vertice, oppositeVertice = params.oppositeVertice;
 				//DeepSeek. вычислить угол между двумя точками на поверхности шара
 				//векторы
@@ -4207,47 +4234,29 @@ RandomVertices.params = (params) => {
 	
 			get: () => {
 
-/*				
-				//DeepSeek. Вычислить противоположную точку сферы в радианах
-				const θ = params.oppositeVertice.latitude - π / 2,//полярный угол (от 0 до π)
-					ϕ = params.oppositeVertice.longitude - π,//азимутальный угол (от 0 до 2π)
-					mod = Math.mod
-				return [π−θ,ϕ+π (mod 2π)];
-*/				
 				//center is antipode of the opposite vertice
-				//Центр окружностей случайных точек center находится с противоположной от params.oppositeVertice стороны сферы
-				const center = [-params.oppositeVertice.latitude, params.oppositeVertice.longitude - π];
+				//Центр окружностей случайных точек center находится с противоположной от params.oppositeVertice стороны гиперсферы
+				const antipodeLatitude = (latitude) => { return -latitude; }, center = [antipodeLatitude(params.oppositeVertice.latitude), params.oppositeVertice.longitude - π];
 				
 				Object.defineProperty(center, 'lat', {
 					
 					get: () => { return center[0]; },
 					set: (lat) => {
 			
-						params.oppositeVertice.latitude = -lat;
-//						center[0] = lat;
+						params.oppositeVertice.latitude = antipodeLatitude(lat);
 						return true;
 			
 					},
 				
 				});
 				Object.defineProperty(center, 'lng', { get: () => { return center[1]; }, });
-				let lat = -params.oppositeVertice.latitude;
+/*				
 				Object.defineProperty(center, '0', {
 					
-					get: () => {
-						
-//						return inaccurateLatitude(-params.oppositeVertice.latitude);
-						return inaccurateLatitude(lat);
-					
-					},
-					set: (latNew) => {
-			
-						lat = latNew;
-						return true;
-			
-					},
+					get: () => { return latitude; },
 				
 				});
+*/				
 				return center;
 			
 			},
@@ -4255,34 +4264,11 @@ RandomVertices.params = (params) => {
 		});
 		
 	}
-/*	
-	if (params.arc != undefined) {
-
-		params.a = params.arc;
-//		params.arc = undefined;
-		
-	}
-	Object.defineProperty(params, 'arc', {
-
-		get: () => {
-			
-			return params.a;
-		
-		},
-		set: (arc) => {
-
-			params.a = arc;
-			return true;
-
-		},
-
-	});
-*/	
 	
 	params.center ||= [];
 	const center = params.center;
-	if (params.center.length &lt; 1) params.center.push(0);
-	if (params.center.length &lt; 2) params.center.push(0);
+	if (center.length &lt; 1) center.push(0);
+	if (center.length &lt; 2) center.push(0);
 	if (center.lat === undefined)
 		Object.defineProperty(center, 'lat', {
 	
@@ -4310,15 +4296,7 @@ RandomVertices.params = (params) => {
 
 		});
 	if (params.arc === undefined) params.arc = 0.5;
-	params.center.lat = inaccurateLatitude(params.center.lat);
-/*
-	const precision = 1e-14;
-	if (params.center.lat > 0) {
-		
-		if ((pi / 2 - params.center.lat) &lt;= precision) params.center.lat -= precision;
-
-	} else if ((pi / 2 + params.center.lat) &lt;= precision) params.center.lat += precision;
-*/	
+	center.lat = inaccurateLatitude(center.lat);
 	
 }
 HyperSphere.RandomVertices = RandomVertices;
@@ -4342,7 +4320,7 @@ const _display = (element, boDisplay) => { element.style.display = boDisplay ===
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Wed Apr 30 2025 16:47:20 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri May 02 2025 08:53:37 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
