@@ -3581,14 +3581,11 @@ class RandomVertices {
 	 */
 	constructor(scene, options, randomVerticesSettings = {}){
 
-//		this.randomVerticesSettings = randomVerticesSettings;
 		const R = randomVerticesSettings.R === undefined ? 1 : randomVerticesSettings.R, np = randomVerticesSettings.np === undefined ? 36 : randomVerticesSettings.np;
-//		const pi = Math.PI;
 		let circlesPointsCount;
 		const getCirclePoint = (options) => {
 
 			const center = params.center, angle = 2 * pi * (params.random ? Math.random() : options.i / options.numPoints); // Текущий угол в радианах
-//const angle = 2 * pi * (params.random ? 0.5 : options.i / options.numPoints); // Текущий угол в радианах
 
 			const circleDistancePrev = (options.circleDistance1Prev != undefined ? options.circleDistance1Prev : circleDistance1Prev) * R;
 			const circleDistance = (params.random ? (options.circleDistance - circleDistancePrev) * Math.random() + circleDistancePrev : options.circleDistance) / R; // Расстояние до окружности по дуге в радианах
@@ -3627,7 +3624,6 @@ class RandomVertices {
 
 			options ||= {};
 			point ||= [0, 0];
-//			if (((options.pointId === undefined) || boCreateCirclesPoints) && (options.pointsCount != undefined) && (points.length < options.pointsCount))
 			if ((options.pointId === undefined) || boCreateCirclesPoints)
 			{
 
@@ -3644,8 +3640,6 @@ class RandomVertices {
 
 		}
 
-		//* @param { Array } center - Центр окружности[0 широта(рад), 1 долгота(рад) ]
-
 		/**
 		 * DeepSeek: Окружность на сфере (расчеты в радианах) — JavaScript
 		 * Генерирует точки окружности на сфере (в радианах)
@@ -3657,7 +3651,6 @@ class RandomVertices {
 		 */
 		const getCirclePointsRadians = (options = {}) => {
 
-//			options ||= {};
 			if (options.circleDistance === undefined) options.circleDistance = 0.5;
 			if (options.numPoints === undefined) options.numPoints = np;
 			const numPoints = options.numPoints;
@@ -3764,20 +3757,11 @@ class RandomVertices {
 						circlesPointsCount += numPoints;
 						const numPoint = { circlesPointsCount: circlesPointsCount, circleDistance: circleDistance, circleDistance1Prev: circleDistance1Prev }
 						aNumPoints.push(numPoint);
-	/*					
-						if (!isNaN(numPoints)) {//не рисовать окружность с бесконечным числом точек
-	
-							circlesPointsCount += numPoints;
-							aNumPoints.push(numPoint);
-	
-						}
-	*/					
 	
 					}
 
 				}
 				const randomPointId = Math.round(Math.random() * circlesPointsCount);//Идентификатор случайной точки
-//const randomPointId = Math.round(0.5 * circlesPointsCount);//Идентификатор случайной точки
 				//Найти окружность, в которую попадает случайная точка randomPointId
 				for (let circleId = 0; circleId < circlesCount; circleId++) {
 
@@ -3789,8 +3773,7 @@ class RandomVertices {
 						{ circlesPointsCount: 1, circleDistance: 0 };
 					if (circleParams.circlesPointsCount >= randomPointId) {
 
-//						params.rnd = true;
-						const point = getCirclePoint(/*params.center, */{ circleDistance: circleParams.circleDistance, circleDistance1Prev: circleParams.circleDistance1Prev });
+						const point = getCirclePoint({ circleDistance: circleParams.circleDistance, circleDistance1Prev: circleParams.circleDistance1Prev });
 						editPoints(circlesPoints, point, editPointsOptions);
 						if (!params.onePointArray) circlesPointsCount = editPointsOptions.pointId;
 						break;
@@ -3801,23 +3784,9 @@ class RandomVertices {
 
 			}
 			for (let i = 0; i < circlesPoints.length; i++) getOnePoint();
-//			createCirclesSphere();
 
 		}
 
-/*
-		let circlesCount,
-			d;//расттояние между окружностями в радианах при условии, что окружности равномерно расположены на сфере
-		const setCirclesCount = () => {
-
-			//circlesCount = (params.random ? np : 1) *
-			circlesCount = 1 *
-				np;//100;//если количество окружностей равно количеству точек на окружности, то точки будут равномерно располагаться на гиперсфере
-			d = pi / (circlesCount - 1);
-
-		}
-		setCirclesCount();
-*/
 		const circlesCount = np,//если количество окружностей равно количеству точек на окружности, то точки будут равномерно располагаться на гиперсфере
 			d = pi / (circlesCount - 1);//расстояние между окружностями в радианах при условии, что окружности равномерно расположены на сфере
 
@@ -3945,7 +3914,6 @@ class RandomVertices {
 			
 		}
 		let circlesSphere, circlesPointsOptions = {}, boCreateCirclesPoints;
-//		this.setCirclesSphere = (circlesSphereNew) => { circlesSphere = circlesSphereNew; }
 		Object.defineProperties(this, {
 			circlesSphere: {
 				get: () => { return circlesSphere; },
@@ -3960,7 +3928,6 @@ class RandomVertices {
 		let circleDistance1Prev;//Положение предыдущего кольца
 		const debug = randomVerticesSettings.debug || false, edges = debug ? [] : undefined;
 		let circlesPoints = [];//точки всех окружностей
-//		this.circlesPoints = circlesPoints;
 		const setCircles = () => {
 
 			setAbc();
@@ -4010,7 +3977,6 @@ class RandomVertices {
 
 			//заполнить circlesPoints максимально возможный массив точек всех окружностей 
 			boCreateCirclesPoints = true;
-//			params.arc = pi / 2;
 			params.arc = pi;
 			changeCirclesPoints();
 
@@ -4020,7 +3986,6 @@ class RandomVertices {
 			changeCirclesPoints();
 
 		}
-//		this.setCirclesPoints = setCirclesPoints;
 		const setCirclesOnePoints = () => {
 
 			boCreateCirclesPoints = true;
@@ -4029,23 +3994,6 @@ class RandomVertices {
 			changeCirclesPoints();
 
 		}
-/*		
-		Object.defineProperties(this, {
-			randomVertice: {
-
-				get: () => {
-
-					const arc = randomVerticesSettings.params.arc;
-					if (arc != pi / 2) setCirclesPoints(arc);
-					else setCirclesOnePoints();
-					return circlesPoints;
-
-				},
-
-			}
-
-		});
-*/
 		this.determinedVertices = (paramsNew) => { 
 
 			params ||= paramsNew;
@@ -4064,10 +4012,8 @@ class RandomVertices {
 		this.randomVertice = (paramsNew) => { this.determinedVertices(paramsNew); }
 		const removeCirclesSphere = () => {
 			
-//			circlesPoints.length = 0;
 			circlesPoints = [];
 			if (!circlesSphere) return;
-//			options.guiSelectPoint.removeMesh(circlesSphere.object3D);
 			if (circlesSphere.object3D) circlesSphere.object3D.parent.remove(circlesSphere.object3D);
 			circlesSphere = undefined;
 			
@@ -4106,11 +4052,6 @@ class RandomVertices {
 		this.createOnePointArray = (paramsNew) => {
 			
 			params ||= paramsNew;
-/*
-			if (params.random === undefined) params.random = true;
-			if (params.onePoint === undefined) params.onePoint = true;
-			if (params.onePointArray === undefined) params.onePointArray = true;
-*/
 			RandomVertices.params(params);
 			params.randomVertices = this;
 			removeCirclesSphere();
