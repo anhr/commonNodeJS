@@ -3717,6 +3717,9 @@ class RandomVertices {
 			const aNumPoints = [];//массив с количеством точек numPoints для каждой окружности. Нужен для того, что бы случайно выбрать окружность при вычислении одиночной случайной точки
 			//заполнить aNumPoints
 			circlesPointsCount = 0;
+let circlesPointsCountOld = 0;
+const table = [];
+
 			circleDistance1Prev = 0;
 			for (let circleId = 0; circleId < circlesCount; circleId++) {
 
@@ -3746,7 +3749,6 @@ class RandomVertices {
 					const r = Math.sin(cd),//радиус основания конуса
 						c = π / 2 - cd,//Половина угла у вершины конуса
 						h = r / Math.tan(c);//Высота конуса
-
 					//DeepSeek. Площадь боковой поверхности конуса высотой h и радиусом r
 					return π * r * Math.sqrt(r * r + h * h);
 					
@@ -3755,25 +3757,35 @@ class RandomVertices {
 				//Для вычисления количества случайных точек numPoints около окружности, расположенной на расстоянии circleDistance1 радиан я вычисляю две боковые площади конусов
 
 				const Sc1 = coneArea(circleDistance1),//Площадь конуса для текущей окружности
-					Sc2 = coneArea(circleDistance1Prev),//Площадь конуса для предыдущей окружности
+					ca = π / 2 - circleDistance1,//Половина угла у вершины текущего и предыдущего конуса
+//					rc1 = Math.sin(circleDistance1),//радиус основания текущего конуса
+//					hс1 = rc1 / Math.tan(ca);//Высота текущего конуса
+					rc2 = Math.sin(circleDistance1Prev),//радиус основания предыдущего конуса
+					hс2 = rc2 / Math.tan(ca),//Высота предыдущего конуса
+//					Sc2 = coneArea(circleDistance1Prev),//Площадь конуса для предыдущей окружности
+					Sc2 = π * rc2 * Math.sqrt(rc2 * rc2 + hс2 * hс2),//Площадь конуса для предыдущей окружности
 					dsc = Math.abs(Sc1 - Sc2),//площадь полоски около окружности
 					numPoints = Math.round(dsc / s);//количество случайных точек около окружности, расположенной на расстоянии circleDistance1 радиан.
 													//s - Площадь сферы на которой в среднем будет находиться одна случайная точка.
 				if (isNaN(numPoints)) console.error('Under constraction')
-/*				
-				const dCircleDistance = circleDistance1 - circleDistance1Prev;
-				let numPoints = parseInt(
-					2 * pi * Math.sin(circleDistance1)//длинна окружности для гиперсферы радиусом 1
-					/ dCircleDistance
-				);
-				if (isNaN(numPoints)) numPoints = 1;//у окружности с бесконечным числом точек делаем одну точку
-*/				
+				
+const dCircleDistance = circleDistance1 - circleDistance1Prev;
+let numPointsOld = parseInt(
+	2 * pi * Math.sin(circleDistance1)//длинна окружности для гиперсферы радиусом 1
+	/ dCircleDistance
+);
+if (isNaN(numPointsOld)) numPointsOld = 1;//у окружности с бесконечным числом точек делаем одну точку
+circlesPointsCountOld += numPointsOld;
+//console.log('circleDistance1=' + circleDistance1 + ', Sc1=' + Sc1 + ', circleDistance1Prev' + circleDistance1Prev + ', Sc2=' + Sc2 + ', numPoints=' + numPoints + ', numPointsOld=' + numPointsOld)
+table.push({circleDistance1: circleDistance1, circleDistance1Prev: circleDistance1Prev, Sc1: Sc1, Sc2: Sc2, numPoints: numPoints, numPointsOld: numPointsOld});
+				
 				circlesPointsCount += numPoints;
 				const numPoint = { circlesPointsCount: circlesPointsCount, circleDistance: circleDistance, circleDistance1Prev: circleDistance1Prev }
 				aNumPoints.push(numPoint);
 				circleDistance1Prev = circleDistance1;
 
 			}
+console.table(table);
 			
 			//вычислить одну случайную точку без необходимости вычисления всех остальных случайных точек
 			//Нужно для сокращения времени вычислений, когда надо всего одну случайную точку
