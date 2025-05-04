@@ -3717,6 +3717,7 @@ class RandomVertices {
 			const aNumPoints = [];//массив с количеством точек numPoints для каждой окружности. Нужен для того, что бы случайно выбрать окружность при вычислении одиночной случайной точки
 			//заполнить aNumPoints
 			circlesPointsCount = 0;
+			circleDistance1Prev = 0;
 			for (let circleId = 0; circleId < circlesCount; circleId++) {
 
 				const x = circleId * d,
@@ -3736,12 +3737,37 @@ class RandomVertices {
 
 				}
 */
+				/*
+				*Площадь боковой поверхности конуса
+				* @param {number} cd уголовое расстояние для окружности основания конуса для гиперсферы радиусом 1
+				*/
+				const coneArea = (cd) => {
+					
+					const r = Math.sin(cd),//радиус основания конуса
+						c = π / 2 - cd,//Половина угла у вершины конуса
+						h = r / Math.tan(c);//Высота конуса
+
+					//DeepSeek. Площадь боковой поверхности конуса высотой h и радиусом r
+					return π * r * Math.sqrt(r * r + h * h);
+					
+				}
+				
+				//Для вычисления количества случайных точек numPoints около окружности, расположенной на расстоянии circleDistance1 радиан я вычисляю две боковые площади конусов
+
+				const Sc1 = coneArea(circleDistance1),//Площадь конуса для текущей окружности
+					Sc2 = coneArea(circleDistance1Prev),//Площадь конуса для предыдущей окружности
+					dsc = Math.abs(Sc1 - Sc2),//площадь полоски около окружности
+					numPoints = Math.round(dsc / s);//количество случайных точек около окружности, расположенной на расстоянии circleDistance1 радиан.
+													//s - Площадь сферы на которой в среднем будет находиться одна случайная точка.
+				if (isNaN(numPoints)) console.error('Under constraction')
+/*				
 				const dCircleDistance = circleDistance1 - circleDistance1Prev;
 				let numPoints = parseInt(
 					2 * pi * Math.sin(circleDistance1)//длинна окружности для гиперсферы радиусом 1
 					/ dCircleDistance
 				);
 				if (isNaN(numPoints)) numPoints = 1;//у окружности с бесконечным числом точек делаем одну точку
+*/				
 				circlesPointsCount += numPoints;
 				const numPoint = { circlesPointsCount: circlesPointsCount, circleDistance: circleDistance, circleDistance1Prev: circleDistance1Prev }
 				aNumPoints.push(numPoint);
