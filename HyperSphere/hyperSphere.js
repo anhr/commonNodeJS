@@ -3587,7 +3587,8 @@ class RandomVertices {
 
 			const center = params.center, angle = 2 * pi * (params.random ? Math.random() : options.i / options.numPoints); // Текущий угол в радианах
 
-			const circleDistancePrev = (options.circleDistance1Prev != undefined ? options.circleDistance1Prev : circleDistance1Prev) * R;
+//			const circleDistancePrev = (options.circleDistance1Prev != undefined ? options.circleDistance1Prev : circleDistance1Prev) * R;
+			const circleDistancePrev = options.circleDistancePrev != undefined ? options.circleDistancePrev : circleDistancePrev;
 			const circleDistance = (params.random ? (options.circleDistance - circleDistancePrev) * Math.random() + circleDistancePrev : options.circleDistance) / R; // Расстояние до окружности по дуге в радианах
 
 			let newLat, newLng;
@@ -3720,18 +3721,21 @@ class RandomVertices {
 //let circlesPointsCountOld = 0;
 //const table = [];
 
-			circleDistance1Prev = 0;
+			circleDistancePrev = 0;
 			for (let circleId = 1; circleId < circlesCount; circleId++) {
 
 				//d = pi / (circlesCount - 1) - расстояние между окружностями в радианах при условии, что окружности равномерно расположены на сфере
 				const x = circleId * d,
-
+/*
 					//уголовое расстояние для окружности для гиперсферы радиусом 1
 					circleDistance1 = b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
 						a / (x + b) + c,
 						
 //					circleDistance1 = circleId * d, //уголовое расстояние для текущей окружности для гиперсферы радиусом 1
 					circleDistance = circleDistance1 * R;
+*/					
+					circleDistance = (b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
+						a / (x + b) + c) * R;
 //console.log('circleId=' + circleId + ', x=' + x + ', circleDistance1=' + circleDistance1)
 				//Для вычисления количества случайных точек numPoints около окружности, расположенной на расстоянии circleDistance1 радиан
 				//я вычисляю площадь шарового пояса между параллелями S и делю ее на s площадь сферы на которой в среднем будет находиться одна случайная точка.
@@ -3755,9 +3759,9 @@ table.push({circleDistance1: circleDistance1, circleDistance1Prev: circleDistanc
 */
 				
 				circlesPointsCount += numPoints;
-				const numPoint = { circlesPointsCount: circlesPointsCount, circleDistance: circleDistance, circleDistance1Prev: circleDistance1Prev }
+				const numPoint = { circlesPointsCount: circlesPointsCount, circleDistance: circleDistance, circleDistancePrev: circleDistancePrev }
 				aNumPoints.push(numPoint);
-				circleDistance1Prev = circleDistance1;
+				circleDistancePrev = circleDistance;
 
 			}
 //console.table(table);
@@ -3767,7 +3771,7 @@ table.push({circleDistance1: circleDistance1, circleDistance1Prev: circleDistanc
 			const getOnePoint = () => {
 
 //				setAbc();
-				circleDistance1Prev = 0;//Положение предыдущего кольца
+				circleDistancePrev = 0;//Положение предыдущего кольца
 
 				if (circlesSphere) circlesPoints = circlesSphere.angles;
 
@@ -3783,7 +3787,7 @@ table.push({circleDistance1: circleDistance1, circleDistance1Prev: circleDistanc
 						{ circlesPointsCount: 1, circleDistance: 0 };
 					if (circleParams.circlesPointsCount >= randomPointId) {
 
-						const point = getCirclePoint({ circleDistance: circleParams.circleDistance, circleDistance1Prev: circleParams.circleDistance1Prev });
+						const point = getCirclePoint({ circleDistance: circleParams.circleDistance, circleDistancePrev: circleParams.circleDistancePrev });
 						editPoints(circlesPoints, point, editPointsOptions);
 						if (!params.onePointArray) circlesPointsCount = editPointsOptions.pointId;
 						break;
@@ -3943,7 +3947,7 @@ table.push({circleDistance1: circleDistance1, circleDistance1Prev: circleDistanc
 				}
 			}
 		});
-		let circleDistance1Prev;//Положение предыдущего кольца
+		let circleDistancePrev;//Положение предыдущего кольца
 		const debug = randomVerticesSettings.debug || false, edges = debug ? [] : undefined;
 		let circlesPoints = [];//точки всех окружностей
 		const setCircles = () => {
