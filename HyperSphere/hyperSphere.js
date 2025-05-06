@@ -3723,13 +3723,16 @@ class RandomVertices {
 			circleDistance1Prev = 0;
 			for (let circleId = 1; circleId < circlesCount; circleId++) {
 
+				//d = pi / (circlesCount - 1) - расстояние между окружностями в радианах при условии, что окружности равномерно расположены на сфере
 				const x = circleId * d,
 
 					//уголовое расстояние для окружности для гиперсферы радиусом 1
 					circleDistance1 = b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
 						a / (x + b) + c,
-//				const circleDistance1 = circleId * d, //уголовое расстояние для текущей окружности для гиперсферы радиусом 1
+						
+//					circleDistance1 = circleId * d, //уголовое расстояние для текущей окружности для гиперсферы радиусом 1
 					circleDistance = circleDistance1 * R;
+//console.log('circleId=' + circleId + ', x=' + x + ', circleDistance1=' + circleDistance1)
 				//Для вычисления количества случайных точек numPoints около окружности, расположенной на расстоянии circleDistance1 радиан
 				//я вычисляю площадь шарового пояса между параллелями S и делю ее на s площадь сферы на которой в среднем будет находиться одна случайная точка.
 				const cos = Math.cos,
