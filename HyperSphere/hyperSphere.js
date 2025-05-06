@@ -3721,29 +3721,20 @@ let circlesPointsCountOld = 0;
 const table = [];
 
 			circleDistance1Prev = 0;
-			for (let circleId = 0; circleId < circlesCount; circleId++) {
+			for (let circleId = 1; circleId < circlesCount; circleId++) {
 
 				const x = circleId * d,
 
 					//уголовое расстояние для окружности для гиперсферы радиусом 1
 					circleDistance1 = b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
 						a / (x + b) + c,
-
+//				const circleDistance1 = circleId * d, //уголовое расстояние для текущей окружности для гиперсферы радиусом 1
 					circleDistance = circleDistance1 * R;
-/*
-				//prev point
-				if (circleId > 0) {
-
-					const xPrev = (circleId - 1) * d;
-					circleDistance1Prev = b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
-						a / (xPrev + b) + c;
-
-				}
-*/
 				/*
 				*Площадь боковой поверхности конуса
 				* @param {number} cd уголовое расстояние для окружности основания конуса для гиперсферы радиусом 1
 				*/
+/*				
 				const coneArea = (cd) => {
 					
 					const r = Math.sin(cd),//радиус основания конуса
@@ -3753,7 +3744,16 @@ const table = [];
 					return π * r * Math.sqrt(r * r + h * h);
 					
 				}
-				
+*/				
+				//Для вычисления количества случайных точек numPoints около окружности, расположенной на расстоянии circleDistance1 радиан
+				//я вычисляю площадь шарового пояса между параллелями S и делю ее на s площадь сферы на которой в среднем будет находиться одна случайная точка.
+				const cos = Math.cos,
+					h1 = cos(x),//расстояние от текущей окружности до центра шара
+					hprev = cos(circleId * d - 1),//расстояние от предыдущей окружности до центра шара
+					h = h1 - hprev,//высота шарового пояса
+					S = Math.abs(2 * π * h),//DeepSeek. площадь шарового пояса между параллелями
+					numPoints = Math.round(S / s);//количество случайных точек около окружности, расположенной на расстоянии circleDistance1 радиан
+/*				
 				//Для вычисления количества случайных точек numPoints около окружности, расположенной на расстоянии circleDistance1 радиан я вычисляю две боковые площади конусов
 
 				const Sc1 = coneArea(circleDistance1),//Площадь конуса для текущей окружности
@@ -3768,6 +3768,7 @@ const table = [];
 					numPoints = Math.round(dsc / s);//количество случайных точек около окружности, расположенной на расстоянии circleDistance1 радиан.
 													//s - Площадь сферы на которой в среднем будет находиться одна случайная точка.
 				if (isNaN(numPoints)) console.error('Under constraction')
+*/				
 				
 const dCircleDistance = circleDistance1 - circleDistance1Prev;
 let numPointsOld = parseInt(
@@ -3777,7 +3778,8 @@ let numPointsOld = parseInt(
 if (isNaN(numPointsOld)) numPointsOld = 1;//у окружности с бесконечным числом точек делаем одну точку
 circlesPointsCountOld += numPointsOld;
 //console.log('circleDistance1=' + circleDistance1 + ', Sc1=' + Sc1 + ', circleDistance1Prev' + circleDistance1Prev + ', Sc2=' + Sc2 + ', numPoints=' + numPoints + ', numPointsOld=' + numPointsOld)
-table.push({circleDistance1: circleDistance1, circleDistance1Prev: circleDistance1Prev, Sc1: Sc1, Sc2: Sc2, numPoints: numPoints, numPointsOld: numPointsOld});
+//table.push({circleDistance1: circleDistance1, circleDistance1Prev: circleDistance1Prev, Sc1: Sc1, Sc2: Sc2, numPoints: numPoints, numPointsOld: numPointsOld});
+table.push({circleDistance1: circleDistance1, circleDistance1Prev: circleDistance1Prev, S: S, numPoints: numPoints, numPointsOld: numPointsOld});
 				
 				circlesPointsCount += numPoints;
 				const numPoint = { circlesPointsCount: circlesPointsCount, circleDistance: circleDistance, circleDistance1Prev: circleDistance1Prev }
