@@ -3591,7 +3591,8 @@ class RandomVertices {
 			const center = params.center, angle = 2 * pi * (params.random ? Math.random() : options.i / options.numPoints); // Текущий угол в радианах
 
 //			const circleDistancePrev = (options.circleDistance1Prev != undefined ? options.circleDistance1Prev : circleDistance1Prev) * R;
-			const circleDistancePrev = options.circleDistancePrev != undefined ? options.circleDistancePrev : circleDistancePrev;
+//			const circleDistancePrev = options.circleDistancePrev != undefined ? options.circleDistancePrev : circleDistancePrev;
+			circleDistancePrev = options.circleDistancePrev != undefined ? options.circleDistancePrev : circleDistancePrev;
 			const circleDistance = (params.random ? (options.circleDistance - circleDistancePrev) * Math.random() + circleDistancePrev : options.circleDistance) / R; // Расстояние до окружности по дуге в радианах
 
 			let newLat, newLng;
@@ -3956,33 +3957,41 @@ table.push({circleDistance1: circleDistance1, circleDistance1Prev: circleDistanc
 		const setCircles = () => {
 
 			setAbc();
-			circleDistance1Prev = 0;//Положение предыдущего кольца
+			circleDistancePrev = 0;//Положение предыдущего кольца
 			circlesPointsCount = 0;
-			for (let circleId = 0; circleId < circlesCount; circleId++) {
+			for (let circleId = 1; circleId < circlesCount; circleId++) {
 
 				const x = circleId * d,
-
+/*
 					//уголовое расстояние для окружности для гиперсферы радиусом 1
 					circleDistance1 = b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
 						a / (x + b) + c,
 
 					circleDistance = circleDistance1 * R;
+*/					
+					circleDistance = (b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
+						a / (x + b) + c) * R;
 
 				//prev point
-				if (circleId > 0) {
+//				if (circleId > 0) {
 
-					const xPrev = (circleId - 1) * d;
-					circleDistance1Prev = b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
-						a / (xPrev + b) + c;
+				const xPrev = (circleId - 1) * d;
+/*				
+				circleDistance1Prev = b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
+					a / (xPrev + b) + c;
+*/					
+				circleDistancePrev = (b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
+					a / (xPrev + b) + c) * R;
 
-				}
+//				}
 				if (circlesSphere) circlesPointsOptions.points = circlesSphere.angles;
 				else circlesPointsOptions.points = circlesPoints;
 				circlesPointsOptions.circleDistance = circleDistance;
-				const dCircleDistance = circleDistance1 - circleDistance1Prev;
+//				const dCircleDistance = circleDistance1 - circleDistance1Prev;
+				const dCircleDistance = (circleDistance - circleDistancePrev) / R;
 				circlesPointsOptions.numPoints =
 					parseInt(
-						2 * pi * Math.sin(circleDistance1)//длинна окружности для гиперсферы радиусом 1
+						2 * pi * Math.sin(circleDistance / R)//длинна окружности для гиперсферы радиусом 1
 						/ dCircleDistance
 					);//np;
 				//console.log('circleId = ' + circleId + ', dCircleDistance = ' + dCircleDistance);
@@ -4069,10 +4078,7 @@ table.push({circleDistance1: circleDistance1, circleDistance1Prev: circleDistanc
 		/**
 		 * Creates an array of the random points from one random point.
 		 * @param {Object} paramsNew See <b>randomVerticesSettings.params</b> of the constructor for details.
-		 * @param {float} [paramsNew.R] Hypersphere radius.
-		 * <pre>
 		 * You can set <b>vertice</b> and <b>oppositeVertice</b> parameters instead <b>arc</b> and <b>center</b>. See below:
-		 * <pre>
 		 * @param {Array} [paramsNew.vertice] First vertice of the <b>arc</b>.
 		 * @param {Array} [paramsNew.oppositeVertice] Second vertice of the <b>arc</b>.
 		 * @returns <a href="../jsdoc/module-HyperSphere-HyperSphere.html" target="_blank">HyperSphere</a>, what contains created points array.
