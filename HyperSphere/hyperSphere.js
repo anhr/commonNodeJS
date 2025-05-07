@@ -2003,6 +2003,7 @@ this.object = () => {
 
 													vertice: vertice.angles,
 													oppositeVertice: oppositeVerticeAngles,
+													R: classSettings.overriddenProperties.r(options.player.getTimeId()),
 													
 												}
 												if (aAngleControls.arc) randomVertices.changeCirclesPoints(params);
@@ -3581,7 +3582,9 @@ class RandomVertices {
 	 */
 	constructor(scene, options, randomVerticesSettings = {}){
 
-		const R = randomVerticesSettings.R === undefined ? 1 : randomVerticesSettings.R, np = randomVerticesSettings.np === undefined ? 36 : randomVerticesSettings.np;
+		//Во вселенной радиус гиперсферы может меняться
+		let R = randomVerticesSettings.R === undefined ? 1 : randomVerticesSettings.R, np = randomVerticesSettings.np === undefined ? 36 : randomVerticesSettings.np;
+
 		let circlesPointsCount;
 		const getCirclePoint = (options) => {
 
@@ -4074,6 +4077,7 @@ table.push({circleDistance1: circleDistance1, circleDistance1Prev: circleDistanc
 		this.createOnePointArray = (paramsNew) => {
 			
 			params ||= paramsNew;
+			if (params.R != undefined) R = params.R;
 			RandomVertices.params(params);
 			params.randomVertices = this;
 			removeCirclesSphere();
