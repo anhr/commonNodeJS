@@ -2031,6 +2031,7 @@ this.object = () => {
 
 													vertice: vertice.angles,
 													oppositeVertice: oppositeVerticeAngles,
+													R: classSettings.overriddenProperties.r(options.player.getTimeId()),
 													
 												}
 												if (aAngleControls.arc) randomVertices.changeCirclesPoints(params);
@@ -3609,16 +3610,16 @@ class RandomVertices {
 	 */
 	constructor(scene, options, randomVerticesSettings = {}){
 
-//		this.randomVerticesSettings = randomVerticesSettings;
-		const R = randomVerticesSettings.R === undefined ? 1 : randomVerticesSettings.R, np = randomVerticesSettings.np === undefined ? 36 : randomVerticesSettings.np;
-//		const pi = Math.PI;
+		//Во вселенной радиус гиперсферы может меняться
+		let R = randomVerticesSettings.R === undefined ? 1 : randomVerticesSettings.R, np = randomVerticesSettings.np === undefined ? 36 : randomVerticesSettings.np;
+
 		let circlesPointsCount;
 		const getCirclePoint = (options) => {
 
 			const center = params.center, angle = 2 * pi * (params.random ? Math.random() : options.i / options.numPoints); // Текущий угол в радианах
-//const angle = 2 * pi * (params.random ? 0.5 : options.i / options.numPoints); // Текущий угол в радианах
 
-			const circleDistancePrev = (options.circleDistance1Prev != undefined ? options.circleDistance1Prev : circleDistance1Prev) * R;
+//			const circleDistancePrev = (options.circleDistance1Prev != undefined ? options.circleDistance1Prev : circleDistance1Prev) * R;
+			const circleDistancePrev = options.circleDistancePrev != undefined ? options.circleDistancePrev : circleDistancePrev;
 			const circleDistance = (params.random ? (options.circleDistance - circleDistancePrev) * Math.random() + circleDistancePrev : options.circleDistance) / R; // Расстояние до окружности по дуге в радианах
 
 			let newLat, newLng;
@@ -3655,7 +3656,6 @@ class RandomVertices {
 
 			options ||= {};
 			point ||= [0, 0];
-//			if (((options.pointId === undefined) || boCreateCirclesPoints) &amp;&amp; (options.pointsCount != undefined) &amp;&amp; (points.length &lt; options.pointsCount))
 			if ((options.pointId === undefined) || boCreateCirclesPoints)
 			{
 
@@ -3672,8 +3672,6 @@ class RandomVertices {
 
 		}
 
-		//* @param { Array } center - Центр окружности[0 широта(рад), 1 долгота(рад) ]
-
 		/**
 		 * DeepSeek: Окружность на сфере (расчеты в радианах) — JavaScript
 		 * Генерирует точки окружности на сфере (в радианах)
@@ -3685,7 +3683,6 @@ class RandomVertices {
 		 */
 		const getCirclePointsRadians = (options = {}) => {
 
-//			options ||= {};
 			if (options.circleDistance === undefined) options.circleDistance = 0.5;
 			if (options.numPoints === undefined) options.numPoints = np;
 			const numPoints = options.numPoints;
@@ -3748,64 +3745,68 @@ class RandomVertices {
 			}
 
 			const editPointsOptions = { pointId: 0, }
-			
+			setAbc();
 			const aNumPoints = [];//массив с количеством точек numPoints для каждой окружности. Нужен для того, что бы случайно выбрать окружность при вычислении одиночной случайной точки
+			//заполнить aNumPoints
+			circlesPointsCount = 0;
+//let circlesPointsCountOld = 0;
+//const table = [];
+
+			circleDistancePrev = 0;
+			for (let circleId = 1; circleId &lt; circlesCount; circleId++) {
+
+				//d = pi / (circlesCount - 1) - расстояние между окружностями в радианах при условии, что окружности равномерно расположены на сфере
+				const x = circleId * d,
+/*
+					//уголовое расстояние для окружности для гиперсферы радиусом 1
+					circleDistance1 = b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
+						a / (x + b) + c,
+						
+//					circleDistance1 = circleId * d, //уголовое расстояние для текущей окружности для гиперсферы радиусом 1
+					circleDistance = circleDistance1 * R;
+*/					
+					circleDistance = (b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
+						a / (x + b) + c) * R;
+//console.log('circleId=' + circleId + ', x=' + x + ', circleDistance1=' + circleDistance1)
+				//Для вычисления количества случайных точек numPoints около окружности, расположенной на расстоянии circleDistance1 радиан
+				//я вычисляю площадь шарового пояса между параллелями S и делю ее на s площадь сферы на которой в среднем будет находиться одна случайная точка.
+				const cos = Math.cos,
+					h1 = cos(x),//расстояние от текущей окружности до центра шара
+					hprev = cos((circleId - 1) * d),//расстояние от предыдущей окружности до центра шара
+					h = h1 - hprev,//высота шарового пояса
+					S = Math.abs(2 * π * h),//DeepSeek. площадь шарового пояса между параллелями
+					numPoints = Math.round(S / s);//количество случайных точек около окружности, расположенной на расстоянии circleDistance1 радиан
+/*				
+const dCircleDistance = circleDistance1 - circleDistance1Prev;
+let numPointsOld = parseInt(
+	2 * pi * Math.sin(circleDistance1)//длинна окружности для гиперсферы радиусом 1
+	/ dCircleDistance
+);
+if (isNaN(numPointsOld)) numPointsOld = 1;//у окружности с бесконечным числом точек делаем одну точку
+circlesPointsCountOld += numPointsOld;
+//console.log('circleDistance1=' + circleDistance1 + ', Sc1=' + Sc1 + ', circleDistance1Prev' + circleDistance1Prev + ', Sc2=' + Sc2 + ', numPoints=' + numPoints + ', numPointsOld=' + numPointsOld)
+//table.push({circleDistance1: circleDistance1, circleDistance1Prev: circleDistance1Prev, Sc1: Sc1, Sc2: Sc2, numPoints: numPoints, numPointsOld: numPointsOld});
+table.push({circleDistance1: circleDistance1, circleDistance1Prev: circleDistance1Prev, S: S, numPoints: numPoints, numPointsOld: numPointsOld});
+*/
+				
+				circlesPointsCount += numPoints;
+				const numPoint = { circlesPointsCount: circlesPointsCount, circleDistance: circleDistance, circleDistancePrev: circleDistancePrev }
+				aNumPoints.push(numPoint);
+				circleDistancePrev = circleDistance;
+
+			}
+//console.table(table);
+			
 			//вычислить одну случайную точку без необходимости вычисления всех остальных случайных точек
 			//Нужно для сокращения времени вычислений, когда надо всего одну случайную точку
 			const getOnePoint = () => {
 
-				setAbc();
-				circleDistance1Prev = 0;//Положение предыдущего кольца
+//				setAbc();
+				circleDistancePrev = 0;//Положение предыдущего кольца
 
 				if (circlesSphere) circlesPoints = circlesSphere.angles;
 
-				//заполнить aNumPoints
-				if (aNumPoints.length === 0)
-				{
-					
-					circlesPointsCount = 0;
-					for (let circleId = 0; circleId &lt; circlesCount; circleId++) {
-	
-						const x = circleId * d,
-	
-							//уголовое расстояние для окружности для гиперсферы радиусом 1
-							circleDistance1 = b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
-								a / (x + b) + c,
-	
-							circleDistance = circleDistance1 * R;
-	
-						//prev point
-						if (circleId > 0) {
-	
-							const xPrev = (circleId - 1) * d;
-							circleDistance1Prev = b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
-								a / (xPrev + b) + c;
-	
-						}
-	
-						const dCircleDistance = circleDistance1 - circleDistance1Prev;
-						let numPoints = parseInt(
-							2 * pi * Math.sin(circleDistance1)//длинна окружности для гиперсферы радиусом 1
-							/ dCircleDistance
-						);
-						if (isNaN(numPoints)) numPoints = 1;//у окружности с бесконечным числом точек делаем одну точку
-						circlesPointsCount += numPoints;
-						const numPoint = { circlesPointsCount: circlesPointsCount, circleDistance: circleDistance, circleDistance1Prev: circleDistance1Prev }
-						aNumPoints.push(numPoint);
-	/*					
-						if (!isNaN(numPoints)) {//не рисовать окружность с бесконечным числом точек
-	
-							circlesPointsCount += numPoints;
-							aNumPoints.push(numPoint);
-	
-						}
-	*/					
-	
-					}
-
-				}
 				const randomPointId = Math.round(Math.random() * circlesPointsCount);//Идентификатор случайной точки
-//const randomPointId = Math.round(0.5 * circlesPointsCount);//Идентификатор случайной точки
 				//Найти окружность, в которую попадает случайная точка randomPointId
 				for (let circleId = 0; circleId &lt; circlesCount; circleId++) {
 
@@ -3817,8 +3818,7 @@ class RandomVertices {
 						{ circlesPointsCount: 1, circleDistance: 0 };
 					if (circleParams.circlesPointsCount >= randomPointId) {
 
-//						params.rnd = true;
-						const point = getCirclePoint(/*params.center, */{ circleDistance: circleParams.circleDistance, circleDistance1Prev: circleParams.circleDistance1Prev });
+						const point = getCirclePoint({ circleDistance: circleParams.circleDistance, circleDistancePrev: circleParams.circleDistancePrev });
 						editPoints(circlesPoints, point, editPointsOptions);
 						if (!params.onePointArray) circlesPointsCount = editPointsOptions.pointId;
 						break;
@@ -3829,25 +3829,19 @@ class RandomVertices {
 
 			}
 			for (let i = 0; i &lt; circlesPoints.length; i++) getOnePoint();
-//			createCirclesSphere();
 
 		}
 
-/*
-		let circlesCount,
-			d;//расттояние между окружностями в радианах при условии, что окружности равномерно расположены на сфере
-		const setCirclesCount = () => {
-
-			//circlesCount = (params.random ? np : 1) *
-			circlesCount = 1 *
-				np;//100;//если количество окружностей равно количеству точек на окружности, то точки будут равномерно располагаться на гиперсфере
-			d = pi / (circlesCount - 1);
-
-		}
-		setCirclesCount();
-*/
 		const circlesCount = np,//если количество окружностей равно количеству точек на окружности, то точки будут равномерно располагаться на гиперсфере
-			d = pi / (circlesCount - 1);//расстояние между окружностями в радианах при условии, что окружности равномерно расположены на сфере
+			d = pi / (circlesCount - 1),//расстояние между окружностями в радианах при условии, что окружности равномерно расположены на сфере
+
+			//Площадь сферы s на которой в среднем будет находиться одна случайная точка.
+			//Площадь сферы s вычисляем из площади боковой поверхности цилиндра, поделенной на количество точек на окружности np
+			//Цилиндр расположен на экваторе сферы так, чтобы его середина касалась экватора
+			//Высота цилиндра в радианах равна d.
+			h = 2 * Math.tan(d / 2),//Высота цилиндра радиусом 1. См. https://en.wikipedia.org/wiki/Trigonometric_functions
+			S = 2 * π * h,//Площадь боковой поверхности цилиндра радиусом 1
+			s = S / np;//Площадь сферы на которой в среднем будет находиться одна случайная точка.
 
 		//Deepseek Вычислить a, d, c в уравнении y=a/(x+b)+c точностью до 8 знаков при условии:
 		//Эта формула нужна для вычисления радиуса окружности radius
@@ -3973,7 +3967,6 @@ class RandomVertices {
 			
 		}
 		let circlesSphere, circlesPointsOptions = {}, boCreateCirclesPoints;
-//		this.setCirclesSphere = (circlesSphereNew) => { circlesSphere = circlesSphereNew; }
 		Object.defineProperties(this, {
 			circlesSphere: {
 				get: () => { return circlesSphere; },
@@ -3985,10 +3978,9 @@ class RandomVertices {
 				}
 			}
 		});
-		let circleDistance1Prev;//Положение предыдущего кольца
+		let circleDistancePrev;//Положение предыдущего кольца
 		const debug = randomVerticesSettings.debug || false, edges = debug ? [] : undefined;
 		let circlesPoints = [];//точки всех окружностей
-//		this.circlesPoints = circlesPoints;
 		const setCircles = () => {
 
 			setAbc();
@@ -4038,7 +4030,6 @@ class RandomVertices {
 
 			//заполнить circlesPoints максимально возможный массив точек всех окружностей 
 			boCreateCirclesPoints = true;
-//			params.arc = pi / 2;
 			params.arc = pi;
 			changeCirclesPoints();
 
@@ -4048,7 +4039,6 @@ class RandomVertices {
 			changeCirclesPoints();
 
 		}
-//		this.setCirclesPoints = setCirclesPoints;
 		const setCirclesOnePoints = () => {
 
 			boCreateCirclesPoints = true;
@@ -4057,23 +4047,6 @@ class RandomVertices {
 			changeCirclesPoints();
 
 		}
-/*		
-		Object.defineProperties(this, {
-			randomVertice: {
-
-				get: () => {
-
-					const arc = randomVerticesSettings.params.arc;
-					if (arc != pi / 2) setCirclesPoints(arc);
-					else setCirclesOnePoints();
-					return circlesPoints;
-
-				},
-
-			}
-
-		});
-*/
 		this.determinedVertices = (paramsNew) => { 
 
 			params ||= paramsNew;
@@ -4092,11 +4065,9 @@ class RandomVertices {
 		this.randomVertice = (paramsNew) => { this.determinedVertices(paramsNew); }
 		const removeCirclesSphere = () => {
 			
-//			circlesPoints.length = 0;
 			circlesPoints = [];
 			if (!circlesSphere) return;
-			options.guiSelectPoint.removeMesh(circlesSphere.object3D);
-			circlesSphere.object3D.parent.remove(circlesSphere.object3D);
+			if (circlesSphere.object3D) circlesSphere.object3D.parent.remove(circlesSphere.object3D);
 			circlesSphere = undefined;
 			
 		}
@@ -4126,7 +4097,10 @@ class RandomVertices {
 		/**
 		 * Creates an array of the random points from one random point.
 		 * @param {Object} paramsNew See &lt;b>randomVerticesSettings.params&lt;/b> of the constructor for details.
+		 * @param {float} [paramsNew.R] Hypersphere radius.
+		 * &lt;pre>
 		 * You can set &lt;b>vertice&lt;/b> and &lt;b>oppositeVertice&lt;/b> parameters instead &lt;b>arc&lt;/b> and &lt;b>center&lt;/b>. See below:
+		 * &lt;pre>
 		 * @param {Array} [paramsNew.vertice] First vertice of the &lt;b>arc&lt;/b>.
 		 * @param {Array} [paramsNew.oppositeVertice] Second vertice of the &lt;b>arc&lt;/b>.
 		 * @returns &lt;a href="../jsdoc/module-HyperSphere-HyperSphere.html" target="_blank">HyperSphere&lt;/a>, what contains created points array.
@@ -4134,11 +4108,7 @@ class RandomVertices {
 		this.createOnePointArray = (paramsNew) => {
 			
 			params ||= paramsNew;
-/*
-			if (params.random === undefined) params.random = true;
-			if (params.onePoint === undefined) params.onePoint = true;
-			if (params.onePointArray === undefined) params.onePointArray = true;
-*/
+			if (params.R != undefined) R = params.R;
 			RandomVertices.params(params);
 			params.randomVertices = this;
 			removeCirclesSphere();
@@ -4206,62 +4176,57 @@ RandomVertices.params = (params) => {
 			},
 	
 		});
-		
-		Object.defineProperty(params, 'arc', {
-	
-			get: () => {
-				
-				const vertice = params.vertice, oppositeVertice = params.oppositeVertice;
-				//DeepSeek. вычислить угол между двумя точками на поверхности шара
-				//векторы
-				//A=(R,ϕ1,λ1 )
-				const ϕ1 = vertice[0], λ1 = vertice[1];
-				//B=(R,ϕ2,λ2 ) - oppositeVertice
-				const ϕ2 = oppositeVertice[0], λ2 = oppositeVertice[1];
-				//где
-				//ϕ — широта (от −90° до 90°),
-				//λ — долгота (от −180° до 180°),
-				const arccos = Math.acos, sin = Math.sin, cos = Math.cos;
-				const θ = arccos(sin(ϕ1) * sin(ϕ2) + cos(ϕ1) * cos(ϕ2) * cos(λ1 - λ2));
-				return θ / 2;//Поделил на 2 потому что ошибочно сделал равномерное распределение случайных точек по сфере при arc = pi / 2
-					//хотя нужно arc = pi, то есть когда вершины дуги расположены на противоположных точках сферы.
-					//Хотел исправить, но это оказалось достаточно сложно
-			
-			},
-	
-		});
-		Object.defineProperty(params, 'center', {
-	
-			get: () => {
 
-				//center is antipode of the opposite vertice
-				//Центр окружностей случайных точек center находится с противоположной от params.oppositeVertice стороны гиперсферы
-				const antipodeLatitude = (latitude) => { return -latitude; }, center = [antipodeLatitude(params.oppositeVertice.latitude), params.oppositeVertice.longitude - π];
-				
-				Object.defineProperty(center, 'lat', {
+		if (params.arc === undefined)
+			Object.defineProperty(params, 'arc', {
+		
+				get: () => {
 					
-					get: () => { return center[0]; },
-					set: (lat) => {
-			
-						params.oppositeVertice.latitude = antipodeLatitude(lat);
-						return true;
-			
-					},
+					const vertice = params.vertice, oppositeVertice = params.oppositeVertice;
+					//DeepSeek. вычислить угол между двумя точками на поверхности шара
+					//векторы
+					//A=(R,ϕ1,λ1 )
+					const ϕ1 = vertice[0], λ1 = vertice[1];
+					//B=(R,ϕ2,λ2 ) - oppositeVertice
+					const ϕ2 = oppositeVertice[0], λ2 = oppositeVertice[1];
+					//где
+					//ϕ — широта (от −90° до 90°),
+					//λ — долгота (от −180° до 180°),
+					const arccos = Math.acos, sin = Math.sin, cos = Math.cos;
+					const θ = arccos(sin(ϕ1) * sin(ϕ2) + cos(ϕ1) * cos(ϕ2) * cos(λ1 - λ2));
+					return θ / 2;//Поделил на 2 потому что ошибочно сделал равномерное распределение случайных точек по сфере при arc = pi / 2
+						//хотя нужно arc = pi, то есть когда вершины дуги расположены на противоположных точках сферы.
+						//Хотел исправить, но это оказалось достаточно сложно
 				
-				});
-				Object.defineProperty(center, 'lng', { get: () => { return center[1]; }, });
-/*				
-				Object.defineProperty(center, '0', {
-					
-					get: () => { return latitude; },
-				
-				});
-*/				
-				return center;
-			
-			},
+				},
+		
+			});
+		if (params.center === undefined)
+			Object.defineProperty(params, 'center', {
+		
+				get: () => {
 	
-		});
+					//center is antipode of the opposite vertice
+					//Центр окружностей случайных точек center находится с противоположной от params.oppositeVertice стороны гиперсферы
+					const antipodeLatitude = (latitude) => { return -latitude; }, center = [antipodeLatitude(params.oppositeVertice.latitude), params.oppositeVertice.longitude - π];
+					
+					Object.defineProperty(center, 'lat', {
+						
+						get: () => { return center[0]; },
+						set: (lat) => {
+				
+							params.oppositeVertice.latitude = antipodeLatitude(lat);
+							return true;
+				
+						},
+					
+					});
+					Object.defineProperty(center, 'lng', { get: () => { return center[1]; }, });
+					return center;
+				
+				},
+		
+			});
 		
 	}
 	
@@ -4320,7 +4285,7 @@ const _display = (element, boDisplay) => { element.style.display = boDisplay ===
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri May 02 2025 08:53:37 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Wed May 07 2025 08:04:08 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

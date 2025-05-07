@@ -4069,7 +4069,10 @@ table.push({circleDistance1: circleDistance1, circleDistance1Prev: circleDistanc
 		/**
 		 * Creates an array of the random points from one random point.
 		 * @param {Object} paramsNew See <b>randomVerticesSettings.params</b> of the constructor for details.
+		 * @param {float} [paramsNew.R] Hypersphere radius.
+		 * <pre>
 		 * You can set <b>vertice</b> and <b>oppositeVertice</b> parameters instead <b>arc</b> and <b>center</b>. See below:
+		 * <pre>
 		 * @param {Array} [paramsNew.vertice] First vertice of the <b>arc</b>.
 		 * @param {Array} [paramsNew.oppositeVertice] Second vertice of the <b>arc</b>.
 		 * @returns <a href="../jsdoc/module-HyperSphere-HyperSphere.html" target="_blank">HyperSphere</a>, what contains created points array.
