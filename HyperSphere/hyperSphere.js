@@ -281,7 +281,10 @@ class HyperSphere extends MyObject {
 
 		if (!classSettings.onSelectScene) classSettings.onSelectScene = (hyperSphere, timeId, t) => { if (this.middleVertices) return this.middleVertices(timeId, t); }
 		//for playing in http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/hyperSphere.html
-		options.onSelectScene = (index, t) => {
+
+		//Eсли options.onSelectScene уже существует, значит на холсте уже есть гиперсфера. Это бывает, когда создается случайная дуга HyperSphere classSettings.randomArc = true
+		//Тогда если переопределить options.onSelectScene, то при выполнении шага проигрывателя options.onSelectScene будет вызываться для случайной дуги а не для гиперсферы вселенной.
+		if (!options.onSelectScene) options.onSelectScene = (index, t) => {
 
 			if (classSettings.onSelectScene) return classSettings.onSelectScene(this, index, t);
 			else if (this.middleVertices) return hyperSphere.middleVertices(index, t);
