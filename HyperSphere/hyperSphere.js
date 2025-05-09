@@ -3831,9 +3831,10 @@ table.push({circleDistance1: circleDistance1, circleDistance1Prev: circleDistanc
 
 		const setAbc = () => {
 
-			b = (0.027 * (exp(3 * params.arc)
+			const arc = params.arc / 2;
+			b = (0.027 * (exp(3 * arc)
 				- 1//отнимаю единицу что бы график выходил из нуля
-			) + 2.718 * pow(params.arc, 4)) * k;//Так b зависит от длинны дуги, что бы плотность вероятностей распределялась от равномерной при arc = π/2 до сводящейся в точку при arc = 0
+			) + 2.718 * pow(arc, 4)) * k;//Так b зависит от длинны дуги, что бы плотность вероятностей распределялась от равномерной при arc = π/2 до сводящейся в точку при arc = 0
 			a = -b * (pi + b); c = -a / b;
 
 		};
@@ -4040,9 +4041,12 @@ table.push({circleDistance1: circleDistance1, circleDistance1Prev: circleDistanc
 				params.onePoint = false;
 				
 			}
+			setCirclesPoints(params.arc);
+/*			
 			const arc = params.arc;
 			if (arc != pi / 2) setCirclesPoints(arc);
 			else setCirclesOnePoints();
+*/			
 			return circlesPoints;
 			
 		}
@@ -4175,9 +4179,12 @@ RandomVertices.params = (params) => {
 					//λ — долгота (от −180° до 180°),
 					const arccos = Math.acos, sin = Math.sin, cos = Math.cos;
 					const θ = arccos(sin(ϕ1) * sin(ϕ2) + cos(ϕ1) * cos(ϕ2) * cos(λ1 - λ2));
+					return θ;
+/*					
 					return θ / 2;//Поделил на 2 потому что ошибочно сделал равномерное распределение случайных точек по сфере при arc = pi / 2
 						//хотя нужно arc = pi, то есть когда вершины дуги расположены на противоположных точках сферы.
 						//Хотел исправить, но это оказалось достаточно сложно
+*/						
 				
 				},
 		
