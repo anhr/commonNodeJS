@@ -18,7 +18,8 @@
 import HyperSphere from './hyperSphere.js';
 import three from '../three.js'
 
-const sCircle = 'Circle';
+const sCircle = 'Circle',
+	π = Math.PI;
 
 /**
  * 1 dimensional [hypersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
@@ -141,5 +142,128 @@ class Circle extends HyperSphere {
 		console.error(sCircle + ': getRandomMiddleAngles. Under constraction. Define getRandomMiddleAngles for current hypersphere dimension = ' + this.dimension);//переопределить getRandomMiddleAngles для текущей размерности гиперсферы
 		
 	}
+	/**
+	 * @param {THREE.Scene} scene [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}
+	 * @param {Options} options See <a href="../../jsdoc/Options/Options.html" target="_blank">Options</a>.
+	 * @param {object} randomVerticesSettings See <b>randomVerticesSettings</b> of the <a href="./module-HyperSphere-RandomVertices.html" target="_blank">RandomVertices</a> class.
+	 * @returns new RandomVertices child class.
+	 */
+	newRandomVertices(scene, options, randomVerticesSettings) { return new RandomVertices(scene, options, randomVerticesSettings); }
+
 }
+
+class RandomVertices extends HyperSphere.RandomVertices {
+
+	constructor(scene, options, randomVerticesSettings) {
+
+		super(scene, options, randomVerticesSettings);
+
+	}
+
+	//overridden methods
+
+	getHyperSphere(options, classSettings) {
+
+		let circlesSphere;
+		circlesSphere = new Circle(options, classSettings);
+		return circlesSphere;
+
+	}
+	getArcAngle(vertice, oppositeVertice)
+	{
+		
+		//векторы
+		//A=(R,λ1 ) - vertice
+		const λ1 = vertice[0];
+		//B=(R,λ2 ) - oppositeVertice
+		const λ2 = oppositeVertice[0];
+		//где
+		//λ — долгота (от −180° до 180°),
+		const θ = λ1 - λ2;
+		if (isNaN(θ)) console.error(sCircle + ': getArcAngle. Invalid θ = ' + θ);
+		return θ;
+		
+	}
+	oppositeVertice0() {}
+//	antipodeCenter(params, antipodeLatitude) { return [params.oppositeVertice.longitude - π]; }
+	zeroArray() { return [0]; }
+	onePointArea(d, np) {
+		//Длинна отрезка одномерной гиперсферы на которой в среднем будет находиться одна случайная точка.
+		return d / np;//Длинна отрезка одномерной гиперсферы вычисляем из длинны окружности одномерной гиперсферы, поделенной на количество точек на окружности np
+		//d: расстояние между окружностями в радианах при условии, что окружности равномерно расположены на одномерной гиперсфере
+		//окружность в одномерной гиперсфере превращается в точку
+		
+	}
+	numPoints(d, s) {
+
+		//Внимание! В одномерной гиперсфере окружность вырождается в точку
+/*		
+		//Для вычисления количества случайных точек numPoints около окружности, расположенной на расстоянии circleDistance радиан
+		//я вычисляю высоту шарового пояса между параллелями h и делю ее на s - длинну отрезка одномерной гиперсферы на которой в среднем будет находиться одна случайная точка. См. onePointArea(...)
+		const cos = Math.cos,
+			h1 = cos(x),//расстояние от текущей окружности до центра шара
+			hprev = cos((circleId - 1) * d),//расстояние от предыдущей окружности до центра шара
+			h = h1 - hprev;//высота шарового пояса
+		return Math.abs(Math.round(h / s));//количество случайных точек около окружности, расположенной на расстоянии circleDistance радиан
+*/
+		return Math.round(d / s);//количество случайных точек около окружности, расположенной на расстоянии circleDistance радиан
+		
+	}
+	center(params) {
+		
+		//center is antipode of the opposite vertice
+		//Центр окружностей случайных точек center находится с противоположной от params.oppositeVertice стороны гиперсферы
+//		const center = params.randomVertices.antipodeCenter(params, antipodeLatitude);
+		const center = [params.oppositeVertice.longitude - π];
+		Object.defineProperty(center, 'lng', { get: () => { return center[0]; }, });
+		return center;
+		
+	}
+	getCirclePoint(circleDistance) {
+
+		let newLng = circleDistance;
+
+		//Normalise angles
+		if (newLng > π) newLng -= 2 * π;
+		else if (newLng < -π) newLng += 2 * π;
+		
+		return [newLng];
+/*		
+		let newLng;
+		const center = params.center, lng = center.lng;
+			
+		if (circleDistance === 0) {
+
+			//длинна дуги равна нулю. Координаты точки окружности противоположны координатам центра окружности
+			newLng = lng + π;
+
+		} else {
+
+			// Формулы сферической тригонометрии
+			newLat = Math.asin(
+				Math.sin(lat) * Math.cos(circleDistance) +
+				Math.cos(lat) * Math.sin(circleDistance) * Math.cos(angle)
+			);
+
+			newLng = lng + Math.atan2(
+				Math.sin(angle) * Math.sin(circleDistance) * Math.cos(lat),
+				Math.cos(circleDistance) - Math.sin(lat) * Math.sin(newLat)
+			);
+
+		}
+
+		//Normalise angles
+		if (newLng > π) newLng -= 2 * π;
+		else if (newLng < -π) newLng += 2 * π;
+
+		return [newLng];
+*/		
+	
+	}
+
+	/////////////////////////////overridden methods
+
+}
+Circle.RandomVertices = RandomVertices;
+
 export default Circle;

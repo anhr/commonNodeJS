@@ -145,7 +145,6 @@ class Sphere extends Circle {
 	get dimension() { return 3; }//space dimension
 	get verticesCountMin() { return 4; }
 	/**
-	 * 
 	 * @param {THREE.Scene} scene [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}
 	 * @param {Options} options See <a href="../../jsdoc/Options/Options.html" target="_blank">Options</a>.
 	 * @param {object} randomVerticesSettings See <b>randomVerticesSettings</b> of the <a href="./module-HyperSphere-RandomVertices.html" target="_blank">RandomVertices</a> class.
@@ -171,6 +170,122 @@ class RandomVertices extends Circle.RandomVertices {
 		circlesSphere = new Sphere(options, classSettings);
 		return circlesSphere;
 
+	}
+	getArcAngle(vertice, oppositeVertice)
+	{
+		
+		//DeepSeek. вычислить угол между двумя точками на поверхности шара
+		//векторы
+		//A=(R,ϕ1,λ1 ) - vertice
+		const ϕ1 = vertice[0], λ1 = vertice[1];
+		//B=(R,ϕ2,λ2 ) - oppositeVertice
+		const ϕ2 = oppositeVertice[0], λ2 = oppositeVertice[1];
+		//где
+		//ϕ — широта (от −90° до 90°),
+		//λ — долгота (от −180° до 180°),
+		const arccos = Math.acos, sin = Math.sin, cos = Math.cos;
+		const θ = arccos(sin(ϕ1) * sin(ϕ2) + cos(ϕ1) * cos(ϕ2) * cos(λ1 - λ2));
+		if (isNaN(θ)) console.error(sSphere + ': getArcAngle. Invalid θ = ' + θ);
+		return θ;
+		
+	}
+	oppositeVertice0(params, inaccurateLatitude) {
+
+		let latitude = params.oppositeVertice.latitude;
+		Object.defineProperty(params.oppositeVertice, '0', {
+
+			get: () => { return latitude; },
+			set: (latitudeNew) => {
+	
+				latitude = inaccurateLatitude(latitudeNew);
+				return true;
+	
+			},
+	
+		});
+		
+	}
+//	antipodeCenter(params, antipodeLatitude) { return [antipodeLatitude(params.oppositeVertice.latitude), params.oppositeVertice.longitude - π]; }
+	zeroArray() { return [0, 0]; }
+	onePointArea(d, np) {
+		
+		//Площадь сферы на которой в среднем будет находиться одна случайная точка.
+		//Площадь сферы вычисляем из площади боковой поверхности цилиндра, поделенной на количество точек на окружности np
+		//Цилиндр расположен на экваторе сферы так, чтобы его середина касалась экватора
+		//Высота цилиндра в радианах равна d.
+		const h = 2 * Math.tan(d / 2),//Высота цилиндра радиусом 1. См. https://en.wikipedia.org/wiki/Trigonometric_functions
+			S = 2 * π * h;//Площадь боковой поверхности цилиндра радиусом 1
+		return S / np;//Площадь сферы на которой в среднем будет находиться одна случайная точка.
+		
+	}
+	numPoints(d, s, circleId, x) {
+		
+		//Для вычисления количества случайных точек numPoints около окружности, расположенной на расстоянии circleDistance радиан
+		//я вычисляю площадь шарового пояса между параллелями S и делю ее на s площадь сферы на которой в среднем будет находиться одна случайная точка.
+		const cos = Math.cos,
+			h1 = cos(x),//расстояние от текущей окружности до центра шара
+			hprev = cos((circleId - 1) * d),//расстояние от предыдущей окружности до центра шара
+			h = h1 - hprev,//высота шарового пояса
+			S = Math.abs(2 * π * h);//DeepSeek. площадь шарового пояса между параллелями
+		return Math.round(S / s);//количество случайных точек около окружности, расположенной на расстоянии circleDistance радиан
+		
+	}
+	center(params) {
+		
+		//center is antipode of the opposite vertice
+		//Центр окружностей случайных точек center находится с противоположной от params.oppositeVertice стороны гиперсферы
+		const antipodeLatitude = (latitude) => { return -latitude; },
+//			center = params.randomVertices.antipodeCenter(params, antipodeLatitude);
+			center = [antipodeLatitude(params.oppositeVertice.latitude), params.oppositeVertice.longitude - π];
+		
+		Object.defineProperty(center, 'lat', {
+			
+			get: () => { return center[0]; },
+			set: (lat) => {
+	
+				params.oppositeVertice.latitude = antipodeLatitude(lat);
+				return true;
+	
+			},
+		
+		});
+		Object.defineProperty(center, 'lng', { get: () => { return center[1]; }, });
+		return center;
+		
+	}
+	getCirclePoint(circleDistance, params) {
+		
+		let newLat, newLng;
+		const center = params.center, angle = 2 * π * (params.random ? Math.random() : options.i / options.numPoints), // Текущий угол в радианах
+			lat = center.lat, lng = center.lng;
+			
+		if (circleDistance === 0) {
+
+			//длинна дуги равна нулю. Координаты точки окружности противоположны координатам центра окружности
+			newLat = - lat;
+			newLng = lng + π;
+
+		} else {
+
+			// Формулы сферической тригонометрии
+			newLat = Math.asin(
+				Math.sin(lat) * Math.cos(circleDistance) +
+				Math.cos(lat) * Math.sin(circleDistance) * Math.cos(angle)
+			);
+
+			newLng = lng + Math.atan2(
+				Math.sin(angle) * Math.sin(circleDistance) * Math.cos(lat),
+				Math.cos(circleDistance) - Math.sin(lat) * Math.sin(newLat)
+			);
+
+		}
+
+		//Normalise angles
+		if (newLng > π) newLng -= 2 * π;
+		else if (newLng < -π) newLng += 2 * π;
+
+		return [newLat, newLng];
+	
 	}
 	
 	/////////////////////////////overridden methods
