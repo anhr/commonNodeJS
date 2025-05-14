@@ -3598,7 +3598,7 @@ if (circleDistancePrev === 0) console.log('circleDistancePrev=' + circleDistance
 			const circleDistance = (params.random ? (options.circleDistance - circleDistancePrev) * Math.random() + circleDistancePrev : options.circleDistance) / R; // Расстояние до окружности по дуге в радианах
 //console.log('circleDistance=' + circleDistance + ', circleDistancePrev=' + circleDistancePrev);
 
-			return this.getCirclePoint(circleDistance, params);
+			return this.getCirclePoint(circleDistance, params, options);
 /*			
 			let newLat, newLng;
 			const center = params.center, angle = 2 * pi * (params.random ? Math.random() : options.i / options.numPoints), // Текущий угол в радианах
@@ -3735,7 +3735,7 @@ if (circleDistancePrev === 0) console.log('circleDistancePrev=' + circleDistance
 //let circlesPointsCountOld = 0;
 //const table = [];
 
-			circleDistancePrev = 0;
+//			circleDistancePrev = 0;
 			for (let circleId = 1; circleId < circlesCount; circleId++) {
 
 				//d = pi / (circlesCount - 1) - расстояние между окружностями в радианах при условии, что окружности равномерно расположены на сфере
@@ -3777,9 +3777,10 @@ table.push({circleDistance1: circleDistance1, circleDistance1Prev: circleDistanc
 */
 				
 				circlesPointsCount += numPoints;
-				const numPoint = { circlesPointsCount: circlesPointsCount, circleDistance: circleDistance, circleDistancePrev: circleId === 1 ? circleDistance : circleDistancePrev }
+//				const numPoint = { circlesPointsCount: circlesPointsCount, circleDistance: circleDistance, circleDistancePrev: circleId === 1 ? circleDistance : circleDistancePrev }
+				const numPoint = { circlesPointsCount: circlesPointsCount, circleDistance: circleDistance }
 				aNumPoints.push(numPoint);
-				circleDistancePrev = circleDistance;
+//				circleDistancePrev = circleDistance;
 
 			}
 //console.table(table);
@@ -3805,7 +3806,13 @@ table.push({circleDistance1: circleDistance1, circleDistance1Prev: circleDistanc
 						{ circlesPointsCount: 1, circleDistance: 0 };
 					if (circleParams.circlesPointsCount >= randomPointId) {
 
-						const point = getCirclePoint({ circleDistance: circleParams.circleDistance, circleDistancePrev: circleParams.circleDistancePrev });
+						const point = getCirclePoint({
+							
+							circleDistance: circleParams.circleDistance,
+//							circleDistancePrev: circleParams.circleDistancePrev,
+							circleDistancePrev: circleId === 0 ? circleParams.circleDistance : aNumPoints[circleId - 1].circleDistance,
+						
+						});
 						editPoints(circlesPoints, point, editPointsOptions);
 						if (!params.onePointArray) circlesPointsCount = editPointsOptions.pointId;
 						break;
@@ -4237,13 +4244,18 @@ RandomVertices.params = (params) => {
 	if (center.length < 1) center.push(0);
 	if (center.length < 2) center.push(0);
 //	params.randomVertices.defineCenterCoordinates(params);
-/*	
 	if (center.lat === undefined)
 		Object.defineProperty(center, 'lat', {
 	
-			get: () => { return center[0]; },
+			get: () => {
+
+console.log('Under constraction');
+				return center[0];
+			
+			},
 			set: (lat) => {
 	
+console.log('Under constraction');
 				center[0] = lat;
 				if (params.randomVertices) params.randomVertices.changeCirclesPoints();
 				return true;
@@ -4254,9 +4266,15 @@ RandomVertices.params = (params) => {
 	if (center.lng === undefined)
 		Object.defineProperty(center, 'lng', {
 	
-			get: () => { return center[1]; },
+			get: () => {
+				
+console.log('Under constraction');
+				return center[1];
+			
+			},
 			set: (lng) => {
 	
+console.log('Under constraction');
 				center[1] = lng;
 				if (params.randomVertices) params.randomVertices.changeCirclesPoints();
 				return true;
@@ -4264,7 +4282,6 @@ RandomVertices.params = (params) => {
 			},
 
 		});
-*/		
 	if (params.arc === undefined) params.arc = 0.5;
 	center.lat = inaccurateLatitude(center.lat);
 	

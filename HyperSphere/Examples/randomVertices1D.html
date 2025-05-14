@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Random Vertices 1D</title>
+
+    <!--for mobile devices-->
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+    <!--<script src="./three.js/dev/build/three.js"></script>-->
+    <!--<script src="./three.js/dev/build/three.min.js"></script>-->
+    <!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.js"></script>-->
+    <!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.min.js"></script>-->
+    <!--<script src="https://threejs.org/build/three.js"></script>-->
+    <!--<script src="https://threejs.org/build/three.min.js"></script>-->
+</head>
+<body>
+	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
+	<div id="info">
+		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a>
+		- <a href="https://github.com/anhr/commonNodeJS/tree/master/HyperSphere" target="_blank" rel="noopener">Random Vertices</a>.
+		By <a href="https://github.com/anhr" target="_blank" rel="noopener">anhr</a>
+	</div>
+
+	<script type="module">
+
+		import * as THREE from '../../../../three.js/dev/build/three.module.js';
+
+		import MyThree from '../../myThree/myThree.js';
+		MyThree.three.THREE = THREE;
+
+//		import Sphere from '../sphere.js';
+		import Circle from '../circle.js';
+		
+		new MyThree((scene, options) => {
+
+			const pi = Math.PI;
+
+			//params
+			
+			const params = {
+				
+				//центр окружности, пересекающей сферу или вершина гиперсферы, вокруг которой будет облако вероятностей
+				center: [
+					//lat
+					//0,
+					pi/2,//если arc = pi, то противоложные точки дуги будут находиться на разных полюсах. Тогда придется делать небольшую поравку в широте точки, вызывая функцию inaccurateLatitude
+						//Иначе случайное распределение вершин получается не случайным непонятно по какой причине
+					
+					0,//-pi,//lng
+				],
+				
+				//arc Длинна дуги, соединяющей две вершины гиперсферы
+				arc: pi,//Вершины дуги расположены на противоположных концах гиперсферы. Длинна дуги максимальная. Окружности вокруг вершины расположены равномерно по всей гиперсфере.
+						//если center.lat = pi / 2, то противоложные точки дуги будут находиться на разных полюсах. Тогда придется делать небольшую поравку в широте точки, вызывая функцию inaccurateLatitude
+						//Иначе случайное распределение вершин получается не случайным непонятно по какой причине
+					//pi / 2,
+					//1.571,
+					//0,//Вершины гиперсферы совпадают. Длинна дуги равна нулю. Окружности вокруг вершины превращаются в точки, которые совпадают с вершиной.
+					//0.5,//По умолчанию
+					//1.5,//Для вычисления коэффициента k
+					//0,
+				
+				random: false,
+				onePoint: true,//Have effect only if params.random = true
+				onePointArray: true,//Have effect only if params.onePoint = true
+
+			}
+			Circle.RandomVertices.params(params);
+
+			///////////////////////////////////////////////params
+			
+			const randomVerticesSettings = {
+
+				//np: 360,
+				//R: 0.5,
+				debug: true,
+			
+			};
+			const randomVertices = new Circle.RandomVertices(scene, options, randomVerticesSettings);
+//			const params = randomVerticesSettings.params;
+			
+			//GUI
+
+			const gui = options.dat.gui;
+//            gui.add(params, 'arc', 0, pi / 2, 0.0001).onChange(() => { randomVertices.changeCirclesPoints(); });
+            gui.add(params, 'arc', 0, pi, 0.0001).onChange(() => { randomVertices.changeCirclesPoints(); });
+
+			//center
+			gui.add(params.center, 'lat', -pi / 2, pi / 2, 0.001);
+			gui.add(params.center, 'lng', -pi, pi, 0.001);
+
+			const cbParamsRandom = gui.add(params, 'random').onChange(() => { randomVertices.onChangeRandom(); });
+			const cbParamsOnePoint = gui.add(params, 'onePoint').onChange(() => {
+
+				if (!params.random && params.onePoint) cbParamsRandom.setValue(true);
+				randomVertices.onChangeOnePoint(params);
+			
+			});
+			const cbParamsOnePointArray = gui.add(params, 'onePointArray').onChange(() => {
+				
+				if (params.onePointArray && !params.onePoint) {
+					
+					if (!params.onePoint) cbParamsOnePoint.setValue(true);
+					randomVertices.createOnePointArray(params);
+
+				} else randomVertices.onChangeOnePoint(params);
+			
+			});
+
+			//////////////////////////////////////////GUI
+			
+			if (!params.random) {
+
+				if (params.onePoint) {
+
+					console.warn('Please, define params.onePoint = false');
+					cbParamsOnePoint.setValue(false);
+					
+				}
+				if (params.onePointArray) {
+
+					console.warn('Please, define params.onePointArray = false');
+					cbParamsOnePointArray.setValue(false);
+					
+				}
+				randomVertices.determinedVertices(params);
+				return;
+
+			}
+			if (!params.onePoint) {
+
+//				console.error('Please define params.onePoint = true or params.random = false.');
+				if (params.onePointArray) {
+
+					console.warn('Please, define params.onePointArray = false');
+					cbParamsOnePointArray.setValue(false);
+					
+				}
+				randomVertices.onChangeRandom(params);
+				return;
+
+			}
+			if (params.onePointArray) {
+				
+				randomVertices.createOnePointArray(params);
+				return;
+
+			}
+			const randomVertice = randomVertices.randomVertice(params);
+			randomVertices.circlesSphere = randomVertices.getHyperSphere(options, {
+
+					edges: false,
+					randomArc: true,
+					projectParams: { scene: scene, },
+					r: randomVerticesSettings.R,//0.5,
+					debug: randomVerticesSettings.debug ? {
+
+						probabilityDensity: false,
+						middleVertice: false,
+						log: false,
+
+					} : false,
+					//debug: false,
+					settings: {
+
+						object: {
+
+							name: 'Random vertice',
+							//color: 'white',
+							geometry: {
+
+								angles: randomVertice,
+								//indices: { edges: edges },
+
+							},
+
+						},
+						overriddenProperties: {
+							setDrawRange: (start, count) => {
+
+								if (randomVertices.circlesSphere) randomVertices.circlesSphere.bufferGeometry.setDrawRange(start, count);
+
+							}
+
+						},
+
+					},
+
+
+				});
+
+		}, {
+
+			scales: {
+
+				//x: x, y: y, z: z,
+				//posAxesIntersection: new THREE.Vector3( 0, 0, 0 ),
+				text: {
+					
+					precision: 5,
+					rect: { displayRect: false, },
+				
+				}
+
+			},
+			canvas: {
+
+				noButtonFullScreen: true,
+
+			},
+			player: false,
+			playerOptions: {
+				
+				//max: Infinity,
+				//interval: 100,
+				
+			}
+
+		} );
+
+	</script>
+</body>
+</html>

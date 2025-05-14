@@ -253,7 +253,7 @@ class RandomVertices extends Circle.RandomVertices {
 		return center;
 		
 	}
-	getCirclePoint(circleDistance, params) {
+	getCirclePoint(circleDistance, params, options) {
 		
 		let newLat, newLng;
 		const center = params.center, angle = 2 * π * (params.random ? Math.random() : options.i / options.numPoints), // Текущий угол в радианах
