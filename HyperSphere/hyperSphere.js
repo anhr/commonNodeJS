@@ -3680,7 +3680,7 @@ if (circleDistancePrev === 0) console.log('circleDistancePrev=' + circleDistance
 
 				} else {
 
-					point = [0, 0];//создается пустой массив максимального размера
+					point = this.zeroArray();//создается пустой массив максимального размера
 					if (edges) {
 
 						const pointsLength = points.length;
@@ -4136,6 +4136,7 @@ table.push({circleDistance1: circleDistance1, circleDistance1Prev: circleDistanc
 	numPoints() { console.error(sRandomVertices + sOver.replace('%s', 'numPoints')); }
 	center() { console.error(sRandomVertices + sOver.replace('%s', 'center')); }
 	getCirclePoint() { console.error(sRandomVertices + sOver.replace('%s', 'getCirclePoint')); }
+	setCenterLength() { console.error(sRandomVertices + sOver.replace('%s', 'setCenterLength')); }
 
 	////////////////////////////////////////overridden methods
 	
@@ -4249,13 +4250,13 @@ RandomVertices.params = (params) => {
 	
 			get: () => {
 
-console.log('Under constraction');
+//console.log('Under constraction');
 				return center[0];
 			
 			},
 			set: (lat) => {
 	
-console.log('Under constraction');
+//console.log('Under constraction');
 				center[0] = lat;
 				if (params.randomVertices) params.randomVertices.changeCirclesPoints();
 				return true;
@@ -4268,13 +4269,13 @@ console.log('Under constraction');
 	
 			get: () => {
 				
-console.log('Under constraction');
+//console.log('Under constraction');
 				return center[1];
 			
 			},
 			set: (lng) => {
 	
-console.log('Under constraction');
+//console.log('Under constraction');
 				center[1] = lng;
 				if (params.randomVertices) params.randomVertices.changeCirclesPoints();
 				return true;

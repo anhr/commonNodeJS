@@ -42,11 +42,6 @@
 				
 				//центр окружности, пересекающей сферу или вершина гиперсферы, вокруг которой будет облако вероятностей
 				center: [
-					//lat
-					//0,
-					pi/2,//если arc = pi, то противоложные точки дуги будут находиться на разных полюсах. Тогда придется делать небольшую поравку в широте точки, вызывая функцию inaccurateLatitude
-						//Иначе случайное распределение вершин получается не случайным непонятно по какой причине
-					
 					0,//-pi,//lng
 				],
 				
@@ -62,8 +57,8 @@
 					//0,
 				
 				random: false,
-				onePoint: true,//Have effect only if params.random = true
-				onePointArray: true,//Have effect only if params.onePoint = true
+				onePoint: false,//Have effect only if params.random = true
+				onePointArray: false,//Have effect only if params.onePoint = true
 
 			}
 			Circle.RandomVertices.params(params);
@@ -77,24 +72,24 @@
 				debug: true,
 			
 			};
-			const randomVertices = new Circle.RandomVertices(scene, options, randomVerticesSettings);
+			params.randomVertices = new Circle.RandomVertices(scene, options, randomVerticesSettings);
 //			const params = randomVerticesSettings.params;
 			
 			//GUI
 
 			const gui = options.dat.gui;
-//            gui.add(params, 'arc', 0, pi / 2, 0.0001).onChange(() => { randomVertices.changeCirclesPoints(); });
-            gui.add(params, 'arc', 0, pi, 0.0001).onChange(() => { randomVertices.changeCirclesPoints(); });
+//            gui.add(params, 'arc', 0, pi / 2, 0.0001).onChange(() => { params.randomVertices.changeCirclesPoints(); });
+            gui.add(params, 'arc', 0, pi, 0.0001).onChange(() => { params.randomVertices.changeCirclesPoints(); });
 
 			//center
-			gui.add(params.center, 'lat', -pi / 2, pi / 2, 0.001);
+//			gui.add(params.center, 'lat', -pi / 2, pi / 2, 0.001);
 			gui.add(params.center, 'lng', -pi, pi, 0.001);
 
-			const cbParamsRandom = gui.add(params, 'random').onChange(() => { randomVertices.onChangeRandom(); });
+			const cbParamsRandom = gui.add(params, 'random').onChange(() => { params.randomVertices.onChangeRandom(); });
 			const cbParamsOnePoint = gui.add(params, 'onePoint').onChange(() => {
 
 				if (!params.random && params.onePoint) cbParamsRandom.setValue(true);
-				randomVertices.onChangeOnePoint(params);
+				params.randomVertices.onChangeOnePoint(params);
 			
 			});
 			const cbParamsOnePointArray = gui.add(params, 'onePointArray').onChange(() => {
@@ -102,9 +97,9 @@
 				if (params.onePointArray && !params.onePoint) {
 					
 					if (!params.onePoint) cbParamsOnePoint.setValue(true);
-					randomVertices.createOnePointArray(params);
+					params.randomVertices.createOnePointArray(params);
 
-				} else randomVertices.onChangeOnePoint(params);
+				} else params.randomVertices.onChangeOnePoint(params);
 			
 			});
 
@@ -124,7 +119,7 @@
 					cbParamsOnePointArray.setValue(false);
 					
 				}
-				randomVertices.determinedVertices(params);
+				params.randomVertices.determinedVertices(params);
 				return;
 
 			}
@@ -137,13 +132,13 @@
 					cbParamsOnePointArray.setValue(false);
 					
 				}
-				randomVertices.onChangeRandom(params);
+				params.randomVertices.onChangeRandom(params);
 				return;
 
 			}
 			if (params.onePointArray) {
 				
-				randomVertices.createOnePointArray(params);
+				params.randomVertices.createOnePointArray(params);
 				return;
 
 			}
