@@ -158,6 +158,7 @@ class RandomVertices extends Circle.RandomVertices {
 
 	constructor(scene, options, randomVerticesSettings){
 
+		randomVerticesSettings.np = 36;
 		super(scene, options, randomVerticesSettings);
 		
 	}
@@ -287,6 +288,7 @@ class RandomVertices extends Circle.RandomVertices {
 		return [newLat, newLng];
 	
 	}
+	circlesCount(np) { return np; }//если количество окружностей равно количеству точек на окружности, то точки будут равномерно располагаться на гиперсфере
 	
 	/////////////////////////////overridden methods
 	

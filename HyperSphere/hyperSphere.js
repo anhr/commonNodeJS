@@ -3822,7 +3822,7 @@ table.push({circleDistance1: circleDistance1, circleDistance1Prev: circleDistanc
 
 		}
 
-		const circlesCount = np,//если количество окружностей равно количеству точек на окружности, то точки будут равномерно располагаться на гиперсфере
+		const circlesCount = this.circlesCount(np),
 			d = pi / (circlesCount - 1),//расстояние между окружностями в радианах при условии, что окружности равномерно расположены на сфере
 			s = this.onePointArea(d, np);
 /*		
@@ -4133,6 +4133,7 @@ table.push({circleDistance1: circleDistance1, circleDistance1Prev: circleDistanc
 	center() { console.error(sRandomVertices + sOver.replace('%s', 'center')); }
 	getCirclePoint() { console.error(sRandomVertices + sOver.replace('%s', 'getCirclePoint')); }
 	setCenterLength() { console.error(sRandomVertices + sOver.replace('%s', 'setCenterLength')); }
+	circlesCount() { console.error(sRandomVertices + sOver.replace('%s', 'circlesCount')); }
 
 	////////////////////////////////////////overridden methods
 	
