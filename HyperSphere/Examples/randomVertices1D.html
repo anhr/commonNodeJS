@@ -42,7 +42,7 @@
 				
 				//центр окружности, пересекающей сферу или вершина гиперсферы, вокруг которой будет облако вероятностей
 				center: [
-					0,//-pi,//lng
+					pi/4,//0,//lng
 				],
 				
 				//arc Длинна дуги, соединяющей две вершины гиперсферы
@@ -59,6 +59,7 @@
 				random: false,
 				onePoint: false,//Have effect only if params.random = true
 				onePointArray: false,//Have effect only if params.onePoint = true
+				HyperSphere: Circle,
 
 			}
 			Circle.RandomVertices.params(params);

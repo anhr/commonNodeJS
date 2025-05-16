@@ -291,6 +291,41 @@ class RandomVertices extends Circle.RandomVertices {
 	/////////////////////////////overridden methods
 	
 }
+RandomVertices.Center = (params, inaccurateLatitude) => {
+
+	const center = params.center;
+	if (center.length < 1) center.push(0);
+	if (center.length < 2) center.push(0);
+//	params.randomVertices.defineCenterCoordinates(params);
+	if (center.lat === undefined)
+		Object.defineProperty(center, 'lat', {
+	
+			get: () => { return center[0]; },
+			set: (lat) => {
+	
+				center[0] = lat;
+				if (params.randomVertices) params.randomVertices.changeCirclesPoints();
+				return true;
+	
+			},
+	
+		});
+	if (center.lng === undefined)
+		Object.defineProperty(center, 'lng', {
+	
+			get: () => { return center[1]; },
+			set: (lng) => {
+	
+				center[1] = lng;
+				if (params.randomVertices) params.randomVertices.changeCirclesPoints();
+				return true;
+	
+			},
+
+		});
+	center.lat = inaccurateLatitude(center.lat);
+	
+}
 Sphere.RandomVertices = RandomVertices;
 
 export default Sphere;

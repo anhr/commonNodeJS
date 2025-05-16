@@ -219,19 +219,13 @@ class RandomVertices extends HyperSphere.RandomVertices {
 		return center;
 		
 	}
-	getCirclePoint(circleDistance) {
+	getCirclePoint(circleDistance, params) {
 
-		let newLng = circleDistance;
-
-		//Normalise angles
-		if (newLng > π) newLng -= 2 * π;
-		else if (newLng < -π) newLng += 2 * π;
-		
-		return [newLng];
 /*		
-		let newLng;
-		const center = params.center, lng = center.lng;
-			
+		let newLat = 0, newLng;
+		const center = params.center, angle = 2 * π * (params.random ? Math.random() : options.i / options.numPoints), // Текущий угол в радианах
+			lng = center.lng, lat = 0;
+
 		if (circleDistance === 0) {
 
 			//длинна дуги равна нулю. Координаты точки окружности противоположны координатам центра окружности
@@ -240,29 +234,51 @@ class RandomVertices extends HyperSphere.RandomVertices {
 		} else {
 
 			// Формулы сферической тригонометрии
-			newLat = Math.asin(
-				Math.sin(lat) * Math.cos(circleDistance) +
-				Math.cos(lat) * Math.sin(circleDistance) * Math.cos(angle)
-			);
-
 			newLng = lng + Math.atan2(
 				Math.sin(angle) * Math.sin(circleDistance) * Math.cos(lat),
 				Math.cos(circleDistance) - Math.sin(lat) * Math.sin(newLat)
 			);
 
 		}
+*/	
+		let newLng = params.center.lng - circleDistance * g_sign;
+		
+		//Каждая окружность пересекает одномерную гиперсферу в двух точках.
+		//Из этих двух точек по очереди выбирается точка справа или слева от заданной долготы params.center.lng
+		g_sign *= -1;
 
 		//Normalise angles
 		if (newLng > π) newLng -= 2 * π;
 		else if (newLng < -π) newLng += 2 * π;
-
+		
 		return [newLng];
-*/		
 	
 	}
 
 	/////////////////////////////overridden methods
 
+}
+
+let g_sign = 1;
+
+RandomVertices.Center = (params) => {
+
+	const center = params.center;
+	if (center.length < 1) center.push(0);
+	if (center.lng === undefined)
+		Object.defineProperty(center, 'lng', {
+	
+			get: () => { return center[0]; },
+			set: (lng) => {
+	
+				center[0] = lng;
+				if (params.randomVertices) params.randomVertices.changeCirclesPoints();
+				return true;
+	
+			},
+
+		});
+	
 }
 Circle.RandomVertices = RandomVertices;
 

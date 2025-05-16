@@ -3594,7 +3594,6 @@ class RandomVertices {
 //			const circleDistancePrev = (options.circleDistance1Prev != undefined ? options.circleDistance1Prev : circleDistance1Prev) * R;
 //			const circleDistancePrev = options.circleDistancePrev != undefined ? options.circleDistancePrev : circleDistancePrev;
 			circleDistancePrev = options.circleDistancePrev != undefined ? options.circleDistancePrev : circleDistancePrev;
-if (circleDistancePrev === 0) console.log('circleDistancePrev=' + circleDistancePrev);
 			const circleDistance = (params.random ? (options.circleDistance - circleDistancePrev) * Math.random() + circleDistancePrev : options.circleDistance) / R; // Расстояние до окружности по дуге в радианах
 //console.log('circleDistance=' + circleDistance + ', circleDistancePrev=' + circleDistancePrev);
 
@@ -3674,11 +3673,8 @@ if (circleDistancePrev === 0) console.log('circleDistancePrev=' + circleDistance
 			for (let i = 0; i < numPoints; i++) {
 
 				let point;
-				if (!boCreateCirclesPoints) {
-
-					point = getCirclePoint({ i: i, numPoints: numPoints, circleDistance: options.circleDistance, });
-
-				} else {
+				if (!boCreateCirclesPoints) point = getCirclePoint({ i: i, numPoints: numPoints, circleDistance: options.circleDistance, });
+				else {
 
 					point = this.zeroArray();//создается пустой массив максимального размера
 					if (edges) {
@@ -4005,7 +4001,7 @@ table.push({circleDistance1: circleDistance1, circleDistance1Prev: circleDistanc
 				if (!isNaN(circlesPointsOptions.numPoints)) {//не рисовать окружность с бесконечным числом точек
 
 					//console.log('circleId = ' + circleId + ', circleDistance1 = ' + circleDistance1 + ', numPoints = ' + circlesPointsOptions.numPoints)
-					getCirclePointsRadians(/*params.center, */circlesPointsOptions);
+					getCirclePointsRadians(circlesPointsOptions);
 
 				}
 
@@ -4239,7 +4235,7 @@ RandomVertices.params = (params) => {
 			});
 		
 	}
-	
+/*	
 	params.center ||= [];
 	const center = params.center;
 	if (center.length < 1) center.push(0);
@@ -4283,10 +4279,14 @@ RandomVertices.params = (params) => {
 			},
 
 		});
-	if (params.arc === undefined) params.arc = 0.5;
 	center.lat = inaccurateLatitude(center.lat);
+*/	
+	params.center ||= [];
+	params.HyperSphere.RandomVertices.Center(params, inaccurateLatitude);
+	if (params.arc === undefined) params.arc = 0.5;
 	
 }
+RandomVertices.Center = () => { console.error(sRandomVertices + ': Please, override RandomVertices.Center method.'); }
 HyperSphere.RandomVertices = RandomVertices;
 
 export default HyperSphere;
