@@ -289,6 +289,14 @@ class RandomVertices extends Circle.RandomVertices {
 	
 	}
 	circlesCount(np) { return np; }//если количество окружностей равно количеству точек на окружности, то точки будут равномерно располагаться на гиперсфере
+	getNumPoints(circleDistance, R, dCircleDistance) {
+		
+		return parseInt(
+			2 * π * Math.sin(circleDistance / R)//длинна окружности для гиперсферы радиусом 1
+			/ dCircleDistance
+		);
+		
+	}
 	
 	/////////////////////////////overridden methods
 	

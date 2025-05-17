@@ -3965,39 +3965,23 @@ table.push({circleDistance1: circleDistance1, circleDistance1Prev: circleDistanc
 			for (let circleId = 1; circleId < circlesCount; circleId++) {
 
 				const x = circleId * d,
-/*
-					//уголовое расстояние для окружности для гиперсферы радиусом 1
-					circleDistance1 = b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
-						a / (x + b) + c,
-
-					circleDistance = circleDistance1 * R;
-*/					
 					circleDistance = (b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
-						a / (x + b) + c) * R;
-
-				//prev point
-//				if (circleId > 0) {
-
-				const xPrev = (circleId - 1) * d;
-/*				
-				circleDistance1Prev = b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
-					a / (xPrev + b) + c;
-*/					
+						a / (x + b) + c) * R,
+					xPrev = (circleId - 1) * d;//prev point
 				circleDistancePrev = (b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
 					a / (xPrev + b) + c) * R;
-
-//				}
 				if (circlesSphere) circlesPointsOptions.points = circlesSphere.angles;
 				else circlesPointsOptions.points = circlesPoints;
 				circlesPointsOptions.circleDistance = circleDistance;
-//				const dCircleDistance = circleDistance1 - circleDistance1Prev;
 				const dCircleDistance = (circleDistance - circleDistancePrev) / R;
+				circlesPointsOptions.numPoints = this.getNumPoints(circleDistance, R, dCircleDistance, np);
+/*				
 				circlesPointsOptions.numPoints =
 					parseInt(
 						2 * pi * Math.sin(circleDistance / R)//длинна окружности для гиперсферы радиусом 1
 						/ dCircleDistance
-					);//np;
-				//console.log('circleId = ' + circleId + ', dCircleDistance = ' + dCircleDistance);
+					);
+*/					
 				if (!isNaN(circlesPointsOptions.numPoints)) {//не рисовать окружность с бесконечным числом точек
 
 					//console.log('circleId = ' + circleId + ', circleDistance1 = ' + circleDistance1 + ', numPoints = ' + circlesPointsOptions.numPoints)
@@ -4134,6 +4118,7 @@ table.push({circleDistance1: circleDistance1, circleDistance1Prev: circleDistanc
 	getCirclePoint() { console.error(sRandomVertices + sOver.replace('%s', 'getCirclePoint')); }
 	setCenterLength() { console.error(sRandomVertices + sOver.replace('%s', 'setCenterLength')); }
 	circlesCount() { console.error(sRandomVertices + sOver.replace('%s', 'circlesCount')); }
+	getNumPoints() { console.error(sRandomVertices + sOver.replace('%s', 'getNumPoints')); }
 
 	////////////////////////////////////////overridden methods
 	
