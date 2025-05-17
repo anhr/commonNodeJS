@@ -4025,11 +4025,6 @@ table.push({circleDistance1: circleDistance1, circleDistance1Prev: circleDistanc
 				
 			}
 			setCirclesPoints(params.arc);
-/*			
-			const arc = params.arc;
-			if (arc != pi / 2) setCirclesPoints(arc);
-			else setCirclesOnePoints();
-*/			
 			return circlesPoints;
 			
 		}
