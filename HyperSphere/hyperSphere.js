@@ -3715,9 +3715,12 @@ class RandomVertices {
 
 			if (boCreateCirclesPoints) {
 
-				//размер circlesPoints массива всех точек окружностей
-				const pointsCount = params.onePointArray ? circlesCount * np ://если надо содать массив из единично создаваемых точек
+				const onePointArea = OnePointArea(),
+					
+					//размер circlesPoints массива всех точек окружностей
+					pointsCount = params.onePointArray ? onePointArea.circlesCount * np ://если надо содать массив из единично создаваемых точек
 						1,//массив состоит из одной точки
+					
 					options = pointsCount === 1 ? { pointId: 0, pointsCount: pointsCount } : undefined;
 				for (let i = 0; i < pointsCount; i++) editPoints(circlesPoints, undefined, options);
 				return;
@@ -3733,10 +3736,11 @@ class RandomVertices {
 //const table = [];
 
 //			circleDistancePrev = 0;
-			for (let circleId = 1; circleId < circlesCount; circleId++) {
+			const onePointArea = OnePointArea();
+			for (let circleId = 1; circleId < onePointArea.circlesCount; circleId++) {
 
 				//d = pi / (circlesCount - 1) - расстояние между окружностями в радианах при условии, что окружности равномерно расположены на сфере
-				const x = circleId * d,
+				const x = circleId * onePointArea.d,
 /*
 					//уголовое расстояние для окружности для гиперсферы радиусом 1
 					circleDistance1 = b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
@@ -3749,7 +3753,7 @@ class RandomVertices {
 						a / (x + b) + c) * R;
 //circleDistance = x * R;
 //console.log('circleId=' + circleId + ', x=' + x + ', circleDistance1=' + circleDistance1)
-				const numPoints = this.numPoints(d, s, circleId, x);
+				const numPoints = this.numPoints(onePointArea.d, onePointArea.s, circleId, x);
 /*				
 				//Для вычисления количества случайных точек numPoints около окружности, расположенной на расстоянии circleDistance радиан
 				//я вычисляю площадь шарового пояса между параллелями S и делю ее на s площадь сферы на которой в среднем будет находиться одна случайная точка.
@@ -3784,7 +3788,7 @@ table.push({circleDistance1: circleDistance1, circleDistance1Prev: circleDistanc
 			
 			//вычислить одну случайную точку без необходимости вычисления всех остальных случайных точек
 			//Нужно для сокращения времени вычислений, когда надо всего одну случайную точку
-			const getOnePoint = () => {
+			const getOnePoint = (onePointArea) => {
 
 //				setAbc();
 				circleDistancePrev = 0;//Положение предыдущего кольца
@@ -3793,7 +3797,7 @@ table.push({circleDistance1: circleDistance1, circleDistance1Prev: circleDistanc
 
 				const randomPointId = Math.round(Math.random() * circlesPointsCount);//Идентификатор случайной точки
 				//Найти окружность, в которую попадает случайная точка randomPointId
-				for (let circleId = 0; circleId < circlesCount; circleId++) {
+				for (let circleId = 0; circleId < onePointArea.circlesCount; circleId++) {
 
 					const circleParams = aNumPoints.length > 0 ? aNumPoints[circleId] :
 
@@ -3819,7 +3823,7 @@ table.push({circleDistance1: circleDistance1, circleDistance1Prev: circleDistanc
 				}
 
 			}
-			for (let i = 0; i < circlesPoints.length; i++) getOnePoint();
+			for (let i = 0; i < circlesPoints.length; i++) getOnePoint(onePointArea);
 
 		}
 
@@ -3958,47 +3962,51 @@ table.push({circleDistance1: circleDistance1, circleDistance1Prev: circleDistanc
 				}
 			}
 		});
-		let circleDistancePrev;//Положение предыдущего кольца
-		const debug = randomVerticesSettings.debug || false, edges = debug ? [] : undefined;
-		let circlesPoints = [];//точки всех окружностей
-		const setCircles = () => {
+		let circleDistancePrev,//Положение предыдущего кольца
+			circlesPoints = [];//точки всех окружностей
+		const debug = randomVerticesSettings.debug || false, edges = debug ? [] : undefined,
+			OnePointArea = () => {
+				
+				const circlesCount = (!boCreateCirclesPoints) && (b === 0) ? 2 : this.circlesCount(np),
+					d = pi / (circlesCount - 1),//расстояние между окружностями в радианах при условии, что окружности равномерно расположены на сфере
+					s = this.onePointArea(d, np);
+				return {
+
+					circlesCount: circlesCount,
+					d: d,
+					s: s,
+					
+				}
+				
+			},
+			setCircles = () => {
 
 			setAbc();
 			circleDistancePrev = 0;//Положение предыдущего кольца
 			circlesPointsCount = 0;
 //			if ((circlesPointsOptions.numPoints != undefined) && (b === 0)) circlesCount = 2;//b === 0 при длинне дуги между вершинами гиперсферы params.arc = 0. Диамерт окружности, пересекающей гиперсферу равен нулю. Создаем одну окружность с одной точкой.
+/*				
 			const circlesCount = (!boCreateCirclesPoints) && (b === 0) ? 2 : this.circlesCount(np),
 				d = pi / (circlesCount - 1),//расстояние между окружностями в радианах при условии, что окружности равномерно расположены на сфере
 				s = this.onePointArea(d, np),
+*/				
+			const onePointArea = OnePointArea(),
 				cos = Math.cos;
-			for (let circleId = 1; circleId < circlesCount; circleId++) {
+			for (let circleId = 1; circleId < onePointArea.circlesCount; circleId++) {
 
-				const x = circleId * d,
-//					circleDistance = (1 - cos(x)) * R,
+				const x = circleId * onePointArea.d,
 					circleDistance = (b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
 						a / (x + b) + c) * R,
-					xPrev = (circleId - 1) * d;//prev point
+					xPrev = (circleId - 1) * onePointArea.d;//prev point
 				circleDistancePrev = (b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
 					a / (xPrev + b) + c) * R;
-//				circleDistancePrev = (1 - cos((circleId - 1) * d)) * R;
 				if (circlesSphere) circlesPointsOptions.points = circlesSphere.angles;
 				else circlesPointsOptions.points = circlesPoints;
 				circlesPointsOptions.circleDistance = circleDistance;
 				const dCircleDistance = (circleDistance - circleDistancePrev) / R;
 				circlesPointsOptions.numPoints = this.getNumPoints(circleDistance, R, dCircleDistance, np);
-/*				
-				circlesPointsOptions.numPoints =
-					parseInt(
-						2 * pi * Math.sin(circleDistance / R)//длинна окружности для гиперсферы радиусом 1
-						/ dCircleDistance
-					);
-*/					
-//				if (!isNaN(circlesPointsOptions.numPoints)) {//не рисовать окружность с бесконечным числом точек
-
-					//console.log('circleId = ' + circleId + ', circleDistance1 = ' + circleDistance1 + ', numPoints = ' + circlesPointsOptions.numPoints)
-					getCirclePointsRadians(circlesPointsOptions);
-
-//				}
+				//console.log('circleId = ' + circleId + ', circleDistance1 = ' + circleDistance1 + ', numPoints = ' + circlesPointsOptions.numPoints)
+				getCirclePointsRadians(circlesPointsOptions);
 
 			}
 			//console.log('circlesPointsCount = ' + circlesPointsCount);
