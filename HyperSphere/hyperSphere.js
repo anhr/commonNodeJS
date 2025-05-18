@@ -3846,16 +3846,17 @@ table.push({circleDistance1: circleDistance1, circleDistance1Prev: circleDistanc
 		//(0.027*exp(3*x)+2.718*(x^4))*0.8
 		const exp = Math.exp, pow = Math.pow,
 			k = 15.890654938344866 / 16.163337545114086;//Умножить b на этот множитель что бы b = 15.890654938344866 при arc = 1.5
-		let a, b, c;//коэфициенты для формулы circleDistance = a / (x + b) + c, уголовое расстояние для окружности для гиперсферы радиусом 1
+		let b, a, c;//коэфициенты для формулы circleDistance = a / (x + b) + c, уголовое расстояние для окружности для гиперсферы радиусом 1
 
 		const setAbc = () => {
 
-			const arc = params.arc / 2;
+//			const arc = params.arc / 2;
+			const arc = params.arc;
 			b = (0.027 * (exp(3 * arc)
 				- 1//отнимаю единицу что бы график выходил из нуля
 			) + 2.718 * pow(arc, 4)) * k;//Так b зависит от длинны дуги, что бы плотность вероятностей распределялась от равномерной при arc = π/2 до сводящейся в точку при arc = 0
 			a = -b * (pi + b); c = -a / b;
-
+			
 		};
 		//			setAbc();
 
@@ -3968,15 +3969,18 @@ table.push({circleDistance1: circleDistance1, circleDistance1Prev: circleDistanc
 //			if ((circlesPointsOptions.numPoints != undefined) && (b === 0)) circlesCount = 2;//b === 0 при длинне дуги между вершинами гиперсферы params.arc = 0. Диамерт окружности, пересекающей гиперсферу равен нулю. Создаем одну окружность с одной точкой.
 			const circlesCount = (!boCreateCirclesPoints) && (b === 0) ? 2 : this.circlesCount(np),
 				d = pi / (circlesCount - 1),//расстояние между окружностями в радианах при условии, что окружности равномерно расположены на сфере
-				s = this.onePointArea(d, np);
+				s = this.onePointArea(d, np),
+				cos = Math.cos;
 			for (let circleId = 1; circleId < circlesCount; circleId++) {
 
 				const x = circleId * d,
+//					circleDistance = (1 - cos(x)) * R,
 					circleDistance = (b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
 						a / (x + b) + c) * R,
 					xPrev = (circleId - 1) * d;//prev point
 				circleDistancePrev = (b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
 					a / (xPrev + b) + c) * R;
+//				circleDistancePrev = (1 - cos((circleId - 1) * d)) * R;
 				if (circlesSphere) circlesPointsOptions.points = circlesSphere.angles;
 				else circlesPointsOptions.points = circlesPoints;
 				circlesPointsOptions.circleDistance = circleDistance;
