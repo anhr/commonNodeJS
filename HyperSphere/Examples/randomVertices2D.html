@@ -50,16 +50,16 @@
 				],
 				
 				//arc Длинна дуги, соединяющей две вершины гиперсферы
-				arc: //pi,//Вершины дуги расположены на противоположных концах гиперсферы. Длинна дуги максимальная. Окружности вокруг вершины расположены равномерно по всей гиперсфере.
+				arc: pi,//Вершины дуги расположены на противоположных концах гиперсферы. Длинна дуги максимальная. Окружности вокруг вершины расположены равномерно по всей гиперсфере.
 						//если center.lat = pi / 2, то противоложные точки дуги будут находиться на разных полюсах. Тогда придется делать небольшую поравку в широте точки, вызывая функцию inaccurateLatitude
 						//Иначе случайное распределение вершин получается не случайным непонятно по какой причине
 					//pi / 2,
 					//1.571,
-					0,//Вершины гиперсферы совпадают. Длинна дуги равна нулю. Окружности вокруг вершины превращаются в точки, которые совпадают с вершиной.
+					//0,//Вершины гиперсферы совпадают. Длинна дуги равна нулю. Окружности вокруг вершины превращаются в точки, которые совпадают с вершиной.
 					//0.5,//По умолчанию
 					//1.5,//Для вычисления коэффициента k
 				
-				random: false,
+				random: true,
 				onePoint: false,//Have effect only if params.random = true
 				onePointArray: false,//Have effect only if params.onePoint = true
 				HyperSphere: Sphere,
@@ -136,13 +136,13 @@
 					cbParamsOnePointArray.setValue(false);
 					
 				}
-				randomVertices.onChangeRandom(params);
+				params.randomVertices.onChangeRandom(params);
 				return;
 
 			}
 			if (params.onePointArray) {
 				
-				randomVertices.createOnePointArray(params);
+				params.randomVertices.createOnePointArray(params);
 				return;
 
 			}
