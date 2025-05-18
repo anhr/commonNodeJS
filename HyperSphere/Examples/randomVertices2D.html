@@ -60,8 +60,8 @@
 					//1.5,//Для вычисления коэффициента k
 				
 				random: true,
-				onePoint: false,//Have effect only if params.random = true
-				onePointArray: false,//Have effect only if params.onePoint = true
+				onePoint: true,//Have effect only if params.random = true
+				onePointArray: true,//Have effect only if params.onePoint = true
 				HyperSphere: Sphere,
 
 			}
@@ -146,8 +146,8 @@
 				return;
 
 			}
-			const randomVertice = randomVertices.randomVertice(params);
-			randomVertices.circlesSphere = randomVertices.getHyperSphere(options, {
+			const randomVertice = params.randomVertices.randomVertice(params);
+			params.randomVertices.circlesSphere = params.randomVertices.getHyperSphere(options, {
 
 					edges: false,
 					randomArc: true,
@@ -178,7 +178,7 @@
 						overriddenProperties: {
 							setDrawRange: (start, count) => {
 
-								if (randomVertices.circlesSphere) randomVertices.circlesSphere.bufferGeometry.setDrawRange(start, count);
+								if (params.randomVertices.circlesSphere) params.randomVertices.circlesSphere.bufferGeometry.setDrawRange(start, count);
 
 							}
 
