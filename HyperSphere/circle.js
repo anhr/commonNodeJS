@@ -242,7 +242,9 @@ class RandomVertices extends HyperSphere.RandomVertices {
 
 		}
 */	
-		let newLng = params.center.lng - circleDistance * g_sign;
+		let newLng = params.center.lng - circleDistance * g_sign - (circleDistance === 0 ?
+																	π ://расстояние между вершинами гиперсферы params.arc = 0. Нужно переместить точку на противовоположную позицию
+																	0);
 		
 		//Каждая окружность пересекает одномерную гиперсферу в двух точках.
 		//Из этих двух точек по очереди выбирается точка справа или слева от заданной долготы params.center.lng
@@ -256,7 +258,12 @@ class RandomVertices extends HyperSphere.RandomVertices {
 	
 	}
 	circlesCount(np) { return 36; }
-	getNumPoints(circleDistance, R, dCircleDistance, np) { return np; }
+	getNumPoints(circleDistance, R, dCircleDistance, np) {
+
+		if (dCircleDistance === 0) return NaN;//Расстояние между окружностями равно нулю. Значит расстояние между вершинами гиперсферы params.arc = 0. Возвращаем NaN потому что в этом случае в окружности делаю одну точку.
+		return np;
+	
+	}
 
 	/////////////////////////////overridden methods
 
