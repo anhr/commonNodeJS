@@ -3732,65 +3732,25 @@ class RandomVertices {
 			const aNumPoints = [];//массив с количеством точек numPoints для каждой окружности. Нужен для того, что бы случайно выбрать окружность при вычислении одиночной случайной точки
 			//заполнить aNumPoints
 			circlesPointsCount = 0;
-//let circlesPointsCountOld = 0;
-//const table = [];
 
-//			circleDistancePrev = 0;
 			const onePointArea = OnePointArea();
 			for (let circleId = 1; circleId < onePointArea.circlesCount; circleId++) {
 
-				//d = pi / (circlesCount - 1) - расстояние между окружностями в радианах при условии, что окружности равномерно расположены на сфере
 				const x = circleId * onePointArea.d,
-/*
-					//уголовое расстояние для окружности для гиперсферы радиусом 1
-					circleDistance1 = b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
-						a / (x + b) + c,
-						
-//					circleDistance1 = circleId * d, //уголовое расстояние для текущей окружности для гиперсферы радиусом 1
-					circleDistance = circleDistance1 * R;
-*/					
 					circleDistance = (b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
 						a / (x + b) + c) * R;
-//circleDistance = x * R;
-//console.log('circleId=' + circleId + ', x=' + x + ', circleDistance1=' + circleDistance1)
 				const numPoints = this.numPoints(onePointArea.d, onePointArea.s, circleId, x);
-/*				
-				//Для вычисления количества случайных точек numPoints около окружности, расположенной на расстоянии circleDistance радиан
-				//я вычисляю площадь шарового пояса между параллелями S и делю ее на s площадь сферы на которой в среднем будет находиться одна случайная точка.
-				const cos = Math.cos,
-					h1 = cos(x),//расстояние от текущей окружности до центра шара
-					hprev = cos((circleId - 1) * d),//расстояние от предыдущей окружности до центра шара
-					h = h1 - hprev,//высота шарового пояса
-					S = Math.abs(2 * π * h),//DeepSeek. площадь шарового пояса между параллелями
-					numPoints = Math.round(S / s);//количество случайных точек около окружности, расположенной на расстоянии circleDistance радиан
-*/					
-/*				
-const dCircleDistance = circleDistance1 - circleDistance1Prev;
-let numPointsOld = parseInt(
-	2 * pi * Math.sin(circleDistance1)//длинна окружности для гиперсферы радиусом 1
-	/ dCircleDistance
-);
-if (isNaN(numPointsOld)) numPointsOld = 1;//у окружности с бесконечным числом точек делаем одну точку
-circlesPointsCountOld += numPointsOld;
-//console.log('circleDistance1=' + circleDistance1 + ', Sc1=' + Sc1 + ', circleDistance1Prev' + circleDistance1Prev + ', Sc2=' + Sc2 + ', numPoints=' + numPoints + ', numPointsOld=' + numPointsOld)
-//table.push({circleDistance1: circleDistance1, circleDistance1Prev: circleDistance1Prev, Sc1: Sc1, Sc2: Sc2, numPoints: numPoints, numPointsOld: numPointsOld});
-table.push({circleDistance1: circleDistance1, circleDistance1Prev: circleDistance1Prev, S: S, numPoints: numPoints, numPointsOld: numPointsOld});
-*/
 				
 				circlesPointsCount += numPoints;
-//				const numPoint = { circlesPointsCount: circlesPointsCount, circleDistance: circleDistance, circleDistancePrev: circleId === 1 ? circleDistance : circleDistancePrev }
 				const numPoint = { circlesPointsCount: circlesPointsCount, circleDistance: circleDistance }
 				aNumPoints.push(numPoint);
-//				circleDistancePrev = circleDistance;
 
 			}
-//console.table(table);
 			
 			//вычислить одну случайную точку без необходимости вычисления всех остальных случайных точек
 			//Нужно для сокращения времени вычислений, когда надо всего одну случайную точку
 			const getOnePoint = (onePointArea) => {
 
-//				setAbc();
 				circleDistancePrev = 0;//Положение предыдущего кольца
 
 				if (circlesSphere) circlesPoints = circlesSphere.angles;
@@ -3810,7 +3770,6 @@ table.push({circleDistance1: circleDistance1, circleDistance1Prev: circleDistanc
 						const point = getCirclePoint({
 							
 							circleDistance: circleParams.circleDistance,
-//							circleDistancePrev: circleParams.circleDistancePrev,
 							circleDistancePrev: circleId === 0 ? circleParams.circleDistance : aNumPoints[circleId - 1].circleDistance,
 						
 						});
@@ -3827,20 +3786,6 @@ table.push({circleDistance1: circleDistance1, circleDistance1Prev: circleDistanc
 
 		}
 
-/*		
-		let circlesCount = this.circlesCount(np);
-		const d = pi / (circlesCount - 1),//расстояние между окружностями в радианах при условии, что окружности равномерно расположены на сфере
-			s = this.onePointArea(d, np);
-*/			
-/*		
-			//Площадь сферы s на которой в среднем будет находиться одна случайная точка.
-			//Площадь сферы s вычисляем из площади боковой поверхности цилиндра, поделенной на количество точек на окружности np
-			//Цилиндр расположен на экваторе сферы так, чтобы его середина касалась экватора
-			//Высота цилиндра в радианах равна d.
-			h = 2 * Math.tan(d / 2),//Высота цилиндра радиусом 1. См. https://en.wikipedia.org/wiki/Trigonometric_functions
-			S = 2 * π * h,//Площадь боковой поверхности цилиндра радиусом 1
-			s = S / np;//Площадь сферы на которой в среднем будет находиться одна случайная точка.
-*/			
 
 		//Deepseek Вычислить a, d, c в уравнении y=a/(x+b)+c точностью до 8 знаков при условии:
 		//Эта формула нужна для вычисления радиуса окружности radius
