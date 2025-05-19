@@ -3585,6 +3585,8 @@ class RandomVertices {
 	 */
 	constructor(scene, options, randomVerticesSettings = {}){
 
+		const _this = this;
+		
 		//Во вселенной радиус гиперсферы может меняться
 		let R = randomVerticesSettings.R === undefined ? 1 : randomVerticesSettings.R, np = randomVerticesSettings.np === undefined ? 36 : randomVerticesSettings.np;
 
@@ -3715,10 +3717,10 @@ class RandomVertices {
 
 			if (boCreateCirclesPoints) {
 
-				const onePointArea = OnePointArea(),
+//				const onePointArea = OnePointArea(),
 					
 					//размер circlesPoints массива всех точек окружностей
-					pointsCount = params.onePointArray ? onePointArea.circlesCount * np ://если надо содать массив из единично создаваемых точек
+				const pointsCount = params.onePointArray ? abc.circlesCount * np ://если надо содать массив из единично создаваемых точек
 						1,//массив состоит из одной точки
 					
 					options = pointsCount === 1 ? { pointId: 0, pointsCount: pointsCount } : undefined;
@@ -3728,28 +3730,28 @@ class RandomVertices {
 			}
 
 			const editPointsOptions = { pointId: 0, }
-			setAbc();
+//			const abc = setAbc();
 			const aNumPoints = [];//массив с количеством точек numPoints для каждой окружности. Нужен для того, что бы случайно выбрать окружность при вычислении одиночной случайной точки
 			//заполнить aNumPoints
 			circlesPointsCount = 0;
 
-			const onePointArea = OnePointArea();
-			for (let circleId = 1; circleId < onePointArea.circlesCount; circleId++) {
+//			const onePointArea = OnePointArea();
+			const b = abc.b, a = abc.a, c = abc.c, d = abc.d, s = abc.s;
+			for (let circleId = 1; circleId < abc.circlesCount; circleId++) {
 
-				const x = circleId * onePointArea.d,
+				const x = circleId * d,
 					circleDistance = (b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
 						a / (x + b) + c) * R;
-				const numPoints = this.numPoints(onePointArea.d, onePointArea.s, circleId, x);
+				const numPoints = this.numPoints(d, s, circleId, x);
 				
 				circlesPointsCount += numPoints;
-				const numPoint = { circlesPointsCount: circlesPointsCount, circleDistance: circleDistance }
-				aNumPoints.push(numPoint);
+				aNumPoints.push({ circlesPointsCount: circlesPointsCount, circleDistance: circleDistance });
 
 			}
 			
 			//вычислить одну случайную точку без необходимости вычисления всех остальных случайных точек
 			//Нужно для сокращения времени вычислений, когда надо всего одну случайную точку
-			const getOnePoint = (onePointArea) => {
+			const getOnePoint = (/*onePointArea*/) => {
 
 				circleDistancePrev = 0;//Положение предыдущего кольца
 
@@ -3757,7 +3759,7 @@ class RandomVertices {
 
 				const randomPointId = Math.round(Math.random() * circlesPointsCount);//Идентификатор случайной точки
 				//Найти окружность, в которую попадает случайная точка randomPointId
-				for (let circleId = 0; circleId < onePointArea.circlesCount; circleId++) {
+				for (let circleId = 0; circleId < abc.circlesCount; circleId++) {
 
 					const circleParams = aNumPoints.length > 0 ? aNumPoints[circleId] :
 
@@ -3782,32 +3784,82 @@ class RandomVertices {
 				}
 
 			}
-			for (let i = 0; i < circlesPoints.length; i++) getOnePoint(onePointArea);
+			for (let i = 0; i < circlesPoints.length; i++) getOnePoint();//onePointArea);
 
 		}
+		const abc = {
 
+			//Deepseek Вычислить a, d, c в уравнении y=a/(x+b)+c точностью до 8 знаков при условии:
+			//Эта формула нужна для вычисления радиуса окружности radius
+	
+			//найти элементарную функцию для массива точек (0.1,0.0033995189605183543),(0.5,0.11673555173106497),(1,0.8759691969420544),(1.5,15.890654938344866)
+			//(0.027*exp(3*x)+2.718*(x^4))*0.8
+			
+			//коэфициенты для формулы circleDistance = a / (x + b) + c, уголовое расстояние для окружности для гиперсферы радиусом 1
+			get b() {
+				
+				const exp = Math.exp, pow = Math.pow,
+					k = 15.890654938344866 / 16.163337545114086,//Умножить b на этот множитель что бы b = 15.890654938344866 при arc = 1.5
+		
+		//			arc = params.arc / 2,//В этом случае точки не совсем равномерно распределяются по гиперсфере когда вершины расположены на противоположных концах гиперсферы
+					arc = params.arc,
+					
+					//коэфициенты для формулы circleDistance = a / (x + b) + c, уголовое расстояние для окружности для гиперсферы радиусом 1
+					b = (0.027 * (exp(3 * arc)
+						- 1//отнимаю единицу что бы график выходил из нуля
+						) + 2.718 * pow(arc, 4)) * k;//Так b зависит от длинны дуги, что бы плотность вероятностей распределялась от равномерной при arc = π/2 до сводящейся в точку при arc = 0
+				return b;
+				
+			},
+			get a() {
 
-		//Deepseek Вычислить a, d, c в уравнении y=a/(x+b)+c точностью до 8 знаков при условии:
-		//Эта формула нужна для вычисления радиуса окружности radius
-
-		//найти элементарную функцию для массива точек (0.1,0.0033995189605183543),(0.5,0.11673555173106497),(1,0.8759691969420544),(1.5,15.890654938344866)
-		//10*(x^3)-10*(x^2)+x залазит в отрицательный y
-		//(0.027*exp(3*x)+2.718*(x^4))*0.8
-		const exp = Math.exp, pow = Math.pow,
-			k = 15.890654938344866 / 16.163337545114086;//Умножить b на этот множитель что бы b = 15.890654938344866 при arc = 1.5
-		let b, a, c;//коэфициенты для формулы circleDistance = a / (x + b) + c, уголовое расстояние для окружности для гиперсферы радиусом 1
-
+				const b = this.b;
+				return -b * (pi + b);
+				
+			},
+			get c() { return -this.a / this.b; },
+			
+			get circlesCount() { return (!boCreateCirclesPoints) && (this.b === 0) ? 2 : _this.circlesCount(np); },
+			get d() { return pi / (this.circlesCount - 1); },//расстояние между окружностями в радианах при условии, что окружности равномерно расположены на сфере
+			get s() { return _this.onePointArea(this.d, np); },//Площадь сферы на которой в среднем будет находиться одна случайная точка.
+			
+		}
+/*		
 		const setAbc = () => {
 
-//			const arc = params.arc / 2;
-			const arc = params.arc;
-			b = (0.027 * (exp(3 * arc)
-				- 1//отнимаю единицу что бы график выходил из нуля
-			) + 2.718 * pow(arc, 4)) * k;//Так b зависит от длинны дуги, что бы плотность вероятностей распределялась от равномерной при arc = π/2 до сводящейся в точку при arc = 0
-			a = -b * (pi + b); c = -a / b;
+			//Deepseek Вычислить a, d, c в уравнении y=a/(x+b)+c точностью до 8 знаков при условии:
+			//Эта формула нужна для вычисления радиуса окружности radius
+	
+			//найти элементарную функцию для массива точек (0.1,0.0033995189605183543),(0.5,0.11673555173106497),(1,0.8759691969420544),(1.5,15.890654938344866)
+			//10*(x^3)-10*(x^2)+x залазит в отрицательный y
+			//(0.027*exp(3*x)+2.718*(x^4))*0.8
+			const exp = Math.exp, pow = Math.pow,
+				k = 15.890654938344866 / 16.163337545114086,//Умножить b на этот множитель что бы b = 15.890654938344866 при arc = 1.5
+	
+	//			arc = params.arc / 2,//В этом случае точки не совсем равномерно распределяются по гиперсфере когда вершины расположены на противоположных концах гиперсферы
+				arc = params.arc,
+				
+				//коэфициенты для формулы circleDistance = a / (x + b) + c, уголовое расстояние для окружности для гиперсферы радиусом 1
+				b = (0.027 * (exp(3 * arc)
+					- 1//отнимаю единицу что бы график выходил из нуля
+					) + 2.718 * pow(arc, 4)) * k,//Так b зависит от длинны дуги, что бы плотность вероятностей распределялась от равномерной при arc = π/2 до сводящейся в точку при arc = 0
+				a = -b * (pi + b),
+				c = -a / b,
+				
+				circlesCount = (!boCreateCirclesPoints) && (b === 0) ? 2 : this.circlesCount(np),
+				d = pi / (circlesCount - 1),//расстояние между окружностями в радианах при условии, что окружности равномерно расположены на сфере
+				s = this.onePointArea(d, np);//Площадь сферы на которой в среднем будет находиться одна случайная точка.
+			return {
+				
+				a: a, b: b, c: c,
+				circlesCount: circlesCount,
+				d: d, s: s,
+				
+			}
 			
 		};
 		//			setAbc();
+*/		
 
 		//есть три точки (0,0), (0,75,2.4), (π,π)
 		//y≈ -1.17280918/(x+0.33708757)+3.47926296
@@ -3910,6 +3962,7 @@ class RandomVertices {
 		let circleDistancePrev,//Положение предыдущего кольца
 			circlesPoints = [];//точки всех окружностей
 		const debug = randomVerticesSettings.debug || false, edges = debug ? [] : undefined,
+/*			
 			OnePointArea = () => {
 				
 				const circlesCount = (!boCreateCirclesPoints) && (b === 0) ? 2 : this.circlesCount(np),
@@ -3924,6 +3977,7 @@ class RandomVertices {
 				}
 				
 			},
+*/			
 			setCircles = () => {
 
 			setAbc();
