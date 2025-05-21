@@ -206,7 +206,8 @@ class RandomVertices extends Sphere.RandomVertices {
 
 	constructor(scene, options, randomVerticesSettings) {
 
-		randomVerticesSettings.np = 36;
+		randomVerticesSettings.np = 6;//Количество окружностей в сфере, которые создаются из случайных точек для двумерной гиперсферы
+		randomVerticesSettings.spheresCount = 7;//облако случайных точек делаю из spheresCount сфер, которые создаются из случайных точек для двумерной гиперсферы
 		super(scene, options, randomVerticesSettings);
 
 	}
@@ -254,10 +255,10 @@ class RandomVertices extends Sphere.RandomVertices {
 
 	}
 	//	antipodeCenter(params, antipodeLatitude) { return [antipodeLatitude(params.oppositeVertice.latitude), params.oppositeVertice.longitude - π]; }
-	zeroArray() { return [0, 0]; }
+	zeroArray() { return [0, 0, 0]; }
 	onePointArea(d, np) {
 
-		//Площадь сферы на которой в среднем будет находиться одна случайная точка.
+		//объем шара в котором в среднем будет находиться одна случайная точка.
 		//Площадь сферы вычисляем из площади боковой поверхности цилиндра, поделенной на количество точек на окружности np
 		//Цилиндр расположен на экваторе сферы так, чтобы его середина касалась экватора
 		//Высота цилиндра в радианах равна d.
@@ -344,6 +345,7 @@ class RandomVertices extends Sphere.RandomVertices {
 		);
 
 	}
+	setCirclesCloud(randomVerticesSettings) { for (let i = 0; i < randomVerticesSettings.spheresCount; i++) this.setCircles(); }
 
 	/////////////////////////////overridden methods
 
@@ -353,15 +355,41 @@ RandomVertices.Center = (params, inaccurateLatitude) => {
 	const center = params.center;
 	if (center.length < 1) center.push(0);
 	if (center.length < 2) center.push(0);
+	if (center.length < 3) center.push(0);
 	//	params.randomVertices.defineCenterCoordinates(params);
+	if (center.altitude === undefined)
+		Object.defineProperty(center, 'altitude', {
+
+			get: () => { return center[0]; },
+			set: (altitude) => {
+
+				if (center[0] === altitude) return true;
+				center[0] = altitude;
+				if (params.randomVertices) {
+					
+console.warn('set altitude under constraction')
+					params.randomVertices.changeCirclesPoints();
+
+				}
+				return true;
+
+			},
+
+		});
 	if (center.lat === undefined)
 		Object.defineProperty(center, 'lat', {
 
-			get: () => { return center[0]; },
+			get: () => { return center[1]; },
 			set: (lat) => {
 
-				center[0] = lat;
-				if (params.randomVertices) params.randomVertices.changeCirclesPoints();
+				if (center[1] === lat) return true;
+				center[1] = lat;
+				if (params.randomVertices){
+					
+console.warn('set lat under constraction')
+					params.randomVertices.changeCirclesPoints();
+
+				}
 				return true;
 
 			},
@@ -370,17 +398,25 @@ RandomVertices.Center = (params, inaccurateLatitude) => {
 	if (center.lng === undefined)
 		Object.defineProperty(center, 'lng', {
 
-			get: () => { return center[1]; },
+			get: () => { return center[2]; },
 			set: (lng) => {
 
-				center[1] = lng;
-				if (params.randomVertices) params.randomVertices.changeCirclesPoints();
+				if (center[2] === lng) return true;
+				center[2] = lng;
+
+				if (params.randomVertices){
+
+console.warn('set lng under constraction')					
+					params.randomVertices.changeCirclesPoints();
+
+				}
 				return true;
 
 			},
 
 		});
-	center.lat = inaccurateLatitude(center.lat);
+console.warn('inaccurateLatitude(center.lat) was removed')
+	//center.lat = inaccurateLatitude(center.lat);
 
 }
 HyperSphere3D.RandomVertices = RandomVertices;

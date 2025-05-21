@@ -158,7 +158,7 @@ class RandomVertices extends Circle.RandomVertices {
 
 	constructor(scene, options, randomVerticesSettings){
 
-		randomVerticesSettings.np = 36;
+		if (randomVerticesSettings.np === undefined) randomVerticesSettings.np = 36;
 		super(scene, options, randomVerticesSettings);
 		
 	}
@@ -297,6 +297,7 @@ class RandomVertices extends Circle.RandomVertices {
 		);
 		
 	}
+	setCirclesCloud() { this.setCircles(); }
 	
 	/////////////////////////////overridden methods
 	
@@ -312,7 +313,8 @@ RandomVertices.Center = (params, inaccurateLatitude) => {
 	
 			get: () => { return center[0]; },
 			set: (lat) => {
-	
+
+				if (center[0] === lat) return true;
 				center[0] = lat;
 				if (params.randomVertices) params.randomVertices.changeCirclesPoints();
 				return true;
@@ -326,6 +328,7 @@ RandomVertices.Center = (params, inaccurateLatitude) => {
 			get: () => { return center[1]; },
 			set: (lng) => {
 	
+				if (center[1] === lng) return true;
 				center[1] = lng;
 				if (params.randomVertices) params.randomVertices.changeCirclesPoints();
 				return true;

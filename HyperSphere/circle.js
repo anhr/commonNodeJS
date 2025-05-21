@@ -281,6 +281,7 @@ RandomVertices.Center = (params) => {
 			get: () => { return center[0]; },
 			set: (lng) => {
 	
+				if (center[0] === lng) return true;
 				center[0] = lng;
 				if (params.randomVertices) params.randomVertices.changeCirclesPoints();
 				return true;

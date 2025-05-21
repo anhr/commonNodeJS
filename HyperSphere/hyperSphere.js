@@ -3675,7 +3675,8 @@ class RandomVertices {
 			}
 			if (!params.onePoint) {
 
-				setCircles();
+				this.setCirclesCloud(randomVerticesSettings);
+//				setCircles();
 				return;
 
 			}
@@ -3926,29 +3927,11 @@ class RandomVertices {
 		});
 		let circleDistancePrev,//Положение предыдущего кольца
 			circlesPoints = [];//точки всех окружностей
-		const debug = randomVerticesSettings.debug || false, edges = debug ? [] : undefined,
-/*			
-			OnePointArea = () => {
-				
-				const circlesCount = (!boCreateCirclesPoints) && (b === 0) ? 2 : this.circlesCount(np),
-					d = pi / (circlesCount - 1),//расстояние между окружностями в радианах при условии, что окружности равномерно расположены на сфере
-					s = this.onePointArea(d, np);
-				return {
+		const debug = randomVerticesSettings.debug || false, edges = debug ? [] : undefined;
+		this.setCircles = () => {
 
-					circlesCount: circlesCount,
-					d: d,
-					s: s,
-					
-				}
-				
-			},
-*/			
-			setCircles = () => {
-
-//				setAbc();
 				circleDistancePrev = 0;//Положение предыдущего кольца
 				circlesPointsCount = 0;
-//				const onePointArea = OnePointArea(),
 				const cos = Math.cos,
 					a = abc.a, b = abc.b, c = abc.c, d = abc.d;
 				for (let circleId = 1; circleId < abc.circlesCount; circleId++) {
@@ -4092,6 +4075,7 @@ class RandomVertices {
 	setCenterLength() { console.error(sRandomVertices + sOver.replace('%s', 'setCenterLength')); }
 	circlesCount() { console.error(sRandomVertices + sOver.replace('%s', 'circlesCount')); }
 	getNumPoints() { console.error(sRandomVertices + sOver.replace('%s', 'getNumPoints')); }
+	setCirclesCloud() { console.error(sRandomVertices + sOver.replace('%s', 'setCirclesCloud')); }
 
 	////////////////////////////////////////overridden methods
 	
