@@ -333,7 +333,7 @@ class RandomVertices extends Sphere.RandomVertices {
 		if (newLng > π) newLng -= 2 * π;
 		else if (newLng < -π) newLng += 2 * π;
 
-		return [newLat, newLng];
+		return [options.altitude, newLat, newLng];
 
 	}
 	circlesCount(np) { return np; }//если количество окружностей равно количеству точек на окружности, то точки будут равномерно располагаться на гиперсфере
@@ -345,7 +345,12 @@ class RandomVertices extends Sphere.RandomVertices {
 		);
 
 	}
-	setCirclesCloud(randomVerticesSettings) { for (let i = 0; i < randomVerticesSettings.spheresCount; i++) this.setCircles(); }
+	setCirclesCloud(randomVerticesSettings) {
+
+		const altitudeStep = (Math.PI / 2) / (randomVerticesSettings.spheresCount - 1);
+		for (let i = 0; i < randomVerticesSettings.spheresCount; i++) this.setCircles(altitudeStep * i);
+	
+	}
 
 	/////////////////////////////overridden methods
 

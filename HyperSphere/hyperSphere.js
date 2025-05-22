@@ -3641,7 +3641,7 @@ class RandomVertices {
 			for (let i = 0; i < numPoints; i++) {
 
 				let point;
-				if (!boCreateCirclesPoints) point = getCirclePoint({ i: i, numPoints: numPoints, circleDistance: options.circleDistance, });
+				if (!boCreateCirclesPoints) point = getCirclePoint({ i: i, numPoints: numPoints, circleDistance: options.circleDistance, altitude: options.altitude });
 				else {
 
 					point = this.zeroArray();//создается пустой массив максимального размера
@@ -3928,7 +3928,7 @@ class RandomVertices {
 		let circleDistancePrev,//Положение предыдущего кольца
 			circlesPoints = [];//точки всех окружностей
 		const debug = randomVerticesSettings.debug || false, edges = debug ? [] : undefined;
-		this.setCircles = () => {
+		this.setCircles = (altitude) => {
 
 				circleDistancePrev = 0;//Положение предыдущего кольца
 				circlesPointsCount = 0;
@@ -3948,6 +3948,7 @@ class RandomVertices {
 					const dCircleDistance = (circleDistance - circleDistancePrev) / R;
 					circlesPointsOptions.numPoints = this.getNumPoints(circleDistance, R, dCircleDistance, np);
 					//console.log('circleId = ' + circleId + ', circleDistance1 = ' + circleDistance1 + ', numPoints = ' + circlesPointsOptions.numPoints)
+					circlesPointsOptions.altitude = altitude;
 					getCirclePointsRadians(circlesPointsOptions);
 	
 				}
