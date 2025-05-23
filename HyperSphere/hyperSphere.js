@@ -3859,7 +3859,7 @@ class RandomVertices {
 
 		const createCirclesSphere = () => {
 
-			circlesPointsOptions.pointId = 0;
+			circlesPointsOptions.pointId = this.pointIdErase(circlesPointsOptions.pointId);
 			if (!circlesSphere && !boCreateCirclesPoints && (circlesPoints.length != 0)) {
 
 				circlesSphere = this.getHyperSphere(options, {
@@ -4077,6 +4077,7 @@ class RandomVertices {
 	circlesCount() { console.error(sRandomVertices + sOver.replace('%s', 'circlesCount')); }
 	getNumPoints() { console.error(sRandomVertices + sOver.replace('%s', 'getNumPoints')); }
 	setCirclesCloud() { console.error(sRandomVertices + sOver.replace('%s', 'setCirclesCloud')); }
+	pointIdErase() { console.error(sRandomVertices + sOver.replace('%s', 'pointIdErase')); }
 
 	////////////////////////////////////////overridden methods
 	
