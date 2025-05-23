@@ -264,7 +264,7 @@ class RandomVertices extends HyperSphere.RandomVertices {
 		return np;
 	
 	}
-	pointIdErase() { return 0; }
+//	pointIdErase() { return 0; }
 
 	/////////////////////////////overridden methods
 

@@ -3615,6 +3615,7 @@ class RandomVertices {
 
 				points[options.pointId] = point;
 				options.pointId++;
+console.log('options.pointId=' + options.pointId)				
 
 			} else console.error('getCirclePointsRadians: Invalid options.pointId = ' + options.pointId);
 
@@ -3859,7 +3860,8 @@ class RandomVertices {
 
 		const createCirclesSphere = () => {
 
-			circlesPointsOptions.pointId = this.pointIdErase(circlesPointsOptions.pointId);
+//			circlesPointsOptions.pointId = this.pointIdErase(circlesPointsOptions.pointId);
+			circlesPointsOptions.pointId = 0;
 			if (!circlesSphere && !boCreateCirclesPoints && (circlesPoints.length != 0)) {
 
 				circlesSphere = this.getHyperSphere(options, {
@@ -4078,7 +4080,7 @@ class RandomVertices {
 	circlesCount() { console.error(sRandomVertices + sOver.replace('%s', 'circlesCount')); }
 	getNumPoints() { console.error(sRandomVertices + sOver.replace('%s', 'getNumPoints')); }
 	setCirclesCloud() { console.error(sRandomVertices + sOver.replace('%s', 'setCirclesCloud')); }
-	pointIdErase() { console.error(sRandomVertices + sOver.replace('%s', 'pointIdErase')); }
+//	pointIdErase() { console.error(sRandomVertices + sOver.replace('%s', 'pointIdErase')); }
 
 	////////////////////////////////////////overridden methods
 	

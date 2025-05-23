@@ -345,8 +345,8 @@ class RandomVertices extends Sphere.RandomVertices {
 		);
 
 	}
-	pointIdErase(pointId) { return pointId === undefined ? 0 : pointId; }
 	setCirclesCloud(randomVerticesSettings) { for (let sphereId = 0; sphereId < randomVerticesSettings.spheresCount; sphereId++) this.setCircles(sphereId); }
+//	pointIdErase(pointId) { return pointId === undefined ? 0 : pointId; }
 
 	/////////////////////////////overridden methods
 
