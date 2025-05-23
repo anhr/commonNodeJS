@@ -3615,7 +3615,6 @@ class RandomVertices {
 
 				points[options.pointId] = point;
 				options.pointId++;
-console.log('options.pointId=' + options.pointId)				
 
 			} else console.error('getCirclePointsRadians: Invalid options.pointId = ' + options.pointId);
 
@@ -3929,7 +3928,8 @@ console.log('options.pointId=' + options.pointId)
 		});
 		let circleDistancePrev,//Положение предыдущего кольца
 			circlesPoints = [];//точки всех окружностей
-		const debug = randomVerticesSettings.debug || false, edges = debug ? [] : undefined;
+		const debug = randomVerticesSettings.debug || false, edges = debug ? [] : undefined,
+			aCircles = [];
 		this.setCircles = (sphereId) => {
 
 			const altitude = sphereId * (Math.PI / 2) / (randomVerticesSettings.spheresCount - 1);
@@ -3949,7 +3949,12 @@ console.log('options.pointId=' + options.pointId)
 				else circlesPointsOptions.points = circlesPoints;
 				circlesPointsOptions.circleDistance = circleDistance;
 				const dCircleDistance = (circleDistance - circleDistancePrev) / R;
-				circlesPointsOptions.numPoints = this.getNumPoints(circleDistance, R, dCircleDistance, np);
+				if (boCreateCirclesPoints) {
+					
+					circlesPointsOptions.numPoints = this.getNumPoints(circleDistance, R, dCircleDistance, np);
+					aCircles.push({ numPoints: circlesPointsOptions.numPoints, });
+
+				} else circlesPointsOptions.numPoints = aCircles[circleId - 1].numPoints;
 				//console.log('circleId = ' + circleId + ', circleDistance1 = ' + circleDistance1 + ', numPoints = ' + circlesPointsOptions.numPoints)
 				circlesPointsOptions.altitude = altitude;
 				getCirclePointsRadians(circlesPointsOptions);
