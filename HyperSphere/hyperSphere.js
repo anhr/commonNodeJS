@@ -3928,34 +3928,35 @@ class RandomVertices {
 		let circleDistancePrev,//Положение предыдущего кольца
 			circlesPoints = [];//точки всех окружностей
 		const debug = randomVerticesSettings.debug || false, edges = debug ? [] : undefined;
-		this.setCircles = (altitude) => {
+		this.setCircles = (sphereId) => {
 
-				circleDistancePrev = 0;//Положение предыдущего кольца
-				circlesPointsCount = 0;
-				const cos = Math.cos,
-					a = abc.a, b = abc.b, c = abc.c, d = abc.d;
-				for (let circleId = 1; circleId < abc.circlesCount; circleId++) {
-	
-					const x = circleId * d,
-						circleDistance = (b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
-							a / (x + b) + c) * R,
-						xPrev = (circleId - 1) * d;//prev point
-					circleDistancePrev = (b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
-						a / (xPrev + b) + c) * R;
-					if (circlesSphere) circlesPointsOptions.points = circlesSphere.angles;
-					else circlesPointsOptions.points = circlesPoints;
-					circlesPointsOptions.circleDistance = circleDistance;
-					const dCircleDistance = (circleDistance - circleDistancePrev) / R;
-					circlesPointsOptions.numPoints = this.getNumPoints(circleDistance, R, dCircleDistance, np);
-					//console.log('circleId = ' + circleId + ', circleDistance1 = ' + circleDistance1 + ', numPoints = ' + circlesPointsOptions.numPoints)
-					circlesPointsOptions.altitude = altitude;
-					getCirclePointsRadians(circlesPointsOptions);
-	
-				}
-				//console.log('circlesPointsCount = ' + circlesPointsCount);
-				createCirclesSphere();
-	
+			const altitude = sphereId * (Math.PI / 2) / (randomVerticesSettings.spheresCount - 1);
+			circleDistancePrev = 0;//Положение предыдущего кольца
+			if ((sphereId === undefined) || (sphereId === 0)) circlesPointsCount = 0;
+			const cos = Math.cos,
+				a = abc.a, b = abc.b, c = abc.c, d = abc.d;
+			for (let circleId = 1; circleId < abc.circlesCount; circleId++) {
+
+				const x = circleId * d,
+					circleDistance = (b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
+						a / (x + b) + c) * R,
+					xPrev = (circleId - 1) * d;//prev point
+				circleDistancePrev = (b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
+					a / (xPrev + b) + c) * R;
+				if (circlesSphere) circlesPointsOptions.points = circlesSphere.angles;
+				else circlesPointsOptions.points = circlesPoints;
+				circlesPointsOptions.circleDistance = circleDistance;
+				const dCircleDistance = (circleDistance - circleDistancePrev) / R;
+				circlesPointsOptions.numPoints = this.getNumPoints(circleDistance, R, dCircleDistance, np);
+				//console.log('circleId = ' + circleId + ', circleDistance1 = ' + circleDistance1 + ', numPoints = ' + circlesPointsOptions.numPoints)
+				circlesPointsOptions.altitude = altitude;
+				getCirclePointsRadians(circlesPointsOptions);
+
 			}
+			//console.log('circlesPointsCount = ' + circlesPointsCount);
+			if ((sphereId === undefined)  || ((sphereId + 1) === randomVerticesSettings.spheresCount)) createCirclesSphere();
+
+		}
 		const setCirclesPoints = (arc) => {
 
 			//заполнить circlesPoints максимально возможный массив точек всех окружностей 

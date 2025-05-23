@@ -210,17 +210,6 @@ class RandomVertices extends Sphere.RandomVertices {
 		randomVerticesSettings.spheresCount = 7;//облако случайных точек делаю из spheresCount сфер, которые создаются из случайных точек для двумерной гиперсферы
 		super(scene, options, randomVerticesSettings);
 		
-		//overridden methods
-		
-		this.setCirclesCloud = (randomVerticesSettings) => {
-	
-			const altitudeStep = (Math.PI / 2) / (randomVerticesSettings.spheresCount - 1);
-			for (let i = 0; i < randomVerticesSettings.spheresCount; i++) this.setCircles(altitudeStep * i);
-		
-		}
-
-		//////////////////////////////overridden methods
-		
 	}
 
 	//overridden methods
@@ -357,6 +346,7 @@ class RandomVertices extends Sphere.RandomVertices {
 
 	}
 	pointIdErase(pointId) { return pointId === undefined ? 0 : pointId; }
+	setCirclesCloud(randomVerticesSettings) { for (let sphereId = 0; sphereId < randomVerticesSettings.spheresCount; sphereId++) this.setCircles(sphereId); }
 
 	/////////////////////////////overridden methods
 
