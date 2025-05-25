@@ -2007,6 +2007,7 @@ this.object = () => {
 													vertice: vertice.angles,
 													oppositeVertice: oppositeVerticeAngles,
 													R: classSettings.overriddenProperties.r(options.player.getTimeId()),
+													HyperSphere: randomVertices.class,
 													
 												}
 												if (aAngleControls.arc) randomVertices.changeCirclesPoints(params);
@@ -3929,14 +3930,17 @@ class RandomVertices {
 		let circleDistancePrev,//Положение предыдущего кольца
 			circlesPoints = [];//точки всех окружностей
 		const debug = randomVerticesSettings.debug || false, edges = debug ? [] : undefined,
-			aCircles = [];
+			aSpheres = [];//массив сфер в трехмерной гиперсфере. Каждый элемент массива это массив окружностей в текущей сфере. каждый елемент массива окружностей содержит параметры окружности
+							//Для двумерной и одномерной гиперсферы когда sphereId = undefined, массив сфер содержит один элемент с массивом окружностей.
 		this.setCircles = (sphereId) => {
 
-			const altitude = sphereId * (Math.PI / 2) / (randomVerticesSettings.spheresCount - 1);
 			circleDistancePrev = 0;//Положение предыдущего кольца
 			if ((sphereId === undefined) || (sphereId === 0)) circlesPointsCount = 0;
 			const cos = Math.cos,
-				a = abc.a, b = abc.b, c = abc.c, d = abc.d;
+				a = abc.a, b = abc.b, c = abc.c, d = abc.d,
+				circlesId = sphereId === undefined ? 0 : sphereId;
+			if (aSpheres.length <= circlesId) aSpheres.push([]);
+			const aCircles = aSpheres[circlesId];
 			for (let circleId = 1; circleId < abc.circlesCount; circleId++) {
 
 				const x = circleId * d,
@@ -3956,7 +3960,7 @@ class RandomVertices {
 
 				} else circlesPointsOptions.numPoints = aCircles[circleId - 1].numPoints;
 				//console.log('circleId = ' + circleId + ', circleDistance1 = ' + circleDistance1 + ', numPoints = ' + circlesPointsOptions.numPoints)
-				circlesPointsOptions.altitude = altitude;
+				circlesPointsOptions.altitude = sphereId * (Math.PI / 2) / (randomVerticesSettings.spheresCount - 1);
 				getCirclePointsRadians(circlesPointsOptions);
 
 			}
@@ -3979,8 +3983,11 @@ class RandomVertices {
 		}
 		const setCirclesOnePoints = () => {
 
+			//заполнить circlesPoints максимально возможный массив точек всех окружностей 
 			boCreateCirclesPoints = true;
 			changeCirclesPoints();
+
+			//создать окружности
 			boCreateCirclesPoints = false;
 			changeCirclesPoints();
 

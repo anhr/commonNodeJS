@@ -158,6 +158,7 @@ class RandomVertices extends HyperSphere.RandomVertices {
 
 		if (randomVerticesSettings.np === undefined) randomVerticesSettings.np = 2;//Каждая окружность пересекает одномерную гиперсферу в двух точках.
 		super(scene, options, randomVerticesSettings);
+		this.class = Circle;
 
 	}
 

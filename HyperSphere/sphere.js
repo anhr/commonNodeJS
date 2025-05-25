@@ -160,6 +160,7 @@ class RandomVertices extends Circle.RandomVertices {
 
 		if (randomVerticesSettings.np === undefined) randomVerticesSettings.np = 36;
 		super(scene, options, randomVerticesSettings);
+		this.class = Sphere;
 		
 	}
 
