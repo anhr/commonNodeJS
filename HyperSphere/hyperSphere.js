@@ -3587,6 +3587,8 @@ class RandomVertices {
 	constructor(scene, options, randomVerticesSettings = {}){
 
 		const _this = this;
+
+		randomVerticesSettings.name ||= 'Random Vertices';
 		
 		//Во вселенной радиус гиперсферы может меняться
 		let R = randomVerticesSettings.R === undefined ? 1 : randomVerticesSettings.R, np = randomVerticesSettings.np === undefined ? 36 : randomVerticesSettings.np;
@@ -3968,7 +3970,7 @@ class RandomVertices {
 
 				} else circlesPointsOptions.numPoints = aCircles[circleId - 1].numPoints;
 				//console.log('circleId = ' + circleId + ', circleDistance1 = ' + circleDistance1 + ', numPoints = ' + circlesPointsOptions.numPoints)
-				circlesPointsOptions.altitude = sphereId * (Math.PI / 2) / (randomVerticesSettings.spheresCount - 1);
+				circlesPointsOptions.altitude = sphereId * (Math.PI / 2) / (randomVerticesSettings.spheresCount - 1) + params.center.altitude;
 				getCirclePointsRadians(circlesPointsOptions);
 
 			}

@@ -44,14 +44,14 @@
 					0,//Altitude
 			
 					//lat
-					0,
-					//pi/4,
+					//0,
+					-pi/4,
 					//pi/2,//если arc = pi, то противоложные точки дуги будут находиться на разных полюсах. Тогда придется делать небольшую поравку в широте точки, вызывая функцию inaccurateLatitude
 						//Иначе случайное распределение вершин получается не случайным непонятно по какой причине
 
 					//lng
-					0,
-					//-pi/8,
+					//0,
+					-pi/4,
 				],
 				
 				//arc Длинна дуги, соединяющей две вершины гиперсферы
@@ -79,6 +79,7 @@
 				//np: 360,
 				//R: 0.5,
 				debug: true,
+				name: 'Random Arc'
 			
 			};
 			params.randomVertices = new HyperSphere3D.RandomVertices(scene, options, randomVerticesSettings);
