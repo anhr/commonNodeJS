@@ -375,12 +375,7 @@ RandomVertices.Center = (params, inaccurateLatitude) => {
 
 				if (center[0] === altitude) return true;
 				center[0] = altitude;
-				if (params.randomVertices) {
-					
-console.warn('set altitude under constraction')
-					params.randomVertices.changeCirclesPoints();
-
-				}
+				if (params.randomVertices) params.randomVertices.changeCirclesPoints();
 				return true;
 
 			},
@@ -394,12 +389,7 @@ console.warn('set altitude under constraction')
 
 				if (center[1] === lat) return true;
 				center[1] = lat;
-				if (params.randomVertices){
-					
-console.warn('set lat under constraction')
-					params.randomVertices.changeCirclesPoints();
-
-				}
+				if (params.randomVertices) params.randomVertices.changeCirclesPoints();
 				return true;
 
 			},
@@ -414,12 +404,7 @@ console.warn('set lat under constraction')
 				if (center[2] === lng) return true;
 				center[2] = lng;
 
-				if (params.randomVertices){
-
-console.warn('set lng under constraction')					
-					params.randomVertices.changeCirclesPoints();
-
-				}
+				if (params.randomVertices) params.randomVertices.changeCirclesPoints();
 				return true;
 
 			},

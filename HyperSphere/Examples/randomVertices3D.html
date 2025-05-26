@@ -92,7 +92,7 @@
 			gui.add(params, 'arc', 0, pi, 0.0001).onChange(() => { params.randomVertices.changeCirclesPoints(); });
 
 			//center
-			gui.add(params.center, 'altitude', -pi / 2, pi / 2, 0.001);
+			gui.add(params.center, 'altitude', 0, pi, 0.001);
 			gui.add(params.center, 'lat', -pi / 2, pi / 2, 0.001);
 			gui.add(params.center, 'lng', -pi, pi, 0.001);
 

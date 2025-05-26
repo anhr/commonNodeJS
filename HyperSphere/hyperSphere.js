@@ -2008,10 +2008,12 @@ this.object = () => {
 													oppositeVertice: oppositeVerticeAngles,
 													R: classSettings.overriddenProperties.r(options.player.getTimeId()),
 													HyperSphere: randomVertices.class,
-													
+random: false,
+onePoint: false,
+onePointArray: false,
 												}
 												if (aAngleControls.arc) randomVertices.changeCirclesPoints(params);
-												else aAngleControls.arc = randomVertices.createOnePointArray(params);
+												else aAngleControls.arc = params.random === false ? randomVertices.determinedVertices(params) : randomVertices.createOnePointArray(params);
 												return;
 												
 											}
@@ -3970,7 +3972,8 @@ class RandomVertices {
 
 				} else circlesPointsOptions.numPoints = aCircles[circleId - 1].numPoints;
 				//console.log('circleId = ' + circleId + ', circleDistance1 = ' + circleDistance1 + ', numPoints = ' + circlesPointsOptions.numPoints)
-				circlesPointsOptions.altitude = sphereId * (Math.PI / 2) / (randomVerticesSettings.spheresCount - 1) + params.center.altitude;
+				const altitudeRange = Math.PI / 2;
+				circlesPointsOptions.altitude = sphereId * altitudeRange / (randomVerticesSettings.spheresCount - 1) + params.center.altitude - altitudeRange / 2;
 				getCirclePointsRadians(circlesPointsOptions);
 
 			}
@@ -4021,6 +4024,10 @@ class RandomVertices {
 				params.onePoint = false;
 				
 			}
+/*			
+			params.randomVertices = this;
+			RandomVertices.params(params);
+*/			
 			setCirclesPoints(params.arc);
 			return circlesPoints;
 			
@@ -4071,7 +4078,7 @@ class RandomVertices {
 			if (params.R != undefined) R = params.R;
 			params.randomVertices = this;
 			RandomVertices.params(params);
-			params.randomVertices = this;
+//			params.randomVertices = this;
 			removeCirclesSphere();
 			if (params.onePointArray) {
 
@@ -4142,20 +4149,6 @@ RandomVertices.params = (params) => {
 	if (params.vertice) {
 
 		params.randomVertices.oppositeVertice0(params, inaccurateLatitude);
-/*		
-		let latitude = params.oppositeVertice.latitude;
-		Object.defineProperty(params.oppositeVertice, '0', {
-
-			get: () => { return latitude; },
-			set: (latitudeNew) => {
-	
-				latitude = inaccurateLatitude(latitudeNew);
-				return true;
-	
-			},
-	
-		});
-*/		
 
 		if (params.arc === undefined)
 			Object.defineProperty(params, 'arc', {
@@ -4216,52 +4209,6 @@ RandomVertices.params = (params) => {
 			});
 		
 	}
-/*	
-	params.center ||= [];
-	const center = params.center;
-	if (center.length < 1) center.push(0);
-	if (center.length < 2) center.push(0);
-//	params.randomVertices.defineCenterCoordinates(params);
-	if (center.lat === undefined)
-		Object.defineProperty(center, 'lat', {
-	
-			get: () => {
-
-//console.log('Under constraction');
-				return center[0];
-			
-			},
-			set: (lat) => {
-	
-//console.log('Under constraction');
-				center[0] = lat;
-				if (params.randomVertices) params.randomVertices.changeCirclesPoints();
-				return true;
-	
-			},
-	
-		});
-	if (center.lng === undefined)
-		Object.defineProperty(center, 'lng', {
-	
-			get: () => {
-				
-//console.log('Under constraction');
-				return center[1];
-			
-			},
-			set: (lng) => {
-	
-//console.log('Under constraction');
-				center[1] = lng;
-				if (params.randomVertices) params.randomVertices.changeCirclesPoints();
-				return true;
-	
-			},
-
-		});
-	center.lat = inaccurateLatitude(center.lat);
-*/	
 	params.center ||= [];
 	params.HyperSphere.RandomVertices.Center(params, inaccurateLatitude);
 	if (params.arc === undefined) params.arc = 0.5;
