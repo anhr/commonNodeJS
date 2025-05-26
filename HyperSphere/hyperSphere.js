@@ -3661,10 +3661,7 @@ class RandomVertices {
 
 			return points;
 		}
-
-		//Параметры, которые может менять пользователь
-		let params;
-
+		let params;//Параметры, которые может менять пользователь
 		const changeCirclesPoints = (paramsNew) => {
 
 			if (paramsNew) {
@@ -3684,14 +3681,15 @@ class RandomVertices {
 
 			if (boCreateCirclesPoints) {
 
-//				const onePointArea = OnePointArea(),
-					
-					//размер circlesPoints массива всех точек окружностей
+				this.setCirclesCloudOnePoint(randomVerticesSettings);
+/*				
+				//размер circlesPoints массива всех точек окружностей
 				const pointsCount = params.onePointArray ? abc.circlesCount * np ://если надо содать массив из единично создаваемых точек
 						1,//массив состоит из одной точки
 					
 					options = pointsCount === 1 ? { pointId: 0, pointsCount: pointsCount } : undefined;
 				for (let i = 0; i < pointsCount; i++) editPoints(circlesPoints, undefined, options);
+*/				
 				return;
 
 			}
@@ -3930,17 +3928,27 @@ class RandomVertices {
 		let circleDistancePrev,//Положение предыдущего кольца
 			circlesPoints = [];//точки всех окружностей
 		const debug = randomVerticesSettings.debug || false, edges = debug ? [] : undefined,
-			aSpheres = [];//массив сфер в трехмерной гиперсфере. Каждый элемент массива это массив окружностей в текущей сфере. каждый елемент массива окружностей содержит параметры окружности
+			aSpheres = [],//массив сфер в трехмерной гиперсфере. Каждый элемент массива это массив окружностей в текущей сфере. каждый елемент массива окружностей содержит параметры окружности
 							//Для двумерной и одномерной гиперсферы когда sphereId = undefined, массив сфер содержит один элемент с массивом окружностей.
+			getCirclesArray = (sphereId) => {
+				
+				const circlesId = sphereId === undefined ? 0 : sphereId;
+				if (aSpheres.length <= circlesId) aSpheres.push([]);
+				return aSpheres[circlesId];
+				
+			}
 		this.setCircles = (sphereId) => {
 
 			circleDistancePrev = 0;//Положение предыдущего кольца
 			if ((sphereId === undefined) || (sphereId === 0)) circlesPointsCount = 0;
 			const cos = Math.cos,
 				a = abc.a, b = abc.b, c = abc.c, d = abc.d,
+				aCircles = getCirclesArray(sphereId);
+/*			
 				circlesId = sphereId === undefined ? 0 : sphereId;
 			if (aSpheres.length <= circlesId) aSpheres.push([]);
 			const aCircles = aSpheres[circlesId];
+*/			
 			for (let circleId = 1; circleId < abc.circlesCount; circleId++) {
 
 				const x = circleId * d,
@@ -3966,6 +3974,16 @@ class RandomVertices {
 			}
 			//console.log('circlesPointsCount = ' + circlesPointsCount);
 			if ((sphereId === undefined)  || ((sphereId + 1) === randomVerticesSettings.spheresCount)) createCirclesSphere();
+
+		}
+		this.setCirclesOnePoint = (sphereId) => {
+
+			//размер circlesPoints массива всех точек окружностей
+			const pointsCount = params.onePointArray ? abc.circlesCount * np ://если надо содать массив из единично создаваемых точек
+					1,//массив состоит из одной точки
+				
+				options = pointsCount === 1 ? { pointId: 0, pointsCount: pointsCount } : undefined;
+			for (let i = 0; i < pointsCount; i++) editPoints(circlesPoints, undefined, options);
 
 		}
 		const setCirclesPoints = (arc) => {
@@ -4092,6 +4110,7 @@ class RandomVertices {
 	circlesCount() { console.error(sRandomVertices + sOver.replace('%s', 'circlesCount')); }
 	getNumPoints() { console.error(sRandomVertices + sOver.replace('%s', 'getNumPoints')); }
 	setCirclesCloud() { console.error(sRandomVertices + sOver.replace('%s', 'setCirclesCloud')); }
+	setCirclesCloudOnePoint() { console.error(sRandomVertices + sOver.replace('%s', 'setCirclesCloudOnePoint')); }
 //	pointIdErase() { console.error(sRandomVertices + sOver.replace('%s', 'pointIdErase')); }
 
 	////////////////////////////////////////overridden methods

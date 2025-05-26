@@ -298,7 +298,6 @@ class RandomVertices extends Circle.RandomVertices {
 		);
 		
 	}
-	setCirclesCloud() { this.setCircles(); }
 	
 	/////////////////////////////overridden methods
 	

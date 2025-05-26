@@ -159,7 +159,7 @@ class RandomVertices extends HyperSphere.RandomVertices {
 		if (randomVerticesSettings.np === undefined) randomVerticesSettings.np = 2;//Каждая окружность пересекает одномерную гиперсферу в двух точках.
 		super(scene, options, randomVerticesSettings);
 		this.class = Circle;
-
+		
 	}
 
 	//overridden methods
@@ -266,6 +266,8 @@ class RandomVertices extends HyperSphere.RandomVertices {
 	
 	}
 //	pointIdErase() { return 0; }
+	setCirclesCloud() { this.setCircles(); }
+	setCirclesCloudOnePoint() { this.setCirclesOnePoint() }
 
 	/////////////////////////////overridden methods
 
