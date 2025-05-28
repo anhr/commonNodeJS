@@ -3771,7 +3771,9 @@ class RandomVertices {
 					k = 15.890654938344866 / 16.163337545114086,//Умножить b на этот множитель что бы b = 15.890654938344866 при arc = 1.5
 		
 		//			arc = params.arc / 2,//В этом случае точки не совсем равномерно распределяются по гиперсфере когда вершины расположены на противоположных концах гиперсферы
-					arc = params.arc,
+					arc = boCreateCirclesPoints ?
+						π ://надо установить максимальную длинну дуги во время создания массива точек окружностей, что бы массив поучился максимальной длинный
+						params.arc,
 					
 					//коэфициенты для формулы circleDistance = a / (x + b) + c, уголовое расстояние для окружности для гиперсферы радиусом 1
 					b = (0.027 * (exp(3 * arc)
@@ -3991,16 +3993,16 @@ class RandomVertices {
 			for (let i = 0; i < pointsCount; i++) editPoints(circlesPoints, undefined, options);
 
 		}
-		const setCirclesPoints = (arc) => {
+		const setCirclesPoints = (/*arc*/) => {
 
 			//заполнить circlesPoints максимально возможный массив точек всех окружностей 
 			boCreateCirclesPoints = true;
-			params.arc = pi;
+//			params.arc = pi;
 			changeCirclesPoints();
 
 			//создать окружности
 			boCreateCirclesPoints = false;
-			params.arc = arc;
+//			params.arc = arc;
 			changeCirclesPoints();
 
 		}
@@ -4024,11 +4026,9 @@ class RandomVertices {
 				params.onePoint = false;
 				
 			}
-/*			
 			params.randomVertices = this;
 			RandomVertices.params(params);
-*/			
-			setCirclesPoints(params.arc);
+			setCirclesPoints();//params.arc);
 			return circlesPoints;
 			
 		}
@@ -4048,7 +4048,7 @@ class RandomVertices {
 			
 			params ||= paramsNew;
 			removeCirclesSphere();
-			setCirclesPoints(params.arc);
+			setCirclesPoints();// params.arc);
 			createCirclesSphere();
 		
 		}
