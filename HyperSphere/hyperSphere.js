@@ -455,7 +455,7 @@ class HyperSphere extends MyObject {
 
 								case sLongitude: return verticeAngles[verticeAngles.length - longitudeShift];
 								case sLatitude: return verticeAngles[verticeAngles.length - latitudeShift];
-								case sAltitude: return verticeAngles[verticeAngles.length - altitudehift];
+								case sAltitude: return verticeAngles[verticeAngles.length - altitudeShift];
 								case 'length': return length;
 								case 'forEach': return (item) => {
 								
@@ -2008,9 +2008,12 @@ this.object = () => {
 													oppositeVertice: oppositeVerticeAngles,
 													R: classSettings.overriddenProperties.r(options.player.getTimeId()),
 													HyperSphere: randomVertices.class,
-random: false,
-onePoint: false,
-onePointArray: false,
+
+													//for debug
+													random: false,
+													onePoint: false,
+													onePointArray: false,
+													
 												}
 												if (aAngleControls.arc) randomVertices.changeCirclesPoints(params);
 												else aAngleControls.arc = params.random === false ? randomVertices.determinedVertices(params) : randomVertices.createOnePointArray(params);
@@ -4029,7 +4032,8 @@ class RandomVertices {
 			params.randomVertices = this;
 			RandomVertices.params(params);
 			setCirclesPoints();//params.arc);
-			return circlesPoints;
+			return circlesSphere;
+//			return circlesPoints;
 			
 		}
 		this.randomVertice = (paramsNew) => { this.determinedVertices(paramsNew); }

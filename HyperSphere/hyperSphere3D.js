@@ -248,13 +248,13 @@ class RandomVertices extends Sphere.RandomVertices {
 	}
 	oppositeVertice0(params, inaccurateLatitude) {
 
-		let latitude = params.oppositeVertice.latitude;
+		let altitude = params.oppositeVertice.altitude;
 		Object.defineProperty(params.oppositeVertice, '0', {
 
-			get: () => { return latitude; },
-			set: (latitudeNew) => {
+			get: () => { return altitude; },
+			set: (altitudeNew) => {
 
-				latitude = inaccurateLatitude(latitudeNew);
+				altitude = altitudeNew;
 				return true;
 
 			},
@@ -293,11 +293,12 @@ class RandomVertices extends Sphere.RandomVertices {
 		//Центр окружностей случайных точек center находится с противоположной от params.oppositeVertice стороны гиперсферы
 		const antipodeLatitude = (latitude) => { return -latitude; },
 			//			center = params.randomVertices.antipodeCenter(params, antipodeLatitude);
-			center = [antipodeLatitude(params.oppositeVertice.latitude), params.oppositeVertice.longitude - π];
+			center = [params.oppositeVertice.altitude, antipodeLatitude(params.oppositeVertice.latitude), params.oppositeVertice.longitude - π];
 
+		Object.defineProperty(center, 'altitude', { get: () => { return center[0]; }, });
 		Object.defineProperty(center, 'lat', {
 
-			get: () => { return center[0]; },
+			get: () => { return center[1]; },
 			set: (lat) => {
 
 				params.oppositeVertice.latitude = antipodeLatitude(lat);
@@ -306,7 +307,7 @@ class RandomVertices extends Sphere.RandomVertices {
 			},
 
 		});
-		Object.defineProperty(center, 'lng', { get: () => { return center[1]; }, });
+		Object.defineProperty(center, 'lng', { get: () => { return center[2]; }, });
 		return center;
 
 	}
