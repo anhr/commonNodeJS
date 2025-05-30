@@ -231,17 +231,18 @@ class RandomVertices extends Sphere.RandomVertices {
 	}
 	getArcAngle(vertice, oppositeVertice) {
 
-		//DeepSeek. вычислить угол между двумя точками на поверхности шара
+		//DeepSeek. вычислить угол между двумя точками на поверхности 3D гиперсферы. Координаты точек указаны в радианах
 		//векторы
-		//A=(R,ϕ1,λ1 ) - vertice
-		const ϕ1 = vertice[0], λ1 = vertice[1];
-		//B=(R,ϕ2,λ2 ) - oppositeVertice
-		const ϕ2 = oppositeVertice[0], λ2 = oppositeVertice[1];
+		//A=(ψ1,θ1,ϕ1) - vertice
+		const ψ1 = vertice[0], θ1 = vertice[1], ϕ1 = vertice[2];
+		//B=(ψ1,θ1,ϕ1) - oppositeVertice
+		const ψ2 = oppositeVertice[0], θ2 = oppositeVertice[1], ϕ2 = oppositeVertice[2];
 		//где
-		//ϕ — широта (от −90° до 90°),
-		//λ — долгота (от −180° до 180°),
+		//ψ - высота
+		//θ — широта (от −90° до 90°),
+		//ϕ — долгота (от −180° до 180°),
 		const arccos = Math.acos, sin = Math.sin, cos = Math.cos;
-		const θ = arccos(sin(ϕ1) * sin(ϕ2) + cos(ϕ1) * cos(ϕ2) * cos(λ1 - λ2));
+		const θ = arccos(cos(ψ1) * cos(ψ2) + sin(ψ1) * sin(ψ2) * (cos(θ1) * cos(θ2) + sin(θ1) * sin(θ2) * cos(ϕ1 - ϕ2)));
 		if (isNaN(θ)) console.error(sSphere + ': getArcAngle. Invalid θ = ' + θ);
 		return θ;
 
