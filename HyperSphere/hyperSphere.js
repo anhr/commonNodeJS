@@ -3958,6 +3958,7 @@ class RandomVertices {
 			if (aSpheres.length <= circlesId) aSpheres.push([]);
 			const aCircles = aSpheres[circlesId];
 */			
+			circlesPointsOptions.altitude = this.altitudeDifference(sphereId, params);
 			for (let circleId = 1; circleId < abc.circlesCount; circleId++) {
 
 				const x = circleId * d,
@@ -3977,8 +3978,6 @@ class RandomVertices {
 
 				} else circlesPointsOptions.numPoints = aCircles[circleId - 1].numPoints;
 				//console.log('circleId = ' + circleId + ', circleDistance1 = ' + circleDistance1 + ', numPoints = ' + circlesPointsOptions.numPoints)
-				const altitudeRange = Math.PI / 2;
-				circlesPointsOptions.altitude = sphereId * altitudeRange / (randomVerticesSettings.spheresCount - 1) + params.center.altitude - altitudeRange / 2;
 				getCirclePointsRadians(circlesPointsOptions);
 
 			}

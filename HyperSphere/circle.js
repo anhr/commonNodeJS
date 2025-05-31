@@ -268,6 +268,7 @@ class RandomVertices extends HyperSphere.RandomVertices {
 //	pointIdErase() { return 0; }
 	setCirclesCloud() { this.setCircles(); }
 	setCirclesCloudOnePoint() { this.setCirclesOnePoint() }
+	altitudeDifference() { return undefined }
 
 	/////////////////////////////overridden methods
 

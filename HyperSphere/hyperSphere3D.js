@@ -214,9 +214,24 @@ class RandomVertices extends Sphere.RandomVertices {
 	constructor(scene, options, randomVerticesSettings) {
 
 		randomVerticesSettings.np = 6;//Количество окружностей в сфере, которые создаются из случайных точек для двумерной гиперсферы
-		randomVerticesSettings.spheresCount = 7;//облако случайных точек делаю из spheresCount сфер, которые создаются из случайных точек для двумерной гиперсферы
+		randomVerticesSettings.spheresCount = 2;//7;//облако случайных точек делаю из spheresCount сфер, которые создаются из случайных точек для двумерной гиперсферы
 		super(scene, options, randomVerticesSettings);
 		this.class = HyperSphere3D;
+		
+		//overridden methods
+
+		this.altitudeDifference = (sphereId, params) => {
+			
+			const boEven = sphereId % 2 === 0;//проверка на четность
+			const altitudeRange = Math.PI;
+			if (randomVerticesSettings.spheresCount === 1)
+				return params.center.altitude;//debug
+			return params.center.altitude;
+	//		return sphereId * (altitudeRange / 2) / (randomVerticesSettings.spheresCount - 1) + params.center.altitude - altitudeRange / 4;
+		
+		}
+		
+		////////////////////////////////overridden methods
 		
 	}
 
