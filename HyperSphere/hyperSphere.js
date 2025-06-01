@@ -3680,8 +3680,7 @@ class RandomVertices {
 			}
 			if (!params.onePoint) {
 
-				this.setCirclesCloud(randomVerticesSettings);
-//				setCircles();
+				this.setCirclesCloud(randomVerticesSettings, params);
 				return;
 
 			}
@@ -3937,8 +3936,9 @@ class RandomVertices {
 		let circleDistancePrev,//Положение предыдущего кольца
 			circlesPoints = [];//точки всех окружностей
 		const debug = randomVerticesSettings.debug || false, edges = debug ? [] : undefined,
-			aSpheres = [],//массив сфер в трехмерной гиперсфере. Каждый элемент массива это массив окружностей в текущей сфере. каждый елемент массива окружностей содержит параметры окружности
+			aSpheres = [];//массив сфер в трехмерной гиперсфере. Каждый элемент массива это массив окружностей в текущей сфере. каждый елемент массива окружностей содержит параметры окружности
 							//Для двумерной и одномерной гиперсферы когда sphereId = undefined, массив сфер содержит один элемент с массивом окружностей.
+/*			
 			getCirclesArray = (sphereId) => {
 				
 				const circlesId = sphereId === undefined ? 0 : sphereId;
@@ -3946,19 +3946,20 @@ class RandomVertices {
 				return aSpheres[circlesId];
 				
 			}
-		this.setCircles = (sphereId) => {
+*/			
+		this.setCircles = (circlesPointsCountNew, circlesIdNew, altitude, boNoCreateCirclesSphere) => {
 
 			circleDistancePrev = 0;//Положение предыдущего кольца
-			if ((sphereId === undefined) || (sphereId === 0)) circlesPointsCount = 0;
+			if (circlesPointsCountNew != undefined) circlesPointsCount = circlesPointsCountNew;
+//			if ((sphereId === undefined) || (sphereId === 0)) circlesPointsCount = 0;
 			const cos = Math.cos,
 				a = abc.a, b = abc.b, c = abc.c, d = abc.d,
-				aCircles = getCirclesArray(sphereId);
-/*			
-				circlesId = sphereId === undefined ? 0 : sphereId;
+//				aCircles = getCirclesArray(sphereId);
+//				circlesId = sphereId === undefined ? 0 : sphereId;
+				circlesId = circlesIdNew === undefined ? 0 : circlesIdNew;
 			if (aSpheres.length <= circlesId) aSpheres.push([]);
 			const aCircles = aSpheres[circlesId];
-*/			
-			circlesPointsOptions.altitude = this.altitudeDifference(sphereId, params);
+			circlesPointsOptions.altitude = altitude;//this.altitudeDifference(sphereId, params);
 			for (let circleId = 1; circleId < abc.circlesCount; circleId++) {
 
 				const x = circleId * d,
@@ -3982,7 +3983,8 @@ class RandomVertices {
 
 			}
 			//console.log('circlesPointsCount = ' + circlesPointsCount);
-			if ((sphereId === undefined)  || ((sphereId + 1) === randomVerticesSettings.spheresCount)) createCirclesSphere();
+//			if ((sphereId === undefined)  || ((sphereId + 1) === randomVerticesSettings.spheresCount)) createCirclesSphere();
+			if (!boNoCreateCirclesSphere) createCirclesSphere();
 
 		}
 		this.setCirclesOnePoint = (sphereId) => {
@@ -4104,7 +4106,7 @@ class RandomVertices {
 		 * @param {Object} paramsNew See <b>paramsNew</b> of the <b>createOnePointArray</b> method for details.
 		 */
 		this.changeCirclesPoints = (params) => { changeCirclesPoints(params); }
-		
+
 	}
 	//overridden methods
 

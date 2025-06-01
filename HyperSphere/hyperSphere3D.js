@@ -219,7 +219,7 @@ class RandomVertices extends Sphere.RandomVertices {
 		this.class = HyperSphere3D;
 		
 		//overridden methods
-
+/*
 		this.altitudeDifference = (sphereId, params) => {
 			
 			const boEven = sphereId % 2 === 0;//проверка на четность
@@ -230,6 +230,7 @@ class RandomVertices extends Sphere.RandomVertices {
 	//		return sphereId * (altitudeRange / 2) / (randomVerticesSettings.spheresCount - 1) + params.center.altitude - altitudeRange / 4;
 		
 		}
+*/		
 		
 		////////////////////////////////overridden methods
 		
@@ -371,7 +372,24 @@ class RandomVertices extends Sphere.RandomVertices {
 
 	}
 //	pointIdErase(pointId) { return pointId === undefined ? 0 : pointId; }
-	setCirclesCloud(randomVerticesSettings) { for (let sphereId = 0; sphereId < randomVerticesSettings.spheresCount; sphereId++) this.setCircles(sphereId); }
+	setCirclesCloud(randomVerticesSettings, params) {
+		
+		for (let sphereId = 0; sphereId < randomVerticesSettings.spheresCount; sphereId++) {
+
+/*			
+			const altitudeRange = Math.PI;
+			return sphereId * (altitudeRange / 2) / (randomVerticesSettings.spheresCount - 1) + params.center.altitude - altitudeRange / 4;
+*/
+/*			
+			if (randomVerticesSettings.spheresCount === 1)
+				return params.center.altitude;//debug
+			retrun params.center.altitude
+*/				
+			this.setCircles(sphereId === 0 ? 0: undefined, sphereId, params.center.altitude, (sphereId + 1) != randomVerticesSettings.spheresCount);
+
+		}
+	
+	}
 	setCirclesCloudOnePoint(randomVerticesSettings) { for (let sphereId = 0; sphereId < randomVerticesSettings.spheresCount; sphereId++) this.setCirclesOnePoint(sphereId); }
 
 	/////////////////////////////overridden methods
@@ -427,7 +445,7 @@ RandomVertices.Center = (params, inaccurateLatitude) => {
 			},
 
 		});
-console.warn('inaccurateLatitude(center.lat) was removed')
+//console.warn('inaccurateLatitude(center.lat) was removed')
 	//center.lat = inaccurateLatitude(center.lat);
 
 }
