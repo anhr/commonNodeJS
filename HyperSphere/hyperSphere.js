@@ -453,9 +453,29 @@ class HyperSphere extends MyObject {
 							}
 							switch (name) {
 
+/*									
 								case sLongitude: return verticeAngles[verticeAngles.length - longitudeShift];
 								case sLatitude: return verticeAngles[verticeAngles.length - latitudeShift];
 								case sAltitude: return verticeAngles[verticeAngles.length - altitudeShift];
+*/								
+								case sLongitude: {
+									
+									const id = length - longitudeShift;
+									return id < verticeAngles.length ? verticeAngles[id] : 0;
+
+								}
+								case sLatitude: {
+									
+									const id = length - latitudeShift;
+									return id < verticeAngles.length ? verticeAngles[id] : 0;
+
+								}
+								case sAltitude: {
+									
+									const id = length - altitudeShift;
+									return id < verticeAngles.length ? verticeAngles[id] : 0;
+
+								}
 								case 'length': return length;
 								case 'forEach': return (item) => {
 								
