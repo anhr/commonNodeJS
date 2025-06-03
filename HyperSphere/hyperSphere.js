@@ -3657,7 +3657,7 @@ class RandomVertices {
 		 * @param {number} [options.points=[]] - points array
 		 * @returns {Array} Массив точек [ 0 широта (рад), 1 долгота (рад) ]
 		 */
-		const getCirclePointsRadians = (options = {}) => {
+		const getCirclePointsRadians = (options = {}, aCirclesRadiusRadians) => {
 
 			if (options.circleDistance === undefined) options.circleDistance = 0.5;
 			if (options.numPoints === undefined) options.numPoints = np;
@@ -3669,8 +3669,13 @@ class RandomVertices {
 			for (let i = 0; i < numPoints; i++) {
 
 				let point;
-				if (!boCreateCirclesPoints) point = getCirclePoint({ i: i, numPoints: numPoints, circleDistance: options.circleDistance, altitude: options.altitude });
-				else {
+				if (!boCreateCirclesPoints) {
+					
+					point = getCirclePoint({ i: i, numPoints: numPoints, circleDistance: options.circleDistance, altitude: options.altitude });
+					if (aCirclesRadiusRadians && (i === 0)) 
+						aCirclesRadiusRadians.push(this.getArcAngle(point, params.oppositeVertice)); //Запомнить расстояние между нулевой точкой каждой окружности и противоположной вершиной, равное радиусу окружности в радианах.
+					
+				} else {
 
 					point = this.zeroArray();//создается пустой массив максимального размера
 					if (edges) {
@@ -3967,7 +3972,7 @@ class RandomVertices {
 				
 			}
 */			
-		this.setCircles = (circlesPointsCountNew, circlesIdNew, altitude, boNoCreateCirclesSphere) => {
+		this.setCircles = (circlesPointsCountNew, circlesIdNew, altitude, boNoCreateCirclesSphere, aCirclesRadiusRadians) => {
 
 			circleDistancePrev = 0;//Положение предыдущего кольца
 			if (circlesPointsCountNew != undefined) circlesPointsCount = circlesPointsCountNew;
@@ -3999,7 +4004,7 @@ class RandomVertices {
 
 				} else circlesPointsOptions.numPoints = aCircles[circleId - 1].numPoints;
 				//console.log('circleId = ' + circleId + ', circleDistance1 = ' + circleDistance1 + ', numPoints = ' + circlesPointsOptions.numPoints)
-				getCirclePointsRadians(circlesPointsOptions);
+				getCirclePointsRadians(circlesPointsOptions, aCirclesRadiusRadians);
 
 			}
 			//console.log('circlesPointsCount = ' + circlesPointsCount);
