@@ -3672,11 +3672,22 @@ class RandomVertices {
 				if (!boCreateCirclesPoints) {
 					
 					point = getCirclePoint({ i: i, numPoints: numPoints, circleDistance: options.circleDistance, altitude: options.altitude });
+/*					
 					if (aCirclesRadiusRadians && (i === 0)) 
 						aCirclesRadiusRadians.push(this.getArcAngle(point, params.oppositeVertice)); //Запомнить расстояние между нулевой точкой каждой окружности и противоположной вершиной, равное радиусу окружности в радианах.
+*/						
 					
 				} else {
 
+					if (aCirclesRadiusRadians && (i === 0)) {
+
+						boCreateCirclesPoints = false;
+						const b = abc.b, circleDistance = (b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
+						abc.a / (aCirclesRadiusRadians.x + abc.b) + abc.c) * R;
+						boCreateCirclesPoints = true;
+						aCirclesRadiusRadians.push(this.getArcAngle(getCirclePoint({ i: i, numPoints: numPoints, circleDistance: circleDistance, altitude: options.altitude }), params.oppositeVertice)); //Запомнить расстояние между нулевой точкой каждой окружности и противоположной вершиной, равное радиусу окружности в радианах.
+
+					}
 					point = this.zeroArray();//создается пустой массив максимального размера
 					if (edges) {
 
@@ -3892,7 +3903,7 @@ class RandomVertices {
 		const createCirclesSphere = () => {
 
 //			circlesPointsOptions.pointId = this.pointIdErase(circlesPointsOptions.pointId);
-			circlesPointsOptions.pointId = 0;
+//			circlesPointsOptions.pointId = 0;
 			if (!circlesSphere && !boCreateCirclesPoints && (circlesPoints.length != 0)) {
 
 				circlesSphere = this.getHyperSphere(options, {
@@ -3946,7 +3957,8 @@ class RandomVertices {
 			if (circlesSphere) circlesSphere.setVerticesRange(0, circlesPointsCount);
 			
 		}
-		let circlesSphere, circlesPointsOptions = {}, boCreateCirclesPoints;
+		let circlesSphere, boCreateCirclesPoints;
+		const circlesPointsOptions = {};
 		Object.defineProperties(this, {
 			circlesSphere: {
 				get: () => { return circlesSphere; },
@@ -4004,6 +4016,7 @@ class RandomVertices {
 
 				} else circlesPointsOptions.numPoints = aCircles[circleId - 1].numPoints;
 				//console.log('circleId = ' + circleId + ', circleDistance1 = ' + circleDistance1 + ', numPoints = ' + circlesPointsOptions.numPoints)
+				if (aCirclesRadiusRadians) aCirclesRadiusRadians.x = x;
 				getCirclePointsRadians(circlesPointsOptions, aCirclesRadiusRadians);
 
 			}
@@ -4032,6 +4045,7 @@ class RandomVertices {
 			//создать окружности
 			boCreateCirclesPoints = false;
 //			params.arc = arc;
+			circlesPointsOptions.pointId = 0;
 			changeCirclesPoints();
 
 		}

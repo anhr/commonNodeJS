@@ -214,25 +214,9 @@ class RandomVertices extends Sphere.RandomVertices {
 	constructor(scene, options, randomVerticesSettings) {
 
 		randomVerticesSettings.np = 6;//Количество окружностей в сфере, которые создаются из случайных точек для двумерной гиперсферы
-		randomVerticesSettings.spheresCount = 1;//7;//облако случайных точек делаю из 1 + spheresCount * 2 сфер, которые создаются из случайных точек для двумерной гиперсферы
+//		randomVerticesSettings.spheresCount = 1;//7;//облако случайных точек делаю из 1 + spheresCount * 2 сфер, которые создаются из случайных точек для двумерной гиперсферы
 		super(scene, options, randomVerticesSettings);
 		this.class = HyperSphere3D;
-		
-		//overridden methods
-/*
-		this.altitudeDifference = (sphereId, params) => {
-			
-			const boEven = sphereId % 2 === 0;//проверка на четность
-			const altitudeRange = Math.PI;
-			if (randomVerticesSettings.spheresCount === 1)
-				return params.center.altitude;//debug
-			return params.center.altitude;
-	//		return sphereId * (altitudeRange / 2) / (randomVerticesSettings.spheresCount - 1) + params.center.altitude - altitudeRange / 4;
-		
-		}
-*/		
-		
-		////////////////////////////////overridden methods
 		
 	}
 
@@ -374,28 +358,46 @@ class RandomVertices extends Sphere.RandomVertices {
 
 	}
 //	pointIdErase(pointId) { return pointId === undefined ? 0 : pointId; }
+	
+	//Облако случайных точек это массив массивов случайноых точек сфер.
+	//Создаем массив окружностей на сфере, на которой находится противоположная точка.
+	//Во время ее создания запоминаем в aCirclesRadiusRadians радиусы всех окружностей в радианах.
+	//Потом создаем массивы окружностей сфер, расположенных внутри и снаружи от сферы, на которой находится противоположная точка.
+	//Каждый элемент массива окружностей сфер находится внутри или снаружи на расстоянии, которое было занесено в aCirclesRadiusRadians.
+	aCirclesRadiusRadians = [];
+	
 	setCirclesCloud(randomVerticesSettings, params) {
 
-		//Облако случайных точек это массив массивов случайноых точек сфер.
-		//Создаем массив окружностей на сфере, на которой находится противоположная точка.
-		//Во время ее создания запоминаем в aCirclesRadiusRadians радиусы всех окружностей в радианах.
-		//Потом создаем массивы окружностей сфер, расположенных внутри и снаружи от сферы, на которой находится противоположная точка.
-		//Каждый элемент массива окружностей сфер находится внутри или снаружи на расстоянии, которое было занесено в aCirclesRadiusRadians.
-		const aCirclesRadiusRadians = [];
+		const aCirclesRadiusRadians = this.aCirclesRadiusRadians;
+		randomVerticesSettings.spheresCount = 0
 		
 		//рисуем окружности вокруг противопрложной точки
-		this.setCircles(0, 0, params.center.altitude, false, aCirclesRadiusRadians);
-		//рисуем окружности слева и справа от противопрложной точки
-		for (let sphereId = 0; sphereId < randomVerticesSettings.spheresCount; sphereId++) {
+		this.setCircles(0,//randomVerticesSettings.spheresCount,
+						randomVerticesSettings.spheresCount, params.center.altitude, false, aCirclesRadiusRadians);
+		randomVerticesSettings.spheresCount++;
 
-			//рисуем окружность слева от противопрложной точки
-			//рисуем окружность справа от противопрложной точки
+		//рисуем окружности внутри и снаружи от противоположной точки
+		const altitude = params.center.altitude;
+		for (let sphereId = aCirclesRadiusRadians.length - 1; sphereId >= 0; sphereId--) {
+
+			const circlesRadius = aCirclesRadiusRadians[sphereId];
+			if (circlesRadius === 0) continue;
+			
+			//рисуем окружности внутри от противоположной точки
+			this.setCircles(undefined,//randomVerticesSettings.spheresCount,
+							randomVerticesSettings.spheresCount, altitude - circlesRadius, false);
+			randomVerticesSettings.spheresCount++;
+			
+			//рисуем окружности снаружи от противоположной точки
+			this.setCircles(undefined,//randomVerticesSettings.spheresCount,
+							randomVerticesSettings.spheresCount, altitude + circlesRadius, false);
+			randomVerticesSettings.spheresCount++;
 			
 		}
 /*		
 		for (let sphereId = 0; sphereId < randomVerticesSettings.spheresCount; sphereId++)
 			this.setCircles(sphereId === 0 ? 0: undefined, sphereId, params.center.altitude, (sphereId + 1) != randomVerticesSettings.spheresCount);
-*/			
+*/	
 	
 	}
 	setCirclesCloudOnePoint(randomVerticesSettings) { for (let sphereId = 0; sphereId < randomVerticesSettings.spheresCount; sphereId++) this.setCirclesOnePoint(sphereId); }
