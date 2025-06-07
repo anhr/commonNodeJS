@@ -210,6 +210,7 @@ class RandomVertices extends HyperSphere.RandomVertices {
 		return Math.round(d / s);//количество случайных точек около окружности, расположенной на расстоянии circleDistance радиан
 		
 	}
+/*	
 	center(params) {
 		
 		//center is antipode of the opposite vertice
@@ -220,6 +221,7 @@ class RandomVertices extends HyperSphere.RandomVertices {
 		return center;
 		
 	}
+*/	
 	getCirclePoint(circleDistance, params) {
 
 /*		
@@ -275,6 +277,17 @@ class RandomVertices extends HyperSphere.RandomVertices {
 
 let g_sign = 1;
 
+RandomVertices.ZeroArray = () => { return [0]; }
+RandomVertices.getCenter = (params) => {
+	
+	//center is antipode of the opposite vertice
+	//Центр окружностей случайных точек center находится с противоположной от params.oppositeVertice стороны гиперсферы
+//		const center = params.randomVertices.antipodeCenter(params, antipodeLatitude);
+	const center = [params.oppositeVertice.longitude - π];
+	Object.defineProperty(center, 'lng', { get: () => { return center[0]; }, });
+	return center;
+	
+}
 RandomVertices.Center = (params) => {
 
 	const center = params.center;

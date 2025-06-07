@@ -243,7 +243,7 @@ class RandomVertices extends Sphere.RandomVertices {
 		//ϕ — долгота (от −180° до 180°),
 		const arccos = Math.acos, sin = Math.sin, cos = Math.cos;
 		const θ = arccos(cos(ψ1) * cos(ψ2) + sin(ψ1) * sin(ψ2) * (cos(θ1) * cos(θ2) + sin(θ1) * sin(θ2) * cos(ϕ1 - ϕ2)));
-		if (isNaN(θ)) console.error(sSphere + ': getArcAngle. Invalid θ = ' + θ);
+		if (isNaN(θ)) console.error(sHyperSphere3D + ': getArcAngle. Invalid θ = ' + θ);
 		return θ;
 
 	}
@@ -290,6 +290,7 @@ class RandomVertices extends Sphere.RandomVertices {
 		return Math.round(S / s);//количество случайных точек около окружности, расположенной на расстоянии circleDistance радиан
 
 	}
+/*
 	center(params) {
 
 		//center is antipode of the opposite vertice
@@ -314,6 +315,7 @@ class RandomVertices extends Sphere.RandomVertices {
 		return center;
 
 	}
+*/	
 	getCirclePoint(circleDistance, params, options) {
 
 		let newLat, newLng;
@@ -403,6 +405,31 @@ class RandomVertices extends Sphere.RandomVertices {
 	setCirclesCloudOnePoint(randomVerticesSettings) { for (let sphereId = 0; sphereId < randomVerticesSettings.spheresCount; sphereId++) this.setCirclesOnePoint(sphereId); }
 
 	/////////////////////////////overridden methods
+
+}
+RandomVertices.ZeroArray = () => { return [0, 0, 0]; }
+RandomVertices.center = (params) => {
+
+	//center is antipode of the opposite vertice
+	//Центр окружностей случайных точек center находится с противоположной от params.oppositeVertice стороны гиперсферы
+	const antipodeLatitude = (latitude) => { return -latitude; },
+		//			center = params.randomVertices.antipodeCenter(params, antipodeLatitude);
+		center = [params.oppositeVertice.altitude, antipodeLatitude(params.oppositeVertice.latitude), params.oppositeVertice.longitude - π];
+
+	Object.defineProperty(center, 'altitude', { get: () => { return center[0]; }, });
+	Object.defineProperty(center, 'lat', {
+
+		get: () => { return center[1]; },
+		set: (lat) => {
+
+			params.oppositeVertice.latitude = antipodeLatitude(lat);
+			return true;
+
+		},
+
+	});
+	Object.defineProperty(center, 'lng', { get: () => { return center[2]; }, });
+	return center;
 
 }
 RandomVertices.Center = (params, inaccurateLatitude) => {

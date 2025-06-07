@@ -4162,7 +4162,7 @@ class RandomVertices {
 	zeroArray() { console.error(sRandomVertices + sOver.replace('%s', 'zeroArray')); }
 	onePointArea() { console.error(sRandomVertices + sOver.replace('%s', 'onePointArea')); }
 	numPoints() { console.error(sRandomVertices + sOver.replace('%s', 'numPoints')); }
-	center() { console.error(sRandomVertices + sOver.replace('%s', 'center')); }
+//	center() { console.error(sRandomVertices + sOver.replace('%s', 'center')); }
 	getCirclePoint() { console.error(sRandomVertices + sOver.replace('%s', 'getCirclePoint')); }
 	setCenterLength() { console.error(sRandomVertices + sOver.replace('%s', 'setCenterLength')); }
 	circlesCount() { console.error(sRandomVertices + sOver.replace('%s', 'circlesCount')); }
@@ -4180,6 +4180,9 @@ RandomVertices.params = (params) => {
 	if (params.random === undefined) params.random = true;
 	if (params.onePoint === undefined) params.onePoint = true;
 	if (params.onePointArray === undefined) params.onePointArray = true;
+	if (params.center) console.warn(sRandomVertices + '.params: deprecated parameter params.center. Use params.oppositeVertice.')
+	params.vertice ||= params.HyperSphere.RandomVertices.ZeroArray();
+	params.oppositeVertice ||= params.HyperSphere.RandomVertices.ZeroArray();
 
 	//если вершина находится на полюсах, то случайное распределение вершин получается не случайным непонятно по какой причине
 	//Для этого немного отклоняю вершину от полюса
@@ -4195,69 +4198,35 @@ RandomVertices.params = (params) => {
 	
 	}
 	
-	if (params.vertice) {
+//	if (params.vertice) {
 
-		params.randomVertices.oppositeVertice0(params, inaccurateLatitude);
+	if (params.randomVertices) params.randomVertices.oppositeVertice0(params, inaccurateLatitude);
 
-		if (params.arc === undefined)
-			Object.defineProperty(params, 'arc', {
-		
-				get: () => {
-					
-					const vertice = params.vertice, oppositeVertice = params.oppositeVertice;
-					return params.randomVertices.getArcAngle(vertice, oppositeVertice);
-/*					
-					//DeepSeek. вычислить угол между двумя точками на поверхности шара
-					//векторы
-					//A=(R,ϕ1,λ1 )
-					const ϕ1 = vertice[0], λ1 = vertice[1];
-					//B=(R,ϕ2,λ2 ) - oppositeVertice
-					const ϕ2 = oppositeVertice[0], λ2 = oppositeVertice[1];
-					//где
-					//ϕ — широта (от −90° до 90°),
-					//λ — долгота (от −180° до 180°),
-					const arccos = Math.acos, sin = Math.sin, cos = Math.cos;
-					const θ = arccos(sin(ϕ1) * sin(ϕ2) + cos(ϕ1) * cos(ϕ2) * cos(λ1 - λ2));
-					if (isNaN(θ)) console.error(sRandomVertices + ': get params.arc. Invalid θ = ' + θ);
-					return θ;
-*/					
-				
-				},
-		
-			});
-		if (params.center === undefined)
-			Object.defineProperty(params, 'center', {
-		
-				get: () => {
+	if (params.arc) console.warn(sRandomVertices + '.params: deprecated parameter params.arc. Use params.vertice and params.oppositeVertice.')
+//	if (params.arc === undefined)
+	Object.defineProperty(params, 'arc', {
 
-					return params.randomVertices.center(params);
-/*					
-					//center is antipode of the opposite vertice
-					//Центр окружностей случайных точек center находится с противоположной от params.oppositeVertice стороны гиперсферы
-					const antipodeLatitude = (latitude) => { return -latitude; },
-						center = params.randomVertices.antipodeCenter(params, antipodeLatitude);
-//						center = [antipodeLatitude(params.oppositeVertice.latitude), params.oppositeVertice.longitude - π];
-					
-					Object.defineProperty(center, 'lat', {
-						
-						get: () => { return center[0]; },
-						set: (lat) => {
-				
-							params.oppositeVertice.latitude = antipodeLatitude(lat);
-							return true;
-				
-						},
-					
-					});
-					Object.defineProperty(center, 'lng', { get: () => { return center[1]; }, });
-					return center;
-*/					
-				
-				},
+		get: () => {
+			
+			const vertice = params.vertice, oppositeVertice = params.oppositeVertice;
+			return params.randomVertices.getArcAngle(vertice, oppositeVertice);
 		
-			});
-		
-	}
+		},
+
+	});
+	if (params.center === undefined)
+		Object.defineProperty(params, 'center', {
+	
+			get: () => {
+
+//				return params.randomVertices.center(params);
+				return params.HyperSphere.RandomVertices.getCenter(params);
+			
+			},
+	
+		});
+	
+//	}
 	params.center ||= [];
 	params.HyperSphere.RandomVertices.Center(params, inaccurateLatitude);
 	if (params.arc === undefined) params.arc = 0.5;

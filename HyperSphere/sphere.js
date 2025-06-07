@@ -232,6 +232,7 @@ class RandomVertices extends Circle.RandomVertices {
 		return Math.round(S / s);//количество случайных точек около окружности, расположенной на расстоянии circleDistance радиан
 		
 	}
+/*	
 	center(params) {
 		
 		//center is antipode of the opposite vertice
@@ -255,6 +256,7 @@ class RandomVertices extends Circle.RandomVertices {
 		return center;
 		
 	}
+*/	
 	getCirclePoint(circleDistance, params, options) {
 		
 		let newLat, newLng;
@@ -300,6 +302,30 @@ class RandomVertices extends Circle.RandomVertices {
 	}
 	
 	/////////////////////////////overridden methods
+	
+}
+RandomVertices.ZeroArray = () => { return [0, 0]; }
+RandomVertices.getCenter = (params) => {
+	
+	//center is antipode of the opposite vertice
+	//Центр окружностей случайных точек center находится с противоположной от params.oppositeVertice стороны гиперсферы
+	const antipodeLatitude = (latitude) => { return -latitude; },
+//			center = params.randomVertices.antipodeCenter(params, antipodeLatitude);
+		center = [antipodeLatitude(params.oppositeVertice.latitude), params.oppositeVertice.longitude - π];
+	
+	Object.defineProperty(center, 'lat', {
+		
+		get: () => { return center[0]; },
+		set: (lat) => {
+
+			params.oppositeVertice.latitude = antipodeLatitude(lat);
+			return true;
+
+		},
+	
+	});
+	Object.defineProperty(center, 'lng', { get: () => { return center[1]; }, });
+	return center;
 	
 }
 RandomVertices.Center = (params, inaccurateLatitude) => {
