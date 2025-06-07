@@ -4144,7 +4144,12 @@ class RandomVertices {
 		 * Сall this method for the <b>randomVerticesSettings.params.arc</b> change to take effect.
 		 * @param {Object} paramsNew See <b>paramsNew</b> of the <b>createOnePointArray</b> method for details.
 		 */
-		this.changeCirclesPoints = (params) => { changeCirclesPoints(params); }
+		this.changeCirclesPoints = (params) => {
+			
+			circlesPointsOptions.pointId = 0;
+			changeCirclesPoints(params);
+		
+		}
 
 	}
 	//overridden methods
