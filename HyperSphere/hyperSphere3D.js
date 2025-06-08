@@ -408,7 +408,7 @@ class RandomVertices extends Sphere.RandomVertices {
 
 }
 RandomVertices.ZeroArray = () => { return [0, 0, 0]; }
-RandomVertices.center = (params) => {
+RandomVertices.getCenter = (params) => {
 
 	//center is antipode of the opposite vertice
 	//Центр окружностей случайных точек center находится с противоположной от params.oppositeVertice стороны гиперсферы
