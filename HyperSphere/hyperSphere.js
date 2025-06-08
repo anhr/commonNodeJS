@@ -3591,6 +3591,8 @@ const sRandomVertices = 'RandomVertices';
  * @class
  */
 class RandomVertices {
+	
+	// * @param {float} [randomVerticesSettings.params.arc=0.5] длинна дуги, соединяющей две вершины гиперсферы в радианах.
 
 	/**
 	 * Random vertices
@@ -3602,9 +3604,9 @@ class RandomVertices {
 	 * @param {number} [randomVerticesSettings.name=''] Name of random vertices.
 	 * @param {object} [randomVerticesSettings.params={}] The following parameters are available.
 	 * @param {array} [randomVerticesSettings.params.center=[]] центр окружности, пересекающей сферу или вершина гиперсферы, вокруг которой будет облако вероятностей.
-	 * @param {float} [randomVerticesSettings.params.center[0]=0] Latitude.
-	 * @param {float} [randomVerticesSettings.params.center[1]=0] Longitude.
-	 * @param {float} [randomVerticesSettings.params.arc=0.5] длинна дуги, соединяющей две вершины гиперсферы в радианах.
+	 * @param {float} [randomVerticesSettings.params.center[0]=0] Altitude.
+	 * @param {float} [randomVerticesSettings.params.center[1]=0] Latitude.
+	 * @param {float} [randomVerticesSettings.params.center[2]=0] Longitude.
 	 * @param {boolean} [randomVerticesSettings.params.random=true] random arrangement of circles vertices.
 	 * @param {boolean} [randomVerticesSettings.params.onePoint=false] true - получить одну случайную точку не вычисляя остальные случайные точки.
 	 * @param {boolean} [randomVerticesSettings.params.onePointArray=false] true - array of the one points.
@@ -4229,7 +4231,7 @@ RandomVertices.params = (params) => {
 //	}
 	params.center ||= [];
 	params.HyperSphere.RandomVertices.Center(params, inaccurateLatitude);
-	if (params.arc === undefined) params.arc = 0.5;
+//	if (params.arc === undefined) params.arc = 0.5;
 	
 }
 RandomVertices.Center = () => { console.error(sRandomVertices + ': Please, override RandomVertices.Center method.'); }
