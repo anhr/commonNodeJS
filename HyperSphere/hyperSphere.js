@@ -4202,16 +4202,16 @@ RandomVertices.params = (params) => {
 
 	if (params.randomVertices) params.randomVertices.oppositeVertice0(params, inaccurateLatitude);
 
-	if (params.arc) console.warn(sRandomVertices + '.params: deprecated parameter params.arc. Use params.vertice and params.oppositeVertice.')
-//	if (params.arc === undefined)
-	Object.defineProperty(params, 'arc', {
-
-		get: () => {
+//	if (params.arc) console.warn(sRandomVertices + '.params: deprecated parameter params.arc. Use params.vertice and params.oppositeVertice.')
+	if (params.arc === undefined)
+		Object.defineProperty(params, 'arc', {
+	
+			get: () => {
+				
+				const vertice = params.vertice, oppositeVertice = params.oppositeVertice;
+				return params.randomVertices.getArcAngle(vertice, oppositeVertice);
 			
-			const vertice = params.vertice, oppositeVertice = params.oppositeVertice;
-			return params.randomVertices.getArcAngle(vertice, oppositeVertice);
-		
-		},
+			},
 
 	});
 	if (params.center === undefined)
