@@ -3591,8 +3591,13 @@ const sRandomVertices = 'RandomVertices';
  * @class
  */
 class RandomVertices {
-	
-	// * @param {float} [randomVerticesSettings.params.arc=0.5] длинна дуги, соединяющей две вершины гиперсферы в радианах.
+/*
+	 * @param {float} [randomVerticesSettings.params.arc=0.5] длинна дуги, соединяющей две вершины гиперсферы в радианах.
+	 * @param {array} [randomVerticesSettings.params.center=[]] центр окружности, пересекающей сферу или вершина гиперсферы, вокруг которой будет облако вероятностей.
+	 * @param {float} [randomVerticesSettings.params.center[0]=0] Altitude.
+	 * @param {float} [randomVerticesSettings.params.center[1]=0] Latitude.
+	 * @param {float} [randomVerticesSettings.params.center[2]=0] Longitude.
+*/	 
 
 	/**
 	 * Random vertices
@@ -3603,10 +3608,8 @@ class RandomVertices {
 	 * @param {number} [randomVerticesSettings.np=36] numPoints. Number of vertices on a circle.
 	 * @param {number} [randomVerticesSettings.name=''] Name of random vertices.
 	 * @param {object} [randomVerticesSettings.params={}] The following parameters are available.
-	 * @param {array} [randomVerticesSettings.params.center=[]] центр окружности, пересекающей сферу или вершина гиперсферы, вокруг которой будет облако вероятностей.
-	 * @param {float} [randomVerticesSettings.params.center[0]=0] Altitude.
-	 * @param {float} [randomVerticesSettings.params.center[1]=0] Latitude.
-	 * @param {float} [randomVerticesSettings.params.center[2]=0] Longitude.
+	 * @param {Array} [randomVerticesSettings.params.paramsNew.vertice=[0, 0, 0]] First vertice of the <b>arc</b>.
+	 * @param {Array} [randomVerticesSettings.params.oppositeVertice=[0, 0, 0]] Second vertice of the <b>arc</b>.
 	 * @param {boolean} [randomVerticesSettings.params.random=true] random arrangement of circles vertices.
 	 * @param {boolean} [randomVerticesSettings.params.onePoint=false] true - получить одну случайную точку не вычисляя остальные случайные точки.
 	 * @param {boolean} [randomVerticesSettings.params.onePointArray=false] true - array of the one points.
@@ -4182,9 +4185,12 @@ RandomVertices.params = (params) => {
 	if (params.random === undefined) params.random = true;
 	if (params.onePoint === undefined) params.onePoint = true;
 	if (params.onePointArray === undefined) params.onePointArray = true;
-	if (params.center) console.warn(sRandomVertices + '.params: deprecated parameter params.center. Use params.oppositeVertice.')
-	params.vertice ||= params.HyperSphere.RandomVertices.ZeroArray();
-	params.oppositeVertice ||= params.HyperSphere.RandomVertices.ZeroArray();
+//	if (params.center) console.warn(sRandomVertices + '.params: deprecated parameter params.center. Use params.oppositeVertice.')
+	const RandomVertices = params.HyperSphere.RandomVertices;
+	params.vertice ||= RandomVertices.ZeroArray();
+//	RandomVertices.Vertice(params.vertice);
+	params.oppositeVertice ||= RandomVertices.ZeroArray();
+//	RandomVertices.Vertice(params.oppositeVertice);
 
 	//если вершина находится на полюсах, то случайное распределение вершин получается не случайным непонятно по какой причине
 	//Для этого немного отклоняю вершину от полюса

@@ -304,6 +304,25 @@ class RandomVertices extends Circle.RandomVertices {
 	/////////////////////////////overridden methods
 	
 }
+/*
+RandomVertices.Vertice = (vertice) => {
+
+	if (vertice.longitude != undefined) return;
+	Object.defineProperty(vertice, 'latitude', {
+		
+		get: () => { return vertice[0]; },
+		set: (latitude) => {
+
+			vertice[0] = latitude;
+			return true;
+
+		},
+	
+	});
+	Object.defineProperty(vertice, 'longitude', { get: () => { return vertice[1]; }, });
+
+}
+*/
 RandomVertices.ZeroArray = () => { return [0, 0]; }
 RandomVertices.getCenter = (params) => {
 	
@@ -363,6 +382,40 @@ RandomVertices.Center = (params, inaccurateLatitude) => {
 
 		});
 	center.lat = inaccurateLatitude(center.lat);
+	
+	const Vertice = (vertice) => {
+	
+		if (vertice.longitude != undefined) return;
+		Object.defineProperty(vertice, 'latitude', {
+			
+			get: () => { return vertice[0]; },
+			set: (latitude) => {
+	
+				if (vertice[0] === latitude) return true;
+				vertice[0] = latitude;
+				if (params.randomVertices) params.randomVertices.changeCirclesPoints();
+				return true;
+	
+			},
+		
+		});
+		Object.defineProperty(vertice, 'longitude', {
+			
+			get: () => { return vertice[1]; },
+			set: (longitude) => {
+	
+				if (vertice[1] === longitude) return true;
+				vertice[1] = longitude;
+				if (params.randomVertices) params.randomVertices.changeCirclesPoints();
+				return true;
+	
+			},
+		
+		});
+	
+	}
+	Vertice(params.vertice);
+	Vertice(params.oppositeVertice);
 	
 }
 Sphere.RandomVertices = RandomVertices;

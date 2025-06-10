@@ -306,6 +306,26 @@ RandomVertices.Center = (params) => {
 			},
 
 		});
+	const Vertice = (vertice) => {
+	
+		if (vertice.longitude != undefined) return;
+		Object.defineProperty(vertice, 'longitude', {
+			
+			get: () => { return vertice[0]; },
+			set: (longitude) => {
+	
+				if (vertice[0] === longitude) return true;
+				vertice[0] = longitude;
+				if (params.randomVertices) params.randomVertices.changeCirclesPoints();
+				return true;
+	
+			},
+		
+		});
+	
+	}
+	Vertice(params.vertice);
+	Vertice(params.oppositeVertice);
 	
 }
 Circle.RandomVertices = RandomVertices;
