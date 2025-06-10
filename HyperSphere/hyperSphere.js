@@ -3608,8 +3608,8 @@ class RandomVertices {
 	 * @param {number} [randomVerticesSettings.np=36] numPoints. Number of vertices on a circle.
 	 * @param {number} [randomVerticesSettings.name=''] Name of random vertices.
 	 * @param {object} [randomVerticesSettings.params={}] The following parameters are available.
-	 * @param {Array} [randomVerticesSettings.params.paramsNew.vertice=[0, 0, 0]] First vertice of the <b>arc</b>.
-	 * @param {Array} [randomVerticesSettings.params.oppositeVertice=[0, 0, 0]] Second vertice of the <b>arc</b>.
+	 * @param {Array} [randomVerticesSettings.params.vertice=[0, 0, 0]] First vertice of the arc between two vertices.
+	 * @param {Array} [randomVerticesSettings.params.oppositeVertice=[0, 0, 0]] Second vertice of the arc between two vertices.
 	 * @param {boolean} [randomVerticesSettings.params.random=true] random arrangement of circles vertices.
 	 * @param {boolean} [randomVerticesSettings.params.onePoint=false] true - получить одну случайную точку не вычисляя остальные случайные точки.
 	 * @param {boolean} [randomVerticesSettings.params.onePointArray=false] true - array of the one points.
@@ -4180,6 +4180,10 @@ class RandomVertices {
 	
 }
 const sOver = ': Please, override %s method in your ' + sRandomVertices + ' child class.';
+/**
+ * Sets a <b>RandomVertices</b> parameters.
+ * @param {object} params See <b>RandomVertices</b> constructor <b>randomVerticesSettings.params</b> parameter for details.
+ */
 RandomVertices.params = (params) => {
 
 	if (params.random === undefined) params.random = true;

@@ -405,13 +405,13 @@
 
         <tr>
             
-                <td class="name"><code>center</code></td>
+                <td class="name"><code>vertice</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">array</span>
+<span class="param-type">Array</span>
 
 
             
@@ -432,25 +432,25 @@
             
                 <td class="default">
                 
-                    []
+                    [0, 0, 0]
                 
                 </td>
             
 
-            <td class="description last">центр окружности, пересекающей сферу или вершина гиперсферы, вокруг которой будет облако вероятностей.</td>
+            <td class="description last">First vertice of the arc between two vertices.</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>center[0]</code></td>
+                <td class="name"><code>oppositeVertice</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">float</span>
+<span class="param-type">Array</span>
 
 
             
@@ -471,90 +471,12 @@
             
                 <td class="default">
                 
-                    0
+                    [0, 0, 0]
                 
                 </td>
             
 
-            <td class="description last">Latitude.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>center[1]</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">float</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    0
-                
-                </td>
-            
-
-            <td class="description last">Longitude.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>arc</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">float</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    0.5
-                
-                </td>
-            
-
-            <td class="description last">длинна дуги, соединяющей две вершины гиперсферы в радианах.</td>
+            <td class="description last">Second vertice of the arc between two vertices.</td>
         </tr>
 
     
@@ -726,7 +648,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3564">line 3564</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3593">line 3593</a>
     </li></ul></dd>
     
 
@@ -883,7 +805,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line4107">line 4107</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line4152">line 4152</a>
     </li></ul></dd>
     
 
@@ -979,7 +901,7 @@
 
             
 
-            <td class="description last">See <b>randomVerticesSettings.params</b> of the constructor for details.
+            <td class="description last">See <b>randomVerticesSettings.params</b> of the constructor for details.You can set <b>vertice</b> and <b>oppositeVertice</b> parameters instead <b>arc</b> and <b>center</b>. See below:
                 <h6>Properties</h6>
                 
 
@@ -1003,39 +925,6 @@
     </thead>
 
     <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>R</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">float</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Hypersphere radius.<pre>You can set <b>vertice</b> and <b>oppositeVertice</b> parameters instead <b>arc</b> and <b>center</b>. See below:<pre></td>
-        </tr>
-
     
 
         <tr>
@@ -1147,7 +1036,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line4080">line 4080</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line4124">line 4124</a>
     </li></ul></dd>
     
 
@@ -1294,7 +1183,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line4062">line 4062</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line4109">line 4109</a>
     </li></ul></dd>
     
 
@@ -1382,7 +1271,144 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line4049">line 4049</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line4096">line 4096</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".params"><span class="type-signature">(static) </span>params<span class="signature">(params)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Sets a <b>RandomVertices</b> parameters.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>params</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">See <b>RandomVertices</b> constructor <b>randomVerticesSettings.params</b> parameter for details.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line4187">line 4187</a>
     </li></ul></dd>
     
 
@@ -1434,7 +1460,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Wed May 07 2025 08:04:09 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Tue Jun 10 2025 09:01:03 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
