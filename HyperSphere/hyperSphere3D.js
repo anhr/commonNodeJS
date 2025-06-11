@@ -318,6 +318,9 @@ class RandomVertices extends Sphere.RandomVertices {
 */	
 	getCirclePoint(circleDistance, params, options) {
 
+		const point2D = this.getCirclePoint2D(circleDistance, params, options);
+		return [options.altitude, point2D[0], point2D[1]];
+/*		
 		let newLat, newLng;
 		const center = params.center, angle = 2 * π * (params.random ? Math.random() : options.i / options.numPoints), // Текущий угол в радианах
 			lat = center.lat, lng = center.lng;
@@ -348,6 +351,7 @@ class RandomVertices extends Sphere.RandomVertices {
 		else if (newLng < -π) newLng += 2 * π;
 
 		return [options.altitude, newLat, newLng];
+*/		
 
 	}
 	circlesCount(np) { return np; }//если количество окружностей равно количеству точек на окружности, то точки будут равномерно располагаться на гиперсфере

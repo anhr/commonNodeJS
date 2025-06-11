@@ -257,7 +257,7 @@ class RandomVertices extends Circle.RandomVertices {
 		
 	}
 */	
-	getCirclePoint(circleDistance, params, options) {
+	getCirclePoint2D(circleDistance, params, options) {
 		
 		let newLat, newLng;
 		const center = params.center, angle = 2 * π * (params.random ? Math.random() : options.i / options.numPoints), // Текущий угол в радианах
@@ -291,6 +291,7 @@ class RandomVertices extends Circle.RandomVertices {
 		return [newLat, newLng];
 	
 	}
+	getCirclePoint(circleDistance, params, options) { return this.getCirclePoint2D(circleDistance, params, options); }
 	circlesCount(np) { return np; }//если количество окружностей равно количеству точек на окружности, то точки будут равномерно располагаться на гиперсфере
 	getNumPoints(circleDistance, R, dCircleDistance) {
 		
