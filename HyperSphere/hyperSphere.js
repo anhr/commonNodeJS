@@ -3905,7 +3905,7 @@ class RandomVertices {
 
 		//////////////////////////////////////////Deepseek
 
-		const createCirclesSphere = () => {
+		this.createCirclesSphere = () => {
 
 //			circlesPointsOptions.pointId = this.pointIdErase(circlesPointsOptions.pointId);
 //			circlesPointsOptions.pointId = 0;
@@ -4026,8 +4026,7 @@ class RandomVertices {
 
 			}
 			//console.log('circlesPointsCount = ' + circlesPointsCount);
-//			if ((sphereId === undefined)  || ((sphereId + 1) === randomVerticesSettings.spheresCount)) createCirclesSphere();
-			if (!boNoCreateCirclesSphere) createCirclesSphere();
+//			if (!boNoCreateCirclesSphere) this.createCirclesSphere();
 
 		}
 		this.setCirclesOnePoint = (sphereId) => {
@@ -4098,7 +4097,7 @@ class RandomVertices {
 			params ||= paramsNew;
 			removeCirclesSphere();
 			setCirclesPoints();// params.arc);
-			createCirclesSphere();
+			_this.createCirclesSphere();
 		
 		}
 		/**
@@ -4141,7 +4140,7 @@ class RandomVertices {
 
 			}
 			else if (params.onePoint) this.randomVertice();
-			createCirclesSphere();
+			_this.createCirclesSphere();
 			return circlesSphere;
 		
 		}

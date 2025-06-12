@@ -400,10 +400,7 @@ class RandomVertices extends Sphere.RandomVertices {
 			randomVerticesSettings.spheresCount++;
 			
 		}
-/*		
-		for (let sphereId = 0; sphereId < randomVerticesSettings.spheresCount; sphereId++)
-			this.setCircles(sphereId === 0 ? 0: undefined, sphereId, params.center.altitude, (sphereId + 1) != randomVerticesSettings.spheresCount);
-*/	
+		this.createCirclesSphere();
 	
 	}
 	setCirclesCloudOnePoint(randomVerticesSettings) { for (let sphereId = 0; sphereId < randomVerticesSettings.spheresCount; sphereId++) this.setCirclesOnePoint(sphereId); }

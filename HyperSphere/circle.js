@@ -267,7 +267,12 @@ class RandomVertices extends HyperSphere.RandomVertices {
 	
 	}
 //	pointIdErase() { return 0; }
-	setCirclesCloud() { this.setCircles(0); }
+	setCirclesCloud() {
+		
+		this.setCircles(0);
+		this.createCirclesSphere();
+	
+	}
 	setCirclesCloudOnePoint() { this.setCirclesOnePoint() }
 //	altitudeDifference() { return undefined }
 
