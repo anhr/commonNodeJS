@@ -18,6 +18,7 @@
 import Sphere from './sphere.js';
 import three from '../three.js'
 import FibonacciSphereGeometry from '../FibonacciSphere/FibonacciSphereGeometry.js'
+import anglesRange from './anglesRange.js'
 
 const sHyperSphere3D = 'HyperSphere3D',
 	π = Math.PI;
@@ -67,10 +68,16 @@ class HyperSphere3D extends Sphere {
 	}
 	newHyperSphere(options, classSettings) { return new HyperSphere3D(options, classSettings); }
 	get cookieName() { return '3DUniverse' + (this.classSettings.cookieName ? '_' + this.classSettings.cookieName : ''); }
-	get altitudeRange() { return {
-		angleName: 'Altitude',
-		min: 0, max: π,//Высота меняется в диапазоне 0 180 градусов. В центре гиперсферы вершины белого и  синего цвета по краям зеленого
-	}}
+	get altitudeRange() {
+
+		return anglesRange.altitude;
+/*		
+		return {
+			angleName: 'Altitude',
+			min: 0, max: π,//Высота меняется в диапазоне 0 180 градусов. В центре гиперсферы вершины белого и  синего цвета по краям зеленого
+		}
+*/		
+	}
 	setW() {
 
 		const classSettings = this.classSettings, options = classSettings.settings.options;

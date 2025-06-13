@@ -42,6 +42,7 @@ import ProgressBar from '../ProgressBar/ProgressBar.js'
 //import WebGPU from '../../../WebGPU/master/WebGPU.js';
 import PositionController from '../PositionController.js';
 import MyObject from '../myObject.js'
+import anglesRange from './anglesRange.js'
 
 const sHyperSphere = 'HyperSphere', sOverride = sHyperSphere + ': Please override the %s method in your child class.',
 	π = Math.PI, pi = Math.PI;
@@ -309,7 +310,7 @@ class HyperSphere extends MyObject {
 			get: () => { return classSettings.settings.object.geometry.angles.length; },
 
 		});
-		this.rotateLatitude = - π / 2;//Поворачиваем широту на 90 градусов что бы начало координат широты находилось на экваторе;
+//		this.rotateLatitude = - π / 2;//Поворачиваем широту на 90 градусов что бы начало координат широты находилось на экваторе;
 		const _this = this, THREE = three.THREE;
 		if (classSettings.debug === undefined) classSettings.debug = true;
 		if (classSettings.debug === true) classSettings.debug = {};
@@ -651,23 +652,32 @@ class HyperSphere extends MyObject {
 			angles.ranges = [];
 			for (let angleId = 0; angleId < this.dimension - 1; angleId++) {
 	
-				const range = {}
+				let range = {}
 				switch (this.dimension - 2 - angleId) {
 	
 					case 0:
+						range = anglesRange.longitude;
+/*						
 						range.angleName = 'Longitude';
 						range.min = - π;
 						range.max = π;
+*/						
 						break;
 					case 1:
+						range = anglesRange.latitude;
+/*						
 						range.angleName = 'Latitude';
 						range.min = 0 + this.rotateLatitude;//- π / 2;
 						range.max = π + this.rotateLatitude;//π / 2;
+*/						
 						break;
 					case 2:
+						range = this.altitudeRange;
+/*						
 						range.angleName = this.altitudeRange.angleName;//'Altitude';
 						range.min = this.altitudeRange.min;//0;
 						range.max = this.altitudeRange.max;//π / 2;
+*/						
 						break;
 					default: console.error(sHyperSphere + ': vertice angles ranges. Invalid angleId = ' + angleId);
 	
@@ -1213,7 +1223,8 @@ class HyperSphere extends MyObject {
 			return intersection.nearestEdgeVerticeId;
 
 		}
-		this.getRotateLatitude = (i) => i === (this.dimension - 3) ? this.rotateLatitude : 0;
+//		this.getRotateLatitude = (i) => i === (this.dimension - 3) ? this.rotateLatitude : 0;
+		this.getRotateLatitude = (i) => i === (this.dimension - 3) ? anglesRange.rotateLatitude : 0;
 		this.setPositionAttributeFromPoints(settings.object.geometry.angles);//itemSize of the buiffer.attributes.position должен быть больше 2. Иначе при копировании из буфера в THREE.Vector3 координата z = undefined
 
 		settings.object.geometry.indices = settings.object.geometry.indices || [];
