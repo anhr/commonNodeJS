@@ -4064,6 +4064,7 @@ class RandomVertices {
 			changeCirclesPoints();
 
 		}
+		this.setCirclesPoints = () => { setCirclesPoints(); }
 		const setCirclesOnePoints = () => {
 
 			//заполнить circlesPoints максимально возможный массив точек всех окружностей 

@@ -466,7 +466,13 @@ RandomVertices.Center = (params, inaccurateLatitude) => {
 	
 				if (vertice[0] === altitude) return true;
 				vertice[0] = altitude;
-				if (params.randomVertices) params.randomVertices.changeCirclesPoints();
+				if (params.randomVertices) {
+
+					params.randomVertices.aCirclesRadiusRadians.length = 0;
+					params.randomVertices.setCirclesPoints();
+//					params.randomVertices.changeCirclesPoints();
+
+				}
 				return true;
 	
 			},
