@@ -361,7 +361,9 @@ class RandomVertices extends Sphere.RandomVertices {
 */		
 
 	}
-	circlesCount(np) { return np; }//если количество окружностей равно количеству точек на окружности, то точки будут равномерно располагаться на гиперсфере
+	circlesCount(np) { return this.boCreateCirclesPoints ?
+		np ://если количество окружностей равно количеству точек на окружности, то точки будут равномерно располагаться на гиперсфере
+		this.aSpheres[this.circlesId].length + 1; }
 	getNumPoints(circleDistance, R, dCircleDistance) {
 
 		return parseInt(
@@ -389,23 +391,45 @@ class RandomVertices extends Sphere.RandomVertices {
 						randomVerticesSettings.spheresCount, params.center.altitude, false, aCirclesRadiusRadians);
 		randomVerticesSettings.spheresCount++;
 
-		//рисуем окружности внутри и снаружи от противоположной точки
-		const altitude = params.center.altitude;
-		for (let sphereId = aCirclesRadiusRadians.length - 1; sphereId >= 0; sphereId--) {
+		if (this.boCreateCirclesPoints) {
 
-			const circlesRadius = aCirclesRadiusRadians[sphereId];
-			if (circlesRadius === 0) continue;
+			//Выделяем место для точек в this.circlesPoints
+			const aCircles0Params = this.aSpheres[0];
+			for(let k = 1; k < aCircles0Params.length; k++) {
+				
+				const aCirclesParams = [];
+				for(let i = k; i < aCircles0Params.length; i++) {
+	
+					const numPoints = aCircles0Params[i].numPoints;
+					aCirclesParams.push({ numPoints: numPoints, });
+					for(let j = 0; j < numPoints * 2; j++) this.circlesPoints.push(this.zeroArray());
+	
+				}
+				this.aSpheres.push(aCirclesParams);
+
+			}
 			
-			//рисуем окружности внутри от противоположной точки
-			this.setCircles(undefined,//randomVerticesSettings.spheresCount,
-							randomVerticesSettings.spheresCount, altitude - circlesRadius, false);
-			randomVerticesSettings.spheresCount++;
+		} else {
 			
-			//рисуем окружности снаружи от противоположной точки
-			this.setCircles(undefined,//randomVerticesSettings.spheresCount,
-							randomVerticesSettings.spheresCount, altitude + circlesRadius, false);
-			randomVerticesSettings.spheresCount++;
-			
+			//рисуем окружности внутри и снаружи от противоположной точки
+			const altitude = params.center.altitude;
+			for (let sphereId = aCirclesRadiusRadians.length - 1; sphereId >= 0; sphereId--) {
+	
+				const circlesRadius = aCirclesRadiusRadians[sphereId];
+				if (circlesRadius === 0) continue;
+				
+				//рисуем окружности внутри от противоположной точки
+				this.setCircles(undefined,//randomVerticesSettings.spheresCount,
+								randomVerticesSettings.spheresCount, altitude - circlesRadius, false);
+				randomVerticesSettings.spheresCount++;
+				
+				//рисуем окружности снаружи от противоположной точки
+				this.setCircles(undefined,//randomVerticesSettings.spheresCount,
+								randomVerticesSettings.spheresCount, altitude + circlesRadius, false);
+				randomVerticesSettings.spheresCount++;
+				
+			}
+
 		}
 		this.createCirclesSphere();
 	
