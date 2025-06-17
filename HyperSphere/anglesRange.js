@@ -8,23 +8,26 @@ const π = Math.PI,
  
 		altitude: {
  
-			angleName: 'Altitude',
-			min: 0, max: π,//Высота меняется в диапазоне 0 180 градусов. В центре гиперсферы вершины белого и синего цвета по краям зеленого
+			get angleName() { return 'Altitude'; },
+
+			//Высота меняется в диапазоне 0 180 градусов. В центре гиперсферы вершины белого и синего цвета по краям зеленого
+			get min() { return 0; },
+			get max() { return π; },
  
 		},
-		rotateLatitude: rotateLatitude,
+		get rotateLatitude() { return rotateLatitude; },
 		latitude: {
 			
-			angleName: 'Latitude',
-			min: 0 + rotateLatitude,//- π / 2;
-			max: π + rotateLatitude,//π / 2;
+			get angleName() { return 'Latitude'; },
+			get min() { return 0 + rotateLatitude; },//-π/2;
+			get max() { return π + rotateLatitude; },//π/2;
 
 		},
 		longitude: {
  
-			angleName: 'Longitude',
-			min: - π,
-			max: π,
+			get angleName() { return 'Longitude'; },
+			get min() { return -π; },
+			get max() { return π; },
  
 		},
  
