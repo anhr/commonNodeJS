@@ -3956,7 +3956,7 @@ class RandomVertices {
 			const cos = Math.cos,
 				a = abc.a, b = abc.b, c = abc.c;// d = abc.d,
 			this.circlesId = circlesIdNew === undefined ? 0 : circlesIdNew;
-			if (this.aSpheres.length <= this.circlesId) this.aSpheres.push([]);
+			if (this.boCreateCirclesPoints && (this.aSpheres.length <= this.circlesId)) this.aSpheres.push([]);
 			const aCircles = this.aSpheres[this.circlesId];
 			circlesPointsOptions.altitude = altitude;//this.altitudeDifference(sphereId, params);
 			for (let circleId = 1; circleId < abc.circlesCount; circleId++) {

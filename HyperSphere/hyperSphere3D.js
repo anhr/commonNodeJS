@@ -421,7 +421,7 @@ class RandomVertices extends Sphere.RandomVertices {
 				//рисуем окружности внутри от противоположной точки
 				this.setCircles(undefined,//randomVerticesSettings.spheresCount,
 								randomVerticesSettings.spheresCount, altitude - circlesRadius, false);
-				randomVerticesSettings.spheresCount++;
+//				randomVerticesSettings.spheresCount++;
 				
 				//рисуем окружности снаружи от противоположной точки
 				this.setCircles(undefined,//randomVerticesSettings.spheresCount,
