@@ -493,6 +493,8 @@ RandomVertices.Center = (params, inaccurateLatitude) => {
 				if (params.randomVertices) {
 
 					params.randomVertices.aCirclesRadiusRadians.length = 0;
+					params.randomVertices.circlesPoints.length = 0;
+					params.randomVertices.aSpheres.length = 0;
 					params.randomVertices.setCirclesPoints();
 //					params.randomVertices.changeCirclesPoints();
 
