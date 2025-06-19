@@ -3671,6 +3671,7 @@ class RandomVertices {
 		 * @param {number} [options.circleDistance=0.5] - Расстояние до окружности по дуге в радианах для гиперсферы радиусом 1
 		 * @param {number} [options.numPoints=36] - Количество точек
 		 * @param {number} [options.points=[]] - points array
+		 * @param {number} [options.circlesPointsCount] - Если равно нулю, то обновить this.aCirclesRadiusRadians. Это нужно делать всякий раз, когда изменяется дуга между вершинами. Например когда пользователь изменил коодинату вершины 
 		 * @returns {Array} Массив точек [ 0 широта (рад), 1 долгота (рад) ]
 		 */
 		const getCirclePointsRadians = (options = {}, aCirclesRadiusRadians) => {
@@ -3685,24 +3686,17 @@ class RandomVertices {
 			for (let i = 0; i < numPoints; i++) {
 
 				let point;
-				if (!this.boCreateCirclesPoints) {
-					
-					point = getCirclePoint({ i: i, numPoints: numPoints, circleDistance: options.circleDistance, altitude: options.altitude });
-/*					
-					if (aCirclesRadiusRadians && (i === 0)) 
-						aCirclesRadiusRadians.push(this.getArcAngle(point, params.oppositeVertice)); //Запомнить расстояние между нулевой точкой каждой окружности и противоположной вершиной, равное радиусу окружности в радианах.
-*/						
-					
-				} else {
+				if (!this.boCreateCirclesPoints) point = getCirclePoint({ i: i, numPoints: numPoints, circleDistance: options.circleDistance, altitude: options.altitude });
+				else {
 
 					if (aCirclesRadiusRadians && (i === 0)) {
-
+	
 						this.boCreateCirclesPoints = false;
 						const b = abc.b, circleDistance = (b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
 							abc.a / (aCirclesRadiusRadians.x + b) + abc.c) * R;
 						this.boCreateCirclesPoints = true;
 						aCirclesRadiusRadians.push(this.getArcAngle(getCirclePoint({ i: i, numPoints: numPoints, circleDistance: circleDistance, altitude: options.altitude }), params.oppositeVertice)); //Запомнить расстояние между нулевой точкой каждой окружности и противоположной вершиной, равное радиусу окружности в радианах.
-
+	
 					}
 					point = this.zeroArray();//создается пустой массив максимального размера
 					if (edges) {
@@ -3713,6 +3707,24 @@ class RandomVertices {
 					}
 
 				}
+/*				
+				if (aCirclesRadiusRadians && (
+						(
+							aCirclesRadiusRadians.boUpdate &&//изменяется дуга между вершинами. Например когда пользователь изменил коодинату вершины 
+							(options.circlesPointsCount === 0)//рисуем окружности вокруг противопрложной точки
+						)||
+						this.boCreateCirclesPoints
+					) && (i === 0)) {
+
+					const boCreateCirclesPoints = this.boCreateCirclesPoints;
+					this.boCreateCirclesPoints = false;
+					const b = abc.b, circleDistance = (b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
+						abc.a / (aCirclesRadiusRadians.x + b) + abc.c) * R;
+					this.boCreateCirclesPoints = boCreateCirclesPoints;
+					aCirclesRadiusRadians.push(this.getArcAngle(getCirclePoint({ i: i, numPoints: numPoints, circleDistance: circleDistance, altitude: options.altitude }), params.oppositeVertice)); //Запомнить расстояние между нулевой точкой каждой окружности и противоположной вершиной, равное радиусу окружности в радианах.
+
+				}
+*/				
 				editPoints(points, point, options);
 				circlesPointsCount++;
 
@@ -3979,6 +3991,7 @@ class RandomVertices {
 				} else circlesPointsOptions.numPoints = aCircles[circleId - 1].numPoints;
 				//console.log('circleId = ' + circleId + ', circleDistance1 = ' + circleDistance1 + ', numPoints = ' + circlesPointsOptions.numPoints)
 				if (aCirclesRadiusRadians) aCirclesRadiusRadians.x = x;
+				circlesPointsOptions.circlesPointsCount = circlesPointsCountNew;
 				getCirclePointsRadians(circlesPointsOptions, aCirclesRadiusRadians);
 
 			}
@@ -4109,7 +4122,10 @@ class RandomVertices {
 		this.changeCirclesPoints = (params) => {
 			
 			circlesPointsOptions.pointId = 0;
+			//_this.aCirclesRadiusRadians.length = 0;
+			//_this.aCirclesRadiusRadians.boUpdate = true;
 			changeCirclesPoints(params);
+			//_this.aCirclesRadiusRadians.boUpdate = undefined;
 		
 		}
 
