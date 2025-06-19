@@ -3689,6 +3689,7 @@ class RandomVertices {
 				if (!this.boCreateCirclesPoints) point = getCirclePoint({ i: i, numPoints: numPoints, circleDistance: options.circleDistance, altitude: options.altitude });
 				else {
 
+/*					
 					if (aCirclesRadiusRadians && (i === 0)) {
 	
 						this.boCreateCirclesPoints = false;
@@ -3698,6 +3699,7 @@ class RandomVertices {
 						aCirclesRadiusRadians.push(this.getArcAngle(getCirclePoint({ i: i, numPoints: numPoints, circleDistance: circleDistance, altitude: options.altitude }), params.oppositeVertice)); //Запомнить расстояние между нулевой точкой каждой окружности и противоположной вершиной, равное радиусу окружности в радианах.
 	
 					}
+*/					
 					point = this.zeroArray();//создается пустой массив максимального размера
 					if (edges) {
 
@@ -3707,7 +3709,6 @@ class RandomVertices {
 					}
 
 				}
-/*				
 				if (aCirclesRadiusRadians && (
 						(
 							aCirclesRadiusRadians.boUpdate &&//изменяется дуга между вершинами. Например когда пользователь изменил коодинату вершины 
@@ -3724,7 +3725,6 @@ class RandomVertices {
 					aCirclesRadiusRadians.push(this.getArcAngle(getCirclePoint({ i: i, numPoints: numPoints, circleDistance: circleDistance, altitude: options.altitude }), params.oppositeVertice)); //Запомнить расстояние между нулевой точкой каждой окружности и противоположной вершиной, равное радиусу окружности в радианах.
 
 				}
-*/				
 				editPoints(points, point, options);
 				circlesPointsCount++;
 
@@ -4122,10 +4122,10 @@ class RandomVertices {
 		this.changeCirclesPoints = (params) => {
 			
 			circlesPointsOptions.pointId = 0;
-			//_this.aCirclesRadiusRadians.length = 0;
-			//_this.aCirclesRadiusRadians.boUpdate = true;
+			_this.aCirclesRadiusRadians.length = 0;
+			_this.aCirclesRadiusRadians.boUpdate = true;
 			changeCirclesPoints(params);
-			//_this.aCirclesRadiusRadians.boUpdate = undefined;
+			_this.aCirclesRadiusRadians.boUpdate = undefined;
 		
 		}
 
