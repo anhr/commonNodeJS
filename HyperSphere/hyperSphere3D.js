@@ -229,6 +229,14 @@ class RandomVertices extends Sphere.RandomVertices {
 
 	//overridden methods
 
+	updateCirclesRadiusRadians(changeCirclesPoints, params){
+		
+		this.aCirclesRadiusRadians.length = 0;
+		this.aCirclesRadiusRadians.boUpdate = true;
+		changeCirclesPoints(params);
+		this.aCirclesRadiusRadians.boUpdate = undefined;
+		
+	}
 	getHyperSphere(options, classSettings) {
 
 		let circlesSphere;
@@ -387,8 +395,7 @@ class RandomVertices extends Sphere.RandomVertices {
 		randomVerticesSettings.spheresCount = 0
 		
 		//рисуем окружности вокруг противопрложной точки
-		this.setCircles(0,//randomVerticesSettings.spheresCount,
-						randomVerticesSettings.spheresCount, params.center.altitude, false, aCirclesRadiusRadians);
+		this.setCircles(0, randomVerticesSettings.spheresCount, params.center.altitude, false);//, aCirclesRadiusRadians);
 		randomVerticesSettings.spheresCount++;
 
 		if (this.boCreateCirclesPoints) {
@@ -435,6 +442,27 @@ class RandomVertices extends Sphere.RandomVertices {
 	
 	}
 	setCirclesCloudOnePoint(randomVerticesSettings) { for (let sphereId = 0; sphereId < randomVerticesSettings.spheresCount; sphereId++) this.setCirclesOnePoint(sphereId); }
+	pushCirclesRadiusRadians(options, i, abc, R, getCirclePoint, numPoints, params) {
+
+		const aCirclesRadiusRadians = this.aCirclesRadiusRadians;
+		if (aCirclesRadiusRadians && (
+				(
+					aCirclesRadiusRadians.boUpdate &&//изменяется дуга между вершинами. Например когда пользователь изменил коодинату вершины 
+					(options.circlesPointsCount === 0)//рисуем окружности вокруг противопрложной точки
+				)||
+				this.boCreateCirclesPoints
+			) && (i === 0)) {
+
+			const boCreateCirclesPoints = this.boCreateCirclesPoints;
+			this.boCreateCirclesPoints = false;
+			const b = abc.b, circleDistance = (b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
+				abc.a / (aCirclesRadiusRadians.x + b) + abc.c) * R;
+			this.boCreateCirclesPoints = boCreateCirclesPoints;
+			aCirclesRadiusRadians.push(this.getArcAngle(getCirclePoint({ i: i, numPoints: numPoints, circleDistance: circleDistance, altitude: options.altitude }), params.oppositeVertice)); //Запомнить расстояние между нулевой точкой каждой окружности и противоположной вершиной, равное радиусу окружности в радианах.
+
+		}
+	}
+	circlesRadiusRadiansSetX(x) { this.aCirclesRadiusRadians.x = x; }
 
 	/////////////////////////////overridden methods
 

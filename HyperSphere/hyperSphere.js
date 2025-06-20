@@ -3674,7 +3674,7 @@ class RandomVertices {
 		 * @param {number} [options.circlesPointsCount] - Если равно нулю, то обновить this.aCirclesRadiusRadians. Это нужно делать всякий раз, когда изменяется дуга между вершинами. Например когда пользователь изменил коодинату вершины 
 		 * @returns {Array} Массив точек [ 0 широта (рад), 1 долгота (рад) ]
 		 */
-		const getCirclePointsRadians = (options = {}, aCirclesRadiusRadians) => {
+		const getCirclePointsRadians = (options = {}/*, aCirclesRadiusRadians*/) => {
 
 			if (options.circleDistance === undefined) options.circleDistance = 0.5;
 			if (options.numPoints === undefined) options.numPoints = np;
@@ -3709,6 +3709,8 @@ class RandomVertices {
 					}
 
 				}
+				this.pushCirclesRadiusRadians(options, i, abc, R, getCirclePoint, numPoints, params)
+/*				
 				if (aCirclesRadiusRadians && (
 						(
 							aCirclesRadiusRadians.boUpdate &&//изменяется дуга между вершинами. Например когда пользователь изменил коодинату вершины 
@@ -3725,6 +3727,7 @@ class RandomVertices {
 					aCirclesRadiusRadians.push(this.getArcAngle(getCirclePoint({ i: i, numPoints: numPoints, circleDistance: circleDistance, altitude: options.altitude }), params.oppositeVertice)); //Запомнить расстояние между нулевой точкой каждой окружности и противоположной вершиной, равное радиусу окружности в радианах.
 
 				}
+*/				
 				editPoints(points, point, options);
 				circlesPointsCount++;
 
@@ -3961,7 +3964,7 @@ class RandomVertices {
 		this.aSpheres = [];//массив сфер в трехмерной гиперсфере. Каждый элемент массива это массив окружностей в текущей сфере. каждый елемент массива окружностей содержит параметры окружности
 							//Для двумерной и одномерной гиперсферы когда sphereId = undefined, массив сфер содержит один элемент с массивом окружностей.
 		this.circlesId = 0;//идентификатор сферы в this.aSpheres. В одномерной и двухмерной гиперсфере в this.aSpheres всего одна сфера и идентификатор сферы равен нулю.
-		this.setCircles = (circlesPointsCountNew, circlesIdNew, altitude, boNoCreateCirclesSphere, aCirclesRadiusRadians) => {
+		this.setCircles = (circlesPointsCountNew, circlesIdNew, altitude, boNoCreateCirclesSphere/*, aCirclesRadiusRadians*/) => {
 
 			circleDistancePrev = 0;//Положение предыдущего кольца
 			if (circlesPointsCountNew != undefined) circlesPointsCount = circlesPointsCountNew;
@@ -3990,9 +3993,10 @@ class RandomVertices {
 
 				} else circlesPointsOptions.numPoints = aCircles[circleId - 1].numPoints;
 				//console.log('circleId = ' + circleId + ', circleDistance1 = ' + circleDistance1 + ', numPoints = ' + circlesPointsOptions.numPoints)
-				if (aCirclesRadiusRadians) aCirclesRadiusRadians.x = x;
+//				if (aCirclesRadiusRadians) aCirclesRadiusRadians.x = x;
+				this.circlesRadiusRadiansSetX(x);
 				circlesPointsOptions.circlesPointsCount = circlesPointsCountNew;
-				getCirclePointsRadians(circlesPointsOptions, aCirclesRadiusRadians);
+				getCirclePointsRadians(circlesPointsOptions);//, aCirclesRadiusRadians);
 
 			}
 			//console.log('circlesPointsCount = ' + circlesPointsCount);
@@ -4122,16 +4126,20 @@ class RandomVertices {
 		this.changeCirclesPoints = (params) => {
 			
 			circlesPointsOptions.pointId = 0;
-			_this.aCirclesRadiusRadians.length = 0;
-			_this.aCirclesRadiusRadians.boUpdate = true;
+			this.updateCirclesRadiusRadians(changeCirclesPoints, params);
+/*			
+//			_this.aCirclesRadiusRadians.length = 0;
+//			_this.aCirclesRadiusRadians.boUpdate = true;
 			changeCirclesPoints(params);
-			_this.aCirclesRadiusRadians.boUpdate = undefined;
+//			_this.aCirclesRadiusRadians.boUpdate = undefined;
+*/
 		
 		}
 
 	}
 	//overridden methods
 
+	updateCirclesRadiusRadians(changeCirclesPoints, params){ changeCirclesPoints(params); }
 	getHyperSphere() { console.error(sRandomVertices + sOver.replace('%s', 'getHyperSphere')); }
 	getArcAngle() { console.error(sRandomVertices + sOver.replace('%s', 'getArcAngle')); }
 	oppositeVertice0() { console.error(sRandomVertices + sOver.replace('%s', 'oppositeVertice0')); }
@@ -4148,6 +4156,8 @@ class RandomVertices {
 	setCirclesCloud() { console.error(sRandomVertices + sOver.replace('%s', 'setCirclesCloud')); }
 	setCirclesCloudOnePoint() { console.error(sRandomVertices + sOver.replace('%s', 'setCirclesCloudOnePoint')); }
 //	pointIdErase() { console.error(sRandomVertices + sOver.replace('%s', 'pointIdErase')); }
+	pushCirclesRadiusRadians() {}
+	circlesRadiusRadiansSetX(x) {}
 
 	////////////////////////////////////////overridden methods
 	
