@@ -3608,7 +3608,7 @@ class RandomVertices {
 	 * @param {float} [randomVerticesSettings.params.center[0]=0] Altitude.
 	 * @param {float} [randomVerticesSettings.params.center[1]=0] Latitude.
 	 * @param {float} [randomVerticesSettings.params.center[2]=0] Longitude.
-*/	 
+*/
 
 	/**
 	 * Random vertices
@@ -3622,8 +3622,20 @@ class RandomVertices {
 	 * @param {Array} [randomVerticesSettings.params.vertice=[0, 0, 0]] First vertice of the arc between two vertices.
 	 * @param {Array} [randomVerticesSettings.params.oppositeVertice=[0, 0, 0]] Second vertice of the arc between two vertices.
 	 * @param {boolean} [randomVerticesSettings.params.random=true] random arrangement of circles vertices.
+	 * @param {Function} [randomVerticesSettings.params.onChangeRandom] Callback function is called when the <b>randomVerticesSettings.params.random</b> has changed.
+	 * <pre>
+	 * parameter <b>random</b>: new value of the <b>randomVerticesSettings.params.random</b>.
+	 * </pre>
 	 * @param {boolean} [randomVerticesSettings.params.onePoint=false] true - получить одну случайную точку не вычисляя остальные случайные точки.
+	 * @param {Function} [randomVerticesSettings.params.onChangeOnePoint] Callback function is called when the <b>randomVerticesSettings.params.onePoint</b> has changed.
+	 * <pre>
+	 * parameter <b>onePoint</b>: new value of the <b>randomVerticesSettings.params.onePoint</b>.
+	 * </pre>
 	 * @param {boolean} [randomVerticesSettings.params.onePointArray=false] true - array of the one points.
+	 * @param {Function} [randomVerticesSettings.params.onChangeOnePointArray] Callback function is called when the <b>randomVerticesSettings.params.onePointArray</b> has changed.
+	 * <pre>
+	 * parameter <b>onePointArray</b>: new value of the <b>randomVerticesSettings.params.onePointArray</b>.
+	 * </pre>
 	 */
 	constructor(scene, options, randomVerticesSettings = {}){
 
