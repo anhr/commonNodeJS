@@ -156,6 +156,9 @@
 			fOppositeVertice.add(params.oppositeVertice, 'latitude', anglesRange.latitude.min, anglesRange.latitude.max, 0.001);
 			fOppositeVertice.add(params.oppositeVertice, 'longitude', anglesRange.longitude.min, anglesRange.longitude.max, 0.001);
 
+			params.onChangeRandom = (random) => { if (!random) cbParamsOnePoint.setValue(false); }
+			const cbParamsRandom = gui.add(params, 'random');
+/*			
 			const cbParamsRandom = gui.add(params, 'random').onChange(() => {
 
 				if (!params.random && params.onePoint) {
@@ -167,12 +170,25 @@
 				else params.randomVertices.onChangeRandom();
 			
 			});
+*/			
+			params.onChangeOnePoint = (onePoint) => {
+				
+				if (onePoint) cbParamsRandom.setValue(onePoint);
+				else cbParamsOnePointArray.setValue(onePoint);
+			
+			}
+			const cbParamsOnePoint = gui.add(params, 'onePoint');
+/*			
 			const cbParamsOnePoint = gui.add(params, 'onePoint').onChange(() => {
 
 				if (!params.random && params.onePoint) cbParamsRandom.setValue(true);
 				params.randomVertices.onChangeOnePoint(params);
 			
 			});
+*/			
+			params.onChangeOnePointArray = (onePointArray) => { if (onePointArray) cbParamsOnePoint.setValue(true); }
+			const cbParamsOnePointArray = gui.add(params, 'onePointArray');
+/*			
 			const cbParamsOnePointArray = gui.add(params, 'onePointArray').onChange(() => {
 				
 				if (params.onePointArray && !params.onePoint) {
@@ -183,6 +199,7 @@
 				} else params.randomVertices.onChangeOnePoint(params);
 			
 			});
+*/			
 
 			//////////////////////////////////////////GUI
 			
