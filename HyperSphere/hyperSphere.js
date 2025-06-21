@@ -4170,9 +4170,73 @@ const sOver = ': Please, override %s method in your ' + sRandomVertices + ' chil
 RandomVertices.params = (params) => {
 
 	if (params.random === undefined) params.random = true;
+	{//hide random
+
+		let random = params.random;
+		Object.defineProperty(params, 'random', {
+	
+			get: () => { return random; },
+			set: (randomNew) => {
+	
+				if (random === randomNew) return true;
+				random = randomNew;
+				if (!random) {
+
+					if (params.onePointArray) params.onePointArray = false;
+					if (params.onePoint) params.onePoint = false;
+					
+				}
+				if (!(!random && params.onePoint))params.randomVertices.onChangeRandom();
+				if (params.onChangeRandom) params.onChangeRandom(random);
+				return true;
+	
+			},
+	
+		});
+
+	}
 	if (params.onePoint === undefined) params.onePoint = true;
+	{//hide onePoint
+
+		let onePoint = params.onePoint;
+		Object.defineProperty(params, 'onePoint', {
+	
+			get: () => { return onePoint; },
+			set: (onePointNew) => {
+	
+				if (onePoint === onePointNew) return true;
+				onePoint = onePointNew;
+				if (!params.random && onePoint) params.random = true;
+				if (params.onChangeOnePoint) params.onChangeOnePoint(onePoint);
+				params.randomVertices.onChangeOnePoint(params);
+				return true;
+	
+			},
+	
+		});
+
+	}
 	if (params.onePointArray === undefined) params.onePointArray = true;
-//	if (params.center) console.warn(sRandomVertices + '.params: deprecated parameter params.center. Use params.oppositeVertice.')
+	{//hide onePointArray
+
+		let onePointArray = params.onePointArray;
+		Object.defineProperty(params, 'onePointArray', {
+	
+			get: () => { return onePointArray; },
+			set: (onePointArrayNew) => {
+	
+				if (onePointArray === onePointArrayNew) return true;
+				onePointArray = onePointArrayNew;
+				if (onePointArray && !params.onePoint) params.randomVertices.createOnePointArray(params);
+				else params.randomVertices.onChangeOnePoint(params);
+				if (params.onChangeOnePointArray) params.onChangeOnePointArray(onePointArray);
+				return true;
+	
+			},
+	
+		});
+
+	}
 	const RandomVertices = params.HyperSphere.RandomVertices;
 	params.vertice ||= RandomVertices.ZeroArray();
 //	RandomVertices.Vertice(params.vertice);
