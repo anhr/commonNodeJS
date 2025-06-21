@@ -114,13 +114,16 @@
 			fOppositeVertice.add(params.oppositeVertice, 'longitude', anglesRange.longitude.min, anglesRange.longitude.max, 0.001);
 
 			params.onChangeRandom = (random) => {
-				
+
+				if (!random) cbParamsOnePoint.setValue(false);
+/*				
 				if (!random && params.onePoint) {
 
 					cbParamsOnePointArray.setValue(false);
 					cbParamsOnePoint.setValue(false);
 					
 				}
+*/				
 				
 			}
 			const cbParamsRandom = gui.add(params, 'random');

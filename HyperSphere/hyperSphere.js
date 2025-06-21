@@ -4182,11 +4182,12 @@ RandomVertices.params = (params) => {
 				random = randomNew;
 				if (!random) {
 
-					if (params.onePointArray) params.onePointArray = false;
+//					if (params.onePointArray) params.onePointArray = false;
 					if (params.onePoint) params.onePoint = false;
 					
 				}
-				if (!(!random && params.onePoint))params.randomVertices.onChangeRandom();
+				params.randomVertices.onChangeRandom();
+//				if (!(!random && params.onePoint))params.randomVertices.onChangeRandom();
 				if (params.onChangeRandom) params.onChangeRandom(random);
 				return true;
 	
@@ -4206,7 +4207,9 @@ RandomVertices.params = (params) => {
 	
 				if (onePoint === onePointNew) return true;
 				onePoint = onePointNew;
-				if (!params.random && onePoint) params.random = true;
+//				if (!params.random && onePoint) params.random = true;
+				if (onePoint) { if (!params.random) params.random = true; }
+				else if (params.onePointArray) params.onePointArray = false;
 				if (params.onChangeOnePoint) params.onChangeOnePoint(onePoint);
 				params.randomVertices.onChangeOnePoint(params);
 				return true;
@@ -4227,8 +4230,17 @@ RandomVertices.params = (params) => {
 	
 				if (onePointArray === onePointArrayNew) return true;
 				onePointArray = onePointArrayNew;
+				if (onePointArray) {
+					
+					if (!params.onePoint) params.onePoint = true;
+					params.randomVertices.createOnePointArray(params);
+
+				}
+				else params.randomVertices.onChangeOnePoint(params);
+/*				
 				if (onePointArray && !params.onePoint) params.randomVertices.createOnePointArray(params);
 				else params.randomVertices.onChangeOnePoint(params);
+*/				
 				if (params.onChangeOnePointArray) params.onChangeOnePointArray(onePointArray);
 				return true;
 	
