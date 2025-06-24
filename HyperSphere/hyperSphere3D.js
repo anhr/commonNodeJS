@@ -216,6 +216,7 @@ class HyperSphere3D extends Sphere {
 
 }
 
+const sRandomVertices = 'RandomVertices'
 class RandomVertices extends Sphere.RandomVertices {
 
 	constructor(scene, options, randomVerticesSettings) {
@@ -258,7 +259,7 @@ class RandomVertices extends Sphere.RandomVertices {
 		//ϕ — долгота (от −180° до 180°),
 		const arccos = Math.acos, sin = Math.sin, cos = Math.cos;
 		const θ = arccos(cos(ψ1) * cos(ψ2) + sin(ψ1) * sin(ψ2) * (cos(θ1) * cos(θ2) + sin(θ1) * sin(θ2) * cos(ϕ1 - ϕ2)));
-		if (isNaN(θ)) console.error(sHyperSphere3D + ': getArcAngle. Invalid θ = ' + θ);
+		if (isNaN(θ)) console.error(sRandomVertices + ': getArcAngle. Invalid θ = ' + θ);
 		return θ;
 
 	}
@@ -396,7 +397,7 @@ class RandomVertices extends Sphere.RandomVertices {
 		
 		//рисуем окружности вокруг противопрложной точки
 		this.setCircles(0, randomVerticesSettings.spheresCount, params.center.altitude, false);//, aCirclesRadiusRadians);
-		randomVerticesSettings.spheresCount++;
+//		randomVerticesSettings.spheresCount++;
 
 		if (this.boCreateCirclesPoints) {
 
@@ -420,22 +421,48 @@ class RandomVertices extends Sphere.RandomVertices {
 			
 			//рисуем окружности внутри и снаружи от противоположной точки
 			const altitude = params.center.altitude;
+
+			//При радиусах окружностей из aCirclesRadiusRadians облако точек вокруг противоположной вершины образуют что то вроде галактики.
+			//Для того, чтобы облако точек вокруг противоположной вершины образовало правильный шар, нужно увеличить радиусы окружностей, расположенных ближе к середине массива aCirclesRadiusRadians
+			//Вычисляем попроавку y к радиусу окружности так, чтобы облако точек вокруг противоположной вершины образовало правильный шар
+			const ymax = aCirclesRadiusRadians[0], xmax = aCirclesRadiusRadians.length - 1,
+				yh = aCirclesRadiusRadians[xmax / 2],//текущее значения радиуса окружностей в середине массива aCirclesRadiusRadians
+				a = ymax / 2 - yh;//Разница между требуемым значением радиуса окружностей и текущим значением радиуса окружностей в середине массива aCirclesRadiusRadians
+			
+			for (let sphereId = 1; sphereId < this.aSpheres.length; sphereId++) {
+
+				randomVerticesSettings.spheresCount = sphereId;//Возможно эта строка не нужна
+
+				
+				const x = aCirclesRadiusRadians.length - sphereId - 1,
+					y = a * Math.sin((π * x)/xmax);//Поправка к текущему радиусу окружностей. Вношу что бы облако точек вокруг противоположной вершины образовало правильный шар.
+				
+				const circlesRadius = aCirclesRadiusRadians[x] + y;
+				if (circlesRadius === 0) {
+
+					console.error(sRandomVertices + '.setCirclesCloud: circlesRadius === 0');
+					continue;
+
+				}
+				this.setCircles(undefined, sphereId, altitude - circlesRadius, false);//рисуем окружности внутри от противоположной точки
+				this.setCircles(undefined, sphereId, altitude + circlesRadius, false);//рисуем окружности снаружи от противоположной точки
+				
+			}
+/*			
 			for (let sphereId = aCirclesRadiusRadians.length - 1; sphereId >= 0; sphereId--) {
 	
 				const circlesRadius = aCirclesRadiusRadians[sphereId];
 				if (circlesRadius === 0) continue;
 				
 				//рисуем окружности внутри от противоположной точки
-				this.setCircles(undefined,//randomVerticesSettings.spheresCount,
-								randomVerticesSettings.spheresCount, altitude - circlesRadius, false);
-//				randomVerticesSettings.spheresCount++;
+				this.setCircles(undefined, randomVerticesSettings.spheresCount, altitude - circlesRadius, false);
 				
 				//рисуем окружности снаружи от противоположной точки
-				this.setCircles(undefined,//randomVerticesSettings.spheresCount,
-								randomVerticesSettings.spheresCount, altitude + circlesRadius, false);
+				this.setCircles(undefined, randomVerticesSettings.spheresCount, altitude + circlesRadius, false);
 				randomVerticesSettings.spheresCount++;
 				
 			}
+*/			
 
 		}
 		this.createCirclesSphere();
