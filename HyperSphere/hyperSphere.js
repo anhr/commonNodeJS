@@ -3664,6 +3664,7 @@ class RandomVertices {
 			{
 
 				points.push(point);
+				if (this.circlesCountDelta != undefined) points.push(point);//сейчас добавляются окружности внутри и снаружи противоположной вершины. Поэтому место в this.circlesPoints удваивается
 				return;
 
 			}
@@ -4011,6 +4012,49 @@ class RandomVertices {
 				getCirclePointsRadians(circlesPointsOptions);//, aCirclesRadiusRadians);
 
 			}
+			//console.log('circlesPointsCount = ' + circlesPointsCount);
+//			if (!boNoCreateCirclesSphere) this.createCirclesSphere();
+
+		}
+		//Вызывается из hyperSphere3D.js. Вычисляем количество точек для окружностей на сферах, расположенных внутри и снаружи противоположной вершины
+		this.setCircles2 = (circlesPointsCountNew, circlesIdNew, altitude, boNoCreateCirclesSphere) => {
+
+			circleDistancePrev = 0;//Положение предыдущего кольца
+			if (circlesPointsCountNew != undefined) circlesPointsCount = circlesPointsCountNew;
+			const cos = Math.cos,
+				a = abc.a, b = abc.b, c = abc.c;// d = abc.d,
+			this.circlesId = circlesIdNew === undefined ? 0 : circlesIdNew;
+			if (this.boCreateCirclesPoints && (this.aSpheres.length <= this.circlesId)) this.aSpheres.push([]);
+			const aCircles = this.aSpheres[this.circlesId];
+			circlesPointsOptions.altitude = altitude;//this.altitudeDifference(sphereId, params);
+			this.circlesCountDelta = circlesIdNew;//Для hyperSphere3D индекс окружностей внутри и снаружи противоположной вершины. Количество окружностей уменьшается когда строятся окружности внутри и снаружи противоположной вершины
+			for (let circleId = 1; circleId < abc.circlesCount; circleId++) {
+
+				const  d = abc.d,//расстояние между окружностями в радианах при условии, что окружности равномерно расположены на сфере
+					x = circleId * d,
+					circleDistance = (b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
+						a / (x + b) + c) * R,
+					xPrev = (circleId - 1) * d;//prev point
+				circleDistancePrev = (b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
+					a / (xPrev + b) + c) * R;
+				if (circlesSphere) circlesPointsOptions.points = circlesSphere.angles;
+				else circlesPointsOptions.points = this.circlesPoints;
+				circlesPointsOptions.circleDistance = circleDistance;
+				const dCircleDistance = (circleDistance - circleDistancePrev) / R;
+				if (this.boCreateCirclesPoints) {
+					
+					circlesPointsOptions.numPoints = this.getNumPoints(circleDistance, R, dCircleDistance, np);
+					aCircles.push({ numPoints: circlesPointsOptions.numPoints, });
+
+				} else circlesPointsOptions.numPoints = aCircles[circleId - 1].numPoints;
+				//console.log('circleId = ' + circleId + ', circleDistance1 = ' + circleDistance1 + ', numPoints = ' + circlesPointsOptions.numPoints)
+//				if (aCirclesRadiusRadians) aCirclesRadiusRadians.x = x;
+				this.circlesRadiusRadiansSetX(x);
+				circlesPointsOptions.circlesPointsCount = circlesPointsCountNew;
+				getCirclePointsRadians(circlesPointsOptions);//, aCirclesRadiusRadians);
+
+			}
+			this.circlesCountDelta = undefined;
 			//console.log('circlesPointsCount = ' + circlesPointsCount);
 //			if (!boNoCreateCirclesSphere) this.createCirclesSphere();
 

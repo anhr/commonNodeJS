@@ -371,7 +371,13 @@ class RandomVertices extends Sphere.RandomVertices {
 
 	}
 	circlesCount(np) { return this.boCreateCirclesPoints ?
-		np ://если количество окружностей равно количеству точек на окружности, то точки будут равномерно располагаться на гиперсфере
+		
+		np - //если количество окружностей равно количеству точек на окружности, то точки будут равномерно располагаться на гиперсфере
+		(this.circlesCountDelta != undefined ?
+			this.circlesCountDelta ://количество окружностей  нужно уменьшить если окружности находятся внутри или снаружи противоположной вершины.
+			0
+		):
+		
 		this.aSpheres[this.circlesId].length + 1; }
 	getNumPoints(circleDistance, R, dCircleDistance) {
 
@@ -404,7 +410,9 @@ class RandomVertices extends Sphere.RandomVertices {
 			//Выделяем место для точек в this.circlesPoints
 			const aCircles0Params = this.aSpheres[0];
 			for(let k = 1; k < aCircles0Params.length; k++) {
-				
+
+				this.setCircles2(0, k, params.center.altitude, false);
+/*				
 				const aCirclesParams = [];
 				for(let i = k; i < aCircles0Params.length; i++) {
 	
@@ -414,6 +422,7 @@ class RandomVertices extends Sphere.RandomVertices {
 	
 				}
 				this.aSpheres.push(aCirclesParams);
+*/				
 
 			}
 			
@@ -426,7 +435,12 @@ class RandomVertices extends Sphere.RandomVertices {
 			//Для того, чтобы облако точек вокруг противоположной вершины образовало правильный шар, нужно увеличить радиусы окружностей, расположенных ближе к середине массива aCirclesRadiusRadians
 			//Вычисляем попроавку y к радиусу окружности так, чтобы облако точек вокруг противоположной вершины образовало правильный шар
 			const ymax = aCirclesRadiusRadians[0], xmax = aCirclesRadiusRadians.length - 1,
-				yh = aCirclesRadiusRadians[xmax / 2],//текущее значения радиуса окружностей в середине массива aCirclesRadiusRadians
+
+				//текущее значения радиуса окружностей в середине массива aCirclesRadiusRadians
+				yh = xmax % 2 === 0 ?//Проверка индекса на четность
+					aCirclesRadiusRadians[xmax / 2] :
+					(aCirclesRadiusRadians[parseInt(xmax / 2)] + aCirclesRadiusRadians[parseInt(xmax / 2) + 1]) / 2,//среднее значение между двумя ближайшеми точками
+				
 				a = ymax / 2 - yh;//Разница между требуемым значением радиуса окружностей и текущим значением радиуса окружностей в середине массива aCirclesRadiusRadians
 			
 			for (let sphereId = 1; sphereId < this.aSpheres.length; sphereId++) {
