@@ -3660,11 +3660,14 @@ class RandomVertices {
 			options ||= {};
 //			point ||= [0, 0];
 			point ||= this.zeroArray();
-			if ((options.pointId === undefined) || this.boCreateCirclesPoints)
-			{
+			if ((options.pointId === undefined) || this.boCreateCirclesPoints){
 
-				points.push(point);
-				if (this.circlesCountDelta != undefined) points.push(point);//сейчас добавляются окружности внутри и снаружи противоположной вершины. Поэтому место в this.circlesPoints удваивается
+				if (!this.aCirclesRadiusRadians.boUpdate) {
+
+					points.push(point);
+					if (this.circlesCountDelta != undefined) points.push(point);//сейчас добавляются окружности внутри и снаружи противоположной вершины. Поэтому место в this.circlesPoints удваивается
+
+				}
 				return;
 
 			}
@@ -3977,7 +3980,8 @@ class RandomVertices {
 		this.aSpheres = [];//массив сфер в трехмерной гиперсфере. Каждый элемент массива это массив окружностей в текущей сфере. каждый елемент массива окружностей содержит параметры окружности
 							//Для двумерной и одномерной гиперсферы когда sphereId = undefined, массив сфер содержит один элемент с массивом окружностей.
 		this.circlesId = 0;//идентификатор сферы в this.aSpheres. В одномерной и двухмерной гиперсфере в this.aSpheres всего одна сфера и идентификатор сферы равен нулю.
-		this.setCircles = (circlesPointsCountNew, circlesIdNew, altitude, boNoCreateCirclesSphere/*, aCirclesRadiusRadians*/) => {
+/*
+		this.setCircles = (circlesPointsCountNew, circlesIdNew, altitude, boNoCreateCirclesSphere) => {
 
 			circleDistancePrev = 0;//Положение предыдущего кольца
 			if (circlesPointsCountNew != undefined) circlesPointsCount = circlesPointsCountNew;
@@ -4016,8 +4020,9 @@ class RandomVertices {
 //			if (!boNoCreateCirclesSphere) this.createCirclesSphere();
 
 		}
+*/
 		//Вызывается из hyperSphere3D.js. Вычисляем количество точек для окружностей на сферах, расположенных внутри и снаружи противоположной вершины
-		this.setCircles2 = (circlesPointsCountNew, circlesIdNew, altitude, boNoCreateCirclesSphere) => {
+		this.setCircles = (circlesPointsCountNew, circlesIdNew, altitude/*, boNoCreateCirclesSphere*/) => {
 
 			circleDistancePrev = 0;//Положение предыдущего кольца
 			if (circlesPointsCountNew != undefined) circlesPointsCount = circlesPointsCountNew;
@@ -4041,7 +4046,7 @@ class RandomVertices {
 				else circlesPointsOptions.points = this.circlesPoints;
 				circlesPointsOptions.circleDistance = circleDistance;
 				const dCircleDistance = (circleDistance - circleDistancePrev) / R;
-				if (this.boCreateCirclesPoints) {
+				if (this.boCreateCirclesPoints && !this.aCirclesRadiusRadians.boUpdate) {
 					
 					circlesPointsOptions.numPoints = this.getNumPoints(circleDistance, R, dCircleDistance, np);
 					aCircles.push({ numPoints: circlesPointsOptions.numPoints, });

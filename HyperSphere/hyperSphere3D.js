@@ -402,32 +402,22 @@ class RandomVertices extends Sphere.RandomVertices {
 		randomVerticesSettings.spheresCount = 0
 		
 		//рисуем окружности вокруг противопрложной точки
-		this.setCircles(0, randomVerticesSettings.spheresCount, params.center.altitude, false);//, aCirclesRadiusRadians);
+		this.setCircles(0, randomVerticesSettings.spheresCount, params.center.altitude);//, false);
 //		randomVerticesSettings.spheresCount++;
 
-		if (this.boCreateCirclesPoints) {
+		const setSphere0Circles = () => { for(let k = 1; k < this.aSpheres[0].length; k++) this.setCircles(0, k, params.center.altitude); }
+		if (this.boCreateCirclesPoints) setSphere0Circles();//Выделяем место для точек в this.circlesPoints
+		else {
 
-			//Выделяем место для точек в this.circlesPoints
-			const aCircles0Params = this.aSpheres[0];
-			for(let k = 1; k < aCircles0Params.length; k++) {
+			if (this.aCirclesRadiusRadians.boUpdate) {
 
-				this.setCircles2(0, k, params.center.altitude, false);
-/*				
-				const aCirclesParams = [];
-				for(let i = k; i < aCircles0Params.length; i++) {
-	
-					const numPoints = aCircles0Params[i].numPoints;
-					aCirclesParams.push({ numPoints: numPoints, });
-					for(let j = 0; j < numPoints * 2; j++) this.circlesPoints.push(this.zeroArray());
-	
-				}
-				this.aSpheres.push(aCirclesParams);
-*/				
-
+				//заполняем this.aCirclesRadiusRadians
+				this.boCreateCirclesPoints = true;
+//				for(let k = 1; k < this.aSpheres[0].length; k++) this.setCircles2(0, k, params.center.altitude);
+				setSphere0Circles();
+				this.boCreateCirclesPoints = false;
+				
 			}
-			
-		} else {
-			
 			//рисуем окружности внутри и снаружи от противоположной точки
 			const altitude = params.center.altitude;
 
@@ -458,8 +448,8 @@ class RandomVertices extends Sphere.RandomVertices {
 					continue;
 
 				}
-				this.setCircles(undefined, sphereId, altitude - circlesRadius, false);//рисуем окружности внутри от противоположной точки
-				this.setCircles(undefined, sphereId, altitude + circlesRadius, false);//рисуем окружности снаружи от противоположной точки
+				this.setCircles(undefined, sphereId, altitude - circlesRadius);//, false);//рисуем окружности внутри от противоположной точки
+				this.setCircles(undefined, sphereId, altitude + circlesRadius);//, false);//рисуем окружности снаружи от противоположной точки
 				
 			}
 /*			
@@ -469,10 +459,10 @@ class RandomVertices extends Sphere.RandomVertices {
 				if (circlesRadius === 0) continue;
 				
 				//рисуем окружности внутри от противоположной точки
-				this.setCircles(undefined, randomVerticesSettings.spheresCount, altitude - circlesRadius, false);
+				this.setCircles(undefined, randomVerticesSettings.spheresCount, altitude - circlesRadius);//, false);
 				
 				//рисуем окружности снаружи от противоположной точки
-				this.setCircles(undefined, randomVerticesSettings.spheresCount, altitude + circlesRadius, false);
+				this.setCircles(undefined, randomVerticesSettings.spheresCount, altitude + circlesRadius);//, false);
 				randomVerticesSettings.spheresCount++;
 				
 			}
