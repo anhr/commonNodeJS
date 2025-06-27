@@ -420,7 +420,7 @@ class RandomVertices extends Sphere.RandomVertices {
 			}
 			//рисуем окружности внутри и снаружи от противоположной точки
 			const altitude = params.center.altitude;
-
+/*
 			//При радиусах окружностей из aCirclesRadiusRadians облако точек вокруг противоположной вершины образуют что то вроде галактики.
 			//Для того, чтобы облако точек вокруг противоположной вершины образовало правильный шар, нужно увеличить радиусы окружностей, расположенных ближе к середине массива aCirclesRadiusRadians
 			//Вычисляем попроавку y к радиусу окружности так, чтобы облако точек вокруг противоположной вершины образовало правильный шар
@@ -432,16 +432,18 @@ class RandomVertices extends Sphere.RandomVertices {
 					(aCirclesRadiusRadians[parseInt(xmax / 2)] + aCirclesRadiusRadians[parseInt(xmax / 2) + 1]) / 2,//среднее значение между двумя ближайшеми точками
 				
 				a = ymax / 2 - yh;//Разница между требуемым значением радиуса окружностей и текущим значением радиуса окружностей в середине массива aCirclesRadiusRadians
+*/				
 			
 			for (let sphereId = 1; sphereId < this.aSpheres.length; sphereId++) {
 
 				randomVerticesSettings.spheresCount = sphereId;//Возможно эта строка не нужна
 
 				
-				const x = aCirclesRadiusRadians.length - sphereId - 1,
-					y = a * Math.sin((π * x)/xmax);//Поправка к текущему радиусу окружностей. Вношу что бы облако точек вокруг противоположной вершины образовало правильный шар.
+//				const x = aCirclesRadiusRadians.length - sphereId - 1,
+				const x = this.aSpheres.length - sphereId - 1;
+//					y = a * Math.sin((π * x)/xmax);//Поправка к текущему радиусу окружностей. Вношу что бы облако точек вокруг противоположной вершины образовало правильный шар.
 				
-				const circlesRadius = aCirclesRadiusRadians[x] + y;
+				const circlesRadius = aCirclesRadiusRadians[x];// + y;
 				if (circlesRadius === 0) {
 
 					console.error(sRandomVertices + '.setCirclesCloud: circlesRadius === 0');
