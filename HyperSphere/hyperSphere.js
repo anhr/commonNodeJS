@@ -3662,7 +3662,7 @@ class RandomVertices {
 			point ||= this.zeroArray();
 			if ((options.pointId === undefined) || this.boCreateCirclesPoints){
 
-				if (!this.aCirclesRadiusRadians.boUpdate) {
+				if (!this.aCirclesRadiusRadians || !this.aCirclesRadiusRadians.boUpdate) {
 
 					points.push(point);
 					if (this.circlesCountDelta != undefined) points.push(point);//сейчас добавляются окружности внутри и снаружи противоположной вершины. Поэтому место в this.circlesPoints удваивается
@@ -4046,7 +4046,7 @@ class RandomVertices {
 				else circlesPointsOptions.points = this.circlesPoints;
 				circlesPointsOptions.circleDistance = circleDistance;
 				const dCircleDistance = (circleDistance - circleDistancePrev) / R;
-				if (this.boCreateCirclesPoints && !this.aCirclesRadiusRadians.boUpdate) {
+				if (this.boCreateCirclesPoints && (!this.aCirclesRadiusRadians || !this.aCirclesRadiusRadians.boUpdate)) {
 					
 					circlesPointsOptions.numPoints = this.getNumPoints(circleDistance, R, dCircleDistance, np);
 					aCircles.push({ numPoints: circlesPointsOptions.numPoints, });
