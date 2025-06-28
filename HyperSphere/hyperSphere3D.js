@@ -405,10 +405,15 @@ class RandomVertices extends Sphere.RandomVertices {
 		this.setCircles(0, randomVerticesSettings.spheresCount, params.center.altitude);//, false);
 //		randomVerticesSettings.spheresCount++;
 
-		const setSphere0Circles = () => { for(let k = 1; k < this.aSpheres[0].length; k++) this.setCircles(0, k, params.center.altitude); }
-		if (this.boCreateCirclesPoints) setSphere0Circles();//Выделяем место для точек в this.circlesPoints
-		else {
+//		const setSphere0Circles = () => { for(let k = 1; k < this.aSpheres[0].length; k++) this.setCircles(0, k, params.center.altitude); }
+		if (this.boCreateCirclesPoints) {
 
+			//Выделяем место для точек в this.circlesPoints
+			for(let k = 1; k < this.aSpheres[0].length; k++) this.setCircles(0, k, params.center.altitude);
+			
+		} else {
+
+/*			
 			if (this.aCirclesRadiusRadians.boUpdate) {
 
 				//заполняем this.aCirclesRadiusRadians
@@ -418,6 +423,7 @@ class RandomVertices extends Sphere.RandomVertices {
 				this.boCreateCirclesPoints = false;
 				
 			}
+*/			
 			//рисуем окружности внутри и снаружи от противоположной точки
 			const altitude = params.center.altitude;
 /*
