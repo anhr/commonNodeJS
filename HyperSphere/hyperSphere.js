@@ -4046,7 +4046,7 @@ class RandomVertices {
 				else circlesPointsOptions.points = this.circlesPoints;
 				circlesPointsOptions.circleDistance = circleDistance;
 				const dCircleDistance = (circleDistance - circleDistancePrev) / R;
-				if (this.boCreateCirclesPoints && (!this.aCirclesRadiusRadians || !this.aCirclesRadiusRadians.boUpdate)) {
+				if (this.boCreateCirclesPoints/* && (!this.aCirclesRadiusRadians || !this.aCirclesRadiusRadians.boUpdate)*/) {
 					
 					circlesPointsOptions.numPoints = this.getNumPoints(circleDistance, R, dCircleDistance, np);
 					aCircles.push({ numPoints: circlesPointsOptions.numPoints, });
