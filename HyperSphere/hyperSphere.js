@@ -3920,6 +3920,8 @@ class RandomVertices {
 
 						},
 						//r: 0.5,
+						debug: debug,
+/*					
 						debug: debug ? {
 
 							probabilityDensity: false,
@@ -3928,6 +3930,7 @@ class RandomVertices {
 
 						} : false,
 						//debug: false,
+*/						
 						settings: {
 
 							object: {
@@ -3977,6 +3980,14 @@ class RandomVertices {
 		let circleDistancePrev;//Положение предыдущего кольца
 		this.circlesPoints = [];//точки всех окружностей
 		const debug = randomVerticesSettings.debug || false, edges = debug ? [] : undefined;
+		if (typeof debug === "object") {
+
+			debug.probabilityDensity = debug.probabilityDensity != undefined ? debug.probabilityDensity : false;
+			debug.middleVertice = debug.middleVertice != undefined ? debug.middleVertice : false;
+			debug.log = debug.log != undefined ? debug.log : false;
+			
+		}
+		
 		this.aSpheres = [];//массив сфер в трехмерной гиперсфере. Каждый элемент массива это массив окружностей в текущей сфере. каждый елемент массива окружностей содержит параметры окружности
 							//Для двумерной и одномерной гиперсферы когда sphereId = undefined, массив сфер содержит один элемент с массивом окружностей.
 		this.circlesId = 0;//идентификатор сферы в this.aSpheres. В одномерной и двухмерной гиперсфере в this.aSpheres всего одна сфера и идентификатор сферы равен нулю.
