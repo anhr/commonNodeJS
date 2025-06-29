@@ -3662,12 +3662,12 @@ class RandomVertices {
 			point ||= this.zeroArray();
 			if ((options.pointId === undefined) || this.boCreateCirclesPoints){
 
-				if (!this.aCirclesRadiusRadians || !this.aCirclesRadiusRadians.boUpdate) {
+//				if (!this.aCirclesRadiusRadians || !this.aCirclesRadiusRadians.boUpdate) {
 
-					points.push(point);
-					if (this.circlesCountDelta != undefined) points.push(point);//сейчас добавляются окружности внутри и снаружи противоположной вершины. Поэтому место в this.circlesPoints удваивается
+				points.push(point);
+				if (this.circlesCountDelta != undefined) points.push(point);//сейчас добавляются окружности внутри и снаружи противоположной вершины. Поэтому место в this.circlesPoints удваивается
 
-				}
+//				}
 				return;
 
 			}
