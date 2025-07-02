@@ -3698,18 +3698,13 @@ class RandomVertices {
 			let numPoints = options.numPoints;
 			if (isNaN(numPoints)) numPoints = 1;//numPoints = NaN при длинне дуги между вершинами гиперсферы params.arc = 0. Диамерт окружности, пересекающей гиперсферу равен нулю. Создаем одну точку.
 			options.points ||= [];
-			const points = options.points;
-
+			const points = options.points,
+				altitudeShift = this.getAltitudeShift(debug, abc.circlesCount - 1, options, params);
 			for (let i = 0; i < numPoints; i++) {
 
 				let point;
-				if (!this.boCreateCirclesPoints) {
-
-					const altitudeShift = this.getAltitudeShift(debug, abc.circlesCount - 1, options, params);
-					point = getCirclePoint({ i: i, numPoints: numPoints, circleDistance: options.circleDistance, altitude: options.altitude + altitudeShift });
-					
-					
-				} else {
+				if (!this.boCreateCirclesPoints) point = getCirclePoint({ i: i, numPoints: numPoints, circleDistance: options.circleDistance, altitude: options.altitude + altitudeShift });
+				else {
 
 					point = this.zeroArray();//создается пустой массив максимального размера
 					if (edges) {
