@@ -134,9 +134,18 @@
 				debug: {
 					
 					//log: true,
+
+					//рисуем окружности только вокруг противоположной вершины. Окружности внутри и снаружи противоположной вершины пропускаем. Это нужн чтобы можно было лучше разглядеть окружности.
+					oneCircles: {
+
+						altitudeShift: 0,//смещение высоты точек окружности с максимальным диаметром. Смешение высоты точек окружности с меньшим диаметром постепенно уменьшается до нуля для окружности, нажходящейся на противоположной вершине.
+						dy: 0,//степень выгнутости пераболы по которой смещение высоты точек зависит от идентификатора окружности. При dy: 0 парабола вырождается в прямую
+						
+					},//true,
+					
 				
 				},
-				//debug: true,
+				//debug: false,
 				name: 'Random Arc'
 			
 			};
@@ -145,24 +154,10 @@
 			
 			//GUI
 
-			const gui = options.dat.gui;
-/*			
-//			gui.add(params, 'arc', 0, pi / 2, 0.0001).onChange(() => { randomVertices.changeCirclesPoints(); });
-			gui.add(params, 'arc', 0, pi, 0.0001).onChange(() => { params.randomVertices.changeCirclesPoints(); });
-
-			//center
-			gui.add(params.center, 'altitude', 0, pi, 0.001);
-			gui.add(params.center, 'lat', -pi / 2, pi / 2, 0.001);
-			gui.add(params.center, 'lng', -pi, pi, 0.001);
-*/			
+			const gui = options.dat.gui.addFolder('Hypersphere');
 
 			//vertice
 			const fVertice = gui.addFolder('Vertice');
-/*			
-			fVertice.add(params.vertice, 'altitude', 0, pi, 0.001);
-			fVertice.add(params.vertice, 'latitude', -pi / 2, pi / 2, 0.001);
-			fVertice.add(params.vertice, 'longitude', -pi, pi, 0.001);
-*/
 			fVertice.add(params.vertice, 'altitude', anglesRange.altitude.min, anglesRange.altitude.max, 0.001);
 			fVertice.add(params.vertice, 'latitude', anglesRange.latitude.min, anglesRange.latitude.max, 0.001);
 			fVertice.add(params.vertice, 'longitude', anglesRange.longitude.min, anglesRange.longitude.max, 0.001);
@@ -175,19 +170,6 @@
 
 			params.onChangeRandom = (random) => { if (!random) cbParamsOnePoint.setValue(false); }
 			const cbParamsRandom = gui.add(params, 'random');
-/*			
-			const cbParamsRandom = gui.add(params, 'random').onChange(() => {
-
-				if (!params.random && params.onePoint) {
-
-					cbParamsOnePointArray.setValue(false);
-					cbParamsOnePoint.setValue(false);
-					
-				}
-				else params.randomVertices.onChangeRandom();
-			
-			});
-*/			
 			params.onChangeOnePoint = (onePoint) => {
 				
 				if (onePoint) cbParamsRandom.setValue(onePoint);
@@ -195,28 +177,14 @@
 			
 			}
 			const cbParamsOnePoint = gui.add(params, 'onePoint');
-/*			
-			const cbParamsOnePoint = gui.add(params, 'onePoint').onChange(() => {
-
-				if (!params.random && params.onePoint) cbParamsRandom.setValue(true);
-				params.randomVertices.onChangeOnePoint(params);
-			
-			});
-*/			
 			params.onChangeOnePointArray = (onePointArray) => { if (onePointArray) cbParamsOnePoint.setValue(true); }
 			const cbParamsOnePointArray = gui.add(params, 'onePointArray');
-/*			
-			const cbParamsOnePointArray = gui.add(params, 'onePointArray').onChange(() => {
+			if (randomVerticesSettings.debug && randomVerticesSettings.debug.oneCircles && randomVerticesSettings.debug.oneCircles && (randomVerticesSettings.debug.oneCircles.altitudeShift != undefined)) {
 				
-				if (params.onePointArray && !params.onePoint) {
-					
-					if (!params.onePoint) cbParamsOnePoint.setValue(true);
-					params.randomVertices.createOnePointArray(params);
+				gui.add(randomVerticesSettings.debug.oneCircles, 'dy', -0.5, 0.5, 0.0001);
+				gui.add(randomVerticesSettings.debug.oneCircles, 'altitudeShift', -0.5, 0.5, 0.001);
 
-				} else params.randomVertices.onChangeOnePoint(params);
-			
-			});
-*/			
+			}
 
 			//////////////////////////////////////////GUI
 			

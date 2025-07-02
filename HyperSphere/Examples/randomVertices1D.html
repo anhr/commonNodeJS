@@ -83,13 +83,7 @@
 			
 			//GUI
 
-			const gui = options.dat.gui;
-/*			
-            gui.add(params, 'arc', 0, pi, 0.0001).onChange(() => { params.randomVertices.changeCirclesPoints(); });
-
-			//center
-			gui.add(params.center, 'lng', -pi, pi, 0.001);
-*/			
+			const gui = options.dat.gui.addFolder('Hypersphere');
 
 			//vertice
 			const fVertice = gui.addFolder('Vertice');
@@ -101,19 +95,6 @@
 
 			params.onChangeRandom = (random) => { if (!random) cbParamsOnePoint.setValue(false); }
 			const cbParamsRandom = gui.add(params, 'random');
-/*			
-			const cbParamsRandom = gui.add(params, 'random').onChange(() => {
-				
-				if (!params.random && params.onePoint) {
-
-					cbParamsOnePointArray.setValue(false);
-					cbParamsOnePoint.setValue(false);
-					
-				}
-				else params.randomVertices.onChangeRandom();
-				
-			});
-*/			
 			params.onChangeOnePoint = (onePoint) => {
 				
 				if (onePoint) cbParamsRandom.setValue(onePoint);
@@ -121,28 +102,8 @@
 			
 			}
 			const cbParamsOnePoint = gui.add(params, 'onePoint');
-/*			
-			const cbParamsOnePoint = gui.add(params, 'onePoint').onChange(() => {
-
-				if (!params.random && params.onePoint) cbParamsRandom.setValue(true);
-				params.randomVertices.onChangeOnePoint(params);
-			
-			});
-*/			
 			params.onChangeOnePointArray = (onePointArray) => { if (onePointArray) cbParamsOnePoint.setValue(true); }
 			const cbParamsOnePointArray = gui.add(params, 'onePointArray');
-/*			
-			const cbParamsOnePointArray = gui.add(params, 'onePointArray').onChange(() => {
-				
-				if (params.onePointArray && !params.onePoint) {
-					
-					if (!params.onePoint) cbParamsOnePoint.setValue(true);
-					params.randomVertices.createOnePointArray(params);
-
-				} else params.randomVertices.onChangeOnePoint(params);
-			
-			});
-*/			
 
 			//////////////////////////////////////////GUI
 			

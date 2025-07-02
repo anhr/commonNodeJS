@@ -3688,9 +3688,10 @@ class RandomVertices {
 		 * @param {number} [options.numPoints=36] - Количество точек
 		 * @param {number} [options.points=[]] - points array
 		 * @param {number} [options.circlesPointsCount] - Если равно нулю, то обновить this.aCirclesRadiusRadians. Это нужно делать всякий раз, когда изменяется дуга между вершинами. Например когда пользователь изменил коодинату вершины 
+		 * @param {number} [options.circleId] - circle id
 		 * @returns {Array} Массив точек [ 0 широта (рад), 1 долгота (рад) ]
 		 */
-		const getCirclePointsRadians = (options = {}/*, aCirclesRadiusRadians*/) => {
+		const getCirclePointsRadians = (options = {}) => {
 
 			if (options.circleDistance === undefined) options.circleDistance = 0.5;
 			if (options.numPoints === undefined) options.numPoints = np;
@@ -3702,20 +3703,15 @@ class RandomVertices {
 			for (let i = 0; i < numPoints; i++) {
 
 				let point;
-				if (!this.boCreateCirclesPoints) point = getCirclePoint({ i: i, numPoints: numPoints, circleDistance: options.circleDistance, altitude: options.altitude });
-				else {
+				if (!this.boCreateCirclesPoints) {
 
-/*					
-					if (aCirclesRadiusRadians && (i === 0)) {
-	
-						this.boCreateCirclesPoints = false;
-						const b = abc.b, circleDistance = (b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
-							abc.a / (aCirclesRadiusRadians.x + b) + abc.c) * R;
-						this.boCreateCirclesPoints = true;
-						aCirclesRadiusRadians.push(this.getArcAngle(getCirclePoint({ i: i, numPoints: numPoints, circleDistance: circleDistance, altitude: options.altitude }), params.oppositeVertice)); //Запомнить расстояние между нулевой точкой каждой окружности и противоположной вершиной, равное радиусу окружности в радианах.
-	
-					}
-*/					
+					const altitudeAndCircleDistanceShift = this.getAltitudeAndCircleDistanceShift(debug, abc.circlesCount - 1, options, params);
+//const circleId = options.circleId, circleDistanceShift = (circleId != 1) && (circleId < (abc.circlesCount - 1)) ? debug.oneCircles.dy : 0;
+					point = getCirclePoint({ i: i, numPoints: numPoints, circleDistance: options.circleDistance + altitudeAndCircleDistanceShift.circleDistanceShift, altitude: options.altitude + altitudeAndCircleDistanceShift.altitudeShift });
+					
+					
+				} else {
+
 					point = this.zeroArray();//создается пустой массив максимального размера
 					if (edges) {
 
@@ -4038,17 +4034,35 @@ class RandomVertices {
 			circleDistancePrev = 0;//Положение предыдущего кольца
 			if (circlesPointsCountNew != undefined) circlesPointsCount = circlesPointsCountNew;
 			const cos = Math.cos,
-				a = abc.a, b = abc.b, c = abc.c;// d = abc.d,
+				a = abc.a, b = abc.b, c = abc.c;
+				//d = abc.d;//расстояние между окружностями в радианах при условии, что окружности равномерно расположены на сфере
 			this.circlesId = circlesIdNew === undefined ? 0 : circlesIdNew;
 			if (this.boCreateCirclesPoints && (this.aSpheres.length <= this.circlesId)) this.aSpheres.push([]);
 			const aCircles = this.aSpheres[this.circlesId];
 			circlesPointsOptions.altitude = altitude;//this.altitudeDifference(sphereId, params);
 			this.circlesCountDelta = circlesIdNew;//Для hyperSphere3D индекс окружностей внутри и снаружи противоположной вершины. Количество окружностей уменьшается когда строятся окружности внутри и снаружи противоположной вершины
+/*			
+			const getCircleDistance = (x) => {
+
+					return (b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
+						a / (x + b) + c) * R;
+					
+				};
+*/				
+//				circleIdMin = 1, circleIdMax = abc.circlesCount - 1;
+/*			
+			if (!this.boCreateCirclesPoints) {
+				
+				circlesPointsOptions.circleDistanceMin = getCircleDistance(circleIdMin * d);
+				circlesPointsOptions.circleDistanceMax = getCircleDistance(circleIdMax * d);
+
+			}
+*/			
 			for (let circleId = 1; circleId < abc.circlesCount; circleId++) {
 
-				const  d = abc.d,//расстояние между окружностями в радианах при условии, что окружности равномерно расположены на сфере
+				const d = abc.d,//расстояние между окружностями в радианах при условии, что окружности равномерно расположены на сфере
 					x = circleId * d,
-					circleDistance = (b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
+					circleDistance = /*getCircleDistance(x),*/(b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
 						a / (x + b) + c) * R,
 					xPrev = (circleId - 1) * d;//prev point
 				circleDistancePrev = (b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
@@ -4067,7 +4081,8 @@ class RandomVertices {
 //				if (aCirclesRadiusRadians) aCirclesRadiusRadians.x = x;
 				this.circlesRadiusRadiansSetX(x);
 				circlesPointsOptions.circlesPointsCount = circlesPointsCountNew;
-				getCirclePointsRadians(circlesPointsOptions);//, aCirclesRadiusRadians);
+				circlesPointsOptions.circleId = circleId;
+				getCirclePointsRadians(circlesPointsOptions);
 
 			}
 			this.circlesCountDelta = undefined;
@@ -4230,6 +4245,7 @@ class RandomVertices {
 //	pointIdErase() { console.error(sRandomVertices + sOver.replace('%s', 'pointIdErase')); }
 	pushCirclesRadiusRadians() {}
 	circlesRadiusRadiansSetX(x) {}
+	getAltitudeAndCircleDistanceShift() { return 0; }
 
 	////////////////////////////////////////overridden methods
 	

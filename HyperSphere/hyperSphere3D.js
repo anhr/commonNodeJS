@@ -221,7 +221,7 @@ class RandomVertices extends Sphere.RandomVertices {
 
 	constructor(scene, options, randomVerticesSettings) {
 
-		randomVerticesSettings.np = 6;//Количество окружностей в сфере, которые создаются из случайных точек для двумерной гиперсферы
+		randomVerticesSettings.np = 20;//6;//Количество окружностей в сфере, которые создаются из случайных точек для двумерной гиперсферы
 //		randomVerticesSettings.spheresCount = 1;//7;//облако случайных точек делаю из 1 + spheresCount * 2 сфер, которые создаются из случайных точек для двумерной гиперсферы
 		super(scene, options, randomVerticesSettings);
 		this.class = HyperSphere3D;
@@ -405,9 +405,6 @@ class RandomVertices extends Sphere.RandomVertices {
 		this.aCirclesRadiusRadians.boUpdate = true;
 		this.setCircles(0, randomVerticesSettings.spheresCount, params.center.altitude);//, false);
 		this.aCirclesRadiusRadians.boUpdate = undefined;
-//		randomVerticesSettings.spheresCount++;
-
-//		const setSphere0Circles = () => { for(let k = 1; k < this.aSpheres[0].length; k++) this.setCircles(0, k, params.center.altitude); }
 		if (this.boCreateCirclesPoints) {
 
 			//Выделяем место для точек в this.circlesPoints
@@ -415,68 +412,28 @@ class RandomVertices extends Sphere.RandomVertices {
 			
 		} else {
 
-/*			
-			if (this.aCirclesRadiusRadians.boUpdate) {
-
-				//заполняем this.aCirclesRadiusRadians
-				this.boCreateCirclesPoints = true;
-//				for(let k = 1; k < this.aSpheres[0].length; k++) this.setCircles2(0, k, params.center.altitude);
-				setSphere0Circles();
-				this.boCreateCirclesPoints = false;
-				
-			}
-*/			
 			//рисуем окружности внутри и снаружи от противоположной точки
 			const altitude = params.center.altitude;
-/*
-			//При радиусах окружностей из aCirclesRadiusRadians облако точек вокруг противоположной вершины образуют что то вроде галактики.
-			//Для того, чтобы облако точек вокруг противоположной вершины образовало правильный шар, нужно увеличить радиусы окружностей, расположенных ближе к середине массива aCirclesRadiusRadians
-			//Вычисляем попроавку y к радиусу окружности так, чтобы облако точек вокруг противоположной вершины образовало правильный шар
-			const ymax = aCirclesRadiusRadians[0], xmax = aCirclesRadiusRadians.length - 1,
 
-				//текущее значения радиуса окружностей в середине массива aCirclesRadiusRadians
-				yh = xmax % 2 === 0 ?//Проверка индекса на четность
-					aCirclesRadiusRadians[xmax / 2] :
-					(aCirclesRadiusRadians[parseInt(xmax / 2)] + aCirclesRadiusRadians[parseInt(xmax / 2) + 1]) / 2,//среднее значение между двумя ближайшеми точками
-				
-				a = ymax / 2 - yh;//Разница между требуемым значением радиуса окружностей и текущим значением радиуса окружностей в середине массива aCirclesRadiusRadians
-*/				
-			
-			for (let sphereId = 1; sphereId < this.aSpheres.length; sphereId++) {
-
-				randomVerticesSettings.spheresCount = sphereId;//Возможно эта строка не нужна
-
-				
-//				const x = aCirclesRadiusRadians.length - sphereId - 1,
-				const x = this.aSpheres.length - sphereId - 1;
-//					y = a * Math.sin((π * x)/xmax);//Поправка к текущему радиусу окружностей. Вношу что бы облако точек вокруг противоположной вершины образовало правильный шар.
-				
-				const circlesRadius = aCirclesRadiusRadians[x];// + y;
-				if (circlesRadius === 0) {
-
-					console.error(sRandomVertices + '.setCirclesCloud: circlesRadius === 0');
-					continue;
-
-				}
-				this.setCircles(undefined, sphereId, altitude - circlesRadius);//, false);//рисуем окружности внутри от противоположной точки
-				this.setCircles(undefined, sphereId, altitude + circlesRadius);//, false);//рисуем окружности снаружи от противоположной точки
-				
-			}
-/*			
-			for (let sphereId = aCirclesRadiusRadians.length - 1; sphereId >= 0; sphereId--) {
+			if (!randomVerticesSettings.debug || !randomVerticesSettings.debug.oneCircles)//Во время отладки не рисуем окружности внутри и снаружи от противоположной точки чтобы лучше можно было разглядеть окружности возле противоположной  вершины
+				for (let sphereId = 1; sphereId < this.aSpheres.length; sphereId++) {
 	
-				const circlesRadius = aCirclesRadiusRadians[sphereId];
-				if (circlesRadius === 0) continue;
-				
-				//рисуем окружности внутри от противоположной точки
-				this.setCircles(undefined, randomVerticesSettings.spheresCount, altitude - circlesRadius);//, false);
-				
-				//рисуем окружности снаружи от противоположной точки
-				this.setCircles(undefined, randomVerticesSettings.spheresCount, altitude + circlesRadius);//, false);
-				randomVerticesSettings.spheresCount++;
-				
-			}
-*/			
+					randomVerticesSettings.spheresCount = sphereId;//Возможно эта строка не нужна
+	
+					
+					const x = this.aSpheres.length - sphereId - 1;
+					
+					const circlesRadius = aCirclesRadiusRadians[x];// + y;
+					if (circlesRadius === 0) {
+	
+						console.error(sRandomVertices + '.setCirclesCloud: circlesRadius === 0');
+						continue;
+	
+					}
+					this.setCircles(undefined, sphereId, altitude - circlesRadius);//, false);//рисуем окружности внутри от противоположной точки
+					this.setCircles(undefined, sphereId, altitude + circlesRadius);//, false);//рисуем окружности снаружи от противоположной точки
+					
+				}
 
 		}
 		this.createCirclesSphere();
@@ -505,6 +462,228 @@ class RandomVertices extends Sphere.RandomVertices {
 		}
 	}
 	circlesRadiusRadiansSetX(x) { this.aCirclesRadiusRadians.x = x; }
+	getAltitudeAndCircleDistanceShift(debug, circleIdMax, options, params) {
+
+		const circleId = options.circleId;
+		if (!debug || !debug.oneCircles || (debug.oneCircles.altitudeShift === undefined)) return 0;
+		if (!debug.oneCircles.altitudeShiftIsDefined){
+
+			let altitudeShift = debug.oneCircles.altitudeShift;
+			Object.defineProperty(debug.oneCircles, 'altitudeShift', {
+				
+				get: () => { return altitudeShift; },
+				set: (altitudeShiftNew) => {
+		
+					if (altitudeShift === altitudeShiftNew) return true;
+					altitudeShift = altitudeShiftNew;
+					if (params.randomVertices) params.randomVertices.changeCirclesPoints();
+					return true;
+		
+				},
+			
+			});
+			debug.oneCircles.altitudeShiftIsDefined = true;
+			
+			let dy = debug.oneCircles.dy;
+			Object.defineProperty(debug.oneCircles, 'dy', {
+				
+				get: () => { return dy; },
+				set: (dyNew) => {
+		
+					if (dy === dyNew) return true;
+					dy = dyNew;
+					if (params.randomVertices) params.randomVertices.changeCirclesPoints();
+					return true;
+		
+				},
+			
+			});
+			
+		}
+		const getAltitudeShift = () => {
+			
+			const altitudeShiftMax = debug.oneCircles.altitudeShift,//, circleIdMax = abc.circlesCount - 1, 
+
+/*				
+				//линейная зависимость					
+				b = altitudeShiftMax / (1 - 1 / circleIdMax), a = altitudeShiftMax - b, altitudeShift = a * circleId + b;
+*/				
+/*			
+			console.log('options.circleId = ' + options.circleId + '. altitudeShift = ' + altitudeShift)
+			point = getCirclePoint({ i: i, numPoints: numPoints, circleDistance: options.circleDistance, altitude: options.altitude + altitudeShift});
+*/					
+			//Параболическая зависимость
+/*				
+			//deepseek Даны три точки (x1,y1), (x2,y2), (x3,y3). Вычислить коэфициенты параболы между этими точками методом подстановки. Написать программу на javascript
+				findParabolaCoefficients = (x1, y1, x2, y2, x3, y3) => {
+					// Система уравнений:
+					// 1) a*x1² + b*x1 + c = y1
+					// 2) a*x2² + b*x2 + c = y2
+					// 3) a*x3² + b*x3 + c = y3
+				
+					// Выразим c из первого уравнения:
+					// c = y1 - a*x1² - b*x1  → (1a)
+				
+					// Подставим c во второе уравнение:
+					// a*x2² + b*x2 + (y1 - a*x1² - b*x1) = y2
+					// a*(x2² - x1²) + b*(x2 - x1) = y2 - y1  → (4)
+				
+					// Подставим c в третье уравнение:
+					// a*x3² + b*x3 + (y1 - a*x1² - b*x1) = y3
+					// a*(x3² - x1²) + b*(x3 - x1) = y3 - y1  → (5)
+				
+					// Теперь решаем систему (4) и (5) относительно a и b:
+				
+					const A = (x2**2 - x1**2);
+					const B = (x2 - x1);
+					const C = (y2 - y1);
+				
+					const D = (x3**2 - x1**2);
+					const E = (x3 - x1);
+					const F = (y3 - y1);
+				
+					// Система:
+					// A*a + B*b = C  → (4)
+					// D*a + E*b = F  → (5)
+				
+					// Решаем методом подстановки:
+					// Из (4) выражаем b:
+					// b = (C - A*a) / B  → (4a)
+				
+					// Подставляем в (5):
+					// D*a + E*( (C - A*a)/B ) = F
+					// Умножаем на B, чтобы избавиться от знаменателя:
+					// D*B*a + E*(C - A*a) = F*B
+					// D*B*a + E*C - E*A*a = F*B
+					// a*(D*B - E*A) = F*B - E*C
+					// a = (F*B - E*C) / (D*B - E*A)
+				
+					const denominator = D*B - E*A;
+					if (denominator === 0) {
+						throw new Error("Точки не образуют параболу (или она вырождена в прямую)");
+					}
+				
+					const a = (F*B - E*C) / denominator;
+					const b = (C - A*a) / B;
+					const c = y1 - a*x1**2 - b*x1;
+				
+					return { a, b, c };
+				},
+				x1 = 1, y1 = altitudeShiftMax,
+				x3 = circleIdMax, y3 = 0,
+				dy = 0,//debug.oneCircles.dy != undefined ? debug.oneCircles.dy : altitudeShiftMax / 1,
+				x2 = (x1 + x3) / 2, y2 = ((y1 + y3) / 2) + dy,
+				
+				parabolaCoefficients = findParabolaCoefficients(x1, y1, x2, y2, x3, y3),
+				a = parabolaCoefficients.a, b = parabolaCoefficients.b, c = parabolaCoefficients.c;
+			console.log('circleId = ' + circleId + ', ' + JSON.stringify(parabolaCoefficients))
+				
+			const altitudeShift = a * circleId * circleId + b * circleId + c;
+*/	
+/*				
+				a = altitudeShiftMax / (circleIdMax * circleIdMax),
+				altitudeShift = altitudeShiftMax - a * circleId * circleId;
+*/				
+/*				
+				a = - altitudeShiftMax / circleIdMax,
+				altitudeShift = a * circleId + altitudeShiftMax;
+*/
+/*				
+				a = altitudeShiftMax / (1 - 1 / circleIdMax), b = altitudeShiftMax - a,
+				altitudeShift = a / circleId + b;
+*/
+/*				
+				a = altitudeShiftMax / (1 - circleIdMax * circleIdMax), b = altitudeShiftMax - a,
+				altitudeShift = a * circleId * circleId + b;
+*/				
+/*				
+				a = altitudeShiftMax / (1 - 1 / circleIdMax), b = altitudeShiftMax - a,
+				altitudeShift = a / circleId + b;
+*/				
+				a = altitudeShiftMax / (1 - 1 / (circleIdMax * circleIdMax)), b = altitudeShiftMax - a,
+				altitudeShift = a / (circleId * circleId) + b;
+	//		console.log('circleId = ' + circleId + '. altitudeShift = ' + altitudeShift)
+			return altitudeShift;
+
+		}
+		const getCircleDistanceShift = () => {
+			
+			//Параболическая зависимость
+			//deepseek Даны три точки (x1,y1), (x2,y2), (x3,y3). Вычислить коэфициенты параболы между этими точками методом подстановки. Написать программу на javascript
+			const findParabolaCoefficients = (x1, y1, x2, y2, x3, y3) => {
+					// Система уравнений:
+					// 1) a*x1² + b*x1 + c = y1
+					// 2) a*x2² + b*x2 + c = y2
+					// 3) a*x3² + b*x3 + c = y3
+				
+					// Выразим c из первого уравнения:
+					// c = y1 - a*x1² - b*x1  → (1a)
+				
+					// Подставим c во второе уравнение:
+					// a*x2² + b*x2 + (y1 - a*x1² - b*x1) = y2
+					// a*(x2² - x1²) + b*(x2 - x1) = y2 - y1  → (4)
+				
+					// Подставим c в третье уравнение:
+					// a*x3² + b*x3 + (y1 - a*x1² - b*x1) = y3
+					// a*(x3² - x1²) + b*(x3 - x1) = y3 - y1  → (5)
+				
+					// Теперь решаем систему (4) и (5) относительно a и b:
+				
+					const A = (x2**2 - x1**2);
+					const B = (x2 - x1);
+					const C = (y2 - y1);
+				
+					const D = (x3**2 - x1**2);
+					const E = (x3 - x1);
+					const F = (y3 - y1);
+				
+					// Система:
+					// A*a + B*b = C  → (4)
+					// D*a + E*b = F  → (5)
+				
+					// Решаем методом подстановки:
+					// Из (4) выражаем b:
+					// b = (C - A*a) / B  → (4a)
+				
+					// Подставляем в (5):
+					// D*a + E*( (C - A*a)/B ) = F
+					// Умножаем на B, чтобы избавиться от знаменателя:
+					// D*B*a + E*(C - A*a) = F*B
+					// D*B*a + E*C - E*A*a = F*B
+					// a*(D*B - E*A) = F*B - E*C
+					// a = (F*B - E*C) / (D*B - E*A)
+				
+					const denominator = D*B - E*A;
+					if (denominator === 0) {
+						throw new Error("Точки не образуют параболу (или она вырождена в прямую)");
+					}
+				
+					const a = (F*B - E*C) / denominator;
+					const b = (C - A*a) / B;
+					const c = y1 - a*x1**2 - b*x1;
+				
+					return { a, b, c };
+				},
+				x1 = 1, y1 = 0,//options.circleDistanceMin,
+				x3 = circleIdMax, y3 = 0,//options.circleDistanceMax,
+				dy = debug.oneCircles.dy != undefined ? debug.oneCircles.dy : 0,
+				x2 = (x1 + x3) / 2, y2 = ((y1 + y3) / 2) + dy,
+				
+				parabolaCoefficients = findParabolaCoefficients(x1, y1, x2, y2, x3, y3),
+				a = parabolaCoefficients.a, b = parabolaCoefficients.b, c = parabolaCoefficients.c;
+//			console.log('circleId = ' + circleId + ', ' + JSON.stringify(parabolaCoefficients))
+				
+			const circleDistanceShift = a * circleId * circleId + b * circleId + c;
+	//		console.log('circleId = ' + circleId + '. circleDistanceShift = ' + circleDistanceShift)
+//const circleDistanceShift = (circleId != 1) && (circleId < circleIdMax) ? debug.oneCircles.dy : 0;
+			return circleDistanceShift;
+			
+		}
+		return { altitudeShift: getAltitudeShift(), circleDistanceShift: getCircleDistanceShift(), };
+//		return debug.oneCircles.altitudeShift;
+//		return debug ? debug.oneCircles? debug.oneCircles.altitudeShift ? debug.oneCircles.altitudeShift : 0 : 0 : 0;
+	
+	}
 
 	/////////////////////////////overridden methods
 
