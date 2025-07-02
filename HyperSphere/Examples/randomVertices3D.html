@@ -181,8 +181,7 @@
 			const cbParamsOnePointArray = gui.add(params, 'onePointArray');
 			if (randomVerticesSettings.debug && randomVerticesSettings.debug.oneCircles && randomVerticesSettings.debug.oneCircles && (randomVerticesSettings.debug.oneCircles.altitudeShift != undefined)) {
 				
-				gui.add(randomVerticesSettings.debug.oneCircles, 'dy', -0.5, 0.5, 0.0001);
-				gui.add(randomVerticesSettings.debug.oneCircles, 'altitudeShift', -0.5, 0.5, 0.001);
+				gui.add(randomVerticesSettings.debug.oneCircles, 'altitudeShift', -5, 5, 0.001);
 
 			}
 

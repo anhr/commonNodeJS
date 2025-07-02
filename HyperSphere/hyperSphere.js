@@ -3705,9 +3705,8 @@ class RandomVertices {
 				let point;
 				if (!this.boCreateCirclesPoints) {
 
-					const altitudeAndCircleDistanceShift = this.getAltitudeAndCircleDistanceShift(debug, abc.circlesCount - 1, options, params);
-//const circleId = options.circleId, circleDistanceShift = (circleId != 1) && (circleId < (abc.circlesCount - 1)) ? debug.oneCircles.dy : 0;
-					point = getCirclePoint({ i: i, numPoints: numPoints, circleDistance: options.circleDistance + altitudeAndCircleDistanceShift.circleDistanceShift, altitude: options.altitude + altitudeAndCircleDistanceShift.altitudeShift });
+					const altitudeShift = this.getAltitudeShift(debug, abc.circlesCount - 1, options, params);
+					point = getCirclePoint({ i: i, numPoints: numPoints, circleDistance: options.circleDistance, altitude: options.altitude + altitudeShift });
 					
 					
 				} else {
@@ -4245,7 +4244,7 @@ class RandomVertices {
 //	pointIdErase() { console.error(sRandomVertices + sOver.replace('%s', 'pointIdErase')); }
 	pushCirclesRadiusRadians() {}
 	circlesRadiusRadiansSetX(x) {}
-	getAltitudeAndCircleDistanceShift() { return 0; }
+	getAltitudeShift() { return 0; }
 
 	////////////////////////////////////////overridden methods
 	
