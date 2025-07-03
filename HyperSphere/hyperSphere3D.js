@@ -492,7 +492,9 @@ class RandomVertices extends Sphere.RandomVertices {
 			debug.oneCircles.altitudeShiftIsDefined = true;
 			
 		}
-		const altitudeShiftMax = debug.oneCircles.altitudeShift,
+		if (circleIdMax === 1) return 0;//В текушей сфере всего одна окружность. Ее не нужно сдвигать.
+const altitudeShiftMax = 0,
+//		const altitudeShiftMax = debug.oneCircles.altitudeShift,
 			a = altitudeShiftMax / (1 - 1 / (circleIdMax * circleIdMax * circleIdMax)), b = altitudeShiftMax - a,
 			altitudeShift = a / (circleId * circleId * circleId) + b;
 //		console.log('circleId = ' + circleId + '. altitudeShift = ' + altitudeShift)
