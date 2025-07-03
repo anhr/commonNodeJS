@@ -486,8 +486,8 @@ class RandomVertices extends Sphere.RandomVertices {
 			
 		}
 		const altitudeShiftMax = debug.oneCircles.altitudeShift,
-			a = altitudeShiftMax / (1 - 1 / (circleIdMax * circleIdMax)), b = altitudeShiftMax - a,
-			altitudeShift = a / (circleId * circleId) + b;
+			a = altitudeShiftMax / (1 - 1 / (circleIdMax * circleIdMax * circleIdMax)), b = altitudeShiftMax - a,
+			altitudeShift = a / (circleId * circleId * circleId) + b;
 //		console.log('circleId = ' + circleId + '. altitudeShift = ' + altitudeShift)
 		return altitudeShift;
 //		return debug.oneCircles.altitudeShift;
