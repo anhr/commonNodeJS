@@ -129,20 +129,18 @@
 			
 			const randomVerticesSettings = {
 
-				//np: 360,
+				//np: 20,
 				//R: 0.5,
-				debug2: {
+				debug: {
 					
 					//log: true,
 
-					/*
 					//View circles only around the opposite vertice. We skip the circles inside and outside the opposite vertice. This is necessary so that we can see the circles better.
 					oneCircles: {
 
-						altitudeShift: 0,//Shift of the altitude of the points of the circle with the maximum diameter. The shift of the altitude of the points of the circle with the smaller diameter gradually decreases to zero for the circle located at the opposite vertice.
+						//altitudeShift: 0,//Shift of the altitude of the points of the circle with the maximum diameter. The shift of the altitude of the points of the circle with the smaller diameter gradually decreases to zero for the circle located at the opposite vertice.
 						
 					},//true,
-					*/
 					
 				
 				},
@@ -180,7 +178,7 @@
 			const cbParamsOnePoint = gui.add(params, 'onePoint');
 			params.onChangeOnePointArray = (onePointArray) => { if (onePointArray) cbParamsOnePoint.setValue(true); }
 			const cbParamsOnePointArray = gui.add(params, 'onePointArray');
-			if (randomVerticesSettings.debug && randomVerticesSettings.debug.oneCircles && randomVerticesSettings.debug.oneCircles && (randomVerticesSettings.debug.oneCircles.altitudeShift != undefined)) {
+			if (randomVerticesSettings.debug && randomVerticesSettings.debug.oneCircles && randomVerticesSettings.debug.oneCircles) {
 				
 				gui.add(randomVerticesSettings.debug.oneCircles, 'altitudeShift', -5, 5, 0.001);
 

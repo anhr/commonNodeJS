@@ -221,8 +221,9 @@ class RandomVertices extends Sphere.RandomVertices {
 
 	constructor(scene, options, randomVerticesSettings) {
 
-		randomVerticesSettings.np = 6;//Количество окружностей в сфере, которые создаются из случайных точек для двумерной гиперсферы
+		if (randomVerticesSettings.np === undefined) randomVerticesSettings.np = 6;//Количество окружностей в сфере, которые создаются из случайных точек для двумерной гиперсферы
 //		randomVerticesSettings.spheresCount = 1;//7;//облако случайных точек делаю из 1 + spheresCount * 2 сфер, которые создаются из случайных точек для двумерной гиперсферы
+		if (randomVerticesSettings.debug && (typeof randomVerticesSettings.debug === 'object') && randomVerticesSettings.debug.oneCircles && (randomVerticesSettings.debug.oneCircles.altitudeShift === undefined)) randomVerticesSettings.debug.oneCircles.altitudeShift = 0;
 		super(scene, options, randomVerticesSettings);
 		this.class = HyperSphere3D;
 		
@@ -471,8 +472,8 @@ class RandomVertices extends Sphere.RandomVertices {
 	getAltitudeShift(debug, circleIdMax, options, params) {
 
 		const circleId = options.circleId;
-		if (!debug || !debug.oneCircles || (debug.oneCircles.altitudeShift === undefined)) return 0;
-		if (!debug.oneCircles.altitudeShiftIsDefined){
+//		if (!debug || !debug.oneCircles || (debug.oneCircles.altitudeShift === undefined)) return 0;
+		if (debug && debug.oneCircles && !debug.oneCircles.altitudeShiftIsDefined){
 
 			let altitudeShift = debug.oneCircles.altitudeShift;
 			Object.defineProperty(debug.oneCircles, 'altitudeShift', {
