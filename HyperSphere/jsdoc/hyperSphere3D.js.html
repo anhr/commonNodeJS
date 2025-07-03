@@ -244,6 +244,7 @@ class HyperSphere3D extends Sphere {
 
 }
 
+const sRandomVertices = 'RandomVertices'
 class RandomVertices extends Sphere.RandomVertices {
 
 	constructor(scene, options, randomVerticesSettings) {
@@ -285,8 +286,14 @@ class RandomVertices extends Sphere.RandomVertices {
 		//θ — широта (от −90° до 90°),
 		//ϕ — долгота (от −180° до 180°),
 		const arccos = Math.acos, sin = Math.sin, cos = Math.cos;
-		const θ = arccos(cos(ψ1) * cos(ψ2) + sin(ψ1) * sin(ψ2) * (cos(θ1) * cos(θ2) + sin(θ1) * sin(θ2) * cos(ϕ1 - ϕ2)));
-		if (isNaN(θ)) console.error(sHyperSphere3D + ': getArcAngle. Invalid θ = ' + θ);
+		const alpha = cos(ψ1) * cos(ψ2) + sin(ψ1) * sin(ψ2) * (cos(θ1) * cos(θ2) + sin(θ1) * sin(θ2) * cos(ϕ1 - ϕ2));
+		let θ = arccos(alpha);
+		if (isNaN(θ)) {
+
+			if (alpha - 1 &lt; 3e-16) θ = 0;//alpha не может быть больше 1, но иногда alpha вычисляется с небольшой погрешностью 1.0000000000000002, которая нарушает это правило
+			else console.error(sRandomVertices + ': getArcAngle. Invalid θ = ' + θ);
+
+		}
 		return θ;
 
 	}
@@ -398,7 +405,13 @@ class RandomVertices extends Sphere.RandomVertices {
 
 	}
 	circlesCount(np) { return this.boCreateCirclesPoints ?
-		np ://если количество окружностей равно количеству точек на окружности, то точки будут равномерно располагаться на гиперсфере
+		
+		np - //если количество окружностей равно количеству точек на окружности, то точки будут равномерно располагаться на гиперсфере
+		(this.circlesCountDelta != undefined ?
+			this.circlesCountDelta ://количество окружностей  нужно уменьшить если окружности находятся внутри или снаружи противоположной вершины.
+			0
+		):
+		
 		this.aSpheres[this.circlesId].length + 1; }
 	getNumPoints(circleDistance, R, dCircleDistance) {
 
@@ -423,47 +436,38 @@ class RandomVertices extends Sphere.RandomVertices {
 		randomVerticesSettings.spheresCount = 0
 		
 		//рисуем окружности вокруг противопрложной точки
-		this.setCircles(0, randomVerticesSettings.spheresCount, params.center.altitude, false);//, aCirclesRadiusRadians);
-		randomVerticesSettings.spheresCount++;
-
+		this.aCirclesRadiusRadians.boUpdate = true;
+		this.setCircles(0, randomVerticesSettings.spheresCount, params.center.altitude);//, false);
+		this.aCirclesRadiusRadians.boUpdate = undefined;
 		if (this.boCreateCirclesPoints) {
 
 			//Выделяем место для точек в this.circlesPoints
-			const aCircles0Params = this.aSpheres[0];
-			for(let k = 1; k &lt; aCircles0Params.length; k++) {
-				
-				const aCirclesParams = [];
-				for(let i = k; i &lt; aCircles0Params.length; i++) {
-	
-					const numPoints = aCircles0Params[i].numPoints;
-					aCirclesParams.push({ numPoints: numPoints, });
-					for(let j = 0; j &lt; numPoints * 2; j++) this.circlesPoints.push(this.zeroArray());
-	
-				}
-				this.aSpheres.push(aCirclesParams);
-
-			}
+			for(let k = 1; k &lt; this.aSpheres[0].length; k++) this.setCircles(0, k, params.center.altitude);
 			
 		} else {
-			
+
 			//рисуем окружности внутри и снаружи от противоположной точки
 			const altitude = params.center.altitude;
-			for (let sphereId = aCirclesRadiusRadians.length - 1; sphereId >= 0; sphereId--) {
+
+			if (!randomVerticesSettings.debug || !randomVerticesSettings.debug.oneCircles)//Во время отладки не рисуем окружности внутри и снаружи от противоположной точки чтобы лучше можно было разглядеть окружности возле противоположной  вершины
+				for (let sphereId = 1; sphereId &lt; this.aSpheres.length; sphereId++) {
 	
-				const circlesRadius = aCirclesRadiusRadians[sphereId];
-				if (circlesRadius === 0) continue;
-				
-				//рисуем окружности внутри от противоположной точки
-				this.setCircles(undefined,//randomVerticesSettings.spheresCount,
-								randomVerticesSettings.spheresCount, altitude - circlesRadius, false);
-//				randomVerticesSettings.spheresCount++;
-				
-				//рисуем окружности снаружи от противоположной точки
-				this.setCircles(undefined,//randomVerticesSettings.spheresCount,
-								randomVerticesSettings.spheresCount, altitude + circlesRadius, false);
-				randomVerticesSettings.spheresCount++;
-				
-			}
+					randomVerticesSettings.spheresCount = sphereId;//Возможно эта строка не нужна
+	
+					
+					const x = this.aSpheres.length - sphereId - 1;
+					
+					const circlesRadius = aCirclesRadiusRadians[x];// + y;
+					if (circlesRadius === 0) {
+	
+						console.error(sRandomVertices + '.setCirclesCloud: circlesRadius === 0');
+						continue;
+	
+					}
+					this.setCircles(undefined, sphereId, altitude - circlesRadius);//, false);//рисуем окружности внутри от противоположной точки
+					this.setCircles(undefined, sphereId, altitude + circlesRadius);//, false);//рисуем окружности снаружи от противоположной точки
+					
+				}
 
 		}
 		this.createCirclesSphere();
@@ -478,7 +482,8 @@ class RandomVertices extends Sphere.RandomVertices {
 					aCirclesRadiusRadians.boUpdate &amp;&amp;//изменяется дуга между вершинами. Например когда пользователь изменил коодинату вершины 
 					(options.circlesPointsCount === 0)//рисуем окружности вокруг противопрложной точки
 				)||
-				this.boCreateCirclesPoints
+//				this.boCreateCirclesPoints
+				(this.boCreateCirclesPoints &amp;&amp; aCirclesRadiusRadians.boUpdate)
 			) &amp;&amp; (i === 0)) {
 
 			const boCreateCirclesPoints = this.boCreateCirclesPoints;
@@ -491,6 +496,38 @@ class RandomVertices extends Sphere.RandomVertices {
 		}
 	}
 	circlesRadiusRadiansSetX(x) { this.aCirclesRadiusRadians.x = x; }
+	getAltitudeShift(debug, circleIdMax, options, params) {
+
+		const circleId = options.circleId;
+		if (!debug || !debug.oneCircles || (debug.oneCircles.altitudeShift === undefined)) return 0;
+		if (!debug.oneCircles.altitudeShiftIsDefined){
+
+			let altitudeShift = debug.oneCircles.altitudeShift;
+			Object.defineProperty(debug.oneCircles, 'altitudeShift', {
+				
+				get: () => { return altitudeShift; },
+				set: (altitudeShiftNew) => {
+		
+					if (altitudeShift === altitudeShiftNew) return true;
+					altitudeShift = altitudeShiftNew;
+					if (params.randomVertices) params.randomVertices.changeCirclesPoints();
+					return true;
+		
+				},
+			
+			});
+			debug.oneCircles.altitudeShiftIsDefined = true;
+			
+		}
+		const altitudeShiftMax = debug.oneCircles.altitudeShift,
+			a = altitudeShiftMax / (1 - 1 / (circleIdMax * circleIdMax * circleIdMax)), b = altitudeShiftMax - a,
+			altitudeShift = a / (circleId * circleId * circleId) + b;
+//		console.log('circleId = ' + circleId + '. altitudeShift = ' + altitudeShift)
+		return altitudeShift;
+//		return debug.oneCircles.altitudeShift;
+//		return debug ? debug.oneCircles? debug.oneCircles.altitudeShift ? debug.oneCircles.altitudeShift : 0 : 0 : 0;
+	
+	}
 
 	/////////////////////////////overridden methods
 
@@ -662,7 +699,7 @@ export default HyperSphere3D;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sat Jun 21 2025 09:14:56 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Thu Jul 03 2025 09:12:27 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

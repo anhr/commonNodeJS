@@ -3636,6 +3636,13 @@ class RandomVertices {
 	 * <pre>
 	 * parameter <b>onePointArray</b>: new value of the <b>randomVerticesSettings.params.onePointArray</b>.
 	 * </pre>
+	 * @param {boolean|object} [randomVerticesSettings.debug=false] Debug mode.
+	 * <pre>
+	 *	false - No debug mode.
+	 *	true or object- Diagnoses your code and display detected errors to console.
+	 * </pre>
+	 * @param {object} [randomVerticesSettings.debug.oneCircles] View circles only around the opposite vertice. We skip the circles inside and outside the opposite vertice. This is necessary so that we can see the circles better.
+	 * @param {float} [randomVerticesSettings.debug.oneCircles.altitudeShift] Shift of the altitude of the points of the circle with the maximum diameter. The shift of the altitude of the points of the circle with the smaller diameter gradually decreases to zero for the circle located at the opposite vertice.
 	 */
 	constructor(scene, options, randomVerticesSettings = {}){
 

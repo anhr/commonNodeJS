@@ -221,7 +221,7 @@ class RandomVertices extends Sphere.RandomVertices {
 
 	constructor(scene, options, randomVerticesSettings) {
 
-		randomVerticesSettings.np = 20;//6;//Количество окружностей в сфере, которые создаются из случайных точек для двумерной гиперсферы
+		randomVerticesSettings.np = 6;//Количество окружностей в сфере, которые создаются из случайных точек для двумерной гиперсферы
 //		randomVerticesSettings.spheresCount = 1;//7;//облако случайных точек делаю из 1 + spheresCount * 2 сфер, которые создаются из случайных точек для двумерной гиперсферы
 		super(scene, options, randomVerticesSettings);
 		this.class = HyperSphere3D;
