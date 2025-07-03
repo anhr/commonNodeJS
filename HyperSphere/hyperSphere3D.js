@@ -258,8 +258,14 @@ class RandomVertices extends Sphere.RandomVertices {
 		//θ — широта (от −90° до 90°),
 		//ϕ — долгота (от −180° до 180°),
 		const arccos = Math.acos, sin = Math.sin, cos = Math.cos;
-		const θ = arccos(cos(ψ1) * cos(ψ2) + sin(ψ1) * sin(ψ2) * (cos(θ1) * cos(θ2) + sin(θ1) * sin(θ2) * cos(ϕ1 - ϕ2)));
-		if (isNaN(θ)) console.error(sRandomVertices + ': getArcAngle. Invalid θ = ' + θ);
+		const alpha = cos(ψ1) * cos(ψ2) + sin(ψ1) * sin(ψ2) * (cos(θ1) * cos(θ2) + sin(θ1) * sin(θ2) * cos(ϕ1 - ϕ2));
+		let θ = arccos(alpha);
+		if (isNaN(θ)) {
+
+			if (alpha - 1 < 3e-16) θ = 0;//alpha не может быть больше 1, но иногда alpha вычисляется с небольшой погрешностью 1.0000000000000002, которая нарушает это правило
+			else console.error(sRandomVertices + ': getArcAngle. Invalid θ = ' + θ);
+
+		}
 		return θ;
 
 	}
