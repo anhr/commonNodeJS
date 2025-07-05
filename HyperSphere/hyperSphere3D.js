@@ -409,7 +409,7 @@ class RandomVertices extends Sphere.RandomVertices {
 		randomVerticesSettings.spheresCount = 0
 		
 		//рисуем окружности вокруг противопрложной точки
-		this.aCirclesRadiusRadians.boUpdate = true;
+		this.aCirclesRadiusRadians.boUpdate = this.boCreateCirclesPoints;
 		this.setCircles(0, randomVerticesSettings.spheresCount, params.center.altitude);//, false);
 		this.aCirclesRadiusRadians.boUpdate = undefined;
 		if (this.boCreateCirclesPoints) {
