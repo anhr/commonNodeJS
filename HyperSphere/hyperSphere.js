@@ -2039,6 +2039,7 @@ this.object = () => {
 													oppositeVertice: oppositeVerticeAngles,
 													R: classSettings.overriddenProperties.r(options.player.getTimeId()),
 													HyperSphere: randomVertices.class,
+//													cSpheres: cSpheres,
 
 													//for debug
 													random: false,
@@ -2267,7 +2268,7 @@ this.object = () => {
 											});
 
 										}
-										aAngleControls.createArc();
+										aAngleControls.createArc();//cSpheres);
 										boTransparent = true;
 
 									}
@@ -2281,6 +2282,8 @@ this.object = () => {
 								aAngleControls.fOppositeVertice = fAdvansed.addFolder(lang.oppositeVertice);
 								_display(aAngleControls.fOppositeVertice.domElement, false);
 								createAnglesControls(aAngleControls.fOppositeVertice, aEdgeAngleControls, edgeAnglesDefault);
+
+								if (randomVertices) randomVertices.gui(aAngleControls.fOppositeVertice, options.getLanguageCode, dat);
 
 								const itemSize = this.bufferGeometry.attributes.position.itemSize,
 									vertices = [],
@@ -3969,7 +3972,7 @@ class RandomVertices {
 		this.circlesId = 0;//идентификатор сферы в this.aSpheres. В одномерной и двухмерной гиперсфере в this.aSpheres всего одна сфера и идентификатор сферы равен нулю.
 
 		//Вызывается из hyperSphere3D.js. Вычисляем количество точек для окружностей на сферах, расположенных внутри и снаружи противоположной вершины
-		this.setCircles = (circlesPointsCountNew, circlesIdNew, altitude/*, boNoCreateCirclesSphere*/) => {
+		this.setCircles = (circlesPointsCountNew, circlesIdNew, altitude, sphereId) => {
 
 			circleDistancePrev = 0;//Положение предыдущего кольца
 			if (circlesPointsCountNew != undefined) circlesPointsCount = circlesPointsCountNew;
@@ -3977,7 +3980,11 @@ class RandomVertices {
 				a = abc.a, b = abc.b, c = abc.c;
 				//d = abc.d;//расстояние между окружностями в радианах при условии, что окружности равномерно расположены на сфере
 			this.circlesId = circlesIdNew === undefined ? 0 : circlesIdNew;
-			if (this.boCreateCirclesPoints && (this.aSpheres.length <= this.circlesId)) this.aSpheres.push([]);
+			if (this.boCreateCirclesPoints && (this.aSpheres.length <= this.circlesId)) {
+
+				this.cSpheresAppendChild();
+
+			}
 			const aCircles = this.aSpheres[this.circlesId];
 			circlesPointsOptions.altitude = altitude;//this.altitudeDifference(sphereId, params);
 			this.circlesCountDelta = circlesIdNew;//Для hyperSphere3D индекс окружностей внутри и снаружи противоположной вершины. Количество окружностей уменьшается когда строятся окружности внутри и снаружи противоположной вершины
@@ -4004,6 +4011,7 @@ class RandomVertices {
 				this.circlesRadiusRadiansSetX(x);
 				circlesPointsOptions.circlesPointsCount = circlesPointsCountNew;
 				circlesPointsOptions.circleId = circleId;
+				circlesPointsOptions.sphereId = sphereId;
 				getCirclePointsRadians(circlesPointsOptions);
 
 			}
@@ -4161,6 +4169,8 @@ class RandomVertices {
 	pushCirclesRadiusRadians() {}
 	circlesRadiusRadiansSetX(x) {}
 	getAltitudeShift() { return 0; }
+	gui() {}
+	cSpheresAppendChild() {}
 
 	////////////////////////////////////////overridden methods
 	

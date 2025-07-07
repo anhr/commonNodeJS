@@ -410,7 +410,7 @@ class RandomVertices extends Sphere.RandomVertices {
 		
 		//рисуем окружности вокруг противопрложной точки
 		this.aCirclesRadiusRadians.boUpdate = this.boCreateCirclesPoints;
-		this.setCircles(0, randomVerticesSettings.spheresCount, params.center.altitude);//, false);
+		this.setCircles(0, randomVerticesSettings.spheresCount, params.center.altitude);
 		this.aCirclesRadiusRadians.boUpdate = undefined;
 		if (this.boCreateCirclesPoints) {
 
@@ -437,8 +437,8 @@ class RandomVertices extends Sphere.RandomVertices {
 						continue;
 	
 					}
-					this.setCircles(undefined, sphereId, altitude - circlesRadius);//, false);//рисуем окружности внутри от противоположной точки
-					this.setCircles(undefined, sphereId, altitude + circlesRadius);//, false);//рисуем окружности снаружи от противоположной точки
+					this.setCircles(undefined, sphereId, altitude - circlesRadius, sphereId);//рисуем окружности внутри от противоположной точки
+					this.setCircles(undefined, sphereId, altitude + circlesRadius, sphereId);//рисуем окружности снаружи от противоположной точки
 					
 				}
 
@@ -493,8 +493,13 @@ class RandomVertices extends Sphere.RandomVertices {
 			
 		}
 		if (circleIdMax === 1) return 0;//В текушей сфере всего одна окружность. Ее не нужно сдвигать.
-const altitudeShiftMax = 0,
-//		const altitudeShiftMax = debug.oneCircles.altitudeShift,
+		const altitudeShiftMax = debug.oneCircles && debug.oneCircles.altitudeShift ? debug.oneCircles.altitudeShift : options.sphereId != undefined ?
+				this.aCirclesRadiusRadians[options.sphereId - 1] * 1 * (
+					options.altitude - params.center.altitude < 0 ?
+						1 ://рисуем окружности внутри от противоположной точки
+						-1//рисуем окружности снаружи от противоположной точки
+				) :
+				0,
 			a = altitudeShiftMax / (1 - 1 / (circleIdMax * circleIdMax * circleIdMax)), b = altitudeShiftMax - a,
 			altitudeShift = a / (circleId * circleId * circleId) + b;
 //		console.log('circleId = ' + circleId + '. altitudeShift = ' + altitudeShift)
@@ -502,6 +507,56 @@ const altitudeShiftMax = 0,
 //		return debug.oneCircles.altitudeShift;
 //		return debug ? debug.oneCircles? debug.oneCircles.altitudeShift ? debug.oneCircles.altitudeShift : 0 : 0 : 0;
 	
+	}
+	gui(fParent, getLanguageCode = () => { return 'en' }, dat = { controllerNameAndTitle: () => {}}) {
+
+		//Localization
+
+		const lang = {
+
+			notSelected: 'not selected',
+
+			randomVertices: 'Random vertices',
+			spheres: 'Spheres',
+			spheresTitle: 'Spheres of the random vertices',
+
+		};
+
+		const _languageCode = getLanguageCode();
+
+		switch (_languageCode) {
+
+			case 'ru'://Russian language
+
+				lang.notSelected = 'Не выбрана';
+				
+				lang.randomVertices = 'Случайные вершины';
+				lang.spheres = 'Сферы';
+				lang.spheresTitle = 'Сферы случайных вершин';
+
+				break;
+			default://Custom language
+
+		}
+		
+		const fRandomVertices = fParent.addFolder(lang.randomVertices),
+			cSpheres = fRandomVertices.add({ Spheres: lang.notSelected }, 'Spheres', { [lang.notSelected]: -1 }).onChange((sphereId) => {
+
+				console.log(this)
+			});
+		cSpheres.__select[0].selected = true;
+		dat.controllerNameAndTitle(cSpheres, lang.spheres, lang.spheresTitle);
+		this.cSpheresAppendChild = () => {
+
+			const aSphere = [],
+				sphereId = this.aSpheres.push(aSphere) - 1;
+			const opt = document.createElement('option');
+			opt.innerHTML = sphereId;
+			opt.setAttribute('value', sphereId);
+			cSpheres.__select.appendChild(opt);
+					
+		}
+		
 	}
 
 	/////////////////////////////overridden methods
