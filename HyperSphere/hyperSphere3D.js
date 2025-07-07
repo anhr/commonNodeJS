@@ -502,10 +502,8 @@ class RandomVertices extends Sphere.RandomVertices {
 				0,
 			a = altitudeShiftMax / (1 - 1 / (circleIdMax * circleIdMax * circleIdMax)), b = altitudeShiftMax - a,
 			altitudeShift = a / (circleId * circleId * circleId) + b;
-//		console.log('circleId = ' + circleId + '. altitudeShift = ' + altitudeShift)
-		return altitudeShift;
-//		return debug.oneCircles.altitudeShift;
-//		return debug ? debug.oneCircles? debug.oneCircles.altitudeShift ? debug.oneCircles.altitudeShift : 0 : 0 : 0;
+//		return altitudeShift;
+return 0;
 	
 	}
 	gui(fParent, getLanguageCode = () => { return 'en' }, dat = { controllerNameAndTitle: () => {}}) {
