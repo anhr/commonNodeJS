@@ -4004,9 +4004,9 @@ class RandomVertices {
 				if (this.boCreateCirclesPoints) {
 					
 					circlesPointsOptions.numPoints = this.getNumPoints(circleDistance, R, dCircleDistance, np);
-					aCircles.push({ numPoints: circlesPointsOptions.numPoints, });
+					if (aCircles) aCircles.push({ numPoints: circlesPointsOptions.numPoints, });//for 3D hypersphere only
 
-				} else circlesPointsOptions.numPoints = aCircles[circleId - 1].numPoints;
+				} else if (aCircles) circlesPointsOptions.numPoints = aCircles[circleId - 1].numPoints;
 				//console.log('circleId = ' + circleId + ', circleDistance1 = ' + circleDistance1 + ', numPoints = ' + circlesPointsOptions.numPoints)
 				this.circlesRadiusRadiansSetX(x);
 				circlesPointsOptions.circlesPointsCount = circlesPointsCountNew;
