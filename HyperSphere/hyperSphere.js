@@ -3670,6 +3670,7 @@ class RandomVertices {
 
 			options ||= {};
 			point ||= this.zeroArray();
+			if (randomVerticesSettings.debug) point.forEach((axis) => { if (isNaN(axis)) console.error(sHyperSphere + ': editPoints. Invalid point = ' + point) })
 			if ((options.pointId === undefined) || this.boCreateCirclesPoints){
 
 				points.push(point);
