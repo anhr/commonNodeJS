@@ -3981,7 +3981,12 @@ class RandomVertices {
 				a = abc.a, b = abc.b, c = abc.c;
 				//d = abc.d;//расстояние между окружностями в радианах при условии, что окружности равномерно расположены на сфере
 			this.circlesId = circlesIdNew === undefined ? 0 : circlesIdNew;
-			if (this.boCreateCirclesPoints && (this.aSpheres.length <= this.circlesId)) this.cSpheresAppendChild();
+			if (this.boCreateCirclesPoints && (this.aSpheres.length <= this.circlesId)) {
+
+				this.aSpheres.push([]);
+				this.cSpheresAppendChild();
+
+			}
 			const aCircles = this.aSpheres[this.circlesId];
 			circlesPointsOptions.altitude = altitude;//this.altitudeDifference(sphereId, params);
 			this.circlesCountDelta = circlesIdNew;//Для hyperSphere3D индекс окружностей внутри и снаружи противоположной вершины. Количество окружностей уменьшается когда строятся окружности внутри и снаружи противоположной вершины
@@ -4001,9 +4006,9 @@ class RandomVertices {
 				if (this.boCreateCirclesPoints) {
 					
 					circlesPointsOptions.numPoints = this.getNumPoints(circleDistance, R, dCircleDistance, np);
-					if (aCircles) aCircles.push({ numPoints: circlesPointsOptions.numPoints, });//for 3D hypersphere only
+					aCircles.push({ numPoints: circlesPointsOptions.numPoints, });//for 3D hypersphere only
 
-				} else if (aCircles) circlesPointsOptions.numPoints = aCircles[circleId - 1].numPoints;
+				} else circlesPointsOptions.numPoints = aCircles[circleId - 1].numPoints;
 				//console.log('circleId = ' + circleId + ', circleDistance1 = ' + circleDistance1 + ', numPoints = ' + circlesPointsOptions.numPoints)
 				this.circlesRadiusRadiansSetX(x);
 				circlesPointsOptions.circlesPointsCount = circlesPointsCountNew;
