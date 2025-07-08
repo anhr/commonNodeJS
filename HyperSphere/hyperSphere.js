@@ -3981,11 +3981,7 @@ class RandomVertices {
 				a = abc.a, b = abc.b, c = abc.c;
 				//d = abc.d;//расстояние между окружностями в радианах при условии, что окружности равномерно расположены на сфере
 			this.circlesId = circlesIdNew === undefined ? 0 : circlesIdNew;
-			if (this.boCreateCirclesPoints && (this.aSpheres.length <= this.circlesId)) {
-
-				this.cSpheresAppendChild();
-
-			}
+			if (this.boCreateCirclesPoints && (this.aSpheres.length <= this.circlesId)) this.cSpheresAppendChild();
 			const aCircles = this.aSpheres[this.circlesId];
 			circlesPointsOptions.altitude = altitude;//this.altitudeDifference(sphereId, params);
 			this.circlesCountDelta = circlesIdNew;//Для hyperSphere3D индекс окружностей внутри и снаружи противоположной вершины. Количество окружностей уменьшается когда строятся окружности внутри и снаружи противоположной вершины
