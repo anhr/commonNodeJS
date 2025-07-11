@@ -3706,8 +3706,29 @@ class RandomVertices {
 			let numPoints = options.numPoints;
 			if (isNaN(numPoints)) numPoints = 1;//numPoints = NaN при длинне дуги между вершинами гиперсферы params.arc = 0. Диамерт окружности, пересекающей гиперсферу равен нулю. Создаем одну точку.
 			options.points ||= [];
-			const points = options.points,
-				altitudeShift = this.getAltitudeShift(debug, abc.circlesCount - 1, options, params);
+			const points = options.points;
+			let altitudeShift = this.getAltitudeShift(debug, abc.circlesCount - 1, options, params);
+/*
+			if (options.sphereId != undefined) {
+				
+				const aSphere = this.aSpheres[options.sphereId];
+				aSphere.altitudeShift = altitudeShift;
+				Object.defineProperty(aSphere, 'altitudeShift', {
+			
+					get: () => { return altitudeShift; },
+					set: (altitudeShiftNew) => {
+			
+						if (altitudeShift === altitudeShiftNew) return true;
+						altitudeShift = altitudeShiftNew;
+						params.randomVertices.changeCirclesPoints();
+						return true;
+			
+					},
+			
+				});
+
+			}
+*/			
 			for (let i = 0; i < numPoints; i++) {
 
 				let point;
@@ -3984,7 +4005,7 @@ class RandomVertices {
 			if (this.boCreateCirclesPoints && (this.aSpheres.length <= this.circlesId)) {
 
 				this.aSpheres.push([]);
-				this.cSpheresAppendChild();
+//				this.cSpheresAppendChild();
 
 			}
 			const aCircles = this.aSpheres[this.circlesId];
@@ -4043,6 +4064,8 @@ class RandomVertices {
 //			params.arc = arc;
 			circlesPointsOptions.pointId = 0;
 			changeCirclesPoints();
+
+			this.cSpheresAppendChild();
 
 		}
 		this.setCirclesPoints = () => { setCirclesPoints(); }
