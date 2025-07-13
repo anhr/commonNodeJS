@@ -3684,7 +3684,7 @@ class RandomVertices {
 				points[options.pointId] = point;
 				options.pointId++;
 
-			} else console.error('getCirclePointsRadians: Invalid options.pointId = ' + options.pointId);
+			} else console.error(sRandomVertices + ': getCirclePointsRadians. Invalid options.pointId = ' + options.pointId);
 
 		}
 
@@ -3996,6 +3996,13 @@ class RandomVertices {
 		//Вызывается из hyperSphere3D.js. Вычисляем количество точек для окружностей на сферах, расположенных внутри и снаружи противоположной вершины
 		this.setCircles = (circlesPointsCountNew, circlesIdNew, altitude, sphereId) => {
 
+/*			
+			circlesPointsOptions.altitudeShiftMax = debug.oneCircles && debug.oneCircles.altitudeShift ?
+				debug.oneCircles.altitudeShift :
+				sphereId != undefined ?
+					this.aCirclesRadiusRadians[sphereId - 1] * inCircles :
+					0;
+*/					
 			circleDistancePrev = 0;//Положение предыдущего кольца
 			if (circlesPointsCountNew != undefined) circlesPointsCount = circlesPointsCountNew;
 			const cos = Math.cos,

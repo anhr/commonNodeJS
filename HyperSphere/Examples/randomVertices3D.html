@@ -143,7 +143,6 @@
 						
 					},//true,
 					*/
-					
 				
 				},
 				//debug: false,
@@ -180,7 +179,7 @@
 			const cbParamsOnePoint = gui.add(params, 'onePoint');
 			params.onChangeOnePointArray = (onePointArray) => { if (onePointArray) cbParamsOnePoint.setValue(true); }
 			const cbParamsOnePointArray = gui.add(params, 'onePointArray');
-			if (randomVerticesSettings.debug && randomVerticesSettings.debug.oneCircles && randomVerticesSettings.debug.oneCircles) gui.add(randomVerticesSettings.debug.oneCircles, 'altitudeShift', -5, 5, 0.001);
+			if (randomVerticesSettings.debug && randomVerticesSettings.debug.oneCircles) gui.add(randomVerticesSettings.debug.oneCircles, 'altitudeShift', -anglesRange.altitude.max, anglesRange.altitude.max, 0.001);
 			params.randomVertices.gui(gui);
 
 			//////////////////////////////////////////GUI
