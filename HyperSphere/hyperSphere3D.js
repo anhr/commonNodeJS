@@ -513,10 +513,11 @@ class RandomVertices extends Sphere.RandomVertices {
 				) :
 				0,
 */				
-		const altitudeShiftMax = ((options.sphereId === undefined) ? 0 : this.aSpheres[options.sphereId - 1].altitudeShiftMax * 
+//		const altitudeShiftMax = ((options.sphereId === undefined) ? 0 : this.aSpheres[options.sphereId - 1].altitudeShiftMax * 
+		const altitudeShiftMax = ((options.sphereId === undefined) ? 0 : this.aSpheres[options.sphereId].altitudeShiftMax * 
 									(options.altitude - params.center.altitude < 0 ?
-										1 ://рисуем окружности внутри от противоположной точки
-										-1//рисуем окружности снаружи от противоположной точки
+										-1 ://рисуем окружности внутри от противоположной точки
+										1//рисуем окружности снаружи от противоположной точки
 								 )) || 0,
 			a = altitudeShiftMax / (1 - 1 / (circleIdMax * circleIdMax * circleIdMax)), b = altitudeShiftMax - a;
 		let altitudeShift = a / (circleId * circleId * circleId) + b;
@@ -524,11 +525,10 @@ class RandomVertices extends Sphere.RandomVertices {
 		if (options.sphereId != undefined) {
 			
 			const aSphere = this.aSpheres[options.sphereId];
-			if (aSphere.altitudeShift === undefined) {
-				
+			if (aSphere.altitudeShiftMax === undefined) {
+
+/*				
 				aSphere.altitudeShift = altitudeShift;
-//			if (!aSphere.altitudeShiftIsDefined) {
-				
 				Object.defineProperty(aSphere, 'altitudeShift', {
 			
 					get: () => { return altitudeShift; },
@@ -542,13 +542,14 @@ class RandomVertices extends Sphere.RandomVertices {
 					},
 			
 				});
+*/				
 				let altitudeShiftMax;
 //				aSphere.altitudeShiftMax = altitudeShiftMax;
 				Object.defineProperty(aSphere, 'altitudeShiftMax', {
 			
 					get: () => {
 
-						if (altitudeShiftMax === undefined) altitudeShiftMax = this.aCirclesRadiusRadians[options.sphereId - 1]
+						if (altitudeShiftMax === undefined) altitudeShiftMax = 0;//this.aCirclesRadiusRadians[options.sphereId - 1]
 						return altitudeShiftMax;
 					
 					},
@@ -610,15 +611,15 @@ class RandomVertices extends Sphere.RandomVertices {
 				lang.spheres = 'Сферы';
 				lang.spheresTitle = 'Сферы случайных вершин';
 
-				lang.altitudeShift = 'Поправка высоты';
-				lang.altitudeShiftTitle = 'Поправка высоты';
+				lang.altitudeShiftMax = 'Поправка высоты';
+				lang.altitudeShiftTitleMax = 'Поправка высоты';
 
 				break;
 			default://Custom language
 
 		}
 
-		const sR = 'r', sL = 'l';
+//		const sR = 'r', sL = 'l';
 		let aSphere;
 		const fRandomVertices = fParent.addFolder(lang.randomVertices),
 			cSpheres = fRandomVertices.add({ Spheres: lang.notSelected }, 'Spheres', { [lang.notSelected]: -1 }).onChange((value) => {
@@ -631,23 +632,22 @@ class RandomVertices extends Sphere.RandomVertices {
 
 					boDisplay = true;
 					this.aSpheres[sphereId].forEach((circle) => this.verticesRange.count += circle.numPoints);
-					if(value.indexOf(sR) != -1){
-
+					if (sphereId != 0) {
+						
 						this.verticesRange.count *= 2;
 						this.aSpheres[0].forEach((circle) => this.verticesRange.start += circle.numPoints);
 						for(let i = 1; i < sphereId; i++) {
-
+	
 							let sphereNumPoints = 0;
 							this.aSpheres[i].forEach((circle) => sphereNumPoints += circle.numPoints);
 							this.verticesRange.start += 2 * sphereNumPoints;
-
+	
 						}
-						aSphere = this.aSpheres[sphereId];
-//						cAltitudeShift.object = aSphere;
-						if (aSphere.altitudeShiftMax != undefined) cAltitudeShift.setValue(aSphere.altitudeShiftMax);
-						else boDisplay = false;
-						
-					} else if(value.indexOf(sL) != -1){}
+
+					}
+					aSphere = this.aSpheres[sphereId];
+					if (aSphere.altitudeShiftMax != undefined) cAltitudeShiftMax.setValue(aSphere.altitudeShiftMax);
+					else boDisplay = false;
 
 				} else {
 
@@ -659,33 +659,15 @@ class RandomVertices extends Sphere.RandomVertices {
 					}
 
 				}
-				_display(cAltitudeShift.domElement.parentNode.parentNode, boDisplay);
+				_display(cAltitudeShiftMax.domElement.parentNode.parentNode, boDisplay);
 				this.circlesSphere.setVerticesRange(this.verticesRange.start, this.verticesRange.count);
 				
 			});
 		cSpheres.__select[0].selected = true;
 		dat.controllerNameAndTitle(cSpheres, lang.spheres, lang.spheresTitle);
-/*
-const as = {
-	
-	get altitudeShift() {
-
-		if (aSphere === undefined) return 0;
-		return aSphere.altitudeShiftMax;
-		
-	},
-	
-	set altitudeShift(altitudeShiftMax) {
-		
-		aSphere.altitudeShiftMax = altitudeShiftMax;
-		
-	}
-	
-}
-*/
-		const cAltitudeShift = fRandomVertices.add({altitudeShiftMax: 0}, 'altitudeShiftMax', -0.5, 0.5, 0.001).onChange((altitudeShiftMax) => { aSphere.altitudeShiftMax = altitudeShiftMax; });
-		dat.controllerNameAndTitle(cAltitudeShift, lang.altitudeShift, lang.altitudeShiftTitle);
-		_display(cAltitudeShift.domElement.parentNode.parentNode, false);
+		const cAltitudeShiftMax = fRandomVertices.add({altitudeShiftMax: 0}, 'altitudeShiftMax', 0, 0.1, 0.0001).onChange((altitudeShiftMax) => { aSphere.altitudeShiftMax = altitudeShiftMax; });
+		dat.controllerNameAndTitle(cAltitudeShiftMax, lang.altitudeShiftMax, lang.altitudeShiftTitleMax);
+		_display(cAltitudeShiftMax.domElement.parentNode.parentNode, false);
 		
 		this.cSpheresAppendChild = () => {
 
@@ -700,12 +682,7 @@ const as = {
 			};
 			let itemId = 0;
 			appendItem(itemId++);
-			for (; itemId < this.aSpheres.length; itemId++) {
-
-//				if (this.aSpheres[itemId].length != 1)//Не добавлять this.cSpheres сферу с одной окружностью, потому что ее не надо смещать
-				appendItem(itemId + ' ' + sR);
-
-			}
+			for (; itemId < this.aSpheres.length; itemId++) { appendItem(itemId); }
 					
 		}
 		
