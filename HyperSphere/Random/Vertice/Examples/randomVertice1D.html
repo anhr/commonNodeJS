@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>1D Random Vertice</title>
+
+    <!--for mobile devices-->
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+    <!--<script src="./three.js/dev/build/three.js"></script>-->
+    <!--<script src="./three.js/dev/build/three.min.js"></script>-->
+    <!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.js"></script>-->
+    <!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.min.js"></script>-->
+    <!--<script src="https://threejs.org/build/three.js"></script>-->
+    <!--<script src="https://threejs.org/build/three.min.js"></script>-->
+</head>
+<body>
+	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
+	<div id="info">
+		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a>
+		- <a href="https://github.com/anhr/commonNodeJS/tree/master/HyperSphere" target="_blank" rel="noopener">1D Random Vertice</a>.
+		By <a href="https://github.com/anhr" target="_blank" rel="noopener">anhr</a>
+	</div>
+
+	<script type="module">
+
+		import * as THREE from '../../../../../../three.js/dev/build/three.module.js';
+
+		import MyThree from '../../../../myThree/myThree.js';
+		MyThree.three.THREE = THREE;
+
+		import RandomVertice from '../randomVerticeCircle.js';
+		import Circle from '../../../circle.js';
+		import anglesRange from '../../../anglesRange.js'
+		
+		new MyThree((scene, options) => {
+
+			const pi = Math.PI;
+
+			const params = {
+
+				/*
+				vertice: [
+					0,//lng
+				],
+				*/
+				oppositeVertice: [
+					pi/4,//0,//lng
+				],
+
+			}
+			const randomVertice = new RandomVertice(params);
+
+			//Random vertice hyperSphere 
+			
+			const randomVerticeSettings = {
+
+				//R: 0.5,
+				debug: true,
+			
+			};
+			let hsRandomVertice;
+			hsRandomVertice = new Circle(options, {
+
+				r: randomVerticeSettings.R,
+				edges: false,
+				//randomArc: true,
+				projectParams: { scene: scene, },
+//				debug: debug,
+				debug: randomVerticeSettings.debug ? {
+
+					probabilityDensity: false,
+					middleVertice: false,
+					log: false,
+
+				} : false,
+				//debug: false,
+				settings: {
+
+					object: {
+
+						name: 'Random vertice',
+						//color: 'white',
+						geometry: { angles: [[randomVertice.angles]], },
+
+					},
+					overriddenProperties: { setDrawRange: (start, count) => { if (hsRandomVertice) hsRandomVertice.bufferGeometry.setDrawRange(start, count); } },
+
+				},
+
+			});
+
+			//Vertices hyperSphere 
+			
+			const verticesSettings = {
+
+				//R: 0.5,
+				debug: true,
+			
+			};
+			let hsVertices;
+			hsVertices = new Circle(options, {
+
+				r: verticesSettings.R,
+				edges: false,
+				//randomArc: true,
+				projectParams: { scene: scene, },
+//				debug: debug,
+				debug: randomVerticeSettings.debug ? {
+
+					probabilityDensity: false,
+					middleVertice: false,
+					log: false,
+
+				} : false,
+				//debug: false,
+				settings: {
+
+					object: {
+
+						name: 'Vertices',
+						color: 'white',
+						geometry: { angles: [params.vertice, params.oppositeVertice], },
+
+					},
+					overriddenProperties: { setDrawRange: (start, count) => { if (hsVertices) hsVertices.bufferGeometry.setDrawRange(start, count); } },
+
+				},
+
+			});
+			
+			//GUI
+
+			const gui = options.dat.gui.addFolder('Hypersphere');
+
+			//vertice
+			const fVertice = gui.addFolder('Vertice');
+			fVertice.add(params.vertice, 'longitude', anglesRange.longitude.min, anglesRange.longitude.max, 0.001);
+
+			//oppositeVertice
+			const fOppositeVertice = gui.addFolder('Opposite Vertice');
+			fOppositeVertice.add(params.oppositeVertice, 'longitude', anglesRange.longitude.min, anglesRange.longitude.max, 0.001);
+
+			//////////////////////////////////////////GUI
+
+		}, {
+
+			orbitControls: { enableRotate: false, },
+			camera: { position: new THREE.Vector3( 0, 0, 2 ) },
+			stereoEffect: false,
+			scales: {
+
+				x: {},
+				y: {},
+				text: { precision: 1, rect: { displayRect: false, }, }
+
+			},
+			canvas: {
+
+				noButtonFullScreen: true,
+
+			},
+			player: false,
+			playerOptions: {
+				
+				//max: Infinity,
+				//interval: 100,
+				
+			}
+
+		} );
+
+	</script>
+</body>
+</html>
