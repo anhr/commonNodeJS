@@ -17,6 +17,7 @@
 
 import HyperSphere from './hyperSphere.js';
 import three from '../three.js'
+import RandomVertice from './Random/Vertice/randomVerticeCircle.js';
 
 const sCircle = 'Circle',
 	π = Math.PI;
@@ -150,6 +151,12 @@ class Circle extends HyperSphere {
 	 */
 	newRandomVertices(scene, options, randomVerticesSettings) { return new RandomVertices(scene, options, randomVerticesSettings); }
 
+	//overridden methods
+	
+	get RandomVertice() { return RandomVertice; }
+	
+	/////////////////////////////overridden methods
+	
 }
 
 class RandomVertices extends HyperSphere.RandomVertices {

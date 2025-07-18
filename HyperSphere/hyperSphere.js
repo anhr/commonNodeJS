@@ -922,7 +922,7 @@ class HyperSphere extends MyObject {
 												//Думаю тут надо применить вероятностный метод определения средней вершины
 											//}
 											
-											const middleVertice = isZero ? _this.getRandomMiddleAngles(oppositeVertices) : _this.vertice2angles(aSum);
+											let middleVertice = isZero ? _this.getRandomMiddleAngles(oppositeVertices) : _this.vertice2angles(aSum);
 											if (classSettings.debug && classSettings.debug.middleVertice) {
 
 												console.log('opposite to vertice[' + verticeId + '] vertices:');
@@ -937,6 +937,9 @@ class HyperSphere extends MyObject {
 											}
 											const geometry = settings.object.geometry;
 											if (boPushMiddleVertice) classSettings.overriddenProperties.pushMiddleVertice(timeId, middleVertice);
+											
+											if (classSettings.randomMiddleVertice) { middleVertice = new this.RandomVertice({ vertice: vertice, oppositeVertice: middleVertice, }).angles; }
+											
 											return middleVertice;
 
 										}
@@ -1410,6 +1413,9 @@ class HyperSphere extends MyObject {
 			middleVertice: 'Middle vertice',
 			middleVerticeTitle: 'Find middle vertice between opposite vertices.',
 
+			randomMiddleVertice: 'Random middle vertice',
+			randomMiddleVerticeTitle: 'Middle vertice is random value',
+
 			plane: 'Plane',
 			planes: 'Planes',
 			planesTitle: 'Planes of rotation of angles.',
@@ -1603,8 +1609,7 @@ this.object = () => {
 
 					if (aAngleControls.planes) aAngleControls.planes.update(changedAngleId);
 
-					const position = settings.bufferGeometry.userData.position[verticeId];
-					aAngleControls.cRadius.setValue(position.radius);
+					if (aAngleControls.cRadius) aAngleControls.cRadius.setValue(settings.bufferGeometry.userData.position[verticeId].radius);
 
 				}
 
@@ -2337,8 +2342,33 @@ this.object = () => {
 
 								//Middle vertice
 
+								const fMiddleVertice = fAdvansed.addFolder(lang.middleVertice)
+
+								if (classSettings.randomMiddleVertice === undefined) classSettings.randomMiddleVertice = true;
+								{
+
+									let randomMiddleVertice = classSettings.randomMiddleVertice;
+									Object.defineProperty(classSettings, 'randomMiddleVertice', {
+							
+										get: () => { return randomMiddleVertice; },
+										set: (randomMiddleVerticeNew) => {
+							
+											if (randomMiddleVertice === randomMiddleVerticeNew) return true;
+											randomMiddleVertice = randomMiddleVerticeNew;
+											aAngleControls.cMiddleVertice.setValue(false);
+											aAngleControls.cMiddleVertice.setValue(true);
+											return true;
+							
+										},
+							
+									});
+									
+								}
+								aAngleControls.cRandomMiddleVertice = fMiddleVertice.add(classSettings, 'randomMiddleVertice');
+								dat.controllerNameAndTitle(aAngleControls.cRandomMiddleVertice, lang.randomMiddleVertice, lang.randomMiddleVerticeTitle);
+								
 								let middleVerticeEdges;
-								aAngleControls.cMiddleVertice = fAdvansed.add({ boMiddleVertice: false }, 'boMiddleVertice').onChange((boMiddleVertice) => {
+								aAngleControls.cMiddleVertice = fMiddleVertice.add({ boMiddleVertice: false }, 'boMiddleVertice').onChange((boMiddleVertice) => {
 
 									_this.opacity(boMiddleVertice);
 									if (boMiddleVertice) {
@@ -3413,7 +3443,11 @@ this.object = () => {
 	 * @param {array} verticeAngles vertice angles
 	 * @returns Normalized a vertices angles.
 	 */
-	normalizeVerticeAngles(verticeAngles){ return this.vertice2angles(this.angles2Vertice(verticeAngles)); }
+	normalizeVerticeAngles(verticeAngles) { return this.vertice2angles(this.angles2Vertice(verticeAngles)); }
+
+//	sOver = ': Please, override %s method in your ' + sHyperSphere + ' child class.';
+	
+//	get RandomVertice() { console.error(sHyperSphere + this.sOver.replace('%s', 'get RandomVertice')); }
 
 }
 
@@ -4202,7 +4236,7 @@ class RandomVertices {
 	circlesRadiusRadiansSetX(x) {}
 	getAltitudeShift() { return 0; }
 	gui() {}
-	cSpheresAppendChild() {}
+	cSpheresAppendChild() { }
 
 	////////////////////////////////////////overridden methods
 	

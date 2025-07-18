@@ -46,7 +46,7 @@ class RandomVerticeCircle extends RandomVertice {
 		
 					if (vertice[0] === longitude) return true;
 					vertice[0] = longitude;
-					if (params.randomVertices) params.randomVertices.changeCirclesPoints();
+//					if (params.randomVertices) params.randomVertices.changeCirclesPoints();
 					return true;
 		
 				},
@@ -58,10 +58,10 @@ class RandomVerticeCircle extends RandomVertice {
 		Vertice(params.oppositeVertice);
 		
 	}
+	
 	get angles() {
 		
-//		return this.params.oppositeVertice;
-		return [(this.params.oppositeVertice.longitude + this.params.vertice.longitude) / 2];
+		return this.params.oppositeVertice;
 		
 	}
 	

@@ -32,14 +32,6 @@ class RandomVertice {
 		params.vertice ||= this.ZeroArray();
 		params.oppositeVertice ||= this.ZeroArray();
 		this.Center(params);
-/*		
-		this.angles = () => {
-			
-			console.log(params)
-			return [0];
-			
-		}
-*/		
 		
 	}
 	
