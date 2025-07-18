@@ -1520,9 +1520,15 @@ this.object = () => {
 			this.objectOpacity = 0.3;
 			this.opacity = (transparent = true, opacity = this.objectOpacity) => {
 
-				if (!nd) myPoints.userData.opacity(transparent ? opacity : 1);
-//				else nd.opacity(nd.object3D, transparent, opacity);
-				else nd.object3Dopacity = opacity;
+				if (!nd) {
+
+					//myPoints = undefined если
+					//Открыть http://localhost/anhr/commonNodeJS/master/HyperSphere/Random/Vertice/Examples/randomVertice1D.html
+					//Выбрать Meshes\Select\Random vertice
+					//поставить птичку Hypersphere\cloud
+					if (myPoints) myPoints.userData.opacity(transparent ? opacity : 1);
+					
+				}else nd.object3Dopacity = opacity;
 
 			}
 
