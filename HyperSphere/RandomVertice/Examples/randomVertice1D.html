@@ -24,14 +24,15 @@
 
 	<script type="module">
 
-		import * as THREE from '../../../../../../three.js/dev/build/three.module.js';
+		import * as THREE from '../../../../../three.js/dev/build/three.module.js';
 
-		import MyThree from '../../../../myThree/myThree.js';
+		import MyThree from '../../../myThree/myThree.js';
 		MyThree.three.THREE = THREE;
 
 		import RandomVertice from '../randomVerticeCircle.js';
-		import Circle from '../../../circle.js';
-		import anglesRange from '../../../anglesRange.js'
+		import RandomCloud from '../randomCloudCircle.js';
+		import Circle from '../../circle.js';
+		import anglesRange from '../../anglesRange.js'
 		
 		new MyThree((scene, options) => {
 
@@ -41,28 +42,26 @@
 
 				/*
 				vertice: [
-					0,//lng
+					pi/2,//0,//lng
 				],
 				*/
 				oppositeVertice: [
-					pi/4,//0,//lng
+					pi,///4,//0,//lng
 				],
 
 			}
-			const randomVertice = new RandomVertice(params);
-
-			//Random vertice hyperSphere 
-
 			const randomVerticeSettings = {
 
 				//R: 0.5,
 				debug: true,
-				cloud: false,
+				cloud: true,
 			
 			};
 			
+			//Random vertice hyperSphere 
+
 			let hsRandomVertice;
-			const createRandomVertice = () => {
+			const createRandomVerticeHyperSphere = (randomVertice, name) => {
 				
 				hsRandomVertice = new Circle(options, {
 	
@@ -84,9 +83,9 @@
 	
 						object: {
 	
-							name: 'Random vertice',
+							name: name,
 							//color: 'white',
-							geometry: { angles: [[randomVertice.angles]], },
+							geometry: { angles: randomVertice.angles, },
 	
 						},
 						overriddenProperties: { setDrawRange: (start, count) => { if (hsRandomVertice) hsRandomVertice.bufferGeometry.setDrawRange(start, count); } },
@@ -96,7 +95,21 @@
 				});
 	
 			}
-			createRandomVertice();
+			const createRandomCloud = () => { createRandomVerticeHyperSphere(new RandomCloud(params), 'Random cloud'); }
+			const createRandomVertice = () => { createRandomVerticeHyperSphere(new RandomVertice(params), 'Random vertice'); }
+			const updateRandomVerticeHyperSphere = () => {
+
+				if (hsRandomVertice) {
+					
+					hsRandomVertice.removeHyperSphere();
+					hsRandomVertice = undefined;
+
+				}
+				if (randomVerticeSettings.cloud) createRandomCloud();
+				else createRandomVertice();
+				
+			}
+			updateRandomVerticeHyperSphere();
 	
 			//Vertices hyperSphere 
 			
@@ -139,22 +152,24 @@
 			
 			//GUI
 
-			const gui = options.dat.gui.addFolder('Hypersphere');
+			const gui = options.dat.gui.addFolder('Hypersphere'),
+				onChangeLongitude = (verticeId, longitude) => {
+
+					hsVertices.classSettings.settings.object.geometry.angles[verticeId].longitude = longitude;
+					hsVertices.setPositionAttributeFromPoint(verticeId);
+					hsVertices.update(verticeId, 0);
+					
+					updateRandomVerticeHyperSphere();
+					
+				};
 
 			//vertice
 			const fVertice = gui.addFolder('Vertice');
-			fVertice.add(params.vertice, 'longitude', anglesRange.longitude.min, anglesRange.longitude.max, 0.001);
+			fVertice.add(params.vertice, 'longitude', anglesRange.longitude.min, anglesRange.longitude.max, 0.001).onChange((longitude) => { onChangeLongitude(0, longitude); });
 
 			//oppositeVertice
 			const fOppositeVertice = gui.addFolder('Opposite Vertice');
-			fOppositeVertice.add(params.oppositeVertice, 'longitude', anglesRange.longitude.min, anglesRange.longitude.max, 0.001).onChange((longitude) => {
-
-				const oppositeVerticeId = 1;
-				hsVertices.classSettings.settings.object.geometry.angles[oppositeVerticeId].longitude = longitude;
-				hsVertices.setPositionAttributeFromPoint(oppositeVerticeId);
-				hsVertices.update(oppositeVerticeId, 0);
-				
-			});
+			fOppositeVertice.add(params.oppositeVertice, 'longitude', anglesRange.longitude.min, anglesRange.longitude.max, 0.001).onChange((longitude) => { onChangeLongitude(1, longitude); });
 
 			//cloud of the random points
 			{
@@ -167,9 +182,13 @@
 			
 						if (cloud === cloudNew) return true;
 						cloud = cloudNew;
+						updateRandomVerticeHyperSphere();
+/*						
 						hsRandomVertice.removeHyperSphere();
 						hsRandomVertice = undefined;
-						createRandomVertice();
+						if (cloud) createRandomCloud();
+						else createRandomVertice();
+*/						
 //						return true;
 			
 					},

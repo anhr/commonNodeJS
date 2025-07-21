@@ -17,7 +17,7 @@
 
 import HyperSphere from './hyperSphere.js';
 import three from '../three.js'
-import RandomVertice from './Random/Vertice/randomVerticeCircle.js';
+import RandomVertice from './RandomVertice/randomVerticeCircle.js';
 
 const sCircle = 'Circle',
 	π = Math.PI;

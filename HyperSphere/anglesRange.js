@@ -1,5 +1,5 @@
 /**
- * @module AnglesRange
+ * @module anglesRange
  * @description Hypersphere angles range.
  */
 const π = Math.PI,
@@ -13,6 +13,7 @@ const π = Math.PI,
 			//Высота меняется в диапазоне 0 180 градусов. В центре гиперсферы вершины белого и синего цвета по краям зеленого
 			get min() { return 0; },
 			get max() { return π; },
+			get range() { return this.max - this.min; },
  
 		},
 		get rotateLatitude() { return rotateLatitude; },
@@ -21,6 +22,7 @@ const π = Math.PI,
 			get angleName() { return 'Latitude'; },
 			get min() { return 0 + rotateLatitude; },//-π/2;
 			get max() { return π + rotateLatitude; },//π/2;
+			get range() { return this.max - this.min; },
 
 		},
 		longitude: {
@@ -28,6 +30,7 @@ const π = Math.PI,
 			get angleName() { return 'Longitude'; },
 			get min() { return -π; },
 			get max() { return π; },
+			get range() { return this.max - this.min; },
  
 		},
  

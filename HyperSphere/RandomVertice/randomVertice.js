@@ -28,7 +28,7 @@ class RandomVertice {
 	 */
 	constructor(params) {
 
-		this.params = params;
+//		this.params = params;
 		params.vertice ||= this.ZeroArray();
 		params.oppositeVertice ||= this.ZeroArray();
 		this.Center(params);
