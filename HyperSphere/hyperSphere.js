@@ -1535,8 +1535,8 @@ this.object = () => {
 			const removeObject = (object) => {
 
 				if (!object) return;
+				options.eventListeners.removeParticle(object);
 				scene.remove(object);
-//				if (options.guiSelectPoint) options.guiSelectPoint.removeMesh(object);
 
 			}
 
