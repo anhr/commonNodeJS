@@ -62,6 +62,14 @@
 
 			let hsRandomVertice;
 			const createRandomVerticeHyperSphere = (randomVertice, name) => {
+
+				if (hsRandomVertice) {
+
+//					hsRandomVertice.classSettings.settings.object.geometry.angles = randomVertice.angles;
+					hsRandomVertice.setPositionAttributeFromPoints(randomVertice.angles, true);
+					return;
+
+				}
 				
 				hsRandomVertice = new Circle(options, {
 	
@@ -95,16 +103,19 @@
 				});
 	
 			}
-			const createRandomCloud = () => { createRandomVerticeHyperSphere(new RandomCloud(params), 'Random cloud'); }
+			const randomCloud = new RandomCloud(params);
+			const createRandomCloud = () => { createRandomVerticeHyperSphere(randomCloud, 'Random cloud'); }
 			const createRandomVertice = () => { createRandomVerticeHyperSphere(new RandomVertice(params), 'Random vertice'); }
 			const updateRandomVerticeHyperSphere = () => {
 
+/*				
 				if (hsRandomVertice) {
 					
 					hsRandomVertice.removeHyperSphere();
 					hsRandomVertice = undefined;
 
 				}
+*/				
 				if (randomVerticeSettings.cloud) createRandomCloud();
 				else createRandomVertice();
 				

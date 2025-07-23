@@ -30,6 +30,8 @@ class RandomCloudCircle extends RandomCloud {
 	constructor(params) {
 
 		super();
+
+		const anglesIdMax = 100, randomVerticesAngles = [], randomVertice = new RandomVertice(params);
 		
 		//overridden methods
 		
@@ -37,11 +39,14 @@ class RandomCloudCircle extends RandomCloud {
 			
 			get: function() {
 
-				const randomVerticesAngles = [], randomVertice = new RandomVertice(params), anglesIdMax = 100;
+				const boUpdate = randomVerticesAngles.length === 0 ? false : true;
 				for (let i = 0; i < anglesIdMax; i++) {
 
 					params.r = (1 / anglesIdMax) * i;//для замены случайной точки на регулярную
-					randomVerticesAngles.push(randomVertice.angles);
+					const randomVerticeAngles = randomVertice.angles;
+					if (boUpdate)
+						randomVerticesAngles[i] = randomVerticeAngles
+					else randomVerticesAngles.push(randomVerticeAngles);
 
 				}
 				return randomVerticesAngles;
