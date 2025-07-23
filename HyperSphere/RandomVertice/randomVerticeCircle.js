@@ -58,9 +58,9 @@ class RandomVerticeCircle extends RandomVertice {
 */				
 //					p = Math.atan(r - 0.5) * (0.5 / Math.atan(0.5));
 					d = a * Math.abs(arc) + b,
-					p = Math.atan((r - 0.5) * d) * ((0.5 + d / (2 * b)) / Math.atan(0.5 * d));
-//					p = Math.atan((r - 0.5) * d) * (0.5 / Math.atan(0.5 * d));
-//					p = Math.atan((r - 0.5) * d) * (1 / Math.atan(0.5 * d));
+					p = Math.atan((r - 0.5) * d) * (((arc * 0.5) / π + 1) / Math.atan(0.5 * d));
+					//p = Math.atan((r - 0.5) * d) * (0.5 / Math.atan(0.5 * d));//arc = π
+					//p = Math.atan((r - 0.5) * d) * (1 / Math.atan(0.5 * d));//arc = 0
 				console.log('r = ' + r + ' p = ' + p);
 				let angle = range * p + params.oppositeVertice.longitude;
 				
