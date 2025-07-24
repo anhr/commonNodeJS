@@ -38,6 +38,17 @@
 
 			const pi = Math.PI;
 
+			const randomVerticeSettings = {
+
+				//R: 0.5,
+				debug: {
+					
+					//notRandomVertices: true,
+				
+				},
+				cloud: true,
+			
+			};
 			const params = {
 
 				/*
@@ -48,15 +59,9 @@
 				oppositeVertice: [
 					pi,///4,//0,//lng
 				],
+				debug: randomVerticeSettings.debug,
 
 			}
-			const randomVerticeSettings = {
-
-				//R: 0.5,
-				debug: true,
-				cloud: true,
-			
-			};
 			
 			//Random vertice hyperSphere 
 
@@ -103,10 +108,10 @@
 				});
 	
 			}
-			const randomCloud = new RandomCloud(params);
-			const createRandomCloud = () => { createRandomVerticeHyperSphere(randomCloud, 'Random cloud'); }
-			const createRandomVertice = () => { createRandomVerticeHyperSphere(new RandomVertice(params), 'Random vertice'); }
-			const updateRandomVerticeHyperSphere = () => {
+			const randomCloud = new RandomCloud(params), randomVertice = new RandomVertice(params),
+				createRandomCloud = () => { createRandomVerticeHyperSphere(randomCloud, 'Random cloud'); },
+				createRandomVertice = () => { createRandomVerticeHyperSphere(randomVertice, 'Random vertice'); },
+				updateRandomVerticeHyperSphere = () => {
 
 /*				
 				if (hsRandomVertice) {
@@ -117,7 +122,12 @@
 				}
 */				
 				if (randomVerticeSettings.cloud) createRandomCloud();
-				else createRandomVertice();
+				else {
+
+					params.r = undefined;
+					createRandomVertice();
+
+				}
 				
 			}
 			updateRandomVerticeHyperSphere();
@@ -193,6 +203,10 @@
 			
 						if (cloud === cloudNew) return true;
 						cloud = cloudNew;
+						
+						hsRandomVertice.removeHyperSphere();
+						hsRandomVertice = undefined;
+						
 						updateRandomVerticeHyperSphere();
 /*						
 						hsRandomVertice.removeHyperSphere();

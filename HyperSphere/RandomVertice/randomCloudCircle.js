@@ -42,11 +42,18 @@ class RandomCloudCircle extends RandomCloud {
 				const boUpdate = randomVerticesAngles.length === 0 ? false : true;
 				for (let i = 0; i < anglesIdMax; i++) {
 
-					params.r = (1 / anglesIdMax) * i;//для замены случайной точки на регулярную
+					if (params.debug && params.debug.notRandomVertices) params.r = (1 / anglesIdMax) * i;//для замены случайной точки на регулярную
 					const randomVerticeAngles = randomVertice.angles;
-					if (boUpdate)
-						randomVerticesAngles[i] = randomVerticeAngles
-					else randomVerticesAngles.push(randomVerticeAngles);
+					if (boUpdate) {
+						
+						randomVerticesAngles[i] = randomVerticeAngles;
+/*						
+						randomVerticeAngles.forEach((angle, angleId) => {
+							randomVerticesAngles[i][angleId] = angle;
+						});
+*/						
+						
+					} else randomVerticesAngles.push(randomVerticeAngles);
 
 				}
 				return randomVerticesAngles;
