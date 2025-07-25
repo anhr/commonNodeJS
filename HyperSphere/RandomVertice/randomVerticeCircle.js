@@ -32,6 +32,7 @@ class RandomVerticeCircle extends RandomVertice {
 		super(params);
 
 		const π = Math.PI, min = anglesRange.longitude.min, max  = anglesRange.longitude.max, range = anglesRange.longitude.range, b = 100, a = (1 - b)/π;
+		let randomAngles;
 
 		//случайные углы вычисляются только с одной стороны от params.oppositeVertice.
 		//Поэтому случайные углы разделяю на две части.
@@ -41,10 +42,17 @@ class RandomVerticeCircle extends RandomVertice {
 		//let direction = Math.random() > 0.5 ? 1 : -1;
 		
 		//overridden methods
-		
+
 		Object.defineProperty(this, 'angles', {
 			
-			get: function() {
+			get: () => { return randomAngles; },
+			set: (anglesNew) => { randomAngles = anglesNew; },
+			
+		});
+		
+		Object.defineProperty(this, 'randomAngles', {
+			
+			get: () => {
 
 				const r = params.r === undefined ? Math.random() : params.r,//, a = max - min, b = min;
 					arc = params.vertice.longitude - params.oppositeVertice.longitude,
@@ -67,14 +75,18 @@ class RandomVerticeCircle extends RandomVertice {
 				//normalize angle
 				if (angle > π) angle -= range;
 				else if(angle < -π) angle += range;
-				
-				return [[angle]];
+
+				randomAngles = [[angle]];
+				return randomAngles;
 				
 			},
+			set: (anglesNew) => {},
 			
 		});
 		
 		/////////////////////////////overridden methods
+
+		this.randomAngles;
 
 	}
 	

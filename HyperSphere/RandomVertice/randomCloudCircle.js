@@ -36,52 +36,37 @@ class RandomCloudCircle extends RandomCloud {
 		
 		//overridden methods
 
-		{
-
-			Object.defineProperty(this, 'angles', {
-				
-				get: function() {
-	
-					const boUpdate = randomVerticesAngles.length === 0 ? false : true;
-					if (boUpdate && !this.boUpdate) {
-
-						return randomVerticesAngles;
-						
-					}
-					const thisBoUpdate = this.boUpdate;
-					this.boUpdate = undefined;
-					for (let i = 0; i < anglesIdMax; i++) {
-	
-						if (params.debug && params.debug.notRandomVertices) params.r = (1 / anglesIdMax) * i;//для замены случайной точки на регулярную
-						const randomVerticeAngles = randomVertice.angles;
-						if (boUpdate) {
-
-							randomVerticesAngles[i] = randomVerticeAngles;
-	/*						
-							randomVerticeAngles.forEach((angle, angleId) => {
-								randomVerticesAngles[i][angleId] = angle;
-							});
-	*/						
-							
-						} else randomVerticesAngles.push(randomVerticeAngles);
-	
-					}
-					this.boUpdate = thisBoUpdate;
-					return randomVerticesAngles;
-					
-				},
-				set: (anglesNew) => {
-
-					randomVerticesAngles = anglesNew;
-//					return true;
+		Object.defineProperty(this, 'angles', {
+			
+			get: () => { return randomVerticesAngles; },
+			set: (anglesNew) => { randomVerticesAngles = anglesNew; },
+			
+		});
 		
-				},
+		Object.defineProperty(this, 'randomAngles', {
+			
+			get: () => {
+
+				const boUpdate = randomVerticesAngles.length === 0 ? false : true;
+				for (let i = 0; i < anglesIdMax; i++) {
+
+					if (params.debug && params.debug.notRandomVertices) params.r = (1 / anglesIdMax) * i;//для замены случайной точки на регулярную
+					const randomVerticeAngles = randomVertice.randomAngles;
+					if (boUpdate) randomVerticesAngles[i] = randomVerticeAngles;
+					else randomVerticesAngles.push(randomVerticeAngles);
+
+				}
+				return randomVerticesAngles;
 				
-			});
-	
-		}
+			},
+			
+			set: (anglesNew) => { randomVerticesAngles = anglesNew; },
+			
+		});
 		
 		/////////////////////////////overridden methods
+
+		this.randomAngles;
 		
 	}
 	

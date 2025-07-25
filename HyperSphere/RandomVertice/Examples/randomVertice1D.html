@@ -43,10 +43,10 @@
 				//R: 0.5,
 				debug: {
 					
-					notRandomVertices: true,
+					//notRandomVertices: true,
 				
 				},
-				cloud: true,
+				cloud: false,
 			
 			};
 			const params = {
@@ -70,10 +70,12 @@
 
 				if (hsRandomVertice) {
 
-//					hsRandomVertice.classSettings.settings.object.geometry.angles = randomVertice.angles;
+/*					
 					randomVertice.boUpdate = true;
 					hsRandomVertice.setPositionAttributeFromPoints(randomVertice.angles, true);
 					randomVertice.boUpdate = undefined;
+*/					
+					hsRandomVertice.setPositionAttributeFromPoints(randomVertice.randomAngles, true);
 					return;
 
 				}
@@ -209,6 +211,8 @@
 						
 						hsRandomVertice.removeHyperSphere();
 						hsRandomVertice = undefined;
+
+						if (!cloud) randomVertice.randomAngles;
 						
 						updateRandomVerticeHyperSphere();
 /*						

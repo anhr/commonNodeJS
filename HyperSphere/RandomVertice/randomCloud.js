@@ -23,13 +23,12 @@ class RandomCloud {
 	/**
 	 * Generates a cloud of the random vertices around opposite vertice.
 	 */
-	constructor(params) {
-
-	}
+	constructor() {}
 	
 	//overridden methods
 	
-	get angles() { console.error(sRandomVertice + sOver.replace('%s', 'get angles')) }
+	get angles() { console.error(sRandomCloud + sOver.replace('%s', 'get angles')) }
+	get randomAngles() { console.error(sRandomCloud + sOver.replace('%s', 'get randomAngles')) }
 	
 	/////////////////////////////overridden methods
 
