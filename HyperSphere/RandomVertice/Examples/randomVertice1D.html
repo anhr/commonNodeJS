@@ -43,7 +43,7 @@
 				//R: 0.5,
 				debug: {
 					
-					//notRandomVertices: true,
+					notRandomVertices: true,
 				
 				},
 				cloud: true,
@@ -71,7 +71,9 @@
 				if (hsRandomVertice) {
 
 //					hsRandomVertice.classSettings.settings.object.geometry.angles = randomVertice.angles;
+					randomVertice.boUpdate = true;
 					hsRandomVertice.setPositionAttributeFromPoints(randomVertice.angles, true);
+					randomVertice.boUpdate = undefined;
 					return;
 
 				}
@@ -98,7 +100,8 @@
 	
 							name: name,
 							//color: 'white',
-							geometry: { angles: randomVertice.angles, },
+//							geometry: { angles: randomVertice.angles, },
+							geometry: randomVertice,
 	
 						},
 						overriddenProperties: { setDrawRange: (start, count) => { if (hsRandomVertice) hsRandomVertice.bufferGeometry.setDrawRange(start, count); } },
