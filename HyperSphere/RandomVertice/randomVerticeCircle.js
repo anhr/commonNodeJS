@@ -70,7 +70,7 @@ class RandomVerticeCircle extends RandomVertice {
 			
 			get: () => {
 
-				const r = (params.r === undefined ? Math.random() : params.r) - 0.5,
+				const r = (params.random === undefined ? Math.random() : params.random) - 0.5,
 					arc = Math.abs(normalizeAngle(params.vertice.longitude - params.oppositeVertice.longitude)),
 					
 					//arc = π, b = 1 все точки почти равномерно распределяются по кругу
