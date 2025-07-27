@@ -31,16 +31,32 @@ class RandomVerticeCircle extends RandomVertice {
 
 		super(params);
 
-		const π = Math.PI, min = anglesRange.longitude.min, max  = anglesRange.longitude.max, range = anglesRange.longitude.range, b = 100, a = (1 - b)/π;
+		const π = Math.PI, tan = Math.tan,
+			range = anglesRange.longitude.range,
+
+			//parameters for b = arc * a + c,
+			a = (1 / π) - 1, c = π,
+			
+			normalizeAngle = (angle) => {
+					
+				if (angle > π) {
+					
+					angle -= range;
+					if (angle > π)
+						console.error('angle > π')
+					
+				} else {
+					
+					if(angle < -π) angle += range;
+					if (angle < -π)
+						console.error('angle < -π')
+
+				}
+				return angle;
+
+			};
 		let randomAngles;
 
-		//случайные углы вычисляются только с одной стороны от params.oppositeVertice.
-		//Поэтому случайные углы разделяю на две части.
-		//В каждой части диапазон случайных углов уменьшаю в два раза.
-		//Случайным образом выбираем direction - какую часть вычисляем сначала.
-		//Это нужно для того, чтобы при вычислении randomVertice, без вычисления облака случайных вершин, randomVertice случайно оказывалась с разных сторон от params.oppositeVertice.
-		//let direction = Math.random() > 0.5 ? 1 : -1;
-		
 		//overridden methods
 
 		Object.defineProperty(this, 'angles', {
@@ -54,27 +70,25 @@ class RandomVerticeCircle extends RandomVertice {
 			
 			get: () => {
 
-				const r = params.r === undefined ? Math.random() : params.r,//, a = max - min, b = min;
-					arc = params.vertice.longitude - params.oppositeVertice.longitude,
-/*					
-					p = Math.pow(r, 1 / (a * Math.abs(arc) + b));
-				console.log('r = ' + r + ' p = ' + p);
-				let angle = (direction * range * p)
-					/ 2//В каждой части случайных углов диапазон случайных углов уменьшаю в два раза
-					+ params.oppositeVertice.longitude - π;
-				direction = -direction;
-*/				
-//					p = Math.atan(r - 0.5) * (0.5 / Math.atan(0.5));
-					d = a * Math.abs(arc) + b,
-					p = Math.atan((r - 0.5) * d) * (((arc * 0.5) / π + 1) / Math.atan(0.5 * d));
-					//p = Math.atan((r - 0.5) * d) * (0.5 / Math.atan(0.5 * d));//arc = π
-					//p = Math.atan((r - 0.5) * d) * (1 / Math.atan(0.5 * d));//arc = 0
-				//console.log('r = ' + r + ' p = ' + p);
-				let angle = range * p + params.oppositeVertice.longitude;
+				const r = (params.r === undefined ? Math.random() : params.r) - 0.5,
+					arc = Math.abs(normalizeAngle(params.vertice.longitude - params.oppositeVertice.longitude)),
+					
+					//arc = π, b = 1 все точки почти равномерно распределяются по кругу
+					//arc = 0, b = π все точки стягиваются в одну точку
+					//a = (1 / π) - 1, c = π
+					b = arc * a + c,
+					
+					p = (
+						tan(r * b) /
+						tan(0.5 * b)//делим на tan(0.5 * b), что бы при минимальном и максимальном r, p получалось -1 и 1
+					) *
+					π;//Умножаем на π что бы при минимальном и максимальном r углы получались на противоположной от params.oppositeVertice.longitude стороне окружности.
+						//Тем самым точки почти равномерно распределяются по окружности когда arc = π, тоесть вершина и противоположная вершина расположены на противоположных сторонах окружности
 				
-				//normalize angle
-				if (angle > π) angle -= range;
-				else if(angle < -π) angle += range;
+//				console.log('r = ' + r + ' p = ' + p);
+				let angle = p + params.oppositeVertice.longitude;
+				
+				normalizeAngle(angle);
 
 				randomAngles = [[angle]];
 				return randomAngles;
