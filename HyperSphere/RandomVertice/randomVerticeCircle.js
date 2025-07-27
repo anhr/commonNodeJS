@@ -88,7 +88,7 @@ class RandomVerticeCircle extends RandomVertice {
 //				console.log('r = ' + r + ' p = ' + p);
 				let angle = p + params.oppositeVertice.longitude;
 				
-				normalizeAngle(angle);
+				angle = normalizeAngle(angle);
 
 				randomAngles = [[angle]];
 				return randomAngles;
