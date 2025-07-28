@@ -15,6 +15,7 @@
 
 import RandomCloud from './RandomCloud.js';
 import RandomVertice from './randomVerticeCircle.js';
+import * as utils from './utils.js'
 
 const sRandomCloudCircle = 'RandomCloudCircle';
 /**
@@ -48,9 +49,15 @@ class RandomCloudCircle extends RandomCloud {
 			get: () => {
 
 				const boUpdate = randomVerticesAngles.length === 0 ? false : true;
+
+				//что бы не делать повторяющихся вычислений
+				params.b = utils.b(params);
+//				params.arc = Math.abs(normalizeAngle(params.vertice.longitude - params.oppositeVertice.longitude));
+				
 				for (let i = 0; i <= anglesIdMax; i++) {
 
 					if (params.debug && params.debug.notRandomVertices) params.random = (1 / anglesIdMax) * i;//для замены случайной точки на регулярную
+					
 					const randomVerticeAngles = randomVertice.randomAngles;
 					if (boUpdate) randomVerticesAngles[i] = randomVerticeAngles;
 					else randomVerticesAngles.push(randomVerticeAngles);

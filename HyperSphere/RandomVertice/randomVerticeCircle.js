@@ -15,6 +15,7 @@
 
 import RandomVertice from './randomVertice.js';
 import anglesRange from '../anglesRange.js'
+import * as utils from './utils.js'
 
 const sRandomVerticesCircle = 'RandomVerticesCircle';
 /**
@@ -32,11 +33,12 @@ class RandomVerticeCircle extends RandomVertice {
 		super(params);
 
 		const π = Math.PI, tan = Math.tan,
-			range = anglesRange.longitude.range,
-
+			range = anglesRange.longitude.range;
+/*
 			//parameters for b = arc * a + c,
-			a = (1 / π) - 1, c = π,
-			
+			a = (1 / π) - 1, c = π;
+*/
+/*			
 			normalizeAngle = (angle) => {
 					
 				if (angle > π) {
@@ -55,6 +57,7 @@ class RandomVerticeCircle extends RandomVertice {
 				return angle;
 
 			};
+*/			
 		let randomAngles;
 
 		//overridden methods
@@ -71,13 +74,15 @@ class RandomVerticeCircle extends RandomVertice {
 			get: () => {
 
 				const r = (params.random === undefined ? Math.random() : params.random) - 0.5,
-					arc = Math.abs(normalizeAngle(params.vertice.longitude - params.oppositeVertice.longitude)),
+					b = params.b ? params.b : utils.b(params),
+/*					
+					arc = params.arc != undefined ? params.arc : Math.abs(normalizeAngle(params.vertice.longitude - params.oppositeVertice.longitude)),
 					
 					//arc = π, b = 1 все точки почти равномерно распределяются по кругу
 					//arc = 0, b = π все точки стягиваются в одну точку
 					//a = (1 / π) - 1, c = π
 					b = arc * a + c,
-					
+*/					
 					p = (
 						tan(r * b) /
 						tan(0.5 * b)//делим на tan(0.5 * b), что бы при минимальном и максимальном r, p получалось -1 и 1
@@ -88,7 +93,7 @@ class RandomVerticeCircle extends RandomVertice {
 //				console.log('r = ' + r + ' p = ' + p);
 				let angle = p + params.oppositeVertice.longitude;
 				
-				angle = normalizeAngle(angle);
+				angle = utils.normalizeAngle(angle);
 
 				randomAngles = [[angle]];
 				return randomAngles;
