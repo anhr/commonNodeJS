@@ -1,6 +1,6 @@
 /**
  * @module RandomVerticeCircle
- * @description Generates a random vertice near the opposite vertice in 1D hypersphere.
+ * @description Generates a random vertice near the opposite vertice in 2D hypersphere.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
@@ -17,15 +17,15 @@ import RandomVertice from './randomVertice.js';
 import anglesRange from '../anglesRange.js'
 import * as utils from './utilsSphere.js'
 
-const sRandomVerticesCircle = 'RandomVerticesCircle';
+const sRandomVerticesSphere = 'RandomVerticesSphere';
 /**
- * Generates a random vertice near the opposite vertice in 1D hypersphere.
+ * Generates a random vertice near the opposite vertice in 2D hypersphere.
  * @class
  */
-class RandomVerticeCircle extends RandomVertice {
+class RandomVerticeSphere extends RandomVertice {
 
 	/**
-	 * Generates a random vertice near the opposite vertice in 1D hypersphere.
+	 * Generates a random vertice near the opposite vertice in 2D hypersphere.
 	 * @param {object} [params={}] See the <b>params</b> of the <b>RandomVertice</b> constructor.
 	 */
 	constructor(params) {
@@ -72,7 +72,7 @@ class RandomVerticeCircle extends RandomVertice {
 				longitude = utils.normalizeAngle(longitude);
 
 				randomAngles = [[0, longitude]];
-				return randomAngles;
+				return randomAngles[0];
 				
 			},
 			set: (anglesNew) => {},
@@ -128,4 +128,4 @@ class RandomVerticeCircle extends RandomVertice {
 	/////////////////////////////overridden methods
 
 }
-export default RandomVerticeCircle;
+export default RandomVerticeSphere;

@@ -17,7 +17,7 @@ import RandomVertice from './randomVertice.js';
 import anglesRange from '../anglesRange.js'
 import * as utils from './utilsCircle.js'
 
-const sRandomVerticesCircle = 'RandomVerticesCircle';
+const sRandomVerticeCircle = 'RandomVerticeCircle';
 /**
  * Generates a random vertice near the opposite vertice in 1D hypersphere.
  * @class
@@ -96,7 +96,7 @@ class RandomVerticeCircle extends RandomVertice {
 				angle = utils.normalizeAngle(angle);
 
 				randomAngles = [[angle]];
-				return randomAngles;
+				return randomAngles[0];
 				
 			},
 			set: (anglesNew) => {},
