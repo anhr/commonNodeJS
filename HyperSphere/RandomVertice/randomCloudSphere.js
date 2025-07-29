@@ -1,6 +1,6 @@
 /**
  * @module RandomCloudCircle
- * @description Generates a cloud of random vertices near the opposite vertice in 1D hypersphere.
+ * @description Generates a cloud of random vertices near the opposite vertice in 2D hypersphere.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
@@ -17,15 +17,15 @@ import RandomCloud from './RandomCloud.js';
 import RandomVertice from './randomVerticeSphere.js';
 import * as utils from './utilsSphere.js'
 
-const sRandomCloudCircle = 'RandomCloudCircle';
+//const sRandomCloudSphere = 'RandomCloudSphere';
 /**
- * Generates a cloud of random vertices near the opposite vertice in 1D hypersphere.
+ * Generates a cloud of random vertices near the opposite vertice in 2D hypersphere.
  * @class
  */
-class RandomCloudCircle extends RandomCloud {
+class RandomCloudSphere extends RandomCloud {
 
 	/**
-	 * Generates a cloud of random vertices near the opposite vertice in 1D hypersphere.
+	 * Generates a cloud of random vertices near the opposite vertice in 2D hypersphere.
 	 * @param {object} [params={}] See the <b>params</b> of the <b>RandomVertice</b> constructor.
 	 */
 	constructor(params) {
@@ -78,16 +78,6 @@ class RandomCloudCircle extends RandomCloud {
 		this.randomAngles;
 		
 	}
-	
-	//overridden methods
-/*	
-	get angles() {
-		
-		return 1;
-		
-	}
-*/	
-	/////////////////////////////overridden methods
 
 }
-export default RandomCloudCircle;
+export default RandomCloudSphere;

@@ -1,6 +1,6 @@
 /**
  * @module utils
- * @description utilities which is used to calculate randomAngles.
+ * @description utilities which is used to calculate randomAngles for sphere.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
@@ -77,5 +77,3 @@ export const b = (params) => {
 	return b;
 		
 }
-
-//export default normalizeAngle;
