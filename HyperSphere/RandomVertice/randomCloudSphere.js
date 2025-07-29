@@ -52,7 +52,8 @@ class RandomCloudSphere extends RandomCloud {
 
 				//что бы не делать повторяющихся вычислений
 				params.b = utils.b(params);
-//				params.arc = Math.abs(normalizeAngle(params.vertice.longitude - params.oppositeVertice.longitude));
+
+params.latitude = 1;
 				
 				for (let i = 0; i <= anglesIdMax; i++) {
 

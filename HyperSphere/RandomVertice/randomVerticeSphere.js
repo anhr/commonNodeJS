@@ -51,14 +51,6 @@ class RandomVerticeSphere extends RandomVertice {
 
 				const r = (params.random === undefined ? Math.random() : params.random) - 0.5,
 					b = params.b ? params.b : utils.b(params),
-/*					
-					arc = params.arc != undefined ? params.arc : Math.abs(normalizeAngle(params.vertice.longitude - params.oppositeVertice.longitude)),
-					
-					//arc = π, b = 1 все точки почти равномерно распределяются по кругу
-					//arc = 0, b = π все точки стягиваются в одну точку
-					//a = (1 / π) - 1, c = π
-					b = arc * a + c,
-*/					
 					p = (
 						tan(r * b) /
 						tan(0.5 * b)//делим на tan(0.5 * b), что бы при минимальном и максимальном r, p получалось -1 и 1
@@ -71,7 +63,7 @@ class RandomVerticeSphere extends RandomVertice {
 				
 				longitude = utils.normalizeAngle(longitude);
 
-				randomAngles = [[0, longitude]];
+				randomAngles = [[params.latitude != undefined ? params.latitude : 0, longitude]];
 				return randomAngles[0];
 				
 			},
