@@ -14,8 +14,8 @@
 */
 
 import RandomCloud from './RandomCloud.js';
-import RandomVertice from './randomVerticeCircle.js';
-import * as utils from './utilsCircle.js'
+import RandomVertice from './randomVerticeSphere.js';
+import * as utils from './utilsSphere.js'
 
 const sRandomCloudCircle = 'RandomCloudCircle';
 /**

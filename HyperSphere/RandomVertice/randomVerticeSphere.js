@@ -15,7 +15,7 @@
 
 import RandomVertice from './randomVertice.js';
 import anglesRange from '../anglesRange.js'
-import * as utils from './utilsCircle.js'
+import * as utils from './utilsSphere.js'
 
 const sRandomVerticesCircle = 'RandomVerticesCircle';
 /**
@@ -34,30 +34,6 @@ class RandomVerticeCircle extends RandomVertice {
 
 		const π = Math.PI, tan = Math.tan,
 			range = anglesRange.longitude.range;
-/*
-			//parameters for b = arc * a + c,
-			a = (1 / π) - 1, c = π;
-*/
-/*			
-			normalizeAngle = (angle) => {
-					
-				if (angle > π) {
-					
-					angle -= range;
-					if (angle > π)
-						console.error('angle > π')
-					
-				} else {
-					
-					if(angle < -π) angle += range;
-					if (angle < -π)
-						console.error('angle < -π')
-
-				}
-				return angle;
-
-			};
-*/			
 		let randomAngles;
 
 		//overridden methods
@@ -91,11 +67,11 @@ class RandomVerticeCircle extends RandomVertice {
 						//Тем самым точки почти равномерно распределяются по окружности когда arc = π, тоесть вершина и противоположная вершина расположены на противоположных сторонах окружности
 				
 //				console.log('r = ' + r + ' p = ' + p);
-				let angle = p + params.oppositeVertice.longitude;
+				let longitude = p + params.oppositeVertice.longitude;
 				
-				angle = utils.normalizeAngle(angle);
+				longitude = utils.normalizeAngle(longitude);
 
-				randomAngles = [[angle]];
+				randomAngles = [[0, longitude]];
 				return randomAngles;
 				
 			},
@@ -111,21 +87,32 @@ class RandomVerticeCircle extends RandomVertice {
 	
 	//overridden methods
 	
-	ZeroArray() { return [0]; }
+	ZeroArray() { return [0, 0]; }
 	Center(params) {
 	
 		const Vertice = (vertice) => {
 		
 			if (vertice.longitude != undefined) return;
-			if (vertice.length === 0) vertice.push(0);
+			while (vertice.length < 2) vertice.push(0);
 			Object.defineProperty(vertice, 'longitude', {
 				
-				get: () => { return vertice[0]; },
+				get: () => { return vertice[1]; },
 				set: (longitude) => {
 		
-					if (vertice[0] === longitude) return true;
-					vertice[0] = longitude;
-//					if (params.randomVertices) params.randomVertices.changeCirclesPoints();
+					if (vertice[1] === longitude) return true;
+					vertice[1] = longitude;
+					return true;
+		
+				},
+			
+			});
+			Object.defineProperty(vertice, 'latitude', {
+				
+				get: () => { return vertice[0]; },
+				set: (latitude) => {
+		
+					if (vertice[0] === latitude) return true;
+					vertice[0] = latitude;
 					return true;
 		
 				},
@@ -137,13 +124,6 @@ class RandomVerticeCircle extends RandomVertice {
 		Vertice(params.oppositeVertice);
 		
 	}
-/*	
-	get angles() {
-		
-		return this.params.oppositeVertice;
-		
-	}
-*/	
 	
 	/////////////////////////////overridden methods
 
