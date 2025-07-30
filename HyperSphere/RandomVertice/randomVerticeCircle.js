@@ -34,30 +34,6 @@ class RandomVerticeCircle extends RandomVertice {
 
 		const π = Math.PI, tan = Math.tan,
 			range = anglesRange.longitude.range;
-/*
-			//parameters for b = arc * a + c,
-			a = (1 / π) - 1, c = π;
-*/
-/*			
-			normalizeAngle = (angle) => {
-					
-				if (angle > π) {
-					
-					angle -= range;
-					if (angle > π)
-						console.error('angle > π')
-					
-				} else {
-					
-					if(angle < -π) angle += range;
-					if (angle < -π)
-						console.error('angle < -π')
-
-				}
-				return angle;
-
-			};
-*/			
 		let randomAngles;
 
 		//overridden methods
@@ -75,14 +51,6 @@ class RandomVerticeCircle extends RandomVertice {
 
 				const r = (params.random === undefined ? Math.random() : params.random) - 0.5,
 					b = params.b ? params.b : utils.b(params),
-/*					
-					arc = params.arc != undefined ? params.arc : Math.abs(normalizeAngle(params.vertice.longitude - params.oppositeVertice.longitude)),
-					
-					//arc = π, b = 1 все точки почти равномерно распределяются по кругу
-					//arc = 0, b = π все точки стягиваются в одну точку
-					//a = (1 / π) - 1, c = π
-					b = arc * a + c,
-*/					
 					p = (
 						tan(r * b) /
 						tan(0.5 * b)//делим на tan(0.5 * b), что бы при минимальном и максимальном r, p получалось -1 и 1
@@ -90,7 +58,6 @@ class RandomVerticeCircle extends RandomVertice {
 					π;//Умножаем на π что бы при минимальном и максимальном r углы получались на противоположной от params.oppositeVertice.longitude стороне окружности.
 						//Тем самым точки почти равномерно распределяются по окружности когда arc = π, тоесть вершина и противоположная вершина расположены на противоположных сторонах окружности
 				
-//				console.log('r = ' + r + ' p = ' + p);
 				let angle = p + params.oppositeVertice.longitude;
 				
 				angle = utils.normalizeAngle(angle);
@@ -137,13 +104,6 @@ class RandomVerticeCircle extends RandomVertice {
 		Vertice(params.oppositeVertice);
 		
 	}
-/*	
-	get angles() {
-		
-		return this.params.oppositeVertice;
-		
-	}
-*/	
 	
 	/////////////////////////////overridden methods
 

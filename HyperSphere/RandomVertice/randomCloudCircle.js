@@ -35,14 +35,6 @@ class RandomCloudCircle extends RandomCloud {
 		const anglesIdMax = 100, randomVertice = new RandomVertice(params);
 		
 		//overridden methods
-/*
-		Object.defineProperty(this, 'angles', {
-			
-			get: () => { return this.verticesAngles; },
-			set: (anglesNew) => { this.verticesAngles = anglesNew; },
-			
-		});
-*/		
 		
 		Object.defineProperty(this, 'randomAngles', {
 			
@@ -58,7 +50,6 @@ class RandomCloudCircle extends RandomCloud {
 		
 		/////////////////////////////overridden methods
 
-//		if (!params.noSetRandomAngles)
 		this.randomAngles;
 		
 	}

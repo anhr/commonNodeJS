@@ -60,5 +60,3 @@ export const b = (params) => {
 	return b;
 		
 }
-
-//export default normalizeAngle;

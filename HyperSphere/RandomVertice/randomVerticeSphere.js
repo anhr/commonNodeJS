@@ -58,7 +58,6 @@ class RandomVerticeSphere extends RandomVertice {
 					π;//Умножаем на π что бы при минимальном и максимальном r углы получались на противоположной от params.oppositeVertice.longitude стороне окружности.
 						//Тем самым точки почти равномерно распределяются по окружности когда arc = π, тоесть вершина и противоположная вершина расположены на противоположных сторонах окружности
 				
-//				console.log('r = ' + r + ' p = ' + p);
 				let longitude = p + params.oppositeVertice.longitude;
 				
 				longitude = utils.normalizeAngle(longitude);
