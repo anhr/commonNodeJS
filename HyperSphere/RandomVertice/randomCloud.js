@@ -13,7 +13,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 
-import * as utils from './utilsCircle.js'
+//import * as utils from './utilsCircle.js'
 
 const sRandomCloud = 'RandomCloud',
 	sOver = ': Please, override %s method in your ' + sRandomCloud + ' child class.';
@@ -29,7 +29,7 @@ class RandomCloud {
 	constructor() { }
 //	randomVerticesAngles = [];
 	verticesAngles = [];
-	anglesCircle = (params, anglesIdMax, randomVertice) => {
+	anglesCircle = (params, anglesIdMax, randomVertice, utils) => {
 		
 		const boUpdate = this.verticesAngles.length === 0 ? false : true;
 

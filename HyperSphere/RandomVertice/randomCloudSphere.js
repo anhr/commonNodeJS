@@ -43,8 +43,8 @@ class RandomCloudSphere extends RandomCloud//Circle
 
 		Object.defineProperty(this, 'angles', {
 			
-			get: () => { return this.randomVerticesAngles; },
-			set: (anglesNew) => { this.randomVerticesAngles = anglesNew; },
+			get: () => { return this.verticesAngles; },
+			set: (anglesNew) => { this.verticesAngles = anglesNew; },
 			
 		});
 		
@@ -54,12 +54,14 @@ class RandomCloudSphere extends RandomCloud//Circle
 			
 			get: () => {
 
+params.latitude = 1;
+				return this.anglesCircle(params, anglesIdMax, randomVertice, utils);
+/*				
 				const boUpdate = this.randomVerticesAngles.length === 0 ? false : true;
 
 				//что бы не делать повторяющихся вычислений
 				params.b = utils.b(params);
 
-params.latitude = 1;
 				
 				for (let i = 0; i <= anglesIdMax; i++) {
 
@@ -73,10 +75,11 @@ params.latitude = 1;
 				delete params.random;
 				delete params.b;
 				return this.randomVerticesAngles;
+*/				
 				
 			},
 			
-			set: (anglesNew) => { randomVerticesAngles = anglesNew; },
+			set: (anglesNew) => { verticesAngles = anglesNew; },
 			
 		});
 		

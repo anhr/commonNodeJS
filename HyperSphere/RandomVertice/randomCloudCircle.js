@@ -15,7 +15,7 @@
 
 import RandomCloud from './randomCloud.js';
 import RandomVertice from './randomVerticeCircle.js';
-//import * as utils from './utilsCircle.js'
+import * as utils from './utilsCircle.js'
 
 const sRandomCloudCircle = 'RandomCloudCircle';
 /**
@@ -49,7 +49,7 @@ class RandomCloudCircle extends RandomCloud {
 			
 			get: () => {
 
-				return this.anglesCircle(params, anglesIdMax, randomVertice);
+				return this.anglesCircle(params, anglesIdMax, randomVertice, utils);
 /*				
 				const boUpdate = this.randomVerticesAngles.length === 0 ? false : true;
 
