@@ -26,7 +26,16 @@ class RandomCloud {
 	/**
 	 * Generates a cloud of the random vertices around opposite vertice.
 	 */
-	constructor() { }
+	constructor() {
+
+		Object.defineProperty(this, 'angles', {
+			
+			get: () => { return this.verticesAngles; },
+			set: (anglesNew) => { this.verticesAngles = anglesNew; },
+			
+		});
+		
+	}
 //	randomVerticesAngles = [];
 	verticesAngles = [];
 	anglesCircle = (params, anglesIdMax, randomVertice, utils) => {

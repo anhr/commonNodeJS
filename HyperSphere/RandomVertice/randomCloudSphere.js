@@ -41,12 +41,14 @@ class RandomCloudSphere extends RandomCloud//Circle
 		
 		//overridden methods
 
+/*		
 		Object.defineProperty(this, 'angles', {
 			
 			get: () => { return this.verticesAngles; },
 			set: (anglesNew) => { this.verticesAngles = anglesNew; },
 			
 		});
+*/		
 		
 //		Object.defineProperty(this, 'randomAnglesSphere',
 		Object.defineProperty(this, 'randomAngles',

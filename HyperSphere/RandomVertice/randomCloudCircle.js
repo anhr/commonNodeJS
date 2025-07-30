@@ -33,43 +33,22 @@ class RandomCloudCircle extends RandomCloud {
 		super(params);
 
 		const anglesIdMax = 100, randomVertice = new RandomVertice(params);
-//		this.randomVerticesAngles = [];
 		
 		//overridden methods
-
-//		if (!params.noSetRandomAngles)
-			Object.defineProperty(this, 'angles', {
-				
-				get: () => { return this.verticesAngles; },
-				set: (anglesNew) => { this.verticesAngles = anglesNew; },
-				
-			});
+/*
+		Object.defineProperty(this, 'angles', {
+			
+			get: () => { return this.verticesAngles; },
+			set: (anglesNew) => { this.verticesAngles = anglesNew; },
+			
+		});
+*/		
 		
 		Object.defineProperty(this, 'randomAngles', {
 			
 			get: () => {
 
 				return this.anglesCircle(params, anglesIdMax, randomVertice, utils);
-/*				
-				const boUpdate = this.randomVerticesAngles.length === 0 ? false : true;
-
-				//что бы не делать повторяющихся вычислений
-				params.b = utils.b(params);
-//				params.arc = Math.abs(normalizeAngle(params.vertice.longitude - params.oppositeVertice.longitude));
-				
-				for (let i = 0; i <= anglesIdMax; i++) {
-
-					if (params.debug && params.debug.notRandomVertices) params.random = (1 / anglesIdMax) * i;//для замены случайной точки на регулярную
-					
-					const randomVerticeAngles = randomVertice.randomAngles;
-					if (boUpdate) this.randomVerticesAngles[i] = randomVerticeAngles;
-					else this.randomVerticesAngles.push(randomVerticeAngles);
-
-				}
-				delete params.random;
-				delete params.b;
-				return this.randomVerticesAngles;
-*/				
 				
 			},
 			
