@@ -44,7 +44,7 @@ class RandomCloudSphere extends RandomCloud//Circle
 			get: () => {
 
 params.latitude = 1;
-				return this.anglesCircle(params, anglesIdMax, randomVertice, utils);
+				return this.anglesCircle(anglesIdMax, randomVertice, utils);
 				
 			},
 			

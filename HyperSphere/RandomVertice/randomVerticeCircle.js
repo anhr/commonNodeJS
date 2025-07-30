@@ -65,7 +65,7 @@ class RandomVerticeCircle extends RandomVertice {
 
 				randomAngles = [[angle]];
 */				
-				randomAngles = [[this.anglesCircle(params, utils)]];
+				randomAngles = [[this.anglesCircle(utils)]];
 				return randomAngles[0];
 				
 			},

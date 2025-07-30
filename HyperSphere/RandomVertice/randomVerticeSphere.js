@@ -65,7 +65,7 @@ class RandomVerticeSphere extends RandomVertice {
 
 				randomAngles = [[params.latitude != undefined ? params.latitude : 0, longitude]];
 */				
-				randomAngles = [[params.latitude != undefined ? params.latitude : 0, this.anglesCircle(params, utils)]];
+				randomAngles = [[params.latitude != undefined ? params.latitude : 0, this.anglesCircle(utils)]];
 				return randomAngles[0];
 				
 			},

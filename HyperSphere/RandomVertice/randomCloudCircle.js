@@ -38,12 +38,7 @@ class RandomCloudCircle extends RandomCloud {
 		
 		Object.defineProperty(this, 'randomAngles', {
 			
-			get: () => {
-
-				return this.anglesCircle(params, anglesIdMax, randomVertice, utils);
-				
-			},
-			
+			get: () => { return this.anglesCircle(anglesIdMax, randomVertice, utils); },
 			set: (anglesNew) => { verticesAngles = anglesNew; },
 			
 		});
