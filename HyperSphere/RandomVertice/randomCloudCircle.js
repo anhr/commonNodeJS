@@ -13,9 +13,9 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 
-import RandomCloud from './RandomCloud.js';
+import RandomCloud from './randomCloud.js';
 import RandomVertice from './randomVerticeCircle.js';
-import * as utils from './utilsCircle.js'
+//import * as utils from './utilsCircle.js'
 
 const sRandomCloudCircle = 'RandomCloudCircle';
 /**
@@ -33,15 +33,15 @@ class RandomCloudCircle extends RandomCloud {
 		super(params);
 
 		const anglesIdMax = 100, randomVertice = new RandomVertice(params);
-		this.randomVerticesAngles = [];
+//		this.randomVerticesAngles = [];
 		
 		//overridden methods
 
-		if (!params.noSetRandomAngles)
+//		if (!params.noSetRandomAngles)
 			Object.defineProperty(this, 'angles', {
 				
-				get: () => { return this.randomVerticesAngles; },
-				set: (anglesNew) => { this.randomVerticesAngles = anglesNew; },
+				get: () => { return this.verticesAngles; },
+				set: (anglesNew) => { this.verticesAngles = anglesNew; },
 				
 			});
 		
@@ -49,6 +49,8 @@ class RandomCloudCircle extends RandomCloud {
 			
 			get: () => {
 
+				return this.anglesCircle(params, anglesIdMax, randomVertice);
+/*				
 				const boUpdate = this.randomVerticesAngles.length === 0 ? false : true;
 
 				//что бы не делать повторяющихся вычислений
@@ -67,16 +69,18 @@ class RandomCloudCircle extends RandomCloud {
 				delete params.random;
 				delete params.b;
 				return this.randomVerticesAngles;
+*/				
 				
 			},
 			
-			set: (anglesNew) => { randomVerticesAngles = anglesNew; },
+			set: (anglesNew) => { verticesAngles = anglesNew; },
 			
 		});
 		
 		/////////////////////////////overridden methods
 
-		if (!params.noSetRandomAngles) this.randomAngles;
+//		if (!params.noSetRandomAngles)
+		this.randomAngles;
 		
 	}
 

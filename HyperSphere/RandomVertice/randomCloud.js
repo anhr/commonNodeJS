@@ -12,6 +12,9 @@
  *
  * http://www.apache.org/licenses/LICENSE-2.0
 */
+
+import * as utils from './utilsCircle.js'
+
 const sRandomCloud = 'RandomCloud',
 	sOver = ': Please, override %s method in your ' + sRandomCloud + ' child class.';
 /**
@@ -23,7 +26,30 @@ class RandomCloud {
 	/**
 	 * Generates a cloud of the random vertices around opposite vertice.
 	 */
-	constructor() {}
+	constructor() { }
+//	randomVerticesAngles = [];
+	verticesAngles = [];
+	anglesCircle = (params, anglesIdMax, randomVertice) => {
+		
+		const boUpdate = this.verticesAngles.length === 0 ? false : true;
+
+		//что бы не делать повторяющихся вычислений
+		params.b = utils.b(params);
+//				params.arc = Math.abs(normalizeAngle(params.vertice.longitude - params.oppositeVertice.longitude));
+		
+		for (let i = 0; i <= anglesIdMax; i++) {
+
+			if (params.debug && params.debug.notRandomVertices) params.random = (1 / anglesIdMax) * i;//для замены случайной точки на регулярную
+			
+			const randomVerticeAngles = randomVertice.randomAngles;
+			if (boUpdate) this.verticesAngles[i] = randomVerticeAngles;
+			else this.verticesAngles.push(randomVerticeAngles);
+
+		}
+		delete params.random;
+		delete params.b;
+		return this.verticesAngles;
+	}
 	
 	//overridden methods
 	

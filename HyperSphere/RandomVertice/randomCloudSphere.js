@@ -13,8 +13,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 
-//import RandomCloud from './randomCloud.js';
-import RandomCloudCircle from './randomCloudCircle.js';
+import RandomCloud from './randomCloud.js';
+//import RandomCloudCircle from './randomCloudCircle.js';
 import RandomVertice from './randomVerticeSphere.js';
 import * as utils from './utilsSphere.js'
 
@@ -23,7 +23,8 @@ import * as utils from './utilsSphere.js'
  * Generates a cloud of random vertices near the opposite vertice in 2D hypersphere.
  * @class
  */
-class RandomCloudSphere extends RandomCloudCircle {
+class RandomCloudSphere extends RandomCloud//Circle
+{
 
 	/**
 	 * Generates a cloud of random vertices near the opposite vertice in 2D hypersphere.
@@ -31,9 +32,9 @@ class RandomCloudSphere extends RandomCloudCircle {
 	 */
 	constructor(params) {
 
-		params.noSetRandomAngles = true;
+//		params.noSetRandomAngles = true;
 		super(params);
-		delete params.noSetRandomAngles;
+//		delete params.noSetRandomAngles;
 
 		const anglesIdMax = 100, randomVertice = new RandomVertice(params);
 //		let randomVerticesAngles = [];
@@ -47,7 +48,9 @@ class RandomCloudSphere extends RandomCloudCircle {
 			
 		});
 		
-		Object.defineProperty(this, 'randomAnglesSphere', {
+//		Object.defineProperty(this, 'randomAnglesSphere',
+		Object.defineProperty(this, 'randomAngles',
+							  {
 			
 			get: () => {
 
@@ -79,7 +82,8 @@ params.latitude = 1;
 		
 		/////////////////////////////overridden methods
 
-		this.randomAnglesSphere;
+//		this.randomAnglesSphere;
+		this.randomAngles;
 		
 	}
 
