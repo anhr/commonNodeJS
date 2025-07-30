@@ -13,7 +13,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 
-import RandomCloud from './RandomCloud.js';
+//import RandomCloud from './randomCloud.js';
+import RandomCloudCircle from './randomCloudCircle.js';
 import RandomVertice from './randomVerticeSphere.js';
 import * as utils from './utilsSphere.js'
 
@@ -22,7 +23,7 @@ import * as utils from './utilsSphere.js'
  * Generates a cloud of random vertices near the opposite vertice in 2D hypersphere.
  * @class
  */
-class RandomCloudSphere extends RandomCloud {
+class RandomCloudSphere extends RandomCloudCircle {
 
 	/**
 	 * Generates a cloud of random vertices near the opposite vertice in 2D hypersphere.
@@ -30,25 +31,27 @@ class RandomCloudSphere extends RandomCloud {
 	 */
 	constructor(params) {
 
-		super();
+		params.noSetRandomAngles = true;
+		super(params);
+		delete params.noSetRandomAngles;
 
 		const anglesIdMax = 100, randomVertice = new RandomVertice(params);
-		let randomVerticesAngles = [];
+//		let randomVerticesAngles = [];
 		
 		//overridden methods
 
 		Object.defineProperty(this, 'angles', {
 			
-			get: () => { return randomVerticesAngles; },
-			set: (anglesNew) => { randomVerticesAngles = anglesNew; },
+			get: () => { return this.randomVerticesAngles; },
+			set: (anglesNew) => { this.randomVerticesAngles = anglesNew; },
 			
 		});
 		
-		Object.defineProperty(this, 'randomAngles', {
+		Object.defineProperty(this, 'randomAnglesSphere', {
 			
 			get: () => {
 
-				const boUpdate = randomVerticesAngles.length === 0 ? false : true;
+				const boUpdate = this.randomVerticesAngles.length === 0 ? false : true;
 
 				//что бы не делать повторяющихся вычислений
 				params.b = utils.b(params);
@@ -60,13 +63,13 @@ params.latitude = 1;
 					if (params.debug && params.debug.notRandomVertices) params.random = (1 / anglesIdMax) * i;//для замены случайной точки на регулярную
 					
 					const randomVerticeAngles = randomVertice.randomAngles;
-					if (boUpdate) randomVerticesAngles[i] = randomVerticeAngles;
-					else randomVerticesAngles.push(randomVerticeAngles);
+					if (boUpdate) this.randomVerticesAngles[i] = randomVerticeAngles;
+					else this.randomVerticesAngles.push(randomVerticeAngles);
 
 				}
 				delete params.random;
 				delete params.b;
-				return randomVerticesAngles;
+				return this.randomVerticesAngles;
 				
 			},
 			
@@ -76,7 +79,7 @@ params.latitude = 1;
 		
 		/////////////////////////////overridden methods
 
-		this.randomAngles;
+		this.randomAnglesSphere;
 		
 	}
 

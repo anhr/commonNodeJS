@@ -30,25 +30,26 @@ class RandomCloudCircle extends RandomCloud {
 	 */
 	constructor(params) {
 
-		super();
+		super(params);
 
 		const anglesIdMax = 100, randomVertice = new RandomVertice(params);
-		let randomVerticesAngles = [];
+		this.randomVerticesAngles = [];
 		
 		//overridden methods
 
-		Object.defineProperty(this, 'angles', {
-			
-			get: () => { return randomVerticesAngles; },
-			set: (anglesNew) => { randomVerticesAngles = anglesNew; },
-			
-		});
+		if (!params.noSetRandomAngles)
+			Object.defineProperty(this, 'angles', {
+				
+				get: () => { return this.randomVerticesAngles; },
+				set: (anglesNew) => { this.randomVerticesAngles = anglesNew; },
+				
+			});
 		
 		Object.defineProperty(this, 'randomAngles', {
 			
 			get: () => {
 
-				const boUpdate = randomVerticesAngles.length === 0 ? false : true;
+				const boUpdate = this.randomVerticesAngles.length === 0 ? false : true;
 
 				//что бы не делать повторяющихся вычислений
 				params.b = utils.b(params);
@@ -59,13 +60,13 @@ class RandomCloudCircle extends RandomCloud {
 					if (params.debug && params.debug.notRandomVertices) params.random = (1 / anglesIdMax) * i;//для замены случайной точки на регулярную
 					
 					const randomVerticeAngles = randomVertice.randomAngles;
-					if (boUpdate) randomVerticesAngles[i] = randomVerticeAngles;
-					else randomVerticesAngles.push(randomVerticeAngles);
+					if (boUpdate) this.randomVerticesAngles[i] = randomVerticeAngles;
+					else this.randomVerticesAngles.push(randomVerticeAngles);
 
 				}
 				delete params.random;
 				delete params.b;
-				return randomVerticesAngles;
+				return this.randomVerticesAngles;
 				
 			},
 			
@@ -75,19 +76,9 @@ class RandomCloudCircle extends RandomCloud {
 		
 		/////////////////////////////overridden methods
 
-		this.randomAngles;
+		if (!params.noSetRandomAngles) this.randomAngles;
 		
 	}
-	
-	//overridden methods
-/*	
-	get angles() {
-		
-		return 1;
-		
-	}
-*/	
-	/////////////////////////////overridden methods
 
 }
 export default RandomCloudCircle;

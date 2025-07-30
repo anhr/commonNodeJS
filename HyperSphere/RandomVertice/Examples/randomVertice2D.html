@@ -110,7 +110,8 @@
 				});
 	
 			}
-			const randomVertice = new RandomVertice(params), randomCloud = new RandomCloud(params), 
+			const randomVertice = new RandomVertice(params), randomCloud = new RandomCloud(params),
+rrr = randomCloud.angles,
 				createRandomCloud = () => { createRandomVerticeHyperSphere(randomCloud, 'Random cloud'); },
 				createRandomVertice = () => { createRandomVerticeHyperSphere(randomVertice, 'Random vertice'); },
 				updateRandomVerticeHyperSphere = () => {
@@ -165,7 +166,7 @@
 			const gui = options.dat.gui.addFolder('Hypersphere'),
 				onChangeLongitude = (verticeId, longitude) => {
 
-					hsVertices.classSettings.settings.object.geometry.angles[verticeId].longitude = longitude;
+//					hsVertices.classSettings.settings.object.geometry.angles[verticeId].longitude = longitude;
 					hsVertices.setPositionAttributeFromPoint(verticeId);
 					hsVertices.update(verticeId, 0);
 					
