@@ -49,6 +49,7 @@ class RandomVerticeSphere extends RandomVertice {
 			
 			get: () => {
 
+/*				
 				const r = (params.random === undefined ? Math.random() : params.random) - 0.5,
 					b = params.b ? params.b : utils.b(params),
 					p = (
@@ -63,6 +64,8 @@ class RandomVerticeSphere extends RandomVertice {
 				longitude = utils.normalizeAngle(longitude);
 
 				randomAngles = [[params.latitude != undefined ? params.latitude : 0, longitude]];
+*/				
+				randomAngles = [[params.latitude != undefined ? params.latitude : 0, this.anglesCircle(params, utils)]];
 				return randomAngles[0];
 				
 			},
@@ -72,7 +75,7 @@ class RandomVerticeSphere extends RandomVertice {
 		
 		/////////////////////////////overridden methods
 
-		this.randomAngles;
+//		this.randomAngles;
 
 	}
 	

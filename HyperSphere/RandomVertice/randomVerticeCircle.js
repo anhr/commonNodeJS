@@ -32,7 +32,7 @@ class RandomVerticeCircle extends RandomVertice {
 
 		super(params);
 
-		const π = Math.PI, tan = Math.tan,
+		const //π = Math.PI, tan = Math.tan,
 			range = anglesRange.longitude.range;
 		let randomAngles;
 
@@ -49,6 +49,7 @@ class RandomVerticeCircle extends RandomVertice {
 			
 			get: () => {
 
+/*				
 				const r = (params.random === undefined ? Math.random() : params.random) - 0.5,
 					b = params.b ? params.b : utils.b(params),
 					p = (
@@ -63,6 +64,8 @@ class RandomVerticeCircle extends RandomVertice {
 				angle = utils.normalizeAngle(angle);
 
 				randomAngles = [[angle]];
+*/				
+				randomAngles = [[this.anglesCircle(params, utils)]];
 				return randomAngles[0];
 				
 			},
