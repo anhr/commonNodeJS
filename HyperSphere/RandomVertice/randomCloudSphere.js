@@ -14,7 +14,6 @@
 */
 
 import RandomCloud from './randomCloud.js';
-//import RandomCloudCircle from './randomCloudCircle.js';
 import RandomVertice from './randomVerticeSphere.js';
 import * as utils from './utilsSphere.js'
 

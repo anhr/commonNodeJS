@@ -28,6 +28,8 @@ class RandomVertice {
 	 * @param {object} [params={}] The following parameters are available.
 	 * @param {Array} [params.vertice=[0, 0, 0]] First vertice of the arc between two vertices.
 	 * @param {Array} [params.oppositeVertice=[0, 0, 0]] Second vertice of the arc between two vertices.
+	 * @param {object} [params.debug] Debug mode.
+	 * @param {object} [params.debug.notRandomVertices] true - replacing random vertices with strictly defined vertices.
 	 */
 	constructor(params) {
 

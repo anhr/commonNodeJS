@@ -23,6 +23,7 @@ class RandomCloud {
 
 	/**
 	 * Generates a cloud of the random vertices around opposite vertice.
+	 * @param {object} [params={}] See the <b>params</b> of the <b>RandomVertice</b> constructor.
 	 */
 	constructor(params) {
 
