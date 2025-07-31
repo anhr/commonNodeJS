@@ -38,10 +38,10 @@ class RandomVertice {
 		this.Center(params);
 		this.anglesCircle = (utils) => {
 			
-			const r = (params.random === undefined ? Math.random() : params.random) - 0.5,
+			const random = (params.random === undefined ? Math.random() : params.random) - 0.5,
 				b = params.b ? params.b : utils.b(params),
 				p = (
-					tan(r * b) /
+					tan(random * b) /
 					tan(0.5 * b)//делим на tan(0.5 * b), что бы при минимальном и максимальном r, p получалось -1 и 1
 				) *
 				π;//Умножаем на π что бы при минимальном и максимальном r углы получались на противоположной от params.oppositeVertice.longitude стороне окружности.
