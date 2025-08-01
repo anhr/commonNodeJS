@@ -43,7 +43,7 @@
 				//R: 0.5,
 				debug: {
 					
-					notRandomVertices: true,
+					//notRandomVertices: true,
 				
 				},
 				cloud: true,
@@ -82,9 +82,10 @@
 	
 					boRemove: false,//Если не установить этот флаг, то при замене старого hsRandomVertice на новый будут удаляться все гиперсферы на scene. То есть удалится hsVertices
 					r: randomVerticeSettings.R,
-					edges: false,
+					//edges: false,
 					//randomArc: true,
 					projectParams: { scene: scene, },
+					/*
 					debug: randomVerticeSettings.debug ? {
 	
 						probabilityDensity: false,
@@ -92,7 +93,14 @@
 						log: false,
 	
 					} : false,
-					//debug: false,
+					*/
+					debug: {
+	
+						probabilityDensity: false,
+						middleVertice: false,
+						log: false,
+	
+					},
 					settings: {
 	
 						object: {
@@ -133,7 +141,7 @@
 			hsVertices = new HyperSphere(options, {
 
 				r: verticesSettings.R,
-				edges: false,
+				//edges: false,
 				//randomArc: true,
 				projectParams: { scene: scene, },
 //				debug: debug,
