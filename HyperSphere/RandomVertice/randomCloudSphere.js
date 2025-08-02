@@ -36,10 +36,10 @@ class RandomCloudSphere extends RandomCloud//Circle
 
 		super(params);
 
-		const anglesIdMax = 200,//Количество точек на окружности, расположенной на экваторе
-			circlesCount = anglesIdMax / 2,//количество окружностей
+		const anglesIdMax = 50,//Количество точек на окружности, расположенной на экваторе
+//			circlesCount = anglesIdMax / 2,//количество окружностей
 			angleStep = (anglesRange.longitude.max - anglesRange.longitude.min) / anglesIdMax,//угол между соседними точками на окружности, расположенной на экваторе
-			cos = Math.cos, round = Math.round,//hStep = 2 / circlesCount, asin = Math.asin, sqrt = Math.sqrt, cos = Math.cos,
+			cos = Math.cos, round = Math.round, random = Math.random,//hStep = 2 / circlesCount, asin = Math.asin, sqrt = Math.sqrt, cos = Math.cos,
 			randomVertice = new RandomVertice(params);
 		
 		//overridden methods
@@ -52,15 +52,69 @@ class RandomCloudSphere extends RandomCloud//Circle
 				//Сфера состоит из набора окружностей.
 				for(let latitude = anglesRange.latitude.min; latitude <= anglesRange.latitude.max; latitude += angleStep) {
 
-					const circleRadius = cos(latitude);//радиус текущей окружности
-					const circleAnglesCount = round(circleRadius * 2 * π / angleStep);//количество точек на текущей окружности равно длинну окружности поделить на угол между соседними точками на окружности, расположенной на экваторе
+//					const circleRadius = cos(latitude);//радиус текущей окружности
+
+					//Количество точек на текущей окружности равно длинну окружности поделить на угол между соседними точками на окружности, расположенной на экваторе
+					const circleAnglesCount = round(//найти ближайшее целое число
+							cos(latitude) *//радиус текущей окружности
+							2 * π / //длинна текущей окружности
+							angleStep//угол между соседними точками на окружности, расположенной на экваторе
+						),
+						angleStep1 = 1 / circleAnglesCount,
+						boSouthernCircle = latitude - angleStep < anglesRange.latitude.min,
+						boNorthernCircle = latitude + angleStep > anglesRange.latitude.max,
+						latitudeMin = boSouthernCircle ? latitude : (angleStep * (0 - 0.5) + latitude),//Минимальная граница широты окружности
+						latitudeMax = boNorthernCircle ? latitude : (angleStep * (1 - 0.5) + latitude),//Максимальная граница широты окружности
+						latitudeStep = latitudeMax - latitudeMin,//Ширина широты окружности
+						latitudeMid = latitudeMin + latitudeStep / 2;//Средняя широта окружности
+//						boFirstOrLastCircle = (latitude - angleStep < anglesRange.latitude.min) || (latitude + angleStep > anglesRange.latitude.max);
+					console.log('boFirstOrLastCircle = ' + (boSouthernCircle || boNorthernCircle) + ', latitude = ' + latitude + ', latitudeMin = ' + latitudeMin + ', latitudeMax = ' + latitudeMax);
+					
 					for (let angleId = 0; angleId <= circleAnglesCount; angleId++) {
 
-/*						
-						const random = params.debug && params.debug.notRandomVertices ? (circleAnglesCount === 0 ? 0 : (1 / circleAnglesCount) * angleId) : undefined;//для замены случайной точки на регулярную
-						const randomVerticeAngles = [latitude, utils.normalizeAngle(((random === undefined ? Math.random() : random) - 0.5) * π * 2)];
-*/						
-						const randomVerticeAngles = [latitude, utils.normalizeAngle(((params.debug && params.debug.notRandomVertices ? (circleAnglesCount === 0 ? 0 : (1 / circleAnglesCount) * angleId) : Math.random()) - 0.5) * π * 2)];
+						const randomVerticeAngles = [
+
+							//latitude
+							params.debug && params.debug.notRandomVertices ?
+							
+								latitude : //окружность расположна на одной широте
+
+								//окружность расположна на случайной широте в диапазоне от latitude до latitude - angleStep. Нужно, что бы окружность случайных точек немного гуляла по широте от latitude до latitude - angleStep. Тогда поверхность сферы будет случайно заполнена точками.
+								//Если это не делать то случайные точки будут располагаться слоями по широте.
+								latitudeStep * (random() - 0.5) + latitudeMid,
+/*							
+								(boSouthernCircle ?
+									//latitude ://окружность на южном полюсе
+									latitudeStep * (random() - 0.5) + latitudeMid ://окружность на южном полюсе
+									boNorthernCircle ?
+										//latitude ://окружность на северном полюсе
+										latitudeStep * (random() - 0.5) + latitudeMid ://окружность на северном полюсе
+										latitudeStep * (random() - 0.5) + latitudeMid),
+*/										
+/*							
+								(boSouthernCircle ||  boNorthernCircle?
+									latitude ://не задавать случайную широту для окружности на полюсах
+									angleStep * (random() - 0.5) + latitude),
+*/									
+
+							//longitude
+							utils.normalizeAngle(
+								(
+									(
+										params.debug && params.debug.notRandomVertices ?
+
+											//Положение текущей точки зависит от порядкового номера точки angleId
+											(circleAnglesCount === 0 ?
+												 0 ://Эта точка расположена на полюсе
+												 angleStep1 * angleId) :
+//												 (1 / circleAnglesCount) * angleId) :
+										
+											random()//случайное положение текущей точки
+									) - 0.5//отнимаем 0.5 что бы диапазон возможных точек был между -0.5 и 0.5. Сразу такой диапазон нельзя вычислять потому что Math.random() имеет диапазон от 0 до 1
+								) * π * 2//диапазон возможных углов от -0.5 до 0.5 мняем на диапазон от -π до π
+							)
+						];
+						console.log('randomVerticeAngles = ' + randomVerticeAngles.toString())
 						this.verticesAngles.push(randomVerticeAngles);
 			
 					}
