@@ -36,7 +36,7 @@ class RandomCloudSphere extends RandomCloud//Circle
 
 		super(params);
 
-		const anglesIdMax = 20,//Количество точек на окружности, расположенной на экваторе
+		const anglesIdMax = 200,//Количество точек на окружности, расположенной на экваторе
 			circlesCount = anglesIdMax / 2,//количество окружностей
 			angleStep = (anglesRange.longitude.max - anglesRange.longitude.min) / anglesIdMax,//угол между соседними точками на окружности, расположенной на экваторе
 			cos = Math.cos, round = Math.round,//hStep = 2 / circlesCount, asin = Math.asin, sqrt = Math.sqrt, cos = Math.cos,
@@ -50,81 +50,23 @@ class RandomCloudSphere extends RandomCloud//Circle
 			get: () => {
 
 				//Сфера состоит из набора окружностей.
-				//Каждая окружность находится на расстоянии h от центра сферы
-				const anglesCircle = (circleAnglesCount) => {
+				for(let latitude = anglesRange.latitude.min; latitude <= anglesRange.latitude.max; latitude += angleStep) {
 
-//						const boUpdate = this.verticesAngles.length === 0 ? false : true;
-					const boUpdate = false;
-/*			
-					//что бы не делать повторяющихся вычислений
-					params.b = utils.b(params);
-*/					
-					const angleCircle = () => {
-						
-						const random = (params.random === undefined ? Math.random() : params.random) - 0.5;
-/*							
-							b = params.b ? params.b : utils.b(params),
-							p = (
-								tan(random * b) /
-								tan(0.5 * b)//делим на tan(0.5 * b), что бы при минимальном и максимальном random, p получалось -1 и 1
-							) *
-							π;//Умножаем на π что бы при минимальном и максимальном r углы получались на противоположной от params.oppositeVertice.longitude стороне окружности.
-								//Тем самым точки почти равномерно распределяются по окружности когда arc = π, тоесть вершина и противоположная вершина расположены на противоположных сторонах окружности
-						
-						let angle = p;// + params.oppositeVertice.longitude;
-*/
-						let angle = random * π * 2;
-						
-						angle = utils.normalizeAngle(angle);
-						return angle;
-						
-					}
-					
-					const getRandomAngles = () => {
-
-//							const randomAngles = [[params.latitude != undefined ? params.latitude : 0, this.anglesCircle(utils)]];
-						const randomAngles = [[params.latitude != undefined ? params.latitude : 0, angleCircle()]];
-						return randomAngles[0];
-						
-					}
-					
+					const circleRadius = cos(latitude);//радиус текущей окружности
+					const circleAnglesCount = round(circleRadius * 2 * π / angleStep);//количество точек на текущей окружности равно длинну окружности поделить на угол между соседними точками на окружности, расположенной на экваторе
 					for (let angleId = 0; angleId <= circleAnglesCount; angleId++) {
-			
-						if (params.debug && params.debug.notRandomVertices) params.random = circleAnglesCount === 0 ? 0 : (1 / circleAnglesCount) * angleId;//для замены случайной точки на регулярную
-						
-//							const randomVerticeAngles = randomVertice.randomAngles;
-						const randomVerticeAngles = getRandomAngles();
-						if (boUpdate) this.verticesAngles[i] = randomVerticeAngles;
-						else this.verticesAngles.push(randomVerticeAngles);
+
+/*						
+						const random = params.debug && params.debug.notRandomVertices ? (circleAnglesCount === 0 ? 0 : (1 / circleAnglesCount) * angleId) : undefined;//для замены случайной точки на регулярную
+						const randomVerticeAngles = [latitude, utils.normalizeAngle(((random === undefined ? Math.random() : random) - 0.5) * π * 2)];
+*/						
+						const randomVerticeAngles = [latitude, utils.normalizeAngle(((params.debug && params.debug.notRandomVertices ? (circleAnglesCount === 0 ? 0 : (1 / circleAnglesCount) * angleId) : Math.random()) - 0.5) * π * 2)];
+						this.verticesAngles.push(randomVerticeAngles);
 			
 					}
-					delete params.random;
-					delete params.b;
-//						return this.verticesAngles;
-					
-				};
-/*				
-				for(let h = -1; h <= 1; h += hStep) {
-
-					params.latitude = asin(h);
-//					this.anglesCircle(anglesIdMax, randomVertice, utils);
-//					const circleRadius = cos(params.latitude);
-					const circleRadius = sqrt(1 - h * h);
-					anglesCircle(parseInt(circleRadius * 2 * π / hStep));
 					
 				}
-*/				
-				for(params.latitude = anglesRange.latitude.min; params.latitude <= anglesRange.latitude.max; params.latitude += angleStep) {
-
-					const circleRadius = cos(params.latitude);//радиус текущей окружности
-					anglesCircle(round(circleRadius * 2 * π / angleStep));//количество точек на текущей окружности равно длинну окружности поделить на угол между соседними точками на окружности, расположенной на экваторе
-					
-				}
-				delete params.latitude;
-/*				
-params.latitude = 1;
-				return this.anglesCircle(anglesIdMax, randomVertice, utils);
-*/				
+//				delete params.latitude;
 				
 			},
 			
