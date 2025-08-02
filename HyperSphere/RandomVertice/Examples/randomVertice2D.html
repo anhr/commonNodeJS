@@ -174,7 +174,6 @@
 			const gui = options.dat.gui.addFolder('Hypersphere'),
 				onChangeVertice = (verticeId) => {
 
-//					hsVertices.classSettings.settings.object.geometry.angles[verticeId].longitude = longitude;
 					hsVertices.setPositionAttributeFromPoint(verticeId);
 					hsVertices.update(verticeId, 0);
 					
