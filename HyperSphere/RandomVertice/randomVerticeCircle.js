@@ -49,22 +49,6 @@ class RandomVerticeCircle extends RandomVertice {
 			
 			get: () => {
 
-/*				
-				const r = (params.random === undefined ? Math.random() : params.random) - 0.5,
-					b = params.b ? params.b : utils.b(params),
-					p = (
-						tan(r * b) /
-						tan(0.5 * b)//делим на tan(0.5 * b), что бы при минимальном и максимальном r, p получалось -1 и 1
-					) *
-					π;//Умножаем на π что бы при минимальном и максимальном r углы получались на противоположной от params.oppositeVertice.longitude стороне окружности.
-						//Тем самым точки почти равномерно распределяются по окружности когда arc = π, тоесть вершина и противоположная вершина расположены на противоположных сторонах окружности
-				
-				let angle = p + params.oppositeVertice.longitude;
-				
-				angle = utils.normalizeAngle(angle);
-
-				randomAngles = [[angle]];
-*/				
 				randomAngles = [[this.anglesCircle(utils)]];
 				return randomAngles[0];
 				

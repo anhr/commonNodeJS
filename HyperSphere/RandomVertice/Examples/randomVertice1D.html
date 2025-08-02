@@ -71,11 +71,6 @@
 
 				if (hsRandomVertice) {
 
-/*					
-					randomVertice.boUpdate = true;
-					hsRandomVertice.setPositionAttributeFromPoints(randomVertice.angles, true);
-					randomVertice.boUpdate = undefined;
-*/					
 					hsRandomVertice.setPositionAttributeFromPoints(randomVertice.randomAngles, true);
 					return;
 
@@ -119,18 +114,10 @@
 				createRandomVertice = () => { createRandomVerticeHyperSphere(randomVertice, 'Random vertice'); },
 				updateRandomVerticeHyperSphere = () => {
 
-/*				
-				if (hsRandomVertice) {
+					if (randomVerticeSettings.cloud) createRandomCloud();
+					else createRandomVertice();
 					
-					hsRandomVertice.removeHyperSphere();
-					hsRandomVertice = undefined;
-
 				}
-*/				
-				if (randomVerticeSettings.cloud) createRandomCloud();
-				else createRandomVertice();
-				
-			}
 			updateRandomVerticeHyperSphere();
 	
 			//Vertices hyperSphere 
