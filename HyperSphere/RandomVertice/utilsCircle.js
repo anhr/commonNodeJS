@@ -15,7 +15,7 @@
 
 import anglesRange from '../anglesRange.js'
 
-const range = anglesRange.longitude.range, π = Math.PI;
+const π = Math.PI, range = anglesRange.longitude.range, longitudeMax = anglesRange.longitude.max, longitudeMin = anglesRange.longitude.min
 
 /**
  * normalize a circle angle to range between anglesRange.longitude.min and anglesRange.longitude.max.
@@ -24,17 +24,17 @@ const range = anglesRange.longitude.range, π = Math.PI;
  */
 export const normalizeAngle = (angle) => {
 
-	if (angle > π) {
+	if (angle > longitudeMax) {
 
 		angle -= range;
-		if (angle > π)
-			console.error('angle > π')
+		if (angle > longitudeMax)
+			console.error('angle > ' + longitudeMax);
 
 	} else {
 
-		if (angle < -π) angle += range;
-		if (angle < -π)
-			console.error('angle < -π')
+		if (angle < longitudeMin) angle += range;
+		if (angle < longitudeMin)
+			console.error('angle < ' + longitudeMin);
 
 	}
 	return angle;

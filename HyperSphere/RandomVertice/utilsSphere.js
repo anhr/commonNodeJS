@@ -22,6 +22,7 @@ const range = anglesRange.longitude.range, π = Math.PI;
  * @param {float} angle angle for normalization.
  * @returns normalized angle.
  */
+/*
 export const normalizeAngle = (angle) => {
 
 	if (angle > π) {
@@ -40,7 +41,7 @@ export const normalizeAngle = (angle) => {
 	return angle;
 
 }
-
+*/
 //parameters for b = arc * a + c,
 const a = (1 / π) - 1, c = π;
 
