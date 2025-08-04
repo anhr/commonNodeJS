@@ -18,7 +18,7 @@ import RandomVertice from './randomVerticeSphere.js';
 import * as utils from './utilsSphere.js'
 import anglesRange from '../anglesRange.js'
 
-//const sRandomCloudSphere = 'RandomCloudSphere';
+const sRandomCloudSphere = 'RandomCloudSphere';
 const π = Math.PI;
 
 /**
@@ -36,7 +36,7 @@ class RandomCloudSphere extends RandomCloud//Circle
 
 		super(params);
 
-		const anglesIdMax = 100,//Количество точек на окружности, расположенной на экваторе
+		const anglesIdMax = 500,//Количество точек на окружности, расположенной на экваторе
 			circlesCount = (anglesIdMax / 2) + 1,//количество окружностей
 			angleStep = (anglesRange.longitude.max - anglesRange.longitude.min) / anglesIdMax,//угол между соседними точками на окружности, расположенной на экваторе
 			cos = Math.cos, round = Math.round, random = Math.random,//hStep = 2 / circlesCount, asin = Math.asin, sqrt = Math.sqrt, cos = Math.cos,
@@ -51,40 +51,53 @@ class RandomCloudSphere extends RandomCloud//Circle
 
 				//Сфера состоит из набора окружностей.
 
+/*				
 				//parameters for b = arc * a + c,
 				const a = (1 / π) - 1,
-					c = π;
+					c = 20 * π;
+*/					
 
-				const tan = Math.tan;
+				const atan = Math.atan,
+					range = anglesRange.latitude.range, latitudeMax = anglesRange.latitude.max, latitudeMin = anglesRange.latitude.min;
 				
 				const utilsCircle = {
 					
 					normalizeAngle: (angle) => {
 					
-						if (angle > π) {
-					
+						if (angle > latitudeMax) {
+
+console.error('angle > ' + latitudeMax);							
 							angle -= range;
-							if (angle > π)
-								console.error('angle > π')
+							if (angle > latitudeMax)
+								console.error('angle > ' + latitudeMax);
 					
 						} else {
 					
-							if (angle < -π) angle += range;
-							if (angle < -π)
-								console.error('angle < -π')
+							if (angle < latitudeMin) {
+								
+console.error('angle < ' + latitudeMin);
+								angle += range;
+								if (angle < latitudeMin)
+									console.error('angle < ' + latitudeMin);
+
+							}
 					
 						}
 						return angle;
 					
 					},
 					b: (params) => {
-						
-//						const arc = params.arc != undefined ? params.arc : Math.abs(utilsCircle.normalizeAngle(params.vertice.longitude - params.oppositeVertice.longitude)),
+
+						//for atan((random + 0.5) * b)
 						const arc = params.arc,
 						
-							//arc = π, b = 1 все точки почти равномерно распределяются по кругу
-							//arc = 0, b = π все точки стягиваются в одну точку
-							b = arc * a + c;
+							//arc = π, b = 1 все точки почти равномерно распределяются по кругу. В идеале должна быть прямая линия между точками (random = -0.5, latitude = -π/2) и (random = 0.5, latitude = π/2)
+								//На самом деле между этими точками проходит arctangens
+							
+							//arc = 0, b = infinity все точки стягиваются в одну точку. Горизонтальная прямая линия между точками (random = -0.5, latitude = π/2) и (random = 0.5, latitude = π/2).
+								//atan(Infinity) = π/2
+//							b = arc * a + c;
+							b = π / arc;
 						
 						return b;
 							
@@ -98,13 +111,34 @@ class RandomCloudSphere extends RandomCloud//Circle
 					
 					const random = (params.random === undefined ? Math.random() : params.random) - 0.5,
 						b = params.b ? params.b : utils.b(params),
+/*						
 						p = (
 							tan(random * b) /
-							tan(0.5 * b)//делим на tan(0.5 * b), что бы при минимальном и максимальном r, p получалось -1 и 1
+							tan(0.5 * b)//делим на tan(0.5 * b), что бы при минимальном random = -0.5 и максимальном random = 0.5, p получалось -1 и 1
 						) *
-						π / 2;//Умножаем на π/2 что бы при минимальном random = -0.5 и максимальном random = 0.5  углы попадали на полюса сферы т.е. получались от -π/2 до π/2.
+*/						
+/*						
+						p = (
+							(atan((random + 0.5) / b) - 1)/
+							(atan((0.5    + 0.5) / b) - 1)//делим на tan(0.5 * b), что бы при минимальном random = -0.5 и максимальном random = 0.5, p получалось -1 и 1
+						) *
+*/						
+						p = (
+								(
+									//К аргументу atan добавляю 0.5 что бы график atan сместился влево на -0.5
+									(atan(((
+												(random === -0.5) &&//Первая точка окружности
+												(b === Infinity) ? //Противоположные вершины совпадают
+													0 ://Если сюда не поставить ноль, то p = NaN
+													random
+										   ) + 0.5) * b)) /
+									atan((0.5 + 0.5) * b)//делим на tan(0.5 * b), что бы при минимальном random = -0.5 и максимальном random = 0.5, p получалось -1 и 1
+								) * 2 - 1//центр графика арктангенса сдвигаю вниз на -1
+							) *
+							π / 2;//Умножаем на π/2 что бы при минимальном random = -0.5 и максимальном random = 0.5  углы попадали на полюса сферы т.е. получались от -π/2 до π/2.
 							//Тем самым точки почти равномерно распределяются по окружности когда arc = π, тоесть вершина и противоположная вершина расположены на противоположных сторонах окружности
-					
+
+					if (isNaN(p)) console.error(sRandomCloudSphere + ': get randomAngles. p = ' + p);
 					let angle = p;// + params.oppositeVertice.longitude;
 					
 					angle = utils.normalizeAngle(angle);
