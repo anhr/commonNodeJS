@@ -4365,8 +4365,8 @@ RandomVertices.params = (params) => {
 				return params.randomVertices.getArcAngle(vertice, oppositeVertice);
 			
 			},
-
-	});
+	
+		});
 	if (params.center === undefined)
 		Object.defineProperty(params, 'center', { get: () => { return params.HyperSphere.RandomVertices.getCenter(params); }, });
 	

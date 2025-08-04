@@ -43,7 +43,7 @@
 				//R: 0.5,
 				debug: {
 					
-					//notRandomVertices: true,
+					notRandomVertices: true,
 				
 				},
 				cloud: true,
@@ -53,14 +53,19 @@
 			const params = {
 
 				/*
+				//вершины расположены друг против друга по диагонали
 				vertice: [
-					0,//Latitude
-					pi,///2,//0,//lng
+					pi / 4,//0,//Latitude
+					0,//lng
+				],
+				oppositeVertice: [
+					-pi / 4,//0,//Latitude
+					pi,//lng
 				],
 				*/
 				oppositeVertice: [
-					pi / 4,//Latitude
-					//pi,///4,//0,//lng
+					-pi / 40,//0,//Latitude
+					0,//lng
 				],
 				debug: randomVerticeSettings.debug,
 
