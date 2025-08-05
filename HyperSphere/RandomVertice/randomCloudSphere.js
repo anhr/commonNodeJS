@@ -57,7 +57,7 @@ class RandomCloudSphere extends RandomCloud//Circle
 					c = 20 * π;
 */					
 
-				const atan = Math.atan,
+				const atan = Math.atan, abs = Math.abs,
 					range = anglesRange.latitude.range, latitudeMax = anglesRange.latitude.max, latitudeMin = anglesRange.latitude.min;
 				
 				const utilsCircle = {
@@ -142,7 +142,7 @@ console.error('angle < ' + latitudeMin);
 					let angle = p;// + params.oppositeVertice.longitude;
 					
 					angle = utils.normalizeAngle(angle);
-console.log('angle = ' + angle + ', random = ' + random)
+//console.log('angle = ' + angle + ', random = ' + random)
 					return angle;
 					
 				}
@@ -158,7 +158,7 @@ console.log('angle = ' + angle + ', random = ' + random)
 							cos(latitude) *//радиус текущей окружности
 							2 * π / //длинна текущей окружности
 //							angleStep//угол между соседними точками на окружности, расположенной на экваторе
-							(latitude - latitudePrev)
+							abs(latitude - latitudePrev)
 						),
 						angleStep1 = 1 / circleAnglesCount,
 						boSouthernCircle = latitude - angleStep < anglesRange.latitude.min,
@@ -167,11 +167,11 @@ console.log('angle = ' + angle + ', random = ' + random)
 						latitudeMax = boNorthernCircle ? latitude : (angleStep * (1 - 0.5) + latitude),//Максимальная граница широты окружности
 						latitudeStep = latitudeMax - latitudeMin,//Ширина широты окружности
 						latitudeMid = latitudeMin + latitudeStep / 2;//Средняя широта окружности
-					console.log('latitude = ' + latitude + ', latitudePrev = ' + latitudePrev + ', circleAnglesCount = ' + circleAnglesCount);
+					//console.log('latitude = ' + latitude + ', latitudePrev = ' + latitudePrev + ', circleAnglesCount = ' + circleAnglesCount);
 					latitudePrev = latitude; 
 					//console.log('boFirstOrLastCircle = ' + (boSouthernCircle || boNorthernCircle) + ', latitude = ' + latitude + ', latitudeMin = ' + latitudeMin + ', latitudeMax = ' + latitudeMax);
 					
-					for (let angleId = 0; angleId <= circleAnglesCount; angleId++) {
+					for (let angleId = 0; angleId < circleAnglesCount; angleId++) {
 
 						const randomVerticeAngles = [
 
