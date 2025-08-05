@@ -36,9 +36,9 @@ class RandomCloudSphere extends RandomCloud//Circle
 
 		super(params);
 
-		const anglesIdMax = 50,//Количество точек на окружности, расположенной на экваторе
+		const anglesIdMax = 500,//Количество точек на окружности, расположенной на экваторе
 			circlesCount = (anglesIdMax / 2) + 1,//количество окружностей
-			angleStep = (anglesRange.longitude.max - anglesRange.longitude.min) / anglesIdMax,//угол между соседними точками на окружности, расположенной на экваторе
+//			angleStep = (anglesRange.longitude.max - anglesRange.longitude.min) / anglesIdMax,//угол между соседними точками на окружности, расположенной на экваторе
 			cos = Math.cos, round = Math.round, random = Math.random,//hStep = 2 / circlesCount, asin = Math.asin, sqrt = Math.sqrt, cos = Math.cos,
 			randomVertice = new RandomVertice(params);
 		
@@ -151,14 +151,14 @@ console.error('angle < ' + latitudeMin);
 				for(let circleId = 0; circleId < circlesCount; circleId++){
 
 					params.random = k * circleId;
-					const latitude = anglesCircle(utilsCircle);
+					const latitude = anglesCircle(utilsCircle),
+						angleStep = abs(latitude - latitudePrev);//угол между соседними точками на окружности
 //console.log('latitude = ' + latitude)
 					//Количество точек на текущей окружности равно длинну окружности поделить на угол между соседними точками на окружности, расположенной на экваторе
 					const circleAnglesCount = round(//найти ближайшее целое число
 							cos(latitude) *//радиус текущей окружности
 							2 * π / //длинна текущей окружности
-//							angleStep//угол между соседними точками на окружности, расположенной на экваторе
-							abs(latitude - latitudePrev)
+							angleStep
 						),
 						angleStep1 = 1 / circleAnglesCount,
 						boSouthernCircle = latitude - angleStep < anglesRange.latitude.min,
