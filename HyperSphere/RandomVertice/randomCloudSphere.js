@@ -36,7 +36,7 @@ class RandomCloudSphere extends RandomCloud//Circle
 
 		super(params);
 
-		const anglesIdMax = 500,//Количество точек на окружности, расположенной на экваторе
+		const anglesIdMax = 50,//Количество точек на окружности, расположенной на экваторе
 			circlesCount = (anglesIdMax / 2) + 1,//количество окружностей
 			angleStep = (anglesRange.longitude.max - anglesRange.longitude.min) / anglesIdMax,//угол между соседними точками на окружности, расположенной на экваторе
 			cos = Math.cos, round = Math.round, random = Math.random,//hStep = 2 / circlesCount, asin = Math.asin, sqrt = Math.sqrt, cos = Math.cos,
@@ -147,6 +147,7 @@ console.log('angle = ' + angle + ', random = ' + random)
 					
 				}
 				const k = 1 / (circlesCount - 1);
+				let latitudePrev = 0;//широта предыдущей окружности
 				for(let circleId = 0; circleId < circlesCount; circleId++){
 
 					params.random = k * circleId;
@@ -156,7 +157,8 @@ console.log('angle = ' + angle + ', random = ' + random)
 					const circleAnglesCount = round(//найти ближайшее целое число
 							cos(latitude) *//радиус текущей окружности
 							2 * π / //длинна текущей окружности
-							angleStep//угол между соседними точками на окружности, расположенной на экваторе
+//							angleStep//угол между соседними точками на окружности, расположенной на экваторе
+							(latitude - latitudePrev)
 						),
 						angleStep1 = 1 / circleAnglesCount,
 						boSouthernCircle = latitude - angleStep < anglesRange.latitude.min,
@@ -165,6 +167,8 @@ console.log('angle = ' + angle + ', random = ' + random)
 						latitudeMax = boNorthernCircle ? latitude : (angleStep * (1 - 0.5) + latitude),//Максимальная граница широты окружности
 						latitudeStep = latitudeMax - latitudeMin,//Ширина широты окружности
 						latitudeMid = latitudeMin + latitudeStep / 2;//Средняя широта окружности
+					console.log('latitude = ' + latitude + ', latitudePrev = ' + latitudePrev + ', circleAnglesCount = ' + circleAnglesCount);
+					latitudePrev = latitude; 
 					//console.log('boFirstOrLastCircle = ' + (boSouthernCircle || boNorthernCircle) + ', latitude = ' + latitude + ', latitudeMin = ' + latitudeMin + ', latitudeMax = ' + latitudeMax);
 					
 					for (let angleId = 0; angleId <= circleAnglesCount; angleId++) {
