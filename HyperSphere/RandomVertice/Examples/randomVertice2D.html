@@ -43,7 +43,7 @@
 				//R: 0.5,
 				debug: {
 					
-					//notRandomVertices: true,
+					notRandomVertices: true,
 				
 				},
 				cloud: true,
@@ -76,51 +76,50 @@
 			let hsRandomVertice;
 			const createRandomVerticeHyperSphere = (randomVertice, name) => {
 
-				if (hsRandomVertice) {
-
+				if (hsRandomVertice)
 					hsRandomVertice.setPositionAttributeFromPoints(randomVertice.randomAngles, true);
-					return;
-
-				}
+				else {
 				
-				hsRandomVertice = new HyperSphere(options, {
-	
-					boRemove: false,//Если не установить этот флаг, то при замене старого hsRandomVertice на новый будут удаляться все гиперсферы на scene. То есть удалится hsVertices
-					r: randomVerticeSettings.R,
-					edges: false,
-					//randomArc: true,
-					projectParams: { scene: scene, },
-					/*
-					debug: randomVerticeSettings.debug ? {
-	
-						probabilityDensity: false,
-						middleVertice: false,
-						log: false,
-	
-					} : false,
-					*/
-					debug: {
-	
-						probabilityDensity: false,
-						middleVertice: false,
-						log: false,
-	
-					},
-					settings: {
-	
-						object: {
-	
-							name: name,
-							//color: 'white',
-//							geometry: { angles: randomVertice.angles, },
-							geometry: randomVertice,
-	
+					hsRandomVertice = new HyperSphere(options, {
+		
+						boRemove: false,//Если не установить этот флаг, то при замене старого hsRandomVertice на новый будут удаляться все гиперсферы на scene. То есть удалится hsVertices
+						r: randomVerticeSettings.R,
+						edges: false,
+						//randomArc: true,
+						projectParams: { scene: scene, },
+						/*
+						debug: randomVerticeSettings.debug ? {
+		
+							probabilityDensity: false,
+							middleVertice: false,
+							log: false,
+		
+						} : false,
+						*/
+						debug: {
+		
+							probabilityDensity: false,
+							middleVertice: false,
+							log: false,
+		
 						},
-						overriddenProperties: { setDrawRange: (start, count) => { if (hsRandomVertice) hsRandomVertice.bufferGeometry.setDrawRange(start, count); } },
-	
-					},
-	
-				});
+						settings: {
+		
+							object: {
+		
+								name: name,
+								//color: 'white',
+	//							geometry: { angles: randomVertice.angles, },
+								geometry: randomVertice,
+		
+							},
+							overriddenProperties: { setDrawRange: (start, count) => { if (hsRandomVertice) hsRandomVertice.bufferGeometry.setDrawRange(start, count); } },
+		
+						},
+		
+					});
+				}
+				hsRandomVertice.setVerticesRange(0, randomCloud.circlesPointsCount);
 	
 			}
 			const randomCloud = new RandomCloud(params), randomVertice = new RandomVertice(params),
@@ -128,10 +127,10 @@
 				createRandomVertice = () => { createRandomVerticeHyperSphere(randomVertice, 'Random vertice'); },
 				updateRandomVerticeHyperSphere = () => {
 
-				if (randomVerticeSettings.cloud) createRandomCloud();
-				else createRandomVertice();
-				
-			}
+					if (randomVerticeSettings.cloud) createRandomCloud();
+					else createRandomVertice();
+					
+				}
 			updateRandomVerticeHyperSphere();
 	
 			//Vertices hyperSphere 

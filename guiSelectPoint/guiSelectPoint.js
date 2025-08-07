@@ -739,6 +739,16 @@ class GuiSelectPoint {
 
 		}
 		/**
+		 * Selects a mesh in the meshs list control
+		 * @param {number} index index of the mesh in the meshs list control
+		 */
+		this.selectMesh = function (index) {
+
+			cMeshs.__onChange(index);
+			cMeshs.__select[index + 1].selected = true;
+
+		}
+		/**
 		 * Removes a mesh from the select point GUI
 		 * @param {THREE.Mesh} mesh [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} for removing.
 		 * @param {boolean} [boHideF3DObjects=true] true - hide the 'Meshes' folder if no any mesh exists in the meshs dropdown menu.

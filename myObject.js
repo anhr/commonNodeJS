@@ -509,6 +509,7 @@ class MyObject {
 
 //				this.setVerticesRange(drawRange.start, (positionId - drawRange.start + 1) / itemSize);
 				this.setVerticesRange(drawRange.start, (positionId + 1) / itemSize - drawRange.start);
+				if (this.object3D && settings.options.guiSelectPoint && settings.options.guiSelectPoint.isSelectedMesh(this.object3D)) settings.options.guiSelectPoint.selectMesh(-1);
 				if (!Number.isInteger(drawRange.count) && (drawRange.count != Infinity)) console.error(sMyObject + '.setPositionAttributeFromPoint failed. Invalid drawRange.count = ' + drawRange.count);
 
 			}

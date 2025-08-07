@@ -57,6 +57,7 @@ class RandomCloud {
 		
 	}
 	verticesAngles = [];
+	circlesPointsCount;
 	
 	//overridden methods
 	
