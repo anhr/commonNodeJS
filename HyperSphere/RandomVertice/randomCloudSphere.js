@@ -134,18 +134,21 @@ console.error('angle < ' + latitudeMin);
 						angleStep = abs(latitude - latitudePrev);//угол между соседними точками на окружности
 //console.log('latitude = ' + latitude)
 					//Количество точек на текущей окружности равно длинну окружности поделить на угол между соседними точками на окружности, расположенной на экваторе
-					const circleAnglesCount = round(//найти ближайшее целое число
+					let circleAnglesCount = round(//найти ближайшее целое число
 							cos(latitude) *//радиус текущей окружности
 							2 * π / //длинна текущей окружности
 							angleStep
-						),
-						angleStep1 = 1 / circleAnglesCount,
+						);
+					const angleStep1 = 1 / circleAnglesCount,
 						boSouthernCircle = latitude - angleStep < anglesRange.latitude.min,
 						boNorthernCircle = latitude + angleStep > anglesRange.latitude.max,
 						latitudeMin = boSouthernCircle ? latitude : (angleStep * (0 - 0.5) + latitude),//Минимальная граница широты окружности
 						latitudeMax = boNorthernCircle ? latitude : (angleStep * (1 - 0.5) + latitude),//Максимальная граница широты окружности
 						latitudeStep = latitudeMax - latitudeMin,//Ширина широты окружности
 						latitudeMid = latitudeMin + latitudeStep / 2;//Средняя широта окружности
+					if (!boAllocateMemory && (circleAnglesCount > this.verticesAngles.length))
+						circleAnglesCount = 1;//когда длинна дуги приближается к нулю, тоесть вершины совпадают, то angleStep стремится к нулю и circleAnglesCount стремится к бесконечности и массив this.verticesAngles переполняется.
+												//Делаем один угол в окружности
 					//console.log('latitude = ' + latitude + ', latitudePrev = ' + latitudePrev + ', circleAnglesCount = ' + circleAnglesCount);
 					latitudePrev = latitude; 
 					//console.log('boFirstOrLastCircle = ' + (boSouthernCircle || boNorthernCircle) + ', latitude = ' + latitude + ', latitudeMin = ' + latitudeMin + ', latitudeMax = ' + latitudeMax);
