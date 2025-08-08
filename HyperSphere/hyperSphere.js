@@ -2917,6 +2917,7 @@ this.object = () => {
 												if (times && classSettings.edges.project)
 													this.setEdgesRange();
 												if (classSettings.overriddenProperties.project) classSettings.overriddenProperties.project();
+												if (classSettings.overriddenProperties.onCreateEdgesCompleted) classSettings.overriddenProperties.onCreateEdgesCompleted();
 												boCompleted = true;
 												return;
 
