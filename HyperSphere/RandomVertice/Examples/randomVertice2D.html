@@ -76,9 +76,13 @@
 			let hsRandomVertice;
 			const createRandomVerticeHyperSphere = (randomVertice, name) => {
 
-				if (hsRandomVertice)
+				if (hsRandomVertice) {
+					
 					hsRandomVertice.setPositionAttributeFromPoints(randomVertice.randomAngles, true);
-				else {
+					const guiSelectPoint = hsRandomVertice.classSettings.settings.options.guiSelectPoint;
+					if (guiSelectPoint && guiSelectPoint.isSelectedMesh(hsRandomVertice.object3D)) guiSelectPoint.selectMesh(-1);
+					
+				} else {
 				
 					hsRandomVertice = new HyperSphere(options, {
 		
