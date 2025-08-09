@@ -40,8 +40,8 @@ class RandomCloudSphere extends RandomCloud//Circle
 			circlesCount = (anglesIdMax / 2) + 1,//количество окружностей
 			k = 1 / (circlesCount - 1),//for params.random = k * circleId;
 //			angleStep = (anglesRange.longitude.max - anglesRange.longitude.min) / anglesIdMax,//угол между соседними точками на окружности, расположенной на экваторе
-			cos = Math.cos, round = Math.round, random = Math.random,//hStep = 2 / circlesCount, asin = Math.asin, sqrt = Math.sqrt, cos = Math.cos,
-			atan = Math.atan, abs = Math.abs,
+			sin = Math.sin, cos = Math.cos, asin = Math.asin, atan = Math.atan, atan2 = Math.atan2,
+			round = Math.round, random = Math.random, abs = Math.abs,
 			range = anglesRange.latitude.range, latitudeMax = anglesRange.latitude.max, latitudeMin = anglesRange.latitude.min,
 			randomVertice = new RandomVertice(params),
 			utilsCircle = {
@@ -188,7 +188,188 @@ console.error('angle < ' + latitudeMin);
 							//console.log('randomVerticeAngles = ' + randomVerticeAngles.toString());
 							
 							if (this.circlesPointsCount >= this.verticesAngles.length) console.error(sRandomCloudSphere + '.verticesAngles: Allocate memory failed! this.circlesPointsCount = ' + this.circlesPointsCount + ' >= this.verticesAngles.length = ' + this.verticesAngles.length);
-							this.verticesAngles[this.circlesPointsCount] = randomVerticeAngles;
+
+							//Повернуть облако случайных точек таким образом, что бы центр облака оказался на противоположной вершине.
+							/*Deepseek Имеется точка на поверхности сферы в полярной состеме коодинат. В полярной системе координат широта задана в диапазое от -π/2 на южном полюсе до π/2 на северном полюсе.
+							Долгота задана в диапазоне от -π до π. Нужно повернуть эту точку на заданную широту и долготу.
+							Широта задана в диапазое от -π/2 на южном полюсе до π/2 на северном полюсе. Долгота задана в диапазоне от -π до π. Результат поворота должен быть в полярной системе координат.
+							Нормализовать полученный результат до стандартного диапазона долготы (-π до π) или широты (-π/2 до π/2).
+							Пример выполнения на javascript.
+							В исходном коде написать комментарий по использованию полученной функции.*/
+							/**
+							 * Поворачивает точку на поверхности сферы, заданную в полярных координатах
+							 * @param {number} lat - исходная широта в радианах (-π/2 до π/2)
+							 * @param {number} lon - исходная долгота в радианах (-π до π)
+							 * @param {number} deltaLat - угол поворота по широте в радианах
+							 * @param {number} deltaLon - угол поворота по долготе в радианах
+							 * @returns {Object} объект с новыми координатами {lat: новая широта, lon: новая долгота}
+							 */
+/*							
+							function rotateSphericalPoint(lat, lon, deltaLat, deltaLon) {
+							    // Преобразование сферических координат в декартовы
+							    const x = Math.cos(lat) * Math.cos(lon);
+							    const y = Math.cos(lat) * Math.sin(lon);
+							    const z = Math.sin(lat);
+							    
+							    // Создаем матрицу вращения вокруг оси Y (изменение широты)
+							    const cosDeltaLat = Math.cos(deltaLat);
+							    const sinDeltaLat = Math.sin(deltaLat);
+							    
+							    // Создаем матрицу вращения вокруг оси Z (изменение долготы)
+							    const cosDeltaLon = Math.cos(deltaLon);
+							    const sinDeltaLon = Math.sin(deltaLon);
+							    
+							    // Применяем вращение сначала по долготе (Z), затем по широте (Y)
+							    // Вращение вокруг Z:
+							    const x1 = x * cosDeltaLon - y * sinDeltaLon;
+							    const y1 = x * sinDeltaLon + y * cosDeltaLon;
+							    const z1 = z;
+							    
+							    // Вращение вокруг Y:
+							    const x2 = x1 * cosDeltaLat + z1 * sinDeltaLat;
+							    const y2 = y1;
+							    const z2 = -x1 * sinDeltaLat + z1 * cosDeltaLat;
+							    
+							    // Преобразование обратно в сферические координаты
+							    const newLat = Math.asin(z2); // Широта (-π/2 до π/2)
+							    const newLon = Math.atan2(y2, x2); // Долгота (-π до π)
+							    
+							    return {
+							        lat: newLat,
+							        lon: newLon
+							    };
+							}
+*/
+							/*
+							// Пример использования:
+							// Повернем точку на экваторе (широта 0) с долготой 0 на 30° севернее и 45° восточнее
+							const originalLat = 0;
+							const originalLon = 0;
+							const deltaLat = 3 * π / 4;//30 * Math.PI / 180; // 30° в радианах
+							const deltaLon = 0;//45 * Math.PI / 180; // 45° в радианах
+							
+							const rotated = rotateSphericalPoint(originalLat, originalLon, deltaLat, deltaLon);
+							
+							console.log(`Новая широта: ${rotated.lat * 180 / Math.PI}°`);
+							console.log(`Новая долгота: ${rotated.lon * 180 / Math.PI}°`);
+							*/
+/*							
+							const rotated = rotateSphericalPoint(randomVerticeAngles[0], randomVerticeAngles[1], - params.oppositeVertice.latitude + π / 2, params.oppositeVertice.longitude);
+														
+							this.verticesAngles[this.circlesPointsCount] = [rotated.lat, rotated.lon];
+*/
+							/*Есть точка на поверхности сферы в полярной системе координат. Начало полярной системы координат находится в центре сферы.
+							Написать на javascript исходный код поворота этой точки на произвольный угол с использованием углов Эйлера.
+							Полярный угол должен быть в диапазоне от π/2 на северном полюсе до -π/2 на южном полюсе. Азимутальный угол должен быть в диапазоне от -π до π.
+							Результат поворота должен быть в полярной системе коодинат.
+							*/
+
+							/**
+							 * Поворот точки на поверхности сферы с использованием углов Эйлера
+							 * @param {number} latitude - Полярный угол (θ) в диапазоне [-π/2, π/2]
+							 * @param {number} longitude - Азимутальный угол (φ) в диапазоне [-π, π]
+							 * @param {number} α - Угол Эйлера вокруг оси Z (поворот по Z). Поворот вокруг собственной оси
+							 * @param {number} β - Угол Эйлера вокруг оси X (поворот по X)
+							 * @param {number} γ - Угол Эйлера вокруг оси Z (поворот по Z)
+							 * @returns {Object} Новые полярные координаты {latitude, longitude}
+							 */
+							const rotatePointWithEulerAngles = (latitude, longitude, α, β, γ) => {
+							    // 1. Преобразование полярных координат в декартовы
+							    const x = cos(latitude) * cos(longitude),
+								    y = cos(latitude) * sin(longitude),
+								    z = sin(latitude),
+							    
+							    // 2. Применение поворотов с использованием углов Эйлера (Z-X-Z)
+							    // Поворот α вокруг оси Z
+								    x1 = α === 0 ? x : x * cos(α) - y * sin(α),
+								    y1 = α === 0 ? y : x * sin(α) + y * cos(α),
+								    z1 = z,
+							    
+							    // Поворот β вокруг новой оси X
+								    x2 = x1,
+								    y2 = y1 * cos(β) - z1 * sin(β),
+								    z2 = y1 * sin(β) + z1 * cos(β),
+							    
+							    // Поворот γ вокруг новой оси Z
+								    x3 = x2 * cos(γ) - y2 * sin(γ),
+								    y3 = x2 * sin(γ) + y2 * cos(γ),
+								    z3 = z2,
+							    
+							    // 3. Преобразование обратно в полярные координаты
+								    newLatitude = asin(z3), // В диапазоне [-π/2, π/2]
+								    newLongitude = atan2(y3, x3), // В диапазоне [-π, π]
+
+									arrayAngles = [newLatitude, newLongitude];
+								
+								Object.defineProperty(arrayAngles, 'longitude', {
+									
+									get: () => { return arrayAngles[1]; },
+/*									
+									set: (longitude) => {
+							
+										if (arrayAngles[1] === longitude) return true;
+										arrayAngles[1] = longitude;
+										return true;
+							
+									},
+*/									
+								
+								});
+								Object.defineProperty(arrayAngles, 'latitude', {
+									
+									get: () => { return arrayAngles[0]; },
+/*									
+									set: (latitude) => {
+							
+										if (arrayAngles[0] === latitude) return true;
+										arrayAngles[0] = latitude;
+										return true;
+							
+									},
+*/									
+								
+								});
+								
+							    return arrayAngles;
+/*							    
+							    return {
+							        latitude: newLatitude,
+							        longitude: newLongitude
+							    };
+*/								
+							}
+
+							/*
+							// Пример использования:
+							const initialLatitude = Math.PI/4; // 45 градусов от экватора
+							const initialLongitude = Math.PI/2; // 90 градусов восточной долготы
+							
+							// Поворот на 30 градусов по всем осям Эйлера
+							const α = Math.PI/6; // 30 градусов
+							const β = Math.PI/6;  // 30 градусов
+							const γ = Math.PI/6; // 30 градусов
+							
+							const rotated = rotatePointWithEulerAngles(
+							    initialLatitude, initialLongitude, α, β, γ
+							);
+							
+							console.log("Исходные координаты:", {
+							    polar: initialLatitude,
+							    azimuthal: initialLongitude
+							});
+							console.log("После поворота:", rotated);
+							*/
+							const initialLatitude = randomVerticeAngles[0],
+								initialLongitude = randomVerticeAngles[1],
+							
+							// Поворот
+								α = 0,
+								β = params.oppositeVertice.latitude - π / 2,
+								γ = params.oppositeVertice.longitude - π / 2,
+								rotated = rotatePointWithEulerAngles(initialLatitude, initialLongitude, α, β, γ);
+							//this.verticesAngles[this.circlesPointsCount] = [rotated.latitude, rotated.longitude];
+							this.verticesAngles[this.circlesPointsCount] = rotated;
+//							this.verticesAngles[this.circlesPointsCount] = randomVerticeAngles;
 							this.circlesPointsCount++;
 							
 						}

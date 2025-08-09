@@ -64,9 +64,19 @@
 				],
 				*/
 				oppositeVertice: [
-					-pi / 80,//0,//Latitude
+					-pi / 800,//0,//Latitude
 					0,//lng
 				],
+				/*
+				vertice: [
+					pi / 4,//0,//Latitude
+					pi / 4,//lng
+				],
+				oppositeVertice: [
+					pi / 4,//0,//Latitude
+					pi / 4 + pi/800,//lng
+				],
+				*/
 				debug: randomVerticeSettings.debug,
 
 			}
@@ -88,7 +98,7 @@
 		
 						boRemove: false,//Если не установить этот флаг, то при замене старого hsRandomVertice на новый будут удаляться все гиперсферы на scene. То есть удалится hsVertices
 						r: randomVerticeSettings.R,
-						//edges: false,
+						edges: false,
 						//randomArc: true,
 						projectParams: { scene: scene, },
 						/*
@@ -231,13 +241,6 @@
 						if (!cloud) randomVertice.randomAngles;
 						
 						updateRandomVerticeHyperSphere();
-/*						
-						hsRandomVertice.removeHyperSphere();
-						hsRandomVertice = undefined;
-						if (cloud) createRandomCloud();
-						else createRandomVertice();
-*/						
-//						return true;
 			
 					},
 			
