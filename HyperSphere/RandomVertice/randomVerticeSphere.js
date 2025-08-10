@@ -73,7 +73,7 @@ class RandomVerticeSphere extends RandomVertice {
 
 			const rnd = (params.random === undefined ? Math.random() : params.random) - 0.5,
 //				b = params.b ? params.b : utilsCircle.b(arc),//params),
-				b = params.b ? params.b : utils.b(params.arc),
+				b = params.b ? params.b : utils.b(params),
 				angle = (
 						(
 							//К аргументу atan добавляю 0.5 что бы график atan сместился влево на -0.5
