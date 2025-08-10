@@ -69,6 +69,47 @@ class RandomVerticeSphere extends RandomVertice {
 			
 		});
 		
+		this.anglesCircle = (utils) => {
+
+			const rnd = (params.random === undefined ? Math.random() : params.random) - 0.5,
+//				b = params.b ? params.b : utilsCircle.b(arc),//params),
+				b = params.b ? params.b : utils.b(params.arc),
+				angle = (
+						(
+							//К аргументу atan добавляю 0.5 что бы график atan сместился влево на -0.5
+							(atan(((
+										(rnd === -0.5) &&//Первая точка окружности
+										(b === Infinity) ? //Противоположные вершины совпадают
+											0 ://Если сюда не поставить ноль, то p = NaN
+											rnd
+								   ) + 0.5) * b)) /
+							atan((0.5 + 0.5) * b)//делим на tan(0.5 * b), что бы при минимальном rnd = -0.5 и максимальном rnd = 0.5, p получалось -1 и 1
+						) * 2 - 1//центр графика арктангенса сдвигаю вниз на -1
+					) *
+					π / 2;//Умножаем на π/2 что бы при минимальном rnd = -0.5 и максимальном rnd = 0.5  углы попадали на полюса сферы т.е. получались от -π/2 до π/2.
+					//Тем самым точки почти равномерно распределяются по окружности когда arc = π, тоесть вершина и противоположная вершина расположены на противоположных сторонах окружности
+
+			if (isNaN(angle)) console.error(sRandomCloudSphere + ': get randomAngles. p = ' + p);
+//			const latitude = utilsCircle.normalizeAngle(angle),
+			return utils.normalizeAngle(angle);
+/*			
+			const random = (params.random === undefined ? Math.random() : params.random) - 0.5,
+				b = params.b ? params.b : utils.b(params),
+				p = (
+					tan(random * b) /
+					tan(0.5 * b)//делим на tan(0.5 * b), что бы при минимальном и максимальном random, p получалось -1 и 1
+				) *
+				π;//Умножаем на π что бы при минимальном и максимальном random углы получались на противоположной от params.oppositeVertice.longitude стороне окружности.
+					//Тем самым точки почти равномерно распределяются по окружности когда arc = π, тоесть вершина и противоположная вершина расположены на противоположных сторонах окружности
+			
+			let angle = p + params.oppositeVertice.longitude;
+			
+			angle = utils.normalizeAngle(angle);
+			return angle;
+*/			
+			
+		}
+		
 		Object.defineProperty(this, 'randomAngles', {
 			
 			get: () => {

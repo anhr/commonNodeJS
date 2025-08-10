@@ -36,6 +36,9 @@ class RandomVertice {
 		params.vertice ||= this.ZeroArray();
 		params.oppositeVertice ||= this.ZeroArray();
 		this.Center(params);
+		
+		//overridden methods
+		
 		this.anglesCircle = (utils) => {
 			
 			const random = (params.random === undefined ? Math.random() : params.random) - 0.5,
@@ -53,6 +56,8 @@ class RandomVertice {
 			return angle;
 			
 		}
+		
+		/////////////////////////////overridden methods
 		
 	}
 	
