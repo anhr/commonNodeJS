@@ -15,7 +15,7 @@
 
 import anglesRange from '../anglesRange.js'
 
-const range = anglesRange.longitude.range, π = Math.PI;
+const range = anglesRange.longitude.range, latitudeMax = anglesRange.latitude.max, latitudeMin = anglesRange.latitude.min, π = Math.PI;
 
 /**
  * normalize a circle angle to range between anglesRange.longitude.min and anglesRange.longitude.max.
@@ -24,6 +24,27 @@ const range = anglesRange.longitude.range, π = Math.PI;
  */
 export const normalizeAngle = (angle) => {
 
+	if (angle > latitudeMax) {
+
+//console.error('angle > ' + latitudeMax);							
+		angle -= range;
+		if (angle > latitudeMax)
+			console.error('angle > ' + latitudeMax);
+
+	} else {
+
+		if (angle < latitudeMin) {
+			
+//console.error('angle < ' + latitudeMin);
+			angle += range;
+			if (angle < latitudeMin)
+				console.error('angle < ' + latitudeMin);
+
+		}
+
+	}
+	return angle;
+/*	
 	if (angle > π) {
 
 		angle -= range;
@@ -38,18 +59,22 @@ export const normalizeAngle = (angle) => {
 
 	}
 	return angle;
+*/	
 
 }
 //parameters for b = arc * a + c,
-const a = (1 / π) - 1, c = π;
+//const a = (1 / π) - 1, c = π;
 
 /**
  * The multiplier for calculating the tangent, which is used to calculate randomAngles.
  * @param {object} [params={}] See the <b>params</b> of the <b>RandomVertice</b> constructor.
  * @returns multiplier.
  */
-export const b = (params) => {
-	
+export const b = (arc) => {
+
+	//for atan((random + 0.5) * b)
+	return π / arc;
+/*	
 	const getArcAngle = (vertice, oppositeVertice) => {
 		
 		//DeepSeek. вычислить угол между двумя точками на поверхности шара
@@ -74,5 +99,6 @@ export const b = (params) => {
 		b = arc * a + c;
 	
 	return b;
+*/	
 		
 }

@@ -42,8 +42,9 @@ class RandomCloudSphere extends RandomCloud//Circle
 //			angleStep = (anglesRange.longitude.max - anglesRange.longitude.min) / anglesIdMax,//угол между соседними точками на окружности, расположенной на экваторе
 			sin = Math.sin, cos = Math.cos, asin = Math.asin, atan = Math.atan, atan2 = Math.atan2,
 			round = Math.round, random = Math.random, abs = Math.abs,
-			range = anglesRange.latitude.range, latitudeMax = anglesRange.latitude.max, latitudeMin = anglesRange.latitude.min,
+			range = anglesRange.latitude.range,// latitudeMax = anglesRange.latitude.max, latitudeMin = anglesRange.latitude.min,
 			randomVertice = new RandomVertice(params),
+/*			
 			utilsCircle = {
 					
 				normalizeAngle: (angle) => {
@@ -77,6 +78,7 @@ console.error('angle < ' + latitudeMin);
 						
 				}
 			},
+*/			
 			verticesAngles = (boAllocateMemory) => {
 
 				//Сфера случайных точек состоит из набора окружностей.
@@ -94,7 +96,8 @@ console.error('angle < ' + latitudeMin);
 					params.random = k * circleId;
 
 					const rnd = (params.random === undefined ? Math.random() : params.random) - 0.5,
-						b = params.b ? params.b : utilsCircle.b(arc),//params),
+//						b = params.b ? params.b : utilsCircle.b(arc),//params),
+						b = params.b ? params.b : utils.b(arc),//params),
 						angle = (
 								(
 									//К аргументу atan добавляю 0.5 что бы график atan сместился влево на -0.5
@@ -111,8 +114,8 @@ console.error('angle < ' + latitudeMin);
 							//Тем самым точки почти равномерно распределяются по окружности когда arc = π, тоесть вершина и противоположная вершина расположены на противоположных сторонах окружности
 
 					if (isNaN(angle)) console.error(sRandomCloudSphere + ': get randomAngles. p = ' + p);
-//					let angle = p;
-					const latitude = utilsCircle.normalizeAngle(angle),
+//					const latitude = utilsCircle.normalizeAngle(angle),
+					const latitude = utils.normalizeAngle(angle),
 						angleStep = abs(latitude - latitudePrev);//угол между соседними точками на окружности
 					//Количество точек на текущей окружности равно длинну окружности поделить на угол между соседними точками на окружности, расположенной на экваторе
 					let circleAnglesCount = round(//найти ближайшее целое число
