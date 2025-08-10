@@ -73,19 +73,6 @@ console.error('angle < ' + latitudeMin);
 				b: (arc) => {
 
 					//for atan((random + 0.5) * b)
-					
-					//arc = π, b = 1 все точки почти равномерно распределяются по кругу. В идеале должна быть прямая линия между точками (random = -0.5, latitude = -π/2) и (random = 0.5, latitude = π/2)
-						//На самом деле между этими точками проходит arctangens
-					
-					//arc = 0, b = infinity все точки стягиваются в одну точку. Горизонтальная прямая линия между точками (random = -0.5, latitude = π/2) и (random = 0.5, latitude = π/2).
-						//atan(Infinity) = π/2
-/*					
-					const arc = params.arc,
-					
-						b = π / arc;
-					
-					return b;
-*/
 					return π / arc;
 						
 				}
