@@ -108,7 +108,7 @@ console.error('angle < ' + latitudeMin);
 
 					const rnd = (params.random === undefined ? Math.random() : params.random) - 0.5,
 						b = params.b ? params.b : utilsCircle.b(arc),//params),
-						p = (
+						angle = (
 								(
 									//К аргументу atan добавляю 0.5 что бы график atan сместился влево на -0.5
 									(atan(((
@@ -123,16 +123,10 @@ console.error('angle < ' + latitudeMin);
 							π / 2;//Умножаем на π/2 что бы при минимальном rnd = -0.5 и максимальном rnd = 0.5  углы попадали на полюса сферы т.е. получались от -π/2 до π/2.
 							//Тем самым точки почти равномерно распределяются по окружности когда arc = π, тоесть вершина и противоположная вершина расположены на противоположных сторонах окружности
 
-					if (isNaN(p)) console.error(sRandomCloudSphere + ': get randomAngles. p = ' + p);
-					let angle = p;// + params.oppositeVertice.longitude;
-					
-//					angle = utilsCircle.normalizeAngle(angle);
-//console.log('angle = ' + angle + ', rnd = ' + rnd)
-					
-//					const latitude = anglesCircle(utilsCircle),
+					if (isNaN(angle)) console.error(sRandomCloudSphere + ': get randomAngles. p = ' + p);
+//					let angle = p;
 					const latitude = utilsCircle.normalizeAngle(angle),
 						angleStep = abs(latitude - latitudePrev);//угол между соседними точками на окружности
-//console.log('latitude = ' + latitude)
 					//Количество точек на текущей окружности равно длинну окружности поделить на угол между соседними точками на окружности, расположенной на экваторе
 					let circleAnglesCount = round(//найти ближайшее целое число
 							cos(latitude) *//радиус текущей окружности
