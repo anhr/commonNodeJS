@@ -16,8 +16,12 @@
 import RandomVertice from './randomVertice.js';
 import anglesRange from '../anglesRange.js'
 import * as utils from './utilsSphere.js'
+import * as utilsCircle from './utilsCircle.js'
 
-const sRandomVerticesSphere = 'RandomVerticesSphere';
+const sRandomVerticesSphere = 'RandomVerticesSphere',
+	π = Math.PI, tan = Math.tan, atan = Math.atan,
+	range = anglesRange.longitude.range;
+
 /**
  * Generates a random vertice near the opposite vertice in 2D hypersphere.
  * @class
@@ -56,8 +60,6 @@ class RandomVerticeSphere extends RandomVertice {
 				},
 		
 			});
-		const π = Math.PI, tan = Math.tan,
-			range = anglesRange.longitude.range;
 		let randomAngles;
 
 		//overridden methods
@@ -72,6 +74,7 @@ class RandomVerticeSphere extends RandomVertice {
 		this.anglesCircle = (utils) => {
 
 			const rnd = (params.random === undefined ? Math.random() : params.random) - 0.5,
+//				b = params.b ? params.b : utilsCircle.b(params),
 //				b = params.b ? params.b : utilsCircle.b(arc),//params),
 				b = params.b ? params.b : utils.b(params),
 				angle = (
@@ -89,7 +92,7 @@ class RandomVerticeSphere extends RandomVertice {
 					π / 2;//Умножаем на π/2 что бы при минимальном rnd = -0.5 и максимальном rnd = 0.5  углы попадали на полюса сферы т.е. получались от -π/2 до π/2.
 					//Тем самым точки почти равномерно распределяются по окружности когда arc = π, тоесть вершина и противоположная вершина расположены на противоположных сторонах окружности
 
-			if (isNaN(angle)) console.error(sRandomCloudSphere + ': get randomAngles. p = ' + p);
+			if (isNaN(angle)) console.error(sRandomVerticesSphere + '.anglesCircle: angle = ' + angle);
 //			const latitude = utilsCircle.normalizeAngle(angle),
 			return utils.normalizeAngle(angle);
 /*			
@@ -114,7 +117,8 @@ class RandomVerticeSphere extends RandomVertice {
 			
 			get: () => {
 
-				randomAngles = [[params.latitude != undefined ? params.latitude : 0, this.anglesCircle(utils)]];
+//				randomAngles = [[params.latitude != undefined ? params.latitude : 0, this.anglesCircle(utils)]];
+				randomAngles = [[params.latitude != undefined ? params.latitude : 0, this.anglesCircle(utilsCircle)]];
 				return randomAngles[0];
 				
 			},

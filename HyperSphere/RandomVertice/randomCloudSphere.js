@@ -95,6 +95,8 @@ console.error('angle < ' + latitudeMin);
 
 					params.random = k * circleId;
 
+					const latitude = randomVertice.anglesCircle(utils),
+/*
 					const rnd = (params.random === undefined ? Math.random() : params.random) - 0.5,
 //						b = params.b ? params.b : utilsCircle.b(arc),//params),
 						b = params.b ? params.b : utils.b(arc),//params),
@@ -116,6 +118,7 @@ console.error('angle < ' + latitudeMin);
 					if (isNaN(angle)) console.error(sRandomCloudSphere + ': get randomAngles. p = ' + p);
 //					const latitude = utilsCircle.normalizeAngle(angle),
 					const latitude = utils.normalizeAngle(angle),
+*/						
 						angleStep = abs(latitude - latitudePrev);//угол между соседними точками на окружности
 					//Количество точек на текущей окружности равно длинну окружности поделить на угол между соседними точками на окружности, расположенной на экваторе
 					let circleAnglesCount = round(//найти ближайшее целое число
@@ -275,149 +278,6 @@ console.log('this.circlesPointsCount = ' + this.circlesPointsCount)
 			get: () => {
 
 				verticesAngles(false);
-/*				
-				//Сфера состоит из набора окружностей.
-
-				const atan = Math.atan, abs = Math.abs,
-					range = anglesRange.latitude.range, latitudeMax = anglesRange.latitude.max, latitudeMin = anglesRange.latitude.min;
-				
-				const utilsCircle = {
-					
-					normalizeAngle: (angle) => {
-					
-						if (angle > latitudeMax) {
-
-console.error('angle > ' + latitudeMax);							
-							angle -= range;
-							if (angle > latitudeMax)
-								console.error('angle > ' + latitudeMax);
-					
-						} else {
-					
-							if (angle < latitudeMin) {
-								
-console.error('angle < ' + latitudeMin);
-								angle += range;
-								if (angle < latitudeMin)
-									console.error('angle < ' + latitudeMin);
-
-							}
-					
-						}
-						return angle;
-					
-					},
-					b: (params) => {
-
-						//for atan((random + 0.5) * b)
-						const arc = params.arc,
-						
-							//arc = π, b = 1 все точки почти равномерно распределяются по кругу. В идеале должна быть прямая линия между точками (random = -0.5, latitude = -π/2) и (random = 0.5, latitude = π/2)
-								//На самом деле между этими точками проходит arctangens
-							
-							//arc = 0, b = infinity все точки стягиваются в одну точку. Горизонтальная прямая линия между точками (random = -0.5, latitude = π/2) и (random = 0.5, latitude = π/2).
-								//atan(Infinity) = π/2
-//							b = arc * a + c;
-							b = π / arc;
-						
-						return b;
-							
-					}
-				}
-				
-				//что бы не делать повторяющихся вычислений
-				params.b = utilsCircle.b(params);
-				
-				const anglesCircle = (utils) => {
-					
-					const random = (params.random === undefined ? Math.random() : params.random) - 0.5,
-						b = params.b ? params.b : utils.b(params),
-						p = (
-								(
-									//К аргументу atan добавляю 0.5 что бы график atan сместился влево на -0.5
-									(atan(((
-												(random === -0.5) &&//Первая точка окружности
-												(b === Infinity) ? //Противоположные вершины совпадают
-													0 ://Если сюда не поставить ноль, то p = NaN
-													random
-										   ) + 0.5) * b)) /
-									atan((0.5 + 0.5) * b)//делим на tan(0.5 * b), что бы при минимальном random = -0.5 и максимальном random = 0.5, p получалось -1 и 1
-								) * 2 - 1//центр графика арктангенса сдвигаю вниз на -1
-							) *
-							π / 2;//Умножаем на π/2 что бы при минимальном random = -0.5 и максимальном random = 0.5  углы попадали на полюса сферы т.е. получались от -π/2 до π/2.
-							//Тем самым точки почти равномерно распределяются по окружности когда arc = π, тоесть вершина и противоположная вершина расположены на противоположных сторонах окружности
-
-					if (isNaN(p)) console.error(sRandomCloudSphere + ': get randomAngles. p = ' + p);
-					let angle = p;// + params.oppositeVertice.longitude;
-					
-					angle = utils.normalizeAngle(angle);
-//console.log('angle = ' + angle + ', random = ' + random)
-					return angle;
-					
-				}
-				const k = 1 / (circlesCount - 1);
-				let latitudePrev = 0;//широта предыдущей окружности
-				for(let circleId = 0; circleId < circlesCount; circleId++){
-
-					params.random = k * circleId;
-					const latitude = anglesCircle(utilsCircle),
-						angleStep = abs(latitude - latitudePrev);//угол между соседними точками на окружности
-//console.log('latitude = ' + latitude)
-					//Количество точек на текущей окружности равно длинну окружности поделить на угол между соседними точками на окружности, расположенной на экваторе
-					const circleAnglesCount = round(//найти ближайшее целое число
-							cos(latitude) * //радиус текущей окружности
-							2 * π / //длинна текущей окружности
-							angleStep
-						),
-						angleStep1 = 1 / circleAnglesCount,
-						boSouthernCircle = latitude - angleStep < anglesRange.latitude.min,
-						boNorthernCircle = latitude + angleStep > anglesRange.latitude.max,
-						latitudeMin = boSouthernCircle ? latitude : (angleStep * (0 - 0.5) + latitude),//Минимальная граница широты окружности
-						latitudeMax = boNorthernCircle ? latitude : (angleStep * (1 - 0.5) + latitude),//Максимальная граница широты окружности
-						latitudeStep = latitudeMax - latitudeMin,//Ширина широты окружности
-						latitudeMid = latitudeMin + latitudeStep / 2;//Средняя широта окружности
-					//console.log('latitude = ' + latitude + ', latitudePrev = ' + latitudePrev + ', circleAnglesCount = ' + circleAnglesCount);
-					latitudePrev = latitude; 
-					//console.log('boFirstOrLastCircle = ' + (boSouthernCircle || boNorthernCircle) + ', latitude = ' + latitude + ', latitudeMin = ' + latitudeMin + ', latitudeMax = ' + latitudeMax);
-					
-					for (let angleId = 0; angleId < circleAnglesCount; angleId++) {
-
-						const randomVerticeAngles = [
-
-							//latitude
-							params.debug && params.debug.notRandomVertices ?
-							
-								latitude : //окружность расположна на одной широте
-
-								//окружность расположна на случайной широте в диапазоне от latitude до latitude - angleStep. Нужно, что бы окружность случайных точек немного гуляла по широте от latitude до latitude - angleStep. Тогда поверхность сферы будет случайно заполнена точками.
-								//Если это не делать то случайные точки будут располагаться слоями по широте.
-								latitudeStep * (random() - 0.5) + latitudeMid,
-
-							//longitude
-							utils.normalizeAngle(
-								(
-									(
-										params.debug && params.debug.notRandomVertices ?
-
-											//Положение текущей точки зависит от порядкового номера точки angleId
-											(circleAnglesCount === 0 ?
-												 0 ://Эта точка расположена на полюсе
-												 angleStep1 * angleId) :
-										
-											random()//случайное положение текущей точки
-									) - 0.5//отнимаем 0.5 что бы диапазон возможных точек был между -0.5 и 0.5. Сразу такой диапазон нельзя вычислять потому что Math.random() имеет диапазон от 0 до 1
-								) * π * 2//диапазон возможных углов от -0.5 до 0.5 мняем на диапазон от -π до π
-							)
-						];
-						//console.log('randomVerticeAngles = ' + randomVerticeAngles.toString())
-						this.verticesAngles.push(randomVerticeAngles);
-			
-					}
-					
-				}
-				delete params.random;
-				delete params.b;
-*/				
 				return this.verticesAngles;
 				
 			},

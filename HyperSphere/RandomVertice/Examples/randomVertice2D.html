@@ -46,10 +46,19 @@
 					notRandomVertices: true,
 				
 				},
-				cloud: true,
+//				cloud: true,
+				
+				mode: 0,
+				modes: {
+
+					cloud: 0,
+					randomVertice: 1,
+					randomCloud: 2,
+					
+				}
 			
 			};
-			randomVerticeSettings.cloud ||= false;
+//			randomVerticeSettings.cloud ||= false;
 			const params = {
 
 				//вершины расположены друг против друга по диагонали. arc = π
@@ -141,12 +150,23 @@
 	
 			}
 			const randomCloud = new RandomCloud(params), randomVertice = new RandomVertice(params),
-				createRandomCloud = () => { createRandomVerticeHyperSphere(randomCloud, 'Random cloud'); },
-				createRandomVertice = () => { createRandomVerticeHyperSphere(randomVertice, 'Random vertice'); },
+//				createRandomCloud = () => { createRandomVerticeHyperSphere(randomCloud, 'Random cloud'); },
+//				createRandomVertice = () => { createRandomVerticeHyperSphere(randomVertice, 'Random vertice'); },
 				updateRandomVerticeHyperSphere = () => {
 
+					const modes = randomVerticeSettings.modes;
+					switch (randomVerticeSettings.mode){
+
+						case modes.cloud: createRandomVerticeHyperSphere(randomCloud, 'Cloud'); break;
+						case modes.randomVertice: createRandomVerticeHyperSphere(randomVertice, 'Random vertice'); break;
+						case modes.randomCloud: console.log('Under constraction') break;
+						default: console.error('Invalid mode = ' + mode);
+							
+					}
+/*					
 					if (randomVerticeSettings.cloud) createRandomCloud();
 					else createRandomVertice();
+*/					
 					
 				}
 			updateRandomVerticeHyperSphere();
@@ -213,6 +233,7 @@
 			fOppositeVertice.add(params.oppositeVertice, 'longitude', anglesRange.longitude.min, anglesRange.longitude.max, 0.001).onChange(() => { onChangeVertice(1); });
 			fOppositeVertice.add(params.oppositeVertice, 'latitude', anglesRange.latitude.min, anglesRange.latitude.max, 0.001).onChange(() => { onChangeVertice(1); });
 
+/*			
 			//cloud of the random points
 			{
 
@@ -238,6 +259,38 @@
 
 			}
 			gui.add(randomVerticeSettings, 'cloud');
+*/			
+
+			//mode
+			{
+
+				let mode = randomVerticeSettings.mode;
+				Object.defineProperty(randomVerticeSettings, 'mode', {
+			
+					get: () => { return mode; },
+					set: (modeNew) => {
+
+						hsRandomVertice.removeHyperSphere();
+						hsRandomVertice = undefined;
+						
+						mode = parseInt(modeNew);
+						const modes = randomVerticeSettings.modes;
+						switch (mode){
+
+							case modes.cloud: break;
+							case modes.randomVertice: randomVertice.randomAngles; break;
+							case modes.randomCloud: break;
+							default: console.error('Invalid mode = ' + mode);
+								
+						}
+						updateRandomVerticeHyperSphere();
+			
+					},
+			
+				});
+
+			}
+			gui.add(randomVerticeSettings, 'mode', randomVerticeSettings.modes);
 			
 			//////////////////////////////////////////GUI
 

@@ -70,10 +70,10 @@ export const normalizeAngle = (angle) => {
  * @param {object} [params={}] See the <b>params</b> of the <b>RandomVertice</b> constructor.
  * @returns multiplier.
  */
-export const b = (arc) => {
+export const b = (params) => {
 
 	//for atan((random + 0.5) * b)
-	return π / arc;
+	return π / params.arc;
 /*	
 	const getArcAngle = (vertice, oppositeVertice) => {
 		
