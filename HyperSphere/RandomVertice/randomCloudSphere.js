@@ -25,7 +25,7 @@ const π = Math.PI;
  * Generates a cloud of random vertices near the opposite vertice in 2D hypersphere.
  * @class
  */
-class RandomCloudSphere extends RandomCloud//Circle
+class RandomCloudSphere extends RandomCloud
 {
 
 	/**
@@ -39,51 +39,14 @@ class RandomCloudSphere extends RandomCloud//Circle
 		const anglesIdMax = 50,//Количество точек на окружности, расположенной на экваторе
 			circlesCount = (anglesIdMax / 2) + 1,//количество окружностей
 			k = 1 / (circlesCount - 1),//for params.random = k * circleId;
-//			angleStep = (anglesRange.longitude.max - anglesRange.longitude.min) / anglesIdMax,//угол между соседними точками на окружности, расположенной на экваторе
 			sin = Math.sin, cos = Math.cos, asin = Math.asin, atan = Math.atan, atan2 = Math.atan2,
 			round = Math.round, random = Math.random, abs = Math.abs,
 			range = anglesRange.latitude.range,// latitudeMax = anglesRange.latitude.max, latitudeMin = anglesRange.latitude.min,
 			randomVertice = new RandomVertice(params),
-/*			
-			utilsCircle = {
-					
-				normalizeAngle: (angle) => {
-				
-					if (angle > latitudeMax) {
-
-console.error('angle > ' + latitudeMax);							
-						angle -= range;
-						if (angle > latitudeMax)
-							console.error('angle > ' + latitudeMax);
-				
-					} else {
-				
-						if (angle < latitudeMin) {
-							
-console.error('angle < ' + latitudeMin);
-							angle += range;
-							if (angle < latitudeMin)
-								console.error('angle < ' + latitudeMin);
-
-						}
-				
-					}
-					return angle;
-				
-				},
-				b: (arc) => {
-
-					//for atan((random + 0.5) * b)
-					return π / arc;
-						
-				}
-			},
-*/			
 			verticesAngles = (boAllocateMemory) => {
 
 				//Сфера случайных точек состоит из набора окружностей.
 				
-//				const k = 1 / (circlesCount - 1);
 				const arc = boAllocateMemory ?
 					π ://Когда выделяется память для облака случайных точек (boAllocateMemory = true), надо сделать максимальное расстояние между вершинами (arc = π).
 						//В этом случае размер выделяемой памяти будет максимальным
@@ -96,29 +59,6 @@ console.error('angle < ' + latitudeMin);
 					params.random = k * circleId;
 
 					const latitude = randomVertice.anglesCircle(utils),
-/*
-					const rnd = (params.random === undefined ? Math.random() : params.random) - 0.5,
-//						b = params.b ? params.b : utilsCircle.b(arc),//params),
-						b = params.b ? params.b : utils.b(arc),//params),
-						angle = (
-								(
-									//К аргументу atan добавляю 0.5 что бы график atan сместился влево на -0.5
-									(atan(((
-												(rnd === -0.5) &&//Первая точка окружности
-												(b === Infinity) ? //Противоположные вершины совпадают
-													0 ://Если сюда не поставить ноль, то p = NaN
-													rnd
-										   ) + 0.5) * b)) /
-									atan((0.5 + 0.5) * b)//делим на tan(0.5 * b), что бы при минимальном rnd = -0.5 и максимальном rnd = 0.5, p получалось -1 и 1
-								) * 2 - 1//центр графика арктангенса сдвигаю вниз на -1
-							) *
-							π / 2;//Умножаем на π/2 что бы при минимальном rnd = -0.5 и максимальном rnd = 0.5  углы попадали на полюса сферы т.е. получались от -π/2 до π/2.
-							//Тем самым точки почти равномерно распределяются по окружности когда arc = π, тоесть вершина и противоположная вершина расположены на противоположных сторонах окружности
-
-					if (isNaN(angle)) console.error(sRandomCloudSphere + ': get randomAngles. p = ' + p);
-//					const latitude = utilsCircle.normalizeAngle(angle),
-					const latitude = utils.normalizeAngle(angle),
-*/						
 						angleStep = abs(latitude - latitudePrev);//угол между соседними точками на окружности
 					//Количество точек на текущей окружности равно длинну окружности поделить на угол между соседними точками на окружности, расположенной на экваторе
 					let circleAnglesCount = round(//найти ближайшее целое число
@@ -262,7 +202,6 @@ console.error('angle < ' + latitudeMin);
 					}
 					
 				}
-console.log('this.circlesPointsCount = ' + this.circlesPointsCount)
 				delete params.random;
 				delete params.b;
 				
