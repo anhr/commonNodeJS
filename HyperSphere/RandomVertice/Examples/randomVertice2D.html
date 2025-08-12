@@ -31,6 +31,7 @@
 
 		import RandomVertice from '../randomVerticeSphere.js';
 		import RandomCloud from '../randomCloudSphere.js';
+		import Cloud from '../cloudSphere.js';
 		import HyperSphere from '../../sphere.js';
 		import anglesRange from '../../anglesRange.js'
 		
@@ -48,14 +49,14 @@
 				},
 //				cloud: true,
 				
-				mode: 0,
 				modes: {
 
 					cloud: 0,
 					randomVertice: 1,
 					randomCloud: 2,
 					
-				}
+				},
+				mode: 0,
 			
 			};
 //			randomVerticeSettings.cloud ||= false;
@@ -134,7 +135,7 @@
 				}
 				hsRandomVertice.classSettings.settings.bufferGeometry.userData.drawRange = () => {
 
-					return { start: 0, count: randomCloud.circlesPointsCount };//устанавливает еоличество точек в органе управления 'Meshes\Points'
+					return { start: 0, count: randomVertice.circlesPointsCount != undefined ? randomVertice.circlesPointsCount : 1 };//устанавливает количество точек в органе управления 'Meshes\Points'
 					
 				}
 				if (hsRandomVertice.classSettings.edges.project) {
@@ -146,10 +147,12 @@
 						
 					}
 					
-				} else hsRandomVertice.setVerticesRange(0, randomCloud.circlesPointsCount);
+				} else hsRandomVertice.setVerticesRange(0, randomVertice.circlesPointsCount != undefined ? randomVertice.circlesPointsCount : 1);
 	
 			}
-			const randomCloud = new RandomCloud(params), randomVertice = new RandomVertice(params),
+			const cloud = new Cloud(params),
+				randomVertice = new RandomVertice(params),
+				randomCloud = new RandomCloud(params),
 //				createRandomCloud = () => { createRandomVerticeHyperSphere(randomCloud, 'Random cloud'); },
 //				createRandomVertice = () => { createRandomVerticeHyperSphere(randomVertice, 'Random vertice'); },
 				updateRandomVerticeHyperSphere = () => {
@@ -157,9 +160,9 @@
 					const modes = randomVerticeSettings.modes;
 					switch (randomVerticeSettings.mode){
 
-						case modes.cloud: createRandomVerticeHyperSphere(randomCloud, 'Cloud'); break;
+						case modes.cloud: createRandomVerticeHyperSphere(cloud, 'Cloud'); break;
 						case modes.randomVertice: createRandomVerticeHyperSphere(randomVertice, 'Random vertice'); break;
-						case modes.randomCloud: console.log('Under constraction') break;
+						case modes.randomCloud: createRandomVerticeHyperSphere(randomCloud, 'Random Cloud'); break;
 						default: console.error('Invalid mode = ' + mode);
 							
 					}
