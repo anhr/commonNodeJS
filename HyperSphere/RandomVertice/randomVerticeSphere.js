@@ -74,6 +74,7 @@ class RandomVerticeSphere extends RandomVertice {
 		
 		this.anglesCircle = (utils) => {
 
+/*			
 			const rnd = (params.random === undefined ? Math.random() : params.random) - 0.5,
 				b = params.b ? params.b : utils.b(params),
 				angle = (
@@ -94,8 +95,8 @@ class RandomVerticeSphere extends RandomVertice {
 							π / 2//Строим облако точек CloudSphere. Умножаем на π/2 что бы при минимальном rnd = -0.5 и максимальном rnd = 0.5  углы попадали на полюса сферы т.е. получались от -π/2 до π/2.
 							//Тем самым точки почти равномерно распределяются по окружности когда arc = π, тоесть вершина и противоположная вершина расположены на противоположных сторонах окружности
 					);
-/*			
-			const rnd = (params.random === undefined ? Math.random() : params.random),
+*/			
+			const rnd = (params.random === undefined ? Math.random() : params.random),//rng range from 0 to 1
 				b = params.b ? params.b : utils.b(params),
 				angle = (
 						(
@@ -114,10 +115,10 @@ class RandomVerticeSphere extends RandomVertice {
 							π / 2//Строим облако точек CloudSphere. Умножаем на π/2 что бы при минимальном rnd = 0 и максимальном rnd = 1  углы попадали на полюса сферы т.е. получались от -π/2 до π/2.
 							//Тем самым точки почти равномерно распределяются по окружности когда arc = π, тоесть вершина и противоположная вершина расположены на противоположных сторонах окружности
 					);
-*/					
 			
 			if (isNaN(angle)) console.error(sRandomVerticesSphere + '.anglesCircle: angle = ' + angle);
-			return utils.normalizeAngle(angle);
+			return angle;
+//			return utils.normalizeAngle(angle);
 			
 		}
 		

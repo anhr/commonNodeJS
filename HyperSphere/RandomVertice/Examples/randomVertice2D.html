@@ -56,7 +56,7 @@
 					randomCloud: 2,
 					
 				},
-				mode: 1,
+				mode: 2,
 			
 			};
 //			randomVerticeSettings.cloud ||= false;
@@ -155,7 +155,7 @@
 				cloud = new Cloud(params),
 				randomVertice = new RandomVertice(params),
 */				
-			let randomCloud, cloud, randomVertice;
+			let randomCloud, cloud, randomVertice;//сразу не создаю эти объекты потому что они могут не понадобиться и потому, что так легче отлаживать
 //				createRandomCloud = () => { createRandomVerticeHyperSphere(randomCloud, 'Random cloud'); },
 //				createRandomVertice = () => { createRandomVerticeHyperSphere(randomVertice, 'Random vertice'); },
 			const updateRandomVerticeHyperSphere = () => {
@@ -263,7 +263,9 @@
 						switch (mode){
 
 							case modes.cloud: break;
-							case modes.randomVertice: randomVertice.randomAngles; break;
+							case modes.randomVertice:
+								if (!randomVertice) randomVertice = new RandomVertice(params);
+								randomVertice.randomAngles; break;
 							case modes.randomCloud: break;
 							default: console.error('Invalid mode = ' + mode);
 								
