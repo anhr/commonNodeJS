@@ -56,7 +56,7 @@
 					randomCloud: 2,
 					
 				},
-				mode: 0,
+				mode: 2,
 			
 			};
 //			randomVerticeSettings.cloud ||= false;
@@ -236,33 +236,6 @@
 			fOppositeVertice.add(params.oppositeVertice, 'longitude', anglesRange.longitude.min, anglesRange.longitude.max, 0.001).onChange(() => { onChangeVertice(1); });
 			fOppositeVertice.add(params.oppositeVertice, 'latitude', anglesRange.latitude.min, anglesRange.latitude.max, 0.001).onChange(() => { onChangeVertice(1); });
 
-/*			
-			//cloud of the random points
-			{
-
-				let cloud = randomVerticeSettings.cloud;
-				Object.defineProperty(randomVerticeSettings, 'cloud', {
-			
-					get: () => { return cloud; },
-					set: (cloudNew) => {
-			
-						if (cloud === cloudNew) return true;
-						cloud = cloudNew;
-						
-						hsRandomVertice.removeHyperSphere();
-						hsRandomVertice = undefined;
-
-						if (!cloud) randomVertice.randomAngles;
-						
-						updateRandomVerticeHyperSphere();
-			
-					},
-			
-				});
-
-			}
-			gui.add(randomVerticeSettings, 'cloud');
-*/			
 
 			//mode
 			{

@@ -36,15 +36,23 @@ class RandomCloudSphere extends RandomCloud
 
 		super(params);
 
+/*		
 		const anglesIdMax = 50,//Количество точек на окружности, расположенной на экваторе
 			circlesCount = (anglesIdMax / 2) + 1,//количество окружностей
 			k = 1 / (circlesCount - 1),//for params.random = k * circleId;
 			sin = Math.sin, cos = Math.cos, asin = Math.asin, atan = Math.atan, atan2 = Math.atan2,
 			round = Math.round, random = Math.random, abs = Math.abs,
 			range = anglesRange.latitude.range,// latitudeMax = anglesRange.latitude.max, latitudeMin = anglesRange.latitude.min,
-			randomVertice = new RandomVertice(params),
-			verticesAngles = (boAllocateMemory) => {
+*/			
+		this.circlesPointsCount = 50;//количество точек в облаке
+		const randomVertice = new RandomVertice(params),
+			verticesAngles = (/*boAllocateMemory*/) => {
 
+				params.range = π;
+				for (let anglesId = 0; anglesId < this.circlesPointsCount; anglesId++) this.verticesAngles.push(randomVertice.randomAngles);
+				delete params.range;
+
+/*				
 				//Сфера случайных точек состоит из набора окружностей.
 				
 				const arc = boAllocateMemory ?
@@ -62,7 +70,7 @@ class RandomCloudSphere extends RandomCloud
 						angleStep = abs(latitude - latitudePrev);//угол между соседними точками на окружности
 					//Количество точек на текущей окружности равно длинну окружности поделить на угол между соседними точками на окружности, расположенной на экваторе
 					let circleAnglesCount = round(//найти ближайшее целое число
-							cos(latitude) *//радиус текущей окружности
+							cos(latitude) * //радиус текущей окружности
 							2 * π / //длинна текущей окружности
 							angleStep
 						);
@@ -116,21 +124,6 @@ class RandomCloudSphere extends RandomCloud
 							
 							if (this.circlesPointsCount >= this.verticesAngles.length) console.error(sRandomCloudSphere + '.verticesAngles: Allocate memory failed! this.circlesPointsCount = ' + this.circlesPointsCount + ' >= this.verticesAngles.length = ' + this.verticesAngles.length);
 
-							/*Есть точка на поверхности сферы в полярной системе координат. Начало полярной системы координат находится в центре сферы.
-							Написать на javascript исходный код поворота этой точки на произвольный угол с использованием углов Эйлера.
-							Полярный угол должен быть в диапазоне от π/2 на северном полюсе до -π/2 на южном полюсе. Азимутальный угол должен быть в диапазоне от -π до π.
-							Результат поворота должен быть в полярной системе коодинат.
-							*/
-
-							/**
-							 * Поворот точки на поверхности сферы с использованием углов Эйлера
-							 * @param {number} latitude - Полярный угол (θ) в диапазоне [-π/2, π/2]
-							 * @param {number} longitude - Азимутальный угол (φ) в диапазоне [-π, π]
-							 * @param {number} α - Угол Эйлера вокруг оси Z (поворот по Z). Поворот вокруг собственной оси
-							 * @param {number} β - Угол Эйлера вокруг оси X (поворот по X)
-							 * @param {number} γ - Угол Эйлера вокруг оси Z (поворот по Z)
-							 * @returns {Object} Новые полярные координаты {latitude, longitude}
-							 */
 							const rotatePointWithEulerAngles = (latitude, longitude, α, β, γ) => {
 							    // 1. Преобразование полярных координат в декартовы
 							    const x = cos(latitude) * cos(longitude),
@@ -165,26 +158,6 @@ class RandomCloudSphere extends RandomCloud
 							    return arrayAngles;
 							}
 
-							/*
-							// Пример использования:
-							const initialLatitude = Math.PI/4; // 45 градусов от экватора
-							const initialLongitude = Math.PI/2; // 90 градусов восточной долготы
-							
-							// Поворот на 30 градусов по всем осям Эйлера
-							const α = Math.PI/6; // 30 градусов
-							const β = Math.PI/6;  // 30 градусов
-							const γ = Math.PI/6; // 30 градусов
-							
-							const rotated = rotatePointWithEulerAngles(
-							    initialLatitude, initialLongitude, α, β, γ
-							);
-							
-							console.log("Исходные координаты:", {
-							    polar: initialLatitude,
-							    azimuthal: initialLongitude
-							});
-							console.log("После поворота:", rotated);
-							*/
 							const initialLatitude = randomVerticeAngles[0],
 								initialLongitude = randomVerticeAngles[1],
 							
@@ -204,11 +177,12 @@ class RandomCloudSphere extends RandomCloud
 				}
 				delete params.random;
 				delete params.b;
+*/				
 				
 			};
 
 		//Allocate this.verticesAngles memory
-		verticesAngles(true);
+//		verticesAngles(true);
 		
 		//overridden methods
 
@@ -216,7 +190,7 @@ class RandomCloudSphere extends RandomCloud
 			
 			get: () => {
 
-				verticesAngles(false);
+				verticesAngles();//false);
 				return this.verticesAngles;
 				
 			},
