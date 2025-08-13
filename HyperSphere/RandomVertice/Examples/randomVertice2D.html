@@ -56,13 +56,12 @@
 					randomCloud: 2,
 					
 				},
-				mode: 0,
+				mode: 1,
 			
 			};
 //			randomVerticeSettings.cloud ||= false;
 			const params = {
 
-				/*
 				//вершины расположены друг против друга по диагонали. arc = π
 				vertice: [
 					pi / 4,//0,//Latitude
@@ -72,7 +71,6 @@
 					-pi / 4,//0,//Latitude
 					pi,//lng
 				],
-				*/
 				/*
 				oppositeVertice: [
 					-pi / 800,//0,//Latitude
@@ -152,19 +150,28 @@
 				} else hsRandomVertice.setVerticesRange(0, randomVertice.circlesPointsCount != undefined ? randomVertice.circlesPointsCount : 1);
 	
 			}
-			const cloud = new Cloud(params),
+/*			
+			const randomCloud = new RandomCloud(params),
+				cloud = new Cloud(params),
 				randomVertice = new RandomVertice(params),
-				randomCloud = new RandomCloud(params),
+*/				
+			let randomCloud, cloud, randomVertice;
 //				createRandomCloud = () => { createRandomVerticeHyperSphere(randomCloud, 'Random cloud'); },
 //				createRandomVertice = () => { createRandomVerticeHyperSphere(randomVertice, 'Random vertice'); },
-				updateRandomVerticeHyperSphere = () => {
+			const updateRandomVerticeHyperSphere = () => {
 
 					const modes = randomVerticeSettings.modes;
 					switch (randomVerticeSettings.mode){
 
-						case modes.cloud: createRandomVerticeHyperSphere(cloud, 'Cloud'); break;
-						case modes.randomVertice: createRandomVerticeHyperSphere(randomVertice, 'Random vertice'); break;
-						case modes.randomCloud: createRandomVerticeHyperSphere(randomCloud, 'Random Cloud'); break;
+						case modes.cloud:
+							if (!cloud) cloud = new Cloud(params);
+							createRandomVerticeHyperSphere(cloud, 'Cloud'); break;
+						case modes.randomVertice:
+							if (!randomVertice) randomVertice = new RandomVertice(params);
+							createRandomVerticeHyperSphere(randomVertice, 'Random vertice'); break;
+						case modes.randomCloud: 
+							if (!randomCloud) randomCloud = new RandomCloud(params);
+							createRandomVerticeHyperSphere(randomCloud, 'Random Cloud'); break;
 						default: console.error('Invalid mode = ' + mode);
 							
 					}
