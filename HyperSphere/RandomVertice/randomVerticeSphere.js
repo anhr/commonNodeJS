@@ -39,7 +39,8 @@ class RandomVerticeSphere extends RandomVertice {
 		if (params.arc === undefined) Object.defineProperty(params, 'arc', {
 	
 				get: () => {
-					
+
+					if (params.boAllocateMemory) return π;//Выделяется память для облака точек. arc нужно сделать максимально возможным то есть вершины расположены друг против друга. В этом случае выделяется максимальный объем памяти.
 					const vertice = params.vertice, oppositeVertice = params.oppositeVertice;
 	//				return params.randomVertices.getArcAngle(vertice, oppositeVertice);
 					
@@ -81,7 +82,7 @@ class RandomVerticeSphere extends RandomVertice {
 							(atan(((
 										(rnd === -0.5) &&//Первая точка окружности
 										(b === Infinity) ? //Противоположные вершины совпадают
-											0 ://Если сюда не поставить ноль, то p = NaN
+											0 ://Если сюда не поставить ноль, то angle = NaN
 											rnd
 								   ) + 0.5) * b)) /
 							atan((0.5 + 0.5) * b)//делим на tan(0.5 * b), что бы при минимальном rnd = -0.5 и максимальном rnd = 0.5, p получалось -1 и 1
@@ -98,23 +99,23 @@ class RandomVerticeSphere extends RandomVertice {
 				b = params.b ? params.b : utils.b(params),
 				angle = (
 						(
-							//К аргументу atan добавляю 0.5 что бы график atan сместился влево на -0.5
 							(atan((
 										(rnd === 0) &&//Первая точка окружности
 										(b === Infinity) ? //Противоположные вершины совпадают
-											0 ://Если сюда не поставить ноль, то p = NaN
+											1 ://Если сюда не поставить 1, то angle = NaN
 											rnd
 								   ) * b)) /
-							atan((0.5) * b)//делим на tan(0.5 * b), что бы при минимальном rnd = -0.5 и максимальном rnd = 0.5, p получалось -1 и 1
+							atan(b)//делим на tan(b), что бы при минимальном rnd = 0 и максимальном rnd = 1, p получалось -1 и 1
 						) * 2 - 1//центр графика арктангенса сдвигаю вниз на -1
 					) *
 					(
 						params.range != undefined ?
 							params.range ://Строим облако случайных точек RandomCloudSphere.
-							π / 2//Строим облако точек CloudSphere. Умножаем на π/2 что бы при минимальном rnd = -0.5 и максимальном rnd = 0.5  углы попадали на полюса сферы т.е. получались от -π/2 до π/2.
+							π / 2//Строим облако точек CloudSphere. Умножаем на π/2 что бы при минимальном rnd = 0 и максимальном rnd = 1  углы попадали на полюса сферы т.е. получались от -π/2 до π/2.
 							//Тем самым точки почти равномерно распределяются по окружности когда arc = π, тоесть вершина и противоположная вершина расположены на противоположных сторонах окружности
 					);
-*/
+*/					
+			
 			if (isNaN(angle)) console.error(sRandomVerticesSphere + '.anglesCircle: angle = ' + angle);
 			return utils.normalizeAngle(angle);
 			

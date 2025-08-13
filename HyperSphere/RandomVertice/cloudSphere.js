@@ -48,11 +48,13 @@ class CloudSphere extends Cloud
 
 				//Сфера случайных точек состоит из набора окружностей.
 				
-//				const k = 1 / (circlesCount - 1);
+/*				
 				const arc = boAllocateMemory ?
 					π ://Когда выделяется память для облака случайных точек (boAllocateMemory = true), надо сделать максимальное расстояние между вершинами (arc = π).
 						//В этом случае размер выделяемой памяти будет максимальным
 					params.arc;
+*/					
+				const arc = params.arc;
 				this.circlesPointsCount = boAllocateMemory ? undefined : //Во время выделения памяти в массив this.verticesAngles добавляется новый item
 					0;//в противном случае в массиве this.verticesAngles редактируется item с индексом this.circlesPointsCount
 				let latitudePrev = 0;//широта предыдущей окружности
@@ -63,6 +65,7 @@ class CloudSphere extends Cloud
 //					const latitude = randomVertice.anglesCircle(utils),
 					const latitude = randomVertice.randomAngles[1],
 						angleStep = abs(latitude - latitudePrev);//угол между соседними точками на окружности
+//					if (angleStep === 0) continue;//широта окружности и предыдущей окружности совпадают
 					//Количество точек на текущей окружности равно длинну окружности поделить на угол между соседними точками на окружности, расположенной на экваторе
 					let circleAnglesCount = round(//найти ближайшее целое число
 							cos(latitude) *//радиус текущей окружности
@@ -212,7 +215,9 @@ console.log('this.circlesPointsCount = ' + this.circlesPointsCount)
 			};
 
 		//Allocate this.verticesAngles memory
-		verticesAngles(true);
+		params.boAllocateMemory = true;
+		verticesAngles(params.boAllocateMemory);
+		delete params.boAllocateMemory;
 		
 		//overridden methods
 
