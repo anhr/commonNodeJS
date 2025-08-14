@@ -48,9 +48,9 @@ class RandomCloudSphere extends RandomCloud
 		const randomVertice = new RandomVertice(params),
 			verticesAngles = (/*boAllocateMemory*/) => {
 
-				params.range = π;
+//				params.range = π;
 				for (let anglesId = 0; anglesId < this.circlesPointsCount; anglesId++) this.verticesAngles.push(randomVertice.randomAngles);
-				delete params.range;
+//				delete params.range;
 
 /*				
 				//Сфера случайных точек состоит из набора окружностей.

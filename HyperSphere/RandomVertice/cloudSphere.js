@@ -63,7 +63,8 @@ class CloudSphere extends Cloud
 					params.random = k * circleId;
 
 //					const latitude = randomVertice.anglesCircle(utils),
-					const latitude = randomVertice.randomAngles[1],
+//					const latitude = randomVertice.randomAngles[1],
+					const latitude = randomVertice.randomAngles.latitude,
 						angleStep = abs(latitude - latitudePrev);//угол между соседними точками на окружности
 //					if (angleStep === 0) continue;//широта окружности и предыдущей окружности совпадают
 					//Количество точек на текущей окружности равно длинну окружности поделить на угол между соседними точками на окружности, расположенной на экваторе
