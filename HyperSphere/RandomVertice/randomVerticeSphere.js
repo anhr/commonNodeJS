@@ -14,6 +14,7 @@
 */
 
 import RandomVertice from './randomVertice.js';
+//import RandomVerticeV2 from './randomVerticeV2.js';
 import anglesRange from '../anglesRange.js'
 import * as utils from './utilsSphere.js'
 import * as utilsCircle from './utilsCircle.js'
@@ -192,7 +193,7 @@ class RandomVerticeSphere extends RandomVertice {
 		
 		/////////////////////////////overridden methods
 
-//		this.randomAngles;
+		this.randomAngles;
 
 	}
 	
