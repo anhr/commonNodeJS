@@ -14,7 +14,7 @@
 */
 
 //import RandomCloud from './randomCloud.js';
-import Cloud from './Cloud.js';
+import Cloud from './cloud.js';
 import RandomVertice from './randomVerticeSphere.js';
 import * as utils from './utilsSphere.js'
 import anglesRange from '../anglesRange.js'
