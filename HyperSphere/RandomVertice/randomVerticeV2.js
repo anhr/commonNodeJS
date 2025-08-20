@@ -1,6 +1,6 @@
 /**
- * @module Cloud
- * @description Generates a cloud of the vertices around opposite vertice.
+ * @module RandomVertice
+ * @description Generates random angles between a vertice and its opposite vertice.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
@@ -13,26 +13,31 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 
-const sCloud = 'Cloud',
-	sOver = ': Please, override %s method in your ' + sCloud + ' child class.';
+const sRandomVertice = 'RandomVertice',
+	sOver = ': Please, override %s method in your ' + sRandomVertice + ' child class.';
 /**
- * Generates a cloud of the vertices around opposite vertice.
+ * Generates random angles between a vertice and its opposite vertice.
  * @class
  */
-class Cloud {
+class RandomVertice {
 
 	/**
-	 * Generates a cloud of the vertices around opposite vertice.
+	 * Generates random angles between a vertice and its opposite vertice.
 	 * @param {object} [params={}] See the <b>params</b> of the <b>RandomVertice</b> constructor.
 	 */
 	constructor(params) {
 
+		params.vertice ||= this.ZeroArray();
+		params.oppositeVertice ||= this.ZeroArray();
+		this.Center(params);
+/*		
 		Object.defineProperty(this, 'angles', {
 			
 			get: () => { return this.verticesAngles; },
 			set: (anglesNew) => { this.verticesAngles = anglesNew; },
 			
 		});
+*/		
 		this.anglesCircle = (anglesIdMax, randomVertice, utils) => {
 			
 			const boUpdate = this.verticesAngles.length === 0 ? false : true;
@@ -67,4 +72,4 @@ class Cloud {
 	/////////////////////////////overridden methods
 
 }
-export default Cloud;
+export default RandomVertice;
