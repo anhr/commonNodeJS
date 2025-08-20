@@ -38,7 +38,13 @@ class CloudSphere extends Cloud
 		super(params);
 
 		const randomVertice = new RandomVertice(params);
-		this.verticesAngles = randomVertice.cloud;
+//		this.verticesAngles = randomVertice.cloud;
+		Object.defineProperty(this, 'verticesAngles', {
+			
+			get: () => { return randomVertice.verticesAngles; },
+			set: (anglesNew) => { randomVertice.verticesAngles = anglesNew; },
+		
+		});
 		Object.defineProperty(this, 'circlesPointsCount', { get: () => { return randomVertice.circlesPointsCount; }, });
 /*
 		const anglesIdMax = 50,//Количество точек на окружности, расположенной на экваторе
