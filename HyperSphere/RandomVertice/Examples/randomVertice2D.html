@@ -56,7 +56,7 @@
 					randomCloud: 2,
 					
 				},
-				mode: 1,
+				mode: 0,
 			
 			};
 //			randomVerticeSettings.cloud ||= false;
@@ -164,7 +164,13 @@
 					switch (randomVerticeSettings.mode){
 
 						case modes.cloud:
-							if (!cloud) cloud = new Cloud(params);
+							if (!cloud) {
+								
+								cloud = new Cloud(params);
+//								cloud = new RandomVertice(params);
+//								cloud.cloud;
+
+							}
 							createRandomVerticeHyperSphere(cloud, 'Cloud'); break;
 						case modes.randomVertice:
 							if (!randomVertice) randomVertice = new RandomVertice(params);

@@ -37,6 +37,10 @@ class CloudSphere extends Cloud
 
 		super(params);
 
+		const randomVertice = new RandomVertice(params);
+		this.verticesAngles = randomVertice.cloud;
+		Object.defineProperty(this, 'circlesPointsCount', { get: () => { return randomVertice.circlesPointsCount; }, });
+/*
 		const anglesIdMax = 50,//Количество точек на окружности, расположенной на экваторе
 			circlesCount = (anglesIdMax / 2) + 1,//количество окружностей
 			k = 1 / (circlesCount - 1),//for params.random = k * circleId;
@@ -48,12 +52,6 @@ class CloudSphere extends Cloud
 
 				//Сфера случайных точек состоит из набора окружностей.
 				
-/*				
-				const arc = boAllocateMemory ?
-					π ://Когда выделяется память для облака случайных точек (boAllocateMemory = true), надо сделать максимальное расстояние между вершинами (arc = π).
-						//В этом случае размер выделяемой памяти будет максимальным
-					params.arc;
-*/					
 				const arc = params.arc;
 				this.circlesPointsCount = boAllocateMemory ? undefined : //Во время выделения памяти в массив this.verticesAngles добавляется новый item
 					0;//в противном случае в массиве this.verticesAngles редактируется item с индексом this.circlesPointsCount
@@ -69,7 +67,7 @@ class CloudSphere extends Cloud
 //					if (angleStep === 0) continue;//широта окружности и предыдущей окружности совпадают
 					//Количество точек на текущей окружности равно длинну окружности поделить на угол между соседними точками на окружности, расположенной на экваторе
 					let circleAnglesCount = round(//найти ближайшее целое число
-							cos(latitude) *//радиус текущей окружности
+							cos(latitude) * //радиус текущей окружности
 							2 * π / //длинна текущей окружности
 							angleStep
 						);
@@ -123,21 +121,6 @@ class CloudSphere extends Cloud
 							
 							if (this.circlesPointsCount >= this.verticesAngles.length) console.error(sRandomCloudSphere + '.verticesAngles: Allocate memory failed! this.circlesPointsCount = ' + this.circlesPointsCount + ' >= this.verticesAngles.length = ' + this.verticesAngles.length);
 
-							/*Есть точка на поверхности сферы в полярной системе координат. Начало полярной системы координат находится в центре сферы.
-							Написать на javascript исходный код поворота этой точки на произвольный угол с использованием углов Эйлера.
-							Полярный угол должен быть в диапазоне от π/2 на северном полюсе до -π/2 на южном полюсе. Азимутальный угол должен быть в диапазоне от -π до π.
-							Результат поворота должен быть в полярной системе коодинат.
-							*/
-
-							/**
-							 * Поворот точки на поверхности сферы с использованием углов Эйлера
-							 * @param {number} latitude - Полярный угол (θ) в диапазоне [-π/2, π/2]
-							 * @param {number} longitude - Азимутальный угол (φ) в диапазоне [-π, π]
-							 * @param {number} α - Угол Эйлера вокруг оси Z (поворот по Z). Поворот вокруг собственной оси
-							 * @param {number} β - Угол Эйлера вокруг оси X (поворот по X)
-							 * @param {number} γ - Угол Эйлера вокруг оси Z (поворот по Z)
-							 * @returns {Object} Новые полярные координаты {latitude, longitude}
-							 */
 							const rotatePointWithEulerAngles = (latitude, longitude, α, β, γ) => {
 							    // 1. Преобразование полярных координат в декартовы
 							    const x = cos(latitude) * cos(longitude),
@@ -172,26 +155,6 @@ class CloudSphere extends Cloud
 							    return arrayAngles;
 							}
 
-							/*
-							// Пример использования:
-							const initialLatitude = Math.PI/4; // 45 градусов от экватора
-							const initialLongitude = Math.PI/2; // 90 градусов восточной долготы
-							
-							// Поворот на 30 градусов по всем осям Эйлера
-							const α = Math.PI/6; // 30 градусов
-							const β = Math.PI/6;  // 30 градусов
-							const γ = Math.PI/6; // 30 градусов
-							
-							const rotated = rotatePointWithEulerAngles(
-							    initialLatitude, initialLongitude, α, β, γ
-							);
-							
-							console.log("Исходные координаты:", {
-							    polar: initialLatitude,
-							    azimuthal: initialLongitude
-							});
-							console.log("После поворота:", rotated);
-							*/
 							const initialLatitude = randomVerticeAngles[0],
 								initialLongitude = randomVerticeAngles[1],
 							
@@ -219,9 +182,11 @@ console.log('this.circlesPointsCount = ' + this.circlesPointsCount)
 		params.boAllocateMemory = true;
 		verticesAngles(params.boAllocateMemory);
 		delete params.boAllocateMemory;
+*/		
 		
 		//overridden methods
 
+/*		
 		Object.defineProperty(this, 'randomAngles', {
 			
 			get: () => {
@@ -234,10 +199,22 @@ console.log('this.circlesPointsCount = ' + this.circlesPointsCount)
 			set: (anglesNew) => { verticesAngles = anglesNew; },
 			
 		});
+*/
+		Object.defineProperty(this, 'randomAngles', {
+			
+			get: () => {
+
+				randomVertice.randomAngles;
+				this.verticesAngles = randomVertice.cloud;
+				return this.verticesAngles;
+				
+			},
+			
+		});
 		
 		/////////////////////////////overridden methods
 
-		this.randomAngles;
+//		this.randomAngles;
 		
 	}
 

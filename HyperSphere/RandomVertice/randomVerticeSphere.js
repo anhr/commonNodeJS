@@ -320,6 +320,17 @@ console.log('this.circlesPointsCount = ' + this.circlesPointsCount)
 			
 		});
 		
+		Object.defineProperty(this, 'cloud', {
+			
+			get: () => {
+
+				verticesAngles(false);
+				return this.verticesAngles;
+				
+			},
+			
+		});
+		
 		/////////////////////////////overridden methods
 
 		this.randomAngles;

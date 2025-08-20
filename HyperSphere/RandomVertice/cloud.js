@@ -61,8 +61,8 @@ class Cloud {
 	
 	//overridden methods
 	
-	get angles() { console.error(sRandomCloud + sOver.replace('%s', 'get angles')) }
-	get randomAngles() { console.error(sRandomCloud + sOver.replace('%s', 'get randomAngles')) }
+	get angles() { console.error(sCloud + sOver.replace('%s', 'get angles')) }
+	get randomAngles() { console.error(sCloud + sOver.replace('%s', 'get randomAngles')) }
 	
 	/////////////////////////////overridden methods
 
