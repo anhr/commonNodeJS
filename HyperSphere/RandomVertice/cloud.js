@@ -56,7 +56,7 @@ class Cloud {
 		}
 		
 	}
-	verticesAngles = [];
+//	verticesAngles = [];
 	circlesPointsCount;
 	
 	//overridden methods
