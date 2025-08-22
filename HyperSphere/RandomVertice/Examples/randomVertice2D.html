@@ -44,7 +44,7 @@
 				//R: 0.5,
 				debug: {
 					
-					notRandomVertices: true,
+					//notRandomVertices: true,
 				
 				},
 //				cloud: true,
@@ -62,21 +62,25 @@
 //			randomVerticeSettings.cloud ||= false;
 			const params = {
 
+				/*
 				//вершины расположены друг против друга по диагонали. arc = π
 				vertice: [
 					pi / 4,//0,//Latitude
-					0,//lng
+					0,//Longitude
 				],
 				oppositeVertice: [
 					-pi / 4,//0,//Latitude
-					pi,//lng
-				],
-				/*
-				oppositeVertice: [
-					-pi / 800,//0,//Latitude
-					0,//lng
+					pi,//Longitude
 				],
 				*/
+				vertice: [
+					0.785,//Latitude
+					pi,//Longitude
+				],
+				oppositeVertice: [
+					0.051,//0,//Latitude
+					pi,//Longitude
+				],
 				debug: randomVerticeSettings.debug,
 
 			}

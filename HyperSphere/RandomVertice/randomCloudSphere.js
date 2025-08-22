@@ -44,12 +44,18 @@ class RandomCloudSphere extends RandomCloud
 			round = Math.round, random = Math.random, abs = Math.abs,
 			range = anglesRange.latitude.range,// latitudeMax = anglesRange.latitude.max, latitudeMin = anglesRange.latitude.min,
 */			
-		this.circlesPointsCount = 50;//количество точек в облаке
+		this.circlesPointsCount = 750;//количество точек в облаке
 		const randomVertice = new RandomVertice(params),
 			verticesAngles = (/*boAllocateMemory*/) => {
 
 //				params.range = π;
-				for (let anglesId = 0; anglesId < this.circlesPointsCount; anglesId++) this.verticesAngles.push(randomVertice.randomAngles);
+				for (let anglesId = 0; anglesId < this.circlesPointsCount; anglesId++) {
+
+					const randomAngles = randomVertice.randomAngles;
+					if (boAllocateMemory) this.verticesAngles.push(randomAngles);
+					else this.verticesAngles[anglesId] = randomAngles;
+
+				}
 //				delete params.range;
 
 /*				
@@ -201,7 +207,9 @@ class RandomCloudSphere extends RandomCloud
 		
 		/////////////////////////////overridden methods
 
+		let boAllocateMemory = true;
 		this.randomAngles;
+		boAllocateMemory = false;
 		
 	}
 
