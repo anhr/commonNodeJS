@@ -1,0 +1,26 @@
+--------------------------------
+jsdoc https://github.com/jsdoc/jsdoc
+Getting Started with JSDoc 3 https://jsdoc.app/about-getting-started.html
+Generating a website:
+	Download https://github.com/jsdoc/jsdoc into D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc
+	Open "Node.js command prompt"
+
+	//Read https://github.com/valerii-zinchenko/jsdoc-inheritance-diagram?tab=readme-ov-file to include the inheritance diagram of classes into the documentation.
+	npm install jsdoc-inheritance-diagram --save-dev
+	//edit the D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\jsdoc\jsdoc.json file.
+
+	d:
+	cd "D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc"
+	npm install -g jsdoc
+
+	//remove all files from "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\nD\jsdoc"
+
+	jsdoc -c "..\commonNodeJS\master\jsdoc\jsdoc.json"
+					-R "..\commonNodeJS\master\HyperSphere\HyperSphere.md"
+					-d "..\commonNodeJS\master\HyperSphere\jsdoc"
+					"..\commonNodeJS\master\HyperSphere\hyperSphere.js"
+					"..\commonNodeJS\master\HyperSphere\circle.js"
+					"..\commonNodeJS\master\HyperSphere\sphere.js"
+					"..\commonNodeJS\master\HyperSphere\hyperSphere3D.js"
+
+	//Open "http://localhost/anhr/commonNodeJS/master/HyperSphere/jsdoc/index.html"
