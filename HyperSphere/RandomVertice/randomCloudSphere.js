@@ -1,5 +1,5 @@
 /**
- * @module RandomCloudCircle
+ * @module RandomCloudSphere
  * @description Generates a cloud of random vertices near the opposite vertice in 2D hypersphere.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
@@ -24,6 +24,7 @@ const π = Math.PI;
 /**
  * Generates a cloud of random vertices near the opposite vertice in 2D hypersphere.
  * @class
+ * @extends RandomCloud
  */
 class RandomCloudSphere extends RandomCloud
 {

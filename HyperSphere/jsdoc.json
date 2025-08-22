@@ -1,0 +1,17 @@
+{
+	"plugins": [ "C:/Users/anhr/node_modules/jsdoc-inheritance-diagram" ],
+	"opts": {
+		"inheritance-diagram": {
+			"externalLinks": {
+				"SuperRoot": "https://super/root/url",
+				"ExtClass": "http://link.to/external/class/documentation.html"
+			},
+			"css": ".parent rect {fill: lightgray;}",
+			"node": {
+				"dimensions": {
+					"width": 80
+				}
+			}
+		}
+	}
+}

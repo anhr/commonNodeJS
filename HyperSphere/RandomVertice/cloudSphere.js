@@ -1,5 +1,5 @@
 /**
- * @module CloudCircle
+ * @module CloudSphere
  * @description Generates a cloud of vertices near the opposite vertice in 2D hypersphere.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
@@ -25,6 +25,7 @@ const π = Math.PI;
 /**
  * Generates a cloud of vertices near the opposite vertice in 2D hypersphere.
  * @class
+ * @extends Cloud
  */
 class CloudSphere extends Cloud
 {

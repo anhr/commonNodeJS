@@ -21,6 +21,7 @@ const sRandomVerticeCircle = 'RandomVerticeCircle';
 /**
  * Generates a random vertice near the opposite vertice in 1D hypersphere.
  * @class
+ * @extends RandomVertice
  */
 class RandomVerticeCircle extends RandomVertice {
 

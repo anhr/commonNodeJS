@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: utilsSphere.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: utilsSphere.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module utils
+ * @description utilities which is used to calculate randomAngles for sphere.
+ *
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
+ *
+ * @copyright 2011 Data Arts Team, Google Creative Lab
+ *
+ * @license under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+*/
+
+import anglesRange from '../anglesRange.js'
+
+const range = anglesRange.longitude.range, latitudeMax = anglesRange.latitude.max, latitudeMin = anglesRange.latitude.min, π = Math.PI;
+
+/**
+ * normalize a circle angle to range between anglesRange.longitude.min and anglesRange.longitude.max.
+ * @param {float} angle angle for normalization.
+ * @returns normalized angle.
+ */
+export const normalizeAngle = (angle) => {
+
+	if (angle > latitudeMax) {
+
+//console.error('angle > ' + latitudeMax);							
+		angle -= range;
+		if (angle > latitudeMax)
+			console.error('angle > ' + latitudeMax);
+
+	} else {
+
+		if (angle &lt; latitudeMin) {
+			
+//console.error('angle &lt; ' + latitudeMin);
+			angle += range;
+			if (angle &lt; latitudeMin)
+				console.error('angle &lt; ' + latitudeMin);
+
+		}
+
+	}
+	return angle;
+/*	
+	if (angle > π) {
+
+		angle -= range;
+		if (angle > π)
+			console.error('angle > π')
+
+	} else {
+
+		if (angle &lt; -π) angle += range;
+		if (angle &lt; -π)
+			console.error('angle &lt; -π')
+
+	}
+	return angle;
+*/	
+
+}
+//parameters for b = arc * a + c,
+//const a = (1 / π) - 1, c = π;
+
+/**
+ * The multiplier for calculating the tangent, which is used to calculate randomAngles.
+ * @param {object} [params={}] See the &lt;b>params&lt;/b> of the &lt;b>RandomVertice&lt;/b> constructor.
+ * @returns multiplier.
+ */
+export const b = (params) => {
+
+	//for atan((random + 0.5) * b)
+	return π / params.arc;
+/*	
+	const getArcAngle = (vertice, oppositeVertice) => {
+		
+		//DeepSeek. вычислить угол между двумя точками на поверхности шара
+		//векторы
+		//A=(R,ϕ1,λ1 ) - vertice
+		const ϕ1 = vertice[0], λ1 = vertice[1];
+		//B=(R,ϕ2,λ2 ) - oppositeVertice
+		const ϕ2 = oppositeVertice[0], λ2 = oppositeVertice[1];
+		//где
+		//ϕ — широта (от −90° до 90°),
+		//λ — долгота (от −180° до 180°),
+		const arccos = Math.acos, sin = Math.sin, cos = Math.cos;
+		const θ = arccos(sin(ϕ1) * sin(ϕ2) + cos(ϕ1) * cos(ϕ2) * cos(λ1 - λ2));
+		if (isNaN(θ)) console.error(sSphere + ': getArcAngle. Invalid θ = ' + θ);
+		return θ;
+		
+	}
+	const arc = params.arc != undefined ? params.arc : Math.abs(normalizeAngle(getArcAngle(params.vertice, params.oppositeVertice))),
+	
+		//arc = π, b = 1 все точки почти равномерно распределяются по кругу
+		//arc = 0, b = π все точки стягиваются в одну точку
+		b = arc * a + c;
+	
+	return b;
+*/	
+		
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Cloud.html">Cloud</a></li><li><a href="module-CloudSphere.html">CloudSphere</a></li><li><a href="module-RandomCloud.html">RandomCloud</a></li><li><a href="module-RandomCloudCircle.html">RandomCloudCircle</a></li><li><a href="module-RandomCloudSphere.html">RandomCloudSphere</a></li><li><a href="module-RandomVertice.html">RandomVertice</a></li><li><a href="module-RandomVerticeCircle.html">RandomVerticeCircle</a></li><li><a href="module-RandomVerticeSphere.html">RandomVerticeSphere</a></li><li><a href="module-utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="module-CloudSphere-CloudSphere.html">CloudSphere</a></li><li><a href="module-Cloud-Cloud.html">Cloud</a></li><li><a href="module-RandomCloudCircle-RandomCloudCircle.html">RandomCloudCircle</a></li><li><a href="module-RandomCloudSphere-RandomCloudSphere.html">RandomCloudSphere</a></li><li><a href="module-RandomCloud-RandomCloud.html">RandomCloud</a></li><li><a href="module-RandomVerticeCircle-RandomVerticeCircle.html">RandomVerticeCircle</a></li><li><a href="module-RandomVerticeSphere-RandomVerticeSphere.html">RandomVerticeSphere</a></li><li><a href="module-RandomVertice-RandomVertice.html">RandomVertice</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri Aug 22 2025 09:59:51 GMT+0700 (Красноярск, стандартное время)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

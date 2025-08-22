@@ -1,5 +1,5 @@
 /**
- * @module RandomVerticeCircle
+ * @module RandomVerticeSphere
  * @description Generates a random vertice near the opposite vertice in 2D hypersphere.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
@@ -27,6 +27,7 @@ const sRandomVerticesSphere = 'RandomVerticesSphere',
 /**
  * Generates a random vertice near the opposite vertice in 2D hypersphere.
  * @class
+ * @extends RandomVertice
  */
 class RandomVerticeSphere extends RandomVertice {
 

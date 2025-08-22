@@ -21,6 +21,7 @@ const sRandomCloudCircle = 'RandomCloudCircle';
 /**
  * Generates a cloud of random vertices near the opposite vertice in 1D hypersphere.
  * @class
+ * @extends RandomCloud
  */
 class RandomCloudCircle extends RandomCloud {
 
