@@ -51,7 +51,6 @@ const sHyperSphere = 'HyperSphere', sOverride = sHyperSphere + ': Please overrid
  * Base class for n dimensional [hypersphere]{@link https://en.wikipedia.org/wiki/N-sphere}. Extends <a href="../../jsdoc/MyObject/module-myObject-MyObject.html" target="_blank">MyObject</a>.
  * @class
  * @extends MyObject
- * @augments Circle
  */
 class HyperSphere extends MyObject {
 
