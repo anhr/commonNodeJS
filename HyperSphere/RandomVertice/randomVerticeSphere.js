@@ -119,6 +119,32 @@ class RandomVerticeSphere extends RandomVertice {
 			range = anglesRange.latitude.range,// latitudeMax = anglesRange.latitude.max, latitudeMin = anglesRange.latitude.min,
 */			
 //			randomVertice = new RandomVerticeV3(params),
+			getRandomVerticeAnglesParams = (latitude, angleStep) => {
+
+/*				
+				const latitude = this.latitude(utils),
+					angleStep = abs(latitude - latitudePrev);//угол между соседними точками на окружности
+				return { latitude: latitude, angleStep: angleStep }
+*/				
+				//Количество точек на текущей окружности равно длинну окружности поделить на угол между соседними точками на окружности, расположенной на экваторе
+				let circleAnglesCount = round(//найти ближайшее целое число
+						cos(latitude) *//радиус текущей окружности
+						2 * π / //длинна текущей окружности
+						angleStep
+					);
+				const angleStep1 = 1 / circleAnglesCount,
+					boSouthernCircle = latitude - angleStep < anglesRange.latitude.min,
+					boNorthernCircle = latitude + angleStep > anglesRange.latitude.max,
+					latitudeMin = boSouthernCircle ? latitude : (angleStep * (0 - 0.5) + latitude),//Минимальная граница широты окружности
+					latitudeMax = boNorthernCircle ? latitude : (angleStep * (1 - 0.5) + latitude),//Максимальная граница широты окружности
+					latitudeStep = latitudeMax - latitudeMin,//Ширина широты окружности
+					latitudeMid = latitudeMin + latitudeStep / 2;//Средняя широта окружности
+				if (!params.boAllocateMemory && (circleAnglesCount > this.verticesAngles.length))
+					circleAnglesCount = 1;//когда длинна дуги приближается к нулю, тоесть вершины совпадают, то angleStep стремится к нулю и circleAnglesCount стремится к бесконечности и массив this.verticesAngles переполняется.
+											//Делаем один угол в окружности
+				return { angleStep1, latitudeMin, latitudeMax, latitudeStep, latitudeMid, boSouthernCircle, boNorthernCircle, circleAnglesCount };
+
+			},
 			getRandomVerticeAngles = (latitude, latitudeStep, latitudeMid, circleAnglesCount, angleStep1, angleId) => {
 				
 				const randomVerticeAngles = [
@@ -249,12 +275,15 @@ class RandomVerticeSphere extends RandomVertice {
 
 					params.random = k * circleId;
 
-//					const latitude = randomVertice.randomAngles.latitude,
 					const latitude = this.latitude(utils),
-						angleStep = abs(latitude - latitudePrev);//угол между соседними точками на окружности
+						angleStep = abs(latitude - latitudePrev),//угол между соседними точками на окружности
+						randomVerticeAnglesParams = getRandomVerticeAnglesParams(latitude, angleStep);
+/*							
+						latitude = randomVerticeAnglesParams.latitude,
+						angleStep = randomVerticeAnglesParams.angleStep;//угол между соседними точками на окружности
 					//Количество точек на текущей окружности равно длинну окружности поделить на угол между соседними точками на окружности, расположенной на экваторе
 					let circleAnglesCount = round(//найти ближайшее целое число
-							cos(latitude) *//радиус текущей окружности
+							cos(latitude) * //радиус текущей окружности
 							2 * π / //длинна текущей окружности
 							angleStep
 						);
@@ -265,10 +294,21 @@ class RandomVerticeSphere extends RandomVertice {
 						latitudeMax = boNorthernCircle ? latitude : (angleStep * (1 - 0.5) + latitude),//Максимальная граница широты окружности
 						latitudeStep = latitudeMax - latitudeMin,//Ширина широты окружности
 						latitudeMid = latitudeMin + latitudeStep / 2;//Средняя широта окружности
-					if (arrayCircles && !boAllocateMemory) arrayCircles.push({latitude: latitude, latitudeStep: latitudeStep, latitudeMid: latitudeMid, circleAnglesCount, circleAnglesCount, angleStep1: angleStep1});
 					if (!boAllocateMemory && (circleAnglesCount > this.verticesAngles.length))
 						circleAnglesCount = 1;//когда длинна дуги приближается к нулю, тоесть вершины совпадают, то angleStep стремится к нулю и circleAnglesCount стремится к бесконечности и массив this.verticesAngles переполняется.
 												//Делаем один угол в окружности
+*/						
+					const angleStep1 = randomVerticeAnglesParams.angleStep1,
+						boSouthernCircle = randomVerticeAnglesParams.boSouthernCircle,
+						boNorthernCircle = randomVerticeAnglesParams.boNorthernCircle,
+						latitudeMin = randomVerticeAnglesParams.latitudeMin,//Минимальная граница широты окружности
+						latitudeMax = randomVerticeAnglesParams.latitudeMax,//Максимальная граница широты окружности
+						latitudeStep = randomVerticeAnglesParams.latitudeStep,//Ширина широты окружности
+						latitudeMid = randomVerticeAnglesParams.latitudeMid,//Средняя широта окружности
+						circleAnglesCount = randomVerticeAnglesParams.circleAnglesCount;
+					if (arrayCircles && !boAllocateMemory)
+						arrayCircles.push({ latitude, angleStep, circleAnglesCount });
+//						arrayCircles.push({latitude: latitude, latitudeStep: latitudeStep, latitudeMid: latitudeMid, circleAnglesCount, circleAnglesCount, angleStep1: angleStep1 });
 					//console.log('latitude = ' + latitude + ', latitudePrev = ' + latitudePrev + ', circleAnglesCount = ' + circleAnglesCount);
 					latitudePrev = latitude; 
 					//console.log('boFirstOrLastCircle = ' + (boSouthernCircle || boNorthernCircle) + ', latitude = ' + latitude + ', latitudeMin = ' + latitudeMin + ', latitudeMax = ' + latitudeMax);
@@ -439,7 +479,9 @@ class RandomVerticeSphere extends RandomVertice {
 						if (verticeId >= randomVerticeId) {
 	
 							//случайная вершина находится на текущей окружности.
-							const rotated = getRandomVerticeAngles(circle.latitude, circle.latitudeStep, circle.latitudeMid, circle.circleAnglesCount, circle.angleStep1, randomVerticeId - (verticeId - circle.circleAnglesCount));//verticeId - randomVerticeId);
+//							const rotated = getRandomVerticeAngles(circle.latitude, circle.latitudeStep, circle.latitudeMid, circle.circleAnglesCount, circle.angleStep1, randomVerticeId - (verticeId - circle.circleAnglesCount));//verticeId - randomVerticeId);
+							const randomVerticeAnglesParams = getRandomVerticeAnglesParams(circle.latitude, circle.angleStep),
+								rotated = getRandomVerticeAngles(circle.latitude, circle.latitudeStep, circle.latitudeMid, circle.circleAnglesCount, randomVerticeAnglesParams.angleStep1, randomVerticeId - (verticeId - circle.circleAnglesCount));//verticeId - randomVerticeId);
 							if (params.debug.notRandomVertices && ((rotated[0] != angles[0]) || (rotated[1] != angles[1]))) console.error(sRandomVerticesSphere + ': get randomAngles. rotated != angles');
 							return rotated;
 							
