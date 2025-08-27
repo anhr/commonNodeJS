@@ -139,7 +139,16 @@ class RandomVerticeSphere extends RandomVertice {
 					latitudeMax = boNorthernCircle ? latitude : (angleStep * (1 - 0.5) + latitude),//Максимальная граница широты окружности
 					latitudeStep = latitudeMax - latitudeMin,//Ширина широты окружности
 					latitudeMid = latitudeMin + latitudeStep / 2;//Средняя широта окружности
-				if (!params.boAllocateMemory && (circleAnglesCount > this.verticesAngles.length))
+				if (
+					!params.boAllocateMemory &&
+					(
+						!arrayCircles && 
+						(circleAnglesCount > this.verticesAngles.length)
+					) || (
+						arrayCircles &&//Вычисляется одна случайная точка. Т.е. randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1
+						(circleAnglesCount === Infinity)
+					)
+				)
 					circleAnglesCount = 1;//когда длинна дуги приближается к нулю, тоесть вершины совпадают, то angleStep стремится к нулю и circleAnglesCount стремится к бесконечности и массив this.verticesAngles переполняется.
 											//Делаем один угол в окружности
 				return { angleStep1, latitudeMin, latitudeMax, latitudeStep, latitudeMid, boSouthernCircle, boNorthernCircle, circleAnglesCount };
@@ -175,8 +184,9 @@ class RandomVerticeSphere extends RandomVertice {
 					)
 				];
 				//console.log('randomVerticeAngles = ' + randomVerticeAngles.toString());
-				
-				if (this.circlesPointsCount >= this.verticesAngles.length) console.error(sRandomCloudSphere + '.verticesAngles: Allocate memory failed! this.circlesPointsCount = ' + this.circlesPointsCount + ' >= this.verticesAngles.length = ' + this.verticesAngles.length);
+
+				//Когда вычисляется одна точка arrayCircles != undefined или randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1 то this.verticesAngles пустой
+				if (!arrayCircles && (this.circlesPointsCount >= this.verticesAngles.length)) console.error(sRandomVerticesSphere + '.verticesAngles: Allocate memory failed! this.circlesPointsCount = ' + this.circlesPointsCount + ' >= this.verticesAngles.length = ' + this.verticesAngles.length);
 
 				/*Есть точка на поверхности сферы в полярной системе координат. Начало полярной системы координат находится в центре сферы.
 				Написать на javascript исходный код поворота этой точки на произвольный угол с использованием углов Эйлера.
@@ -306,11 +316,16 @@ class RandomVerticeSphere extends RandomVertice {
 						latitudeStep = randomVerticeAnglesParams.latitudeStep,//Ширина широты окружности
 						latitudeMid = randomVerticeAnglesParams.latitudeMid,//Средняя широта окружности
 						circleAnglesCount = randomVerticeAnglesParams.circleAnglesCount;
-					if (arrayCircles && !boAllocateMemory)
+					latitudePrev = latitude; 
+					if (arrayCircles && !boAllocateMemory) {
+						
 						arrayCircles.push({ latitude, angleStep, circleAnglesCount });
 //						arrayCircles.push({latitude: latitude, latitudeStep: latitudeStep, latitudeMid: latitudeMid, circleAnglesCount, circleAnglesCount, angleStep1: angleStep1 });
+						this.circlesPointsCount += circleAnglesCount;
+						continue;
+
+					}
 					//console.log('latitude = ' + latitude + ', latitudePrev = ' + latitudePrev + ', circleAnglesCount = ' + circleAnglesCount);
-					latitudePrev = latitude; 
 					//console.log('boFirstOrLastCircle = ' + (boSouthernCircle || boNorthernCircle) + ', latitude = ' + latitude + ', latitudeMin = ' + latitudeMin + ', latitudeMax = ' + latitudeMax);
 					
 					for (let angleId = 0; angleId < circleAnglesCount; angleId++) {
@@ -349,7 +364,7 @@ class RandomVerticeSphere extends RandomVertice {
 							];
 							//console.log('randomVerticeAngles = ' + randomVerticeAngles.toString());
 							
-							if (this.circlesPointsCount >= this.verticesAngles.length) console.error(sRandomCloudSphere + '.verticesAngles: Allocate memory failed! this.circlesPointsCount = ' + this.circlesPointsCount + ' >= this.verticesAngles.length = ' + this.verticesAngles.length);
+							if (this.circlesPointsCount >= this.verticesAngles.length) console.error(sRandomVerticesSphere + '.verticesAngles: Allocate memory failed! this.circlesPointsCount = ' + this.circlesPointsCount + ' >= this.verticesAngles.length = ' + this.verticesAngles.length);
 
 							/*Есть точка на поверхности сферы в полярной системе координат. Начало полярной системы координат находится в центре сферы.
 							Написать на javascript исходный код поворота этой точки на произвольный угол с использованием углов Эйлера.
@@ -442,10 +457,14 @@ class RandomVerticeSphere extends RandomVertice {
 				
 			};
 
-		//Allocate this.verticesAngles memory
-		params.boAllocateMemory = true;
-		verticesAngles(params.boAllocateMemory);
-		delete params.boAllocateMemory;
+		if (!arrayCircles) {//не выделять this.verticesAngles если нужно вычислить одну случайную точку randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1
+			
+			//Allocate this.verticesAngles memory
+			params.boAllocateMemory = true;
+			verticesAngles(params.boAllocateMemory);
+			delete params.boAllocateMemory;
+
+		}
 		
 		let randomAngles;
 
@@ -482,7 +501,8 @@ class RandomVerticeSphere extends RandomVertice {
 //							const rotated = getRandomVerticeAngles(circle.latitude, circle.latitudeStep, circle.latitudeMid, circle.circleAnglesCount, circle.angleStep1, randomVerticeId - (verticeId - circle.circleAnglesCount));//verticeId - randomVerticeId);
 							const randomVerticeAnglesParams = getRandomVerticeAnglesParams(circle.latitude, circle.angleStep),
 								rotated = getRandomVerticeAngles(circle.latitude, circle.latitudeStep, circle.latitudeMid, circle.circleAnglesCount, randomVerticeAnglesParams.angleStep1, randomVerticeId - (verticeId - circle.circleAnglesCount));//verticeId - randomVerticeId);
-							if (params.debug.notRandomVertices && ((rotated[0] != angles[0]) || (rotated[1] != angles[1]))) console.error(sRandomVerticesSphere + ': get randomAngles. rotated != angles');
+							if (angles && params.debug.notRandomVertices && ((rotated[0] != angles[0]) || (rotated[1] != angles[1]))) console.error(sRandomVerticesSphere + ': get randomAngles. rotated != angles');
+							this.angles[0] = rotated;
 							return rotated;
 							
 						}
