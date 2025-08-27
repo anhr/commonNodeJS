@@ -308,6 +308,16 @@ class RandomVerticeSphere extends RandomVertice {
 						circleAnglesCount = 1;//когда длинна дуги приближается к нулю, тоесть вершины совпадают, то angleStep стремится к нулю и circleAnglesCount стремится к бесконечности и массив this.verticesAngles переполняется.
 												//Делаем один угол в окружности
 */						
+					latitudePrev = latitude; 
+					if (arrayCircles && !boAllocateMemory) {
+
+						const circleAnglesCount = randomVerticeAnglesParams.circleAnglesCount;
+						arrayCircles.push({ latitude, angleStep, circleAnglesCount });
+//						arrayCircles.push({latitude: latitude, latitudeStep: latitudeStep, latitudeMid: latitudeMid, circleAnglesCount, circleAnglesCount, angleStep1: angleStep1 });
+						this.circlesPointsCount += circleAnglesCount;
+						continue;
+
+					}
 					const angleStep1 = randomVerticeAnglesParams.angleStep1,
 						boSouthernCircle = randomVerticeAnglesParams.boSouthernCircle,
 						boNorthernCircle = randomVerticeAnglesParams.boNorthernCircle,
@@ -316,15 +326,6 @@ class RandomVerticeSphere extends RandomVertice {
 						latitudeStep = randomVerticeAnglesParams.latitudeStep,//Ширина широты окружности
 						latitudeMid = randomVerticeAnglesParams.latitudeMid,//Средняя широта окружности
 						circleAnglesCount = randomVerticeAnglesParams.circleAnglesCount;
-					latitudePrev = latitude; 
-					if (arrayCircles && !boAllocateMemory) {
-						
-						arrayCircles.push({ latitude, angleStep, circleAnglesCount });
-//						arrayCircles.push({latitude: latitude, latitudeStep: latitudeStep, latitudeMid: latitudeMid, circleAnglesCount, circleAnglesCount, angleStep1: angleStep1 });
-						this.circlesPointsCount += circleAnglesCount;
-						continue;
-
-					}
 					//console.log('latitude = ' + latitude + ', latitudePrev = ' + latitudePrev + ', circleAnglesCount = ' + circleAnglesCount);
 					//console.log('boFirstOrLastCircle = ' + (boSouthernCircle || boNorthernCircle) + ', latitude = ' + latitude + ', latitudeMin = ' + latitudeMin + ', latitudeMax = ' + latitudeMax);
 					
@@ -334,7 +335,8 @@ class RandomVerticeSphere extends RandomVertice {
 						if (boAllocateMemory) this.verticesAngles.push(this.ZeroArray());//allocate memory
 						else {//edit memory
 
-							//getRandomVerticeAngles();
+							const rotated = getRandomVerticeAngles(latitude, latitudeStep, latitudeMid, circleAnglesCount, angleStep1, angleId);
+/*							
 							const randomVerticeAngles = [
 	
 								//latitude
@@ -365,7 +367,7 @@ class RandomVerticeSphere extends RandomVertice {
 							//console.log('randomVerticeAngles = ' + randomVerticeAngles.toString());
 							
 							if (this.circlesPointsCount >= this.verticesAngles.length) console.error(sRandomVerticesSphere + '.verticesAngles: Allocate memory failed! this.circlesPointsCount = ' + this.circlesPointsCount + ' >= this.verticesAngles.length = ' + this.verticesAngles.length);
-
+*/
 							/*Есть точка на поверхности сферы в полярной системе координат. Начало полярной системы координат находится в центре сферы.
 							Написать на javascript исходный код поворота этой точки на произвольный угол с использованием углов Эйлера.
 							Полярный угол должен быть в диапазоне от π/2 на северном полюсе до -π/2 на южном полюсе. Азимутальный угол должен быть в диапазоне от -π до π.
@@ -381,6 +383,7 @@ class RandomVerticeSphere extends RandomVertice {
 							 * @param {number} γ - Угол Эйлера вокруг оси Z (поворот по Z)
 							 * @returns {Object} Новые полярные координаты {latitude, longitude}
 							 */
+/*							
 							const rotatePointWithEulerAngles = (latitude, longitude, α, β, γ) => {
 							    // 1. Преобразование полярных координат в декартовы
 							    const x = cos(latitude) * cos(longitude),
@@ -414,7 +417,7 @@ class RandomVerticeSphere extends RandomVertice {
 								
 							    return arrayAngles;
 							}
-
+*/
 							/*
 							// Пример использования:
 							const initialLatitude = Math.PI/4; // 45 градусов от экватора
@@ -435,6 +438,7 @@ class RandomVerticeSphere extends RandomVertice {
 							});
 							console.log("После поворота:", rotated);
 							*/
+/*							
 							const initialLatitude = randomVerticeAngles[0],
 								initialLongitude = randomVerticeAngles[1],
 							
@@ -443,6 +447,7 @@ class RandomVerticeSphere extends RandomVertice {
 								β = params.oppositeVertice.latitude - π / 2,
 								γ = params.oppositeVertice.longitude - π / 2,
 								rotated = rotatePointWithEulerAngles(initialLatitude, initialLongitude, α, β, γ);
+*/							
 							//this.verticesAngles[this.circlesPointsCount] = [rotated.latitude, rotated.longitude];
 							this.verticesAngles[this.circlesPointsCount] = rotated;
 							this.circlesPointsCount++;
