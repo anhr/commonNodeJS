@@ -14,7 +14,7 @@
 */
 
 //import RandomVertice from './randomVertice.js';
-import RandomVertice from './randomVerticeV2.js';
+import RandomVertice from './randomVertice.js';
 import anglesRange from '../anglesRange.js'
 import * as utils from './utilsSphere.js'
 //import * as utilsCircle from './utilsCircle.js'

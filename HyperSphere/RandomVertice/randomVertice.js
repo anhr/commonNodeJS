@@ -14,9 +14,7 @@
 */
 
 const sRandomVertice = 'RandomVertice',
-	sOver = ': Please, override %s method in your ' + sRandomVertice + ' child class.',
-	π = Math.PI, tan = Math.tan;
-			
+	sOver = ': Please, override %s method in your ' + sRandomVertice + ' child class.';
 /**
  * Generates random angles between a vertice and its opposite vertice.
  * @class
@@ -25,45 +23,45 @@ class RandomVertice {
 
 	/**
 	 * Generates random angles between a vertice and its opposite vertice.
-	 * @param {object} [params={}] The following parameters are available.
-	 * @param {Array} [params.vertice=[0, 0, 0]] First vertice of the arc between two vertices.
-	 * @param {Array} [params.oppositeVertice=[0, 0, 0]] Second vertice of the arc between two vertices.
-	 * @param {object} [params.debug] Debug mode.
-	 * @param {object} [params.debug.notRandomVertices] true - replacing random vertices with strictly defined vertices.
+	 * @param {object} [params={}] See the <b>params</b> of the <b>RandomVertice</b> constructor.
 	 */
 	constructor(params) {
 
 		params.vertice ||= this.ZeroArray();
 		params.oppositeVertice ||= this.ZeroArray();
 		this.Center(params);
-		
-		//overridden methods
-		
-		this.anglesCircle = (utils) => {
+/*
+		this.anglesCircle = (anglesIdMax, randomVertice, utils) => {
 			
-			const random = (params.random === undefined ? Math.random() : params.random) - 0.5,
-				b = params.b ? params.b : utils.b(params),
-				p = (
-					tan(random * b) /
-					tan(0.5 * b)//делим на tan(0.5 * b), что бы при минимальном и максимальном random, p получалось -1 и 1
-				) *
-				π;//Умножаем на π что бы при минимальном и максимальном random углы получались на противоположной от params.oppositeVertice.longitude стороне окружности.
-					//Тем самым точки почти равномерно распределяются по окружности когда arc = π, тоесть вершина и противоположная вершина расположены на противоположных сторонах окружности
+			const boUpdate = this.verticesAngles.length === 0 ? false : true;
+	
+			//что бы не делать повторяющихся вычислений
+			params.b = utils.b(params);
 			
-			let angle = p + params.oppositeVertice.longitude;
-			
-			angle = utils.normalizeAngle(angle);
-			return angle;
+			for (let i = 0; i <= anglesIdMax; i++) {
+	
+				if (params.debug && params.debug.notRandomVertices) params.random = (1 / anglesIdMax) * i;//для замены случайной точки на регулярную
+				
+				const randomVerticeAngles = randomVertice.randomAngles;
+				if (boUpdate) this.verticesAngles[i] = randomVerticeAngles;
+				else this.verticesAngles.push(randomVerticeAngles);
+	
+			}
+			delete params.random;
+			delete params.b;
+			return this.verticesAngles;
 			
 		}
-		
-		/////////////////////////////overridden methods
+*/		
 		
 	}
+	verticesAngles = [];
+	circlesPointsCount;
 	
 	//overridden methods
 	
-	get angles() { console.error(sRandomVertice + sOver.replace('%s', 'get angles')) }
+	get angles() { console.error(sRandomCloud + sOver.replace('%s', 'get angles')) }
+	get randomAngles() { console.error(sRandomCloud + sOver.replace('%s', 'get randomAngles')) }
 	
 	/////////////////////////////overridden methods
 
