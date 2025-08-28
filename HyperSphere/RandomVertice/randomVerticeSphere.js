@@ -140,16 +140,20 @@ class RandomVerticeSphere extends RandomVertice {
 					latitudeStep = latitudeMax - latitudeMin,//Ширина широты окружности
 					latitudeMid = latitudeMin + latitudeStep / 2;//Средняя широта окружности
 				if (
-					!params.boAllocateMemory &&
+					(circleAnglesCount === 0) ||//добавить по одной точке на полюсах
 					(
-						!arrayCircles && 
-						(circleAnglesCount > this.verticesAngles.length)
-					) || (
-						arrayCircles &&//Вычисляется одна случайная точка. Т.е. randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1
-						(circleAnglesCount === Infinity)
+						!params.boAllocateMemory &&
+						(
+							!arrayCircles && 
+							(circleAnglesCount > this.verticesAngles.length)
+						) || (
+							arrayCircles &&//Вычисляется одна случайная точка. Т.е. randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1
+							(circleAnglesCount === Infinity)
+						)
 					)
 				)
 					circleAnglesCount = 1;//когда длинна дуги приближается к нулю, тоесть вершины совпадают, то angleStep стремится к нулю и circleAnglesCount стремится к бесконечности и массив this.verticesAngles переполняется.
+											//или когда окружность находится на полюсе т.е. circleAnglesCount === 0
 											//Делаем один угол в окружности
 				return { angleStep1, latitudeMin, latitudeMax, latitudeStep, latitudeMid, boSouthernCircle, boNorthernCircle, circleAnglesCount };
 
@@ -174,9 +178,12 @@ class RandomVerticeSphere extends RandomVertice {
 								params.debug && params.debug.notRandomVertices ?
 
 									//Положение текущей точки зависит от порядкового номера точки angleId
-									(circleAnglesCount === 0 ?
+									(
+//										circleAnglesCount === 0 ?
+										circleAnglesCount === 1 ?
 										 0 ://Эта точка расположена на полюсе
-										 angleStep1 * angleId) :
+										 angleStep1 * angleId
+									) :
 								
 									random()//случайное положение текущей точки
 							) - 0.5//отнимаем 0.5 что бы диапазон возможных точек был между -0.5 и 0.5. Сразу такой диапазон нельзя вычислять потому что Math.random() имеет диапазон от 0 до 1
