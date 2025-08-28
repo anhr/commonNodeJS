@@ -486,6 +486,7 @@ class RandomVerticeSphere extends RandomVertice {
 			
 			get: () => {
 
+				if (arrayCircles) arrayCircles.length = 0;
 				verticesAngles(false);
 //				randomAngles = [[params.latitude != undefined ? params.latitude : this.latitude(utils), this.longitude(utils)]];
 				const randomVerticeId = round(random() * (this.circlesPointsCount - 1));
@@ -536,7 +537,8 @@ class RandomVerticeSphere extends RandomVertice {
 		
 		/////////////////////////////overridden methods
 
-		this.randomAngles;
+		if (arrayCircles) this.randomAngles;//Вычислить случайную точку если нужна одна случайная точка т.е. randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1
+		else verticesAngles(false);//Вычислить облако случайных точек
 
 	}
 	
