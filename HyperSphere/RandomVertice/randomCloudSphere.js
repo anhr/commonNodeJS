@@ -32,8 +32,9 @@ class RandomCloudSphere extends RandomCloud
 	/**
 	 * Generates a cloud of random vertices near the opposite vertice in 2D hypersphere.
 	 * @param {object} [params={}] See the <b>params</b> of the <a href="./module-RandomVertice-RandomVertice.html" target="_blank"><b>RandomVertice</b></a> constructor for details.
+	 * @param {object} [randomVerticeSettings] See the <b>randomVerticeSettings</b> of the <a href="./module-RandomVerticeSphere-RandomVerticeSphere.html" target="_blank"><b>RandomVerticeSphere</b></a> constructor for details.
 	 */
-	constructor(params) {
+	constructor(params, randomVerticeSettings) {
 
 		super(params);
 
@@ -46,7 +47,7 @@ class RandomCloudSphere extends RandomCloud
 			range = anglesRange.latitude.range,// latitudeMax = anglesRange.latitude.max, latitudeMin = anglesRange.latitude.min,
 */			
 		this.circlesPointsCount = 750;//количество точек в облаке
-		const randomVertice = new RandomVertice(params),
+		const randomVertice = new RandomVertice(params, randomVerticeSettings),
 			verticesAngles = (/*boAllocateMemory*/) => {
 
 //				params.range = π;
