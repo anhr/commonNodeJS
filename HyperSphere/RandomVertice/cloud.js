@@ -23,7 +23,7 @@ class Cloud {
 
 	/**
 	 * Generates a cloud of the vertices around opposite vertice.
-	 * @param {object} [params={}] See the <b>params</b> of the <b>RandomVertice</b> constructor.
+	 * @param {object} [params={}] See the <b>params</b> of the <a href="./module-RandomVertice-RandomVertice.html" target="_blank"><b>RandomVertice</b></a> constructor for details.
 	 */
 	constructor(params) {
 

@@ -46,7 +46,7 @@ const a = (1 / π) - 1, c = π;
 
 /**
  * The multiplier for calculating the tangent, which is used to calculate randomAngles.
- * @param {object} [params={}] See the <b>params</b> of the <b>RandomVertice</b> constructor.
+ * @param {object} [params={}] See the <b>params</b> of the <a href="./module-RandomVertice-RandomVertice.html" target="_blank"><b>RandomVertice</b></a> constructor for details.
  * @returns multiplier.
  */
 export const b = (params) => {
