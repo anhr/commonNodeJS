@@ -177,10 +177,10 @@
 							}
 							createRandomVerticeHyperSphere(cloud, 'Cloud'); break;
 						case modes.randomVertice:
-							if (!randomVertice) randomVertice = new RandomVertice(params, randomVerticeSettings);
+							if (!randomVertice) randomVertice = new RandomVertice(params);//, randomVerticeSettings);
 							createRandomVerticeHyperSphere(randomVertice, 'Random vertice'); break;
 						case modes.randomCloud: 
-							if (!randomCloud) randomCloud = new RandomCloud(params, randomVerticeSettings);
+							if (!randomCloud) randomCloud = new RandomCloud(params);//, randomVerticeSettings);
 							createRandomVerticeHyperSphere(randomCloud, 'Random Cloud'); break;
 						default: console.error('Invalid mode = ' + mode);
 							

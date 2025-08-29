@@ -43,16 +43,19 @@ class RandomVerticeSphere extends RandomVertice {
 	 * @param {object} [randomVerticeSettings.modes.randomVertice=1] Generates a random vertice.
 	 * @param {object} [randomVerticeSettings.modes.randomCloud=2] Generates a random vertice cloud from separated random vertices.
 	 */
-	constructor(params, randomVerticeSettings = {}) {
+	constructor(params, boCloud = false) {
 
 		super(params);
 
+		const arrayCircles = boCloud ? undefined : [];
+/*		
 		const arrayCircles = (
 			randomVerticeSettings.mode != undefined) &&
 			(
 				(randomVerticeSettings.mode === randomVerticeSettings.modes.randomVertice) ||
 				(randomVerticeSettings.mode === randomVerticeSettings.modes.randomCloud)
 			) ? [] : undefined;
+*/			
 			
 		if (params.arc === undefined) Object.defineProperty(params, 'arc', {
 	
