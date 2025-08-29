@@ -34,14 +34,7 @@ class RandomVerticeSphere extends RandomVertice {
 	/**
 	 * Generates a random vertice near the opposite vertice in 2D hypersphere.
 	 * @param {object} [params={}] See the <b>params</b> of the <a href="./module-RandomVertice-RandomVertice.html" target="_blank"><b>RandomVertice</b></a> constructor for details.
-	 * @param {object} [randomVerticeSettings={}] random vertice settings.
-	 * @param {object} [randomVerticeSettings.debug] Debug mode.
-	 * @param {object} [randomVerticeSettings.debug.notRandomVertices] true - replacing random vertices with strictly defined vertices.
-	 * @param {object} [randomVerticeSettings.mode] See below.
-	 * @param {object} [randomVerticeSettings.modes] The following modes are available.
-	 * @param {object} [randomVerticeSettings.modes.cloud=0] Generates a random vertice cloud.
-	 * @param {object} [randomVerticeSettings.modes.randomVertice=1] Generates a random vertice.
-	 * @param {object} [randomVerticeSettings.modes.randomCloud=2] Generates a random vertice cloud from separated random vertices.
+	 * @param {object} [boCloud=false] true - generates a random vertice cloud.
 	 */
 	constructor(params, boCloud = false) {
 

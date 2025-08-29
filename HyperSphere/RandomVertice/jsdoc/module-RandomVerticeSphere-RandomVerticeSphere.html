@@ -29,7 +29,7 @@
 <header>
     
         <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="module-RandomVerticeSphere.html">RandomVerticeSphere</a>~</span>RandomVerticeSphere<span class="signature">(params<span class="signature-attributes">opt</span>, randomVerticeSettings<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+            <span class="ancestors"><a href="module-RandomVerticeSphere.html">RandomVerticeSphere</a>~</span>RandomVerticeSphere<span class="signature">(params<span class="signature-attributes">opt</span>, boCloud<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
             <div class="class-description"><div class="class-diagram"> <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="379" height="116"> <defs> <style type="text/css"> text { font-size: initial; } rect { stroke-width: 2; stroke: black; fill: white; } marker { overflow: visible; } marker rect { stroke: none; stroke-width: 0 } marker path { fill: white; stroke: black; } a { cursor: pointer; } a text { fill: blue; text-decoration: underline; } polyline, line { stroke-width: 2; stroke: black; fill: none; } .child rect, .parent rect { stroke: blue; } .interface rect { stroke: blueviolet; } .mixin rect { stroke: green; } .no-ref rect { fill: lightgray; } </style> <marker id="inheritance" refX="5" refY="3" orient="auto-start-reverse"> <rect width="6" height="5"></rect> <path d="M 0 0 L 5 3 L 0 6 z"></path> </marker> </defs> <g transform="translate(189.5, 73)"><g transform="translate(0, -58)"><polyline class="inherit" marker-end="url(#inheritance)" points="0,58 0,28"></polyline><g class="parent no-ref" transform="translate(-59.765625, 0)"><rect height="28" width="119.53125"></rect><text y="20" text-anchor="middle" x="59.765625">RandomVertice</text></g></g><g class="noi" transform="translate(-184.5, 0)"><rect height="28" width="369"></rect><text y="20" text-anchor="middle" x="184.5">module:RandomVerticeSphere~RandomVerticeSphere</text></g></g> </svg></div>Generates a random vertice near the opposite vertice in 2D hypersphere.</div>
         
@@ -46,7 +46,7 @@
     
 
     
-    <h4 class="name" id="RandomVerticeSphere"><span class="type-signature"></span>new RandomVerticeSphere<span class="signature">(params<span class="signature-attributes">opt</span>, randomVerticeSettings<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="RandomVerticeSphere"><span class="type-signature"></span>new RandomVerticeSphere<span class="signature">(params<span class="signature-attributes">opt</span>, boCloud<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -133,7 +133,7 @@
 
         <tr>
             
-                <td class="name"><code>randomVerticeSettings</code></td>
+                <td class="name"><code>boCloud</code></td>
             
 
             <td class="type">
@@ -160,347 +160,12 @@
             
                 <td class="default">
                 
-                    {}
+                    false
                 
                 </td>
             
 
-            <td class="description last">random vertice settings.
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>debug</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Debug mode.
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>notRandomVertices</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">true - replacing random vertices with strictly defined vertices.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>mode</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">See below.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>modes</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">The following modes are available.
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>cloud</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    0
-                
-                </td>
-            
-
-            <td class="description last">Generates a random vertice cloud.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>randomVertice</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    1
-                
-                </td>
-            
-
-            <td class="description last">Generates a random vertice.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>randomCloud</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    2
-                
-                </td>
-            
-
-            <td class="description last">Generates a random vertice cloud from separated random vertices.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
+            <td class="description last">true - generates a random vertice cloud.</td>
         </tr>
 
     
@@ -620,7 +285,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri Aug 29 2025 10:09:07 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri Aug 29 2025 10:49:21 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
