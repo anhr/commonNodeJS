@@ -54,8 +54,8 @@ class RandomCloudSphere extends RandomCloud
 				for (let anglesId = 0; anglesId < this.circlesPointsCount; anglesId++) {
 
 					const randomAngles = randomVertice.randomAngles;
-					if (boAllocateMemory) this.verticesAngles.push(randomAngles);
-					else this.verticesAngles[anglesId] = randomAngles;
+					if (boAllocateMemory) this.verticesAngles.push(randomAngles[0]);
+					else this.verticesAngles[anglesId] = randomAngles[0];
 
 				}
 //				delete params.range;
