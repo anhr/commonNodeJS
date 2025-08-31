@@ -38,7 +38,7 @@ class CloudSphere extends Cloud
 
 		super(params);
 
-		const randomVertice = new RandomVertice(params);
+		const randomVertice = new RandomVertice(params, true);
 //		this.verticesAngles = randomVertice.cloud;
 		Object.defineProperty(this, 'verticesAngles', {
 			

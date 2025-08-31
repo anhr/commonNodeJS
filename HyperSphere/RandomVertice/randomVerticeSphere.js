@@ -507,36 +507,35 @@ class RandomVerticeSphere extends RandomVertice {
 //				randomAngles = [[params.latitude != undefined ? params.latitude : this.latitude(utils), this.longitude(utils)]];
 				const randomVerticeId = round(random() * (this.circlesPointsCount - 1))
 
-//				if (arrayCircles) {
+				if (arrayCircles) {
 					
-				let verticeId = 0;
-				for (let circleId = 0; circleId < arrayCircles.length; circleId++) {
-
-					const circle = arrayCircles[circleId];
-					verticeId += circle.circleAnglesCount;
-					if (verticeId >= randomVerticeId) {
-
-						//случайная вершина находится на текущей окружности.
-//							const rotated = getRandomVerticeAngles(circle.latitude, circle.latitudeStep, circle.latitudeMid, circle.circleAnglesCount, circle.angleStep1, randomVerticeId - (verticeId - circle.circleAnglesCount));//verticeId - randomVerticeId);
-						const randomVerticeAnglesParams = getRandomVerticeAnglesParams(circle.latitude, circle.angleStep),
-							rotated = getRandomVerticeAngles(circle.latitude, circle.latitudeStep, circle.latitudeMid, circle.circleAnglesCount, randomVerticeAnglesParams.angleStep1, randomVerticeId - (verticeId - circle.circleAnglesCount));//verticeId - randomVerticeId);
-//							if (angles && params.debug.notRandomVertices && ((rotated[0] != angles[0]) || (rotated[1] != angles[1]))) console.error(sRandomVerticesSphere + ': get randomAngles. rotated != angles');
-//							this.angles[0] = rotated;
-						if (randomAngles) {
+					let verticeId = 0;
+					for (let circleId = 0; circleId < arrayCircles.length; circleId++) {
+	
+						const circle = arrayCircles[circleId];
+						verticeId += circle.circleAnglesCount;
+						if (verticeId >= randomVerticeId) {
+	
+							//случайная вершина находится на текущей окружности.
+	//							const rotated = getRandomVerticeAngles(circle.latitude, circle.latitudeStep, circle.latitudeMid, circle.circleAnglesCount, circle.angleStep1, randomVerticeId - (verticeId - circle.circleAnglesCount));//verticeId - randomVerticeId);
+							const randomVerticeAnglesParams = getRandomVerticeAnglesParams(circle.latitude, circle.angleStep),
+								rotated = getRandomVerticeAngles(circle.latitude, circle.latitudeStep, circle.latitudeMid, circle.circleAnglesCount, randomVerticeAnglesParams.angleStep1, randomVerticeId - (verticeId - circle.circleAnglesCount));//verticeId - randomVerticeId);
+	//							if (angles && params.debug.notRandomVertices && ((rotated[0] != angles[0]) || (rotated[1] != angles[1]))) console.error(sRandomVerticesSphere + ': get randomAngles. rotated != angles');
+	//							this.angles[0] = rotated;
+							if (randomAngles) {
+								
+								this.angles[0] = rotated;
+								//randomAngles[0] = rotated;
+								
+							}else randomAngles = [rotated];
+	//							return rotated;
+							return this.angles;
 							
-							this.angles[0] = rotated;
-							//randomAngles[0] = rotated;
-							
-						}else randomAngles = [rotated];
-//							return rotated;
-						return this.angles;
-						
+						}
+	
 					}
+					console.error(sRandomVerticesSphere + ': get randomAngles. rotated was not found.');
 
-				}
-				console.error(sRandomVerticesSphere + ': get randomAngles. rotated was not found.');
-
-/*					
 				} else {
 					
 //					return angles;
@@ -544,7 +543,6 @@ class RandomVerticeSphere extends RandomVertice {
 					return this.angles;
 
 				}
-*/
 				
 			},
 			set: (anglesNew) => {},
