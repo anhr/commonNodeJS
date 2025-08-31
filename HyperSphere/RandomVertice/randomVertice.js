@@ -29,7 +29,7 @@ class RandomVertice {
 	 * @param {object} [params.debug] Debug mode.
 	 * @param {object} [params.debug.notRandomVertices] true - replacing random vertices with strictly defined vertices.
 	 */
-	constructor(params) {
+	constructor(params={}) {
 
 		params.vertice ||= this.ZeroArray();
 		params.oppositeVertice ||= this.ZeroArray();

@@ -18,6 +18,7 @@
 import HyperSphere from './hyperSphere.js';
 import three from '../three.js'
 import RandomVertice from './RandomVertice/randomVerticeCircle.js';
+import RandomCloud from './RandomVertice/randomCloudCircle.js';
 
 const sCircle = 'Circle',
 	π = Math.PI;
@@ -154,6 +155,7 @@ class Circle extends HyperSphere {
 	//overridden methods
 	
 	get RandomVertice() { return RandomVertice; }
+	get RandomCloud() { return RandomCloud; }
 	
 	/////////////////////////////overridden methods
 	

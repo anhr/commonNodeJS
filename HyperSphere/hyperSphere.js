@@ -344,6 +344,8 @@ class HyperSphere extends MyObject {
 		
 		this.classSettings = classSettings;
 
+		const middleVerticeColor = 'blue';
+
 		let edgesOld;
 		if (classSettings.edges != false) {//Если в настройках запрещены ребра, то не брать настройки ребер из cookie
 			
@@ -937,8 +939,56 @@ class HyperSphere extends MyObject {
 											}
 											const geometry = settings.object.geometry;
 											if (boPushMiddleVertice) classSettings.overriddenProperties.pushMiddleVertice(timeId, middleVertice);
-											
-											if (classSettings.randomMiddleVertice) { middleVertice = new this.RandomVertice({ vertice: vertice, oppositeVertice: middleVertice, }).angles; }
+
+											if (classSettings.randomArc) {
+
+												const randomVertice = new this.RandomCloud({ vertice: vertice, oppositeVertice: middleVertice, debug: classSettings.debug });
+												
+												//Localization
+									
+												const lang = {
+
+													name: 'Middle vertice cloud',
+													
+												}
+									
+												switch (options.getLanguageCode()) {
+										
+													case 'ru'://Russian language
+										
+														lang.name = 'Облако средней точки';
+										
+														break;
+													default://Custom language
+										
+												}
+												
+												let hsRandomVertice = new HyperSphere(options, {
+									
+													boRemove: false,//Если не установить этот флаг, то при замене старого hsRandomVertice на новый будут удаляться все гиперсферы на scene. То есть удалится hsVertices
+													r: classSettings.r,
+													edges: false,
+													//randomArc: true,
+													projectParams: { scene: classSettings.projectParams.scene, },
+									//				debug: debug,
+													debug: classSettings.debug,
+													//debug: false,
+													settings: {
+									
+														object: {
+									
+															name: lang.name,
+															//color: 'white',
+															geometry: randomVertice,
+									
+														},
+														overriddenProperties: { setDrawRange: (start, count) => { if (hsRandomVertice) hsRandomVertice.bufferGeometry.setDrawRange(start, count); } },
+									
+													},
+									
+												});
+												
+											} else if (classSettings.randomMiddleVertice) { middleVertice = new this.RandomVertice({ vertice: vertice, oppositeVertice: middleVertice, }).angles; }
 											
 											return middleVertice;
 
@@ -2401,7 +2451,7 @@ this.object = () => {
 
 										});
 										delete userData.selectedTimeId;
-										middleVerticeEdges = addObject2Scene(vertices, 'blue');
+										middleVerticeEdges = addObject2Scene(vertices, middleVerticeColor);
 
 									} else {
 
@@ -3200,6 +3250,11 @@ this.object = () => {
 		verticeAngles.push(Math.random() * (longitudeRange.max - longitudeRange.min) + longitudeRange.min);
 		
 	}
+	/**
+	 * Base method that returns a space dimension.
+	 * @returns a console error if your call this method directly.
+	 */
+	get dimension() { console.error(sOverride.replace('%s', 'dimension')) }//
 	/**
 	 * Base method that returns a name of the hyper sphere in the child classes.
 	 * @returns a console error if your call this method directly.

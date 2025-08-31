@@ -29,7 +29,7 @@ class RandomVerticeCircle extends RandomVertice {
 	 * Generates a random vertice near the opposite vertice in 1D hypersphere.
 	 * @param {object} [params={}] See the <b>params</b> of the <a href="./module-RandomVertice-RandomVertice.html" target="_blank"><b>RandomVertice</b></a> constructor for details.
 	 */
-	constructor(params) {
+	constructor(params={}) {
 
 		super(params);
 
