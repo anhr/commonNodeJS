@@ -63,6 +63,7 @@ class RandomCloud {
 	
 	get angles() { console.error(sRandomCloud + sOver.replace('%s', 'get angles')) }
 	get randomAngles() { console.error(sRandomCloud + sOver.replace('%s', 'get randomAngles')) }
+	getHyperSphere() { console.error(sRandomCloud + sOver.replace('%s', 'getHyperSphere()')) }
 	
 	/////////////////////////////overridden methods
 

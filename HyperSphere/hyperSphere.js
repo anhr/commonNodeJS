@@ -942,51 +942,12 @@ class HyperSphere extends MyObject {
 
 											if (classSettings.randomArc) {
 
-												const randomVertice = new this.RandomCloud({ vertice: vertice, oppositeVertice: middleVertice, debug: classSettings.debug });
-												
-												//Localization
-									
-												const lang = {
+												const randomVertice = new this.RandomCloud({ vertice: vertice, oppositeVertice: middleVertice, debug: classSettings.debug ? {
 
-													name: 'Middle vertice cloud',
-													
-												}
-									
-												switch (options.getLanguageCode()) {
-										
-													case 'ru'://Russian language
-										
-														lang.name = 'Облако средней точки';
-										
-														break;
-													default://Custom language
-										
-												}
-												
-												let hsRandomVertice = new HyperSphere(options, {
-									
-													boRemove: false,//Если не установить этот флаг, то при замене старого hsRandomVertice на новый будут удаляться все гиперсферы на scene. То есть удалится hsVertices
-													r: classSettings.r,
-													edges: false,
-													//randomArc: true,
-													projectParams: { scene: classSettings.projectParams.scene, },
-									//				debug: debug,
-													debug: classSettings.debug,
-													//debug: false,
-													settings: {
-									
-														object: {
-									
-															name: lang.name,
-															//color: 'white',
-															geometry: randomVertice,
-									
-														},
-														overriddenProperties: { setDrawRange: (start, count) => { if (hsRandomVertice) hsRandomVertice.bufferGeometry.setDrawRange(start, count); } },
-									
-													},
-									
-												});
+														notRandomVertices: true,
+														
+													} : false });
+												angles.hsRandomVertice = randomVertice.getHyperSphere(options, classSettings, middleVerticeColor);
 												
 											} else if (classSettings.randomMiddleVertice) { middleVertice = new this.RandomVertice({ vertice: vertice, oppositeVertice: middleVertice, }).angles; }
 											
@@ -2427,11 +2388,11 @@ this.object = () => {
 								aAngleControls.cMiddleVertice = fMiddleVertice.add({ boMiddleVertice: false }, 'boMiddleVertice').onChange((boMiddleVertice) => {
 
 									_this.opacity(boMiddleVertice);
+									const verticeId = aAngleControls.verticeId,
+										angles = verticeId != undefined ? classSettings.overriddenProperties.position0.angles[verticeId] : undefined;
 									if (boMiddleVertice) {
 
-										const verticeId = aAngleControls.verticeId,
-											angles = classSettings.overriddenProperties.position0.angles[verticeId],
-											oppositeVerticesId = angles.oppositeVerticesId,
+										const oppositeVerticesId = angles.oppositeVerticesId,
 											settings = classSettings.settings,
 											timeId = settings.guiPoints ? settings.guiPoints.timeId : options.player.getTimeId(),
 											middleVertice = _this.angles2Vertice(angles.middleVertice(oppositeVerticesId, timeId + 1, false), timeId),
@@ -2458,6 +2419,14 @@ this.object = () => {
 										if (middleVerticeEdges) classSettings.projectParams.scene.remove(middleVerticeEdges);
 										middleVerticeEdges = undefined;
 
+										if (angles) {
+
+											const hsRandomVertice = angles.hsRandomVertice;
+											if (hsRandomVertice) hsRandomVertice.removeHyperSphere();
+											angles.hsRandomVertice = undefined;
+
+										}
+										
 									}
 
 								});
