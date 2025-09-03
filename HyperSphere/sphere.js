@@ -103,7 +103,7 @@ class Sphere extends Circle {
 		
 		const lang = {
 
-			name: "HyperSphere",
+			name: "Sphere",
 
 		};
 

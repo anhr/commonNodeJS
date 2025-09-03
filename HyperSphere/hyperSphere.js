@@ -99,7 +99,7 @@ class HyperSphere extends MyObject {
 	 * </pre>
 	 * @param {object} [classSettings.settings] The following settings are available
 	 * @param {object} [classSettings.settings.object] HyperSphere object.
-	 * @param {String} [classSettings.settings.object.name] name of hypersphere.
+	 * @param {String} [classSettings.settings.object.name='Circle'| 'Sphere'| 'Hypersphere'] name of hypersphere.
 	 * @param {String|number} [classSettings.settings.object.color='lime'] color of edges or vertices.
 	 * <pre>
 	 * String - color name. See list of available color names in the <b>_colorKeywords</b> object in the [Color.js]{@link https://github.com/mrdoob/three.js/blob/dev/src/math/Color.js} file.
