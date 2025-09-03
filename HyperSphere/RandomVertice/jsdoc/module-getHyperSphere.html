@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: utilsCircle.js</title>
+    <title>JSDoc: Module: getHyperSphere</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,80 +17,145 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: utilsCircle.js</h1>
+    <h1 class="page-title">Module: getHyperSphere</h1>
 
     
 
 
 
+
+<section>
+
+<header>
     
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>/**
- * @module utils
- * @description utilities which is used to calculate randomAngles for circle.
- *
- * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
- *
- * @copyright 2011 Data Arts Team, Google Creative Lab
- *
- * @license under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
-*/
+        
+            
+        
+    
+</header>
 
-import anglesRange from '../anglesRange.js'
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description">Returns a <a href="../../../../master/HyperSphere/jsdoc/module-HyperSphere-HyperSphere.html" target="_blank">Hypersphere</a> with random vertices.</div>
+        
 
-const π = Math.PI, range = anglesRange.longitude.range, longitudeMax = anglesRange.longitude.max, longitudeMin = anglesRange.longitude.min
+        
+            
 
-/**
- * normalize a circle angle to range between anglesRange.longitude.min and anglesRange.longitude.max.
- * @param {float} angle angle for normalization.
- * @returns normalized angle.
- */
-export const normalizeAngle = (angle) => {
 
-	if (angle > longitudeMax) {
 
-		angle -= range;
-		if (angle > longitudeMax)
-			console.error('angle > ' + longitudeMax);
 
-	} else {
 
-		if (angle &lt; longitudeMin) angle += range;
-		if (angle &lt; longitudeMin)
-			console.error('angle &lt; ' + longitudeMin);
 
-	}
-	return angle;
 
-}
 
-//parameters for b = arc * a + c,
-const a = (1 / π) - 1, c = π;
 
-/**
- * The multiplier for calculating the tangent, which is used to calculate randomAngles.
- * @param {object} [params={}] See the &lt;b>params&lt;/b> of the &lt;a href="./module-RandomVertice-RandomVertice.html" target="_blank">&lt;b>RandomVertice&lt;/b>&lt;/a> constructor for details.
- * @returns multiplier.
- */
-export const b = (params) => {
-	
-	const arc = params.arc != undefined ? params.arc : Math.abs(normalizeAngle(params.vertice.longitude - params.oppositeVertice.longitude)),
-	
-		//arc = π, b = 1 все точки почти равномерно распределяются по кругу
-		//arc = 0, b = π все точки стягиваются в одну точку
-		b = arc * a + c;
-	
-	return b;
-		
-}
-</code></pre>
-        </article>
-    </section>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li><a href="https://github.com/anhr">Andrej Hristoliubov</a></li>
+        </ul>
+    </dd>
+    
+
+    
+    <dt class="tag-copyright">Copyright:</dt>
+    <dd class="tag-copyright"><ul class="dummy"><li>2011 Data Arts Team, Google Creative Lab</li></ul></dd>
+    
+
+    
+    <dt class="tag-license">License:</dt>
+    <dd class="tag-license"><ul class="dummy"><li>under the Apache License, Version 2.0 (the "License");you may not use this file except in compliance with the License.You may obtain a copy of the License athttp://www.apache.org/licenses/LICENSE-2.0</li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="getHyperSphere.js.html">getHyperSphere.js</a>, <a href="getHyperSphere.js.html#line1">line 1</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 
