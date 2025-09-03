@@ -55,6 +55,8 @@ class RandomCloudCircle extends RandomCloud {
 	
 	getHyperSphere(options, classSettings, color) {
 
+		return this.getHyperSphereBase(HyperSphere, options, classSettings, color);
+/*		
 		//Localization
 
 		const lang = {
@@ -89,7 +91,7 @@ class RandomCloudCircle extends RandomCloud {
 
 				object: {
 
-					name: lang.name,
+					name: this.getHyperSphereName(options),//
 					color: color,
 					geometry: this,//randomVertice,
 
@@ -100,6 +102,7 @@ class RandomCloudCircle extends RandomCloud {
 
 		});
 		return hsRandomVertice;
+*/		
 		
 	}
 	

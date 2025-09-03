@@ -17,6 +17,7 @@
 
 import Circle from './circle.js';
 import three from '../three.js'
+import RandomCloud from './RandomVertice/randomCloudSphere.js';
 
 const sSphere = 'Sphere',
 	π = Math.PI;
@@ -151,6 +152,9 @@ class Sphere extends Circle {
 	 * @returns new RandomVertices child class.
 	 */
 	newRandomVertices(scene, options, randomVerticesSettings) { return new RandomVertices(scene, options, randomVerticesSettings); }
+	get RandomCloud() { return RandomCloud; }
+
+	///////////////////////////////Overridden methods from base class
 
 }
 

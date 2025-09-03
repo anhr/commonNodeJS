@@ -75,8 +75,9 @@
 					return;
 
 				}
-				
-				hsRandomVertice = new HyperSphere(options, {
+
+				if (randomVertice.getHyperSphere) hsRandomVertice = randomVertice.getHyperSphere(options, { projectParams: { scene: scene } });
+				else hsRandomVertice = new HyperSphere(options, {
 	
 					boRemove: false,//Если не установить этот флаг, то при замене старого hsRandomVertice на новый будут удаляться все гиперсферы на scene. То есть удалится hsVertices
 					r: randomVerticeSettings.R,
