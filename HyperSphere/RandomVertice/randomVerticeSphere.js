@@ -328,7 +328,7 @@ class RandomVerticeSphere extends RandomVertice {
 					if (arrayCircles && !boAllocateMemory) {
 
 						const circleAnglesCount = randomVerticeAnglesParams.circleAnglesCount;
-						arrayCircles.push({ latitude, angleStep, circleAnglesCount });
+						arrayCircles.push({ latitude, angleStep, latitudeStep: randomVerticeAnglesParams.latitudeStep, latitudeMid: randomVerticeAnglesParams.latitudeMid, circleAnglesCount });
 //						arrayCircles.push({latitude: latitude, latitudeStep: latitudeStep, latitudeMid: latitudeMid, circleAnglesCount, circleAnglesCount, angleStep1: angleStep1 });
 						this.circlesPointsCount += circleAnglesCount;
 						continue;
