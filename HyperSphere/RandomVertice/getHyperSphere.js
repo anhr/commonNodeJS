@@ -20,7 +20,7 @@
  * <a href="../../jsdoc/module-HyperSphere3D.html" target="_blank">HyperSphere3D</a>,
  * @param {Options} options See <a href="../../../../master/jsdoc/Options/Options.html" target="_blank">Options</a>.
  * @param {THREE.Scene} scene [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}
- * @param {string} randomVertices Array of the random vertices. See <b>classSettings.settings.object.geometry</b> of <a href="../../jsdoc/module-HyperSphere-HyperSphere.html" target="_blank">Hypersphere</a>.
+ * @param {object} randomVertices Array of the random vertices. See <b>classSettings.settings.object.geometry</b> of <a href="../../jsdoc/module-HyperSphere-HyperSphere.html" target="_blank">Hypersphere</a>.
  * @param {object} [settings={}] The following settings are available
  * @param {object} [settings.debug={}] See <b>params.debug</b> of the <a href="../jsdoc/module-RandomVertice-RandomVertice.html" target="_blank">RandomVertice</a>.
  * @param {float} [settings.r=1.0] HyperSphere radius.
