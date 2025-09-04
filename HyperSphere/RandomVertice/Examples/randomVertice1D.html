@@ -76,11 +76,16 @@
 					return;
 
 				}
-
-				if (randomVertice.getHyperSphere) hsRandomVertice = randomVertice.getHyperSphere(options, { projectParams: { scene: scene } });
+				const debug = {
+							
+					probabilityDensity: false,
+					middleVertice: false,
+					log: false,
+					
+				}
+				if (randomVertice.getHyperSphere) hsRandomVertice = randomVertice.getHyperSphere(options, {projectParams: { scene: scene }, debug: debug });
 				else
-					hsRandomVertice = getHyperSphere(HyperSphere, options, scene, randomVertice, { debug: randomVerticeSettings.debug, r: randomVerticeSettings.R, name: name });
-
+					hsRandomVertice = getHyperSphere(HyperSphere, options, scene, randomVertice, { debug: debug, r: randomVerticeSettings.R, name: name });
 /*					
 					hsRandomVertice = new HyperSphere(options, {
 	
