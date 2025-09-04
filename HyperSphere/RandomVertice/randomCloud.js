@@ -13,6 +13,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 
+import getHyperSphere from './getHyperSphere.js'
+
 const sRandomCloud = 'RandomCloud',
 	sOver = ': Please, override %s method in your ' + sRandomCloud + ' child class.';
 /**
@@ -78,7 +80,9 @@ class RandomCloud {
 			default://Custom language
 
 		}
-		
+
+		return getHyperSphere(HyperSphere, options, classSettings.projectParams.scene, this, { debug: classSettings.debug, r: classSettings.r, name: lang.name, color: color });
+/*		
 		let hsRandomVertice;
 		hsRandomVertice = new HyperSphere(options, {
 
@@ -105,6 +109,7 @@ class RandomCloud {
 
 		});
 		return hsRandomVertice;
+*/		
 		
 	}
 	
