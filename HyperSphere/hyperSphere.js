@@ -1547,7 +1547,7 @@ this.object = () => {
 			const removeObject = (object) => {
 
 				if (!object) return;
-				options.eventListeners.removeParticle(object);
+				if (options.eventListeners) options.eventListeners.removeParticle(object);
 				scene.remove(object);
 
 			}
