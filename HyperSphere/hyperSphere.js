@@ -280,6 +280,7 @@ class HyperSphere extends MyObject {
 	 **/
 	constructor(options, classSettings = {}) {
 
+		if (classSettings.randomMiddleVertice === undefined) classSettings.randomMiddleVertice = true;
 		if (!classSettings.onSelectScene) classSettings.onSelectScene = (hyperSphere, timeId, t) => { if (this.middleVertices) return this.middleVertices(timeId, t); }
 		//for playing in http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/hyperSphere.html
 
@@ -927,7 +928,7 @@ class HyperSphere extends MyObject {
 											let middleVertice = isZero ? _this.getRandomMiddleAngles(oppositeVertices) : _this.vertice2angles(aSum);
 											const geometry = settings.object.geometry;
 											if (boPushMiddleVertice) classSettings.overriddenProperties.pushMiddleVertice(timeId, middleVertice);
-
+/*
 											if (classSettings.randomArc) {
 
 												const randomVertice = new this.RandomCloud({ vertice: vertice, oppositeVertice: middleVertice, debug: classSettings.debug ? {
@@ -938,6 +939,8 @@ class HyperSphere extends MyObject {
 												angles.hsRandomVertice = randomVertice.getHyperSphere(options, classSettings, middleVerticeColor);
 												
 											} else if (classSettings.randomMiddleVertice) { middleVertice = new this.RandomVertice({ vertice: vertice, oppositeVertice: middleVertice, }).angles; }
+*/												
+											if (classSettings.randomMiddleVertice) { middleVertice = new this.RandomVertice({ vertice: vertice, oppositeVertice: middleVertice, }).angles; }
 											
 											if (classSettings.debug && classSettings.debug.middleVertice) {
 
@@ -2362,7 +2365,7 @@ this.object = () => {
 
 								const fMiddleVertice = fAdvansed.addFolder(lang.middleVertice)
 
-								if (classSettings.randomMiddleVertice === undefined) classSettings.randomMiddleVertice = true;
+//								if (classSettings.randomMiddleVertice === undefined) classSettings.randomMiddleVertice = true;
 								{
 
 									let randomMiddleVertice = classSettings.randomMiddleVertice;
@@ -2389,9 +2392,11 @@ this.object = () => {
 
 								}
 								
-								let middleVerticeEdges;
+								let middleVerticeEdges, randomMiddleVerticeOld;
 								aAngleControls.cMiddleVertice = fMiddleVertice.add({ boMiddleVertice: false }, 'boMiddleVertice').onChange((boMiddleVertice) => {
 
+									if(randomMiddleVerticeOld != undefined) return;//Предотвращаем переполнение стека когда создаем облако случайных средних точек. Потому что при изменении classSettings.randomMiddleVertice изменяется згачение aAngleControls.cMiddleVertice. Смотри Object.defineProperty(classSettings, 'randomMiddleVertice...)
+									
 									_this.opacity(boMiddleVertice);
 									const verticeId = aAngleControls.verticeId,
 										angles = verticeId != undefined ? classSettings.overriddenProperties.position0.angles[verticeId] : undefined;
@@ -2399,9 +2404,35 @@ this.object = () => {
 
 										const oppositeVerticesId = angles.oppositeVerticesId,
 											settings = classSettings.settings,
-											timeId = settings.guiPoints ? settings.guiPoints.timeId : options.player.getTimeId(),
-											middleVertice = _this.angles2Vertice(angles.middleVertice(oppositeVerticesId, timeId + 1, false), timeId),
-											userData = settings.bufferGeometry.userData;
+											timeId = settings.guiPoints ? settings.guiPoints.timeId : options.player.getTimeId();
+										if (classSettings.randomArc) {
+
+											//Создаем облако случайных средних точек 
+											randomMiddleVerticeOld = classSettings.randomMiddleVertice;
+											classSettings.randomMiddleVertice = false;//Среднюю вершину вычисляем не случайно
+
+										}
+										const middleVerticeAngles = angles.middleVertice(oppositeVerticesId, timeId + 1, false),
+											middleVertice = _this.angles2Vertice(middleVerticeAngles, timeId);
+										if (randomMiddleVerticeOld != undefined) {
+											
+											classSettings.randomMiddleVertice = randomMiddleVerticeOld;
+											randomMiddleVerticeOld = undefined;
+
+										}
+												
+										if (classSettings.randomArc) {
+
+											const randomVertice = new this.RandomCloud({ vertice: angles, oppositeVertice: middleVerticeAngles, debug: classSettings.debug ? {
+
+													notRandomVertices: true,
+													
+												} : false });
+											angles.hsRandomVertice = randomVertice.getHyperSphere(options, classSettings, middleVerticeColor);
+											
+										}
+											
+										const userData = settings.bufferGeometry.userData;
 										
 										userData.selectedTimeId = timeId;//Для корректной работы position[oppositeVerticeId] когда во вселенной пользователь выбрал вершину не на последнем времени проигрывателя.
 										//Для проверки открыть http://localhost/anhr/universe/main/hyperSphere/Examples/
