@@ -925,18 +925,6 @@ class HyperSphere extends MyObject {
 											//}
 											
 											let middleVertice = isZero ? _this.getRandomMiddleAngles(oppositeVertices) : _this.vertice2angles(aSum);
-											if (classSettings.debug && classSettings.debug.middleVertice) {
-
-												console.log('opposite to vertice[' + verticeId + '] vertices:');
-												oppositeVerticesId.forEach(oppositeVerticeId => {
-
-													const verticeAngles = position[oppositeVerticeId].angles;
-													console.log('vertice[' + oppositeVerticeId + '] anlges: ' + JSON.stringify(verticeAngles));
-
-												});
-												console.log('Middle vertice ' + JSON.stringify(_this.angles2Vertice(middleVertice, timeId)) + ' angles: ' + JSON.stringify(middleVertice));
-
-											}
 											const geometry = settings.object.geometry;
 											if (boPushMiddleVertice) classSettings.overriddenProperties.pushMiddleVertice(timeId, middleVertice);
 
@@ -950,6 +938,19 @@ class HyperSphere extends MyObject {
 												angles.hsRandomVertice = randomVertice.getHyperSphere(options, classSettings, middleVerticeColor);
 												
 											} else if (classSettings.randomMiddleVertice) { middleVertice = new this.RandomVertice({ vertice: vertice, oppositeVertice: middleVertice, }).angles; }
+											
+											if (classSettings.debug && classSettings.debug.middleVertice) {
+
+												console.log('opposite to vertice[' + verticeId + '] vertices:');
+												oppositeVerticesId.forEach(oppositeVerticeId => {
+
+													const verticeAngles = position[oppositeVerticeId].angles;
+													console.log('vertice[' + oppositeVerticeId + '] anlges: ' + JSON.stringify(verticeAngles));
+
+												});
+												console.log('Middle vertice ' + JSON.stringify(_this.angles2Vertice(middleVertice, timeId)) + ' angles: ' + JSON.stringify(middleVertice));
+
+											}
 											
 											return middleVertice;
 
