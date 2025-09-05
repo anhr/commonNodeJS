@@ -2381,8 +2381,12 @@ this.object = () => {
 									});
 									
 								}
-								aAngleControls.cRandomMiddleVertice = fMiddleVertice.add(classSettings, 'randomMiddleVertice');
-								dat.controllerNameAndTitle(aAngleControls.cRandomMiddleVertice, lang.randomMiddleVertice, lang.randomMiddleVerticeTitle);
+								if (classSettings.randomArc != true) {//classSettings.randomMiddleVertice не влияет на работу когда lassSettings.randomArc = true. Другими словами когда надо нарисовать облако случайных средних вершин, среднюю вершину я рисую не случайную
+									
+									aAngleControls.cRandomMiddleVertice = fMiddleVertice.add(classSettings, 'randomMiddleVertice');
+									dat.controllerNameAndTitle(aAngleControls.cRandomMiddleVertice, lang.randomMiddleVertice, lang.randomMiddleVerticeTitle);
+
+								}
 								
 								let middleVerticeEdges;
 								aAngleControls.cMiddleVertice = fMiddleVertice.add({ boMiddleVertice: false }, 'boMiddleVertice').onChange((boMiddleVertice) => {
