@@ -36,7 +36,7 @@ class RandomVerticeSphere extends RandomVertice {
 	 * @param {object} [params={}] See the <b>params</b> of the <a href="./module-RandomVertice-RandomVertice.html" target="_blank"><b>RandomVertice</b></a> constructor for details.
 	 * @param {object} [boCloud=false] true - generates a random vertice cloud.
 	 */
-	constructor(params, boCloud = false) {
+	constructor(params, boCloud = false, boInitRandomAngles = true) {
 
 		super(params);
 
@@ -562,8 +562,15 @@ class RandomVerticeSphere extends RandomVertice {
 		
 		/////////////////////////////overridden methods
 
-		if (arrayCircles) this.randomAngles;//Вычислить случайную точку если нужна одна случайная точка т.е. randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1 или randomVerticeSettings.mode = randomVerticeSettings.modes.randomCloud = 2
-		else verticesAngles(false);//Вычислить облако случайных точек
+		if (arrayCircles) {
+
+			//Когда создается облако случайных точек randomVerticeSettings.mode = randomVerticeSettings.modes.randomCloud = 2, то boInitRandomAngles = false и не нужно инициализировать случайные точки для экономии времени.
+			//Если создается одна случайная точка randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1, то boInitRandomAngles = true и нужно инициализировать случайные точки.
+			//Иначе при изменении положения вершины или противоположной вершины почему то появляется несколько случайных точек.
+			if (boInitRandomAngles)
+				this.randomAngles;//Вычислить случайную точку если нужна одна случайная точка т.е. randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1 или randomVerticeSettings.mode = randomVerticeSettings.modes.randomCloud = 2
+			
+		} else verticesAngles(false);//Вычислить облако случайных точек
 
 	}
 	

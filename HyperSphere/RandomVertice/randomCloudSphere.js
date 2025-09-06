@@ -48,7 +48,7 @@ class RandomCloudSphere extends RandomCloud
 			range = anglesRange.latitude.range,// latitudeMax = anglesRange.latitude.max, latitudeMin = anglesRange.latitude.min,
 */			
 		this.circlesPointsCount = 750;//количество точек в облаке
-		const randomVertice = new RandomVertice(params, boCloud),
+		const randomVertice = new RandomVertice(params, boCloud, false),
 			verticesAngles = (/*boAllocateMemory*/) => {
 
 //				params.range = π;
