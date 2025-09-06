@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>3D Random Vertice</title>
+
+    <!--for mobile devices-->
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+    <!--<script src="../../../../../three.js/dev/build/three.js"></script>-->
+    <!--<script src="../../../../../three.js/dev/build/three.min.js"></script>-->
+    <!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.js"></script>-->
+    <!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.min.js"></script>-->
+    <!--<script src="https://threejs.org/build/three.js"></script>-->
+    <!--<script src="https://threejs.org/build/three.min.js"></script>-->
+</head>
+<body>
+	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
+	<div id="info">
+		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a>
+		- <a href="https://github.com/anhr/commonNodeJS/tree/master/HyperSphere" target="_blank" rel="noopener">3D Random Vertice</a>.
+		By <a href="https://github.com/anhr" target="_blank" rel="noopener">anhr</a>
+	</div>
+
+	<script type="module">
+
+		import * as THREE from '../../../../../three.js/dev/build/three.module.js';
+
+		import MyThree from '../../../myThree/myThree.js';
+		MyThree.three.THREE = THREE;
+
+		import RandomVertice from '../randomVerticeHyperSphere.js';
+		import RandomCloud from '../randomCloudHyperSphere.js';
+		import Cloud from '../cloudHyperSphere.js';
+		import HyperSphere from '../../hyperSphere3D.js';
+		
+		import anglesRange from '../../anglesRange.js'
+		import getHyperSphere from '../getHyperSphere.js'
+		
+		new MyThree((scene, options) => {
+
+			const pi = Math.PI;
+
+			const randomVerticeSettings = {
+
+				//R: 0.5,
+				debug: {
+					
+					//notRandomVertices: true,
+				
+				},
+				
+				modes: {
+
+					cloud: 0,
+					randomVertice: 1,
+					randomCloud: 2,
+					
+				},
+				mode: 2,
+			
+			};
+			const params = {
+
+				//вершины расположены друг против друга по диагонали. arc = π
+				vertice: [
+					pi / 4,//0,//Latitude
+					0,//Longitude
+				],
+				oppositeVertice: [
+					-pi / 4,//0,//Latitude
+					pi,//Longitude
+				],
+				/*
+				vertice: [
+					0.785,//Latitude
+					pi,//Longitude
+				],
+				oppositeVertice: [
+					0.051,//0,//Latitude
+					pi,//Longitude
+				],
+				*/
+				debug: randomVerticeSettings.debug,
+
+			}
+			
+			//Random vertice hyperSphere 
+
+			let hsRandomVertice;
+			const createRandomVerticeHyperSphere = (randomVertice, name) => {
+
+				if (hsRandomVertice) {
+					
+					hsRandomVertice.setPositionAttributeFromPoints(randomVertice.randomAngles, true);
+					const guiSelectPoint = hsRandomVertice.classSettings.settings.options.guiSelectPoint;
+					if (guiSelectPoint && guiSelectPoint.isSelectedMesh(hsRandomVertice.object3D)) guiSelectPoint.selectMesh(-1);
+					
+				} else {
+
+					const debug = {
+								
+						probabilityDensity: false,
+						middleVertice: false,
+						log: false,
+						
+					}
+					if (randomVertice.getHyperSphere) hsRandomVertice = randomVertice.getHyperSphere(options, {projectParams: { scene: scene }, debug: debug });
+					else
+						hsRandomVertice = getHyperSphere(HyperSphere, options, scene, randomVertice, { debug: debug, r: randomVerticeSettings.R, name: name });
+					
+				}
+				hsRandomVertice.classSettings.settings.bufferGeometry.userData.drawRange = () => {
+
+					return { start: 0, count: randomVertice.circlesPointsCount != undefined ? randomVertice.circlesPointsCount : 1 };//устанавливает количество точек в органе управления 'Meshes\Points'
+					
+				}
+				if (hsRandomVertice.classSettings.edges.project) {
+
+					hsRandomVertice.classSettings.overriddenProperties.onCreateEdgesCompleted = () => {
+
+						hsRandomVertice.setDrawRange(0, randomCloud.circlesPointsCount * 2 - 1);//Умножаем на 2 потому что на каждую точку облака случайных точек приходится два ребра
+						delete hsRandomVertice.classSettings.overriddenProperties.onCreateEdgesCompleted;
+						
+					}
+					
+				} else hsRandomVertice.setVerticesRange(0, randomVertice.circlesPointsCount != undefined ? randomVertice.circlesPointsCount : 1);
+	
+			}
+			let randomCloud, cloud, randomVertice;//сразу не создаю эти объекты потому что они могут не понадобиться и потому, что так легче отлаживать
+			const updateRandomVerticeHyperSphere = () => {
+
+					const modes = randomVerticeSettings.modes;
+					switch (randomVerticeSettings.mode){
+
+						case modes.cloud:
+							if (!cloud) {
+								
+								cloud = new Cloud(params);
+
+							}
+							createRandomVerticeHyperSphere(cloud, 'Cloud'); break;
+						case modes.randomVertice:
+							if (!randomVertice) randomVertice = new RandomVertice(params);
+							createRandomVerticeHyperSphere(randomVertice, 'Random vertice'); break;
+						case modes.randomCloud: 
+							if (!randomCloud) randomCloud = new RandomCloud(params);
+							createRandomVerticeHyperSphere(randomCloud, 'Random Cloud'); break;
+						default: console.error('Invalid mode = ' + mode);
+							
+					}
+					
+				}
+			updateRandomVerticeHyperSphere();
+	
+			//Vertices hyperSphere 
+			
+			const verticesSettings = {
+
+				//R: 0.5,
+				debug: true,
+			
+			};
+			let hsVertices;
+			hsVertices = new HyperSphere(options, {
+
+				r: verticesSettings.R,
+				//edges: false,
+				//randomArc: true,
+				projectParams: { scene: scene, },
+				debug: randomVerticeSettings.debug ? {
+
+					probabilityDensity: false,
+					middleVertice: false,
+					log: false,
+
+				} : false,
+				//debug: false,
+				settings: {
+
+					object: {
+
+						name: 'Vertices',
+						color: 'white',
+						geometry: { angles: [params.vertice, params.oppositeVertice], },
+
+					},
+					overriddenProperties: { setDrawRange: (start, count) => { if (hsVertices) hsVertices.bufferGeometry.setDrawRange(start, count); } },
+
+				},
+
+			});
+			hsVertices.setDrawRange(hsVertices.bufferGeometry.drawRange.start, hsVertices.bufferGeometry.attributes.position.count, 0);
+			
+			//GUI
+
+			const gui = options.dat.gui.addFolder('Hypersphere'),
+				onChangeVertice = (verticeId) => {
+
+					hsVertices.setPositionAttributeFromPoint(verticeId);
+					hsVertices.update(verticeId, 0);
+					
+					updateRandomVerticeHyperSphere();
+					
+				};
+
+			//vertice
+			const fVertice = gui.addFolder('Vertice');
+			fVertice.add(params.vertice, 'longitude', anglesRange.longitude.min, anglesRange.longitude.max, 0.001).onChange(() => { onChangeVertice(0); });
+			fVertice.add(params.vertice, 'latitude', anglesRange.latitude.min, anglesRange.latitude.max, 0.001).onChange(() => { onChangeVertice(0); });
+
+			//oppositeVertice
+			const fOppositeVertice = gui.addFolder('Opposite Vertice');
+			fOppositeVertice.add(params.oppositeVertice, 'longitude', anglesRange.longitude.min, anglesRange.longitude.max, 0.001).onChange(() => { onChangeVertice(1); });
+			fOppositeVertice.add(params.oppositeVertice, 'latitude', anglesRange.latitude.min, anglesRange.latitude.max, 0.001).onChange(() => { onChangeVertice(1); });
+
+
+			//mode
+			{
+
+				let mode = randomVerticeSettings.mode;
+				Object.defineProperty(randomVerticeSettings, 'mode', {
+			
+					get: () => { return mode; },
+					set: (modeNew) => {
+
+						hsRandomVertice.removeHyperSphere();
+						hsRandomVertice = undefined;
+						
+						mode = parseInt(modeNew);
+						const modes = randomVerticeSettings.modes;
+						switch (mode){
+
+							case modes.cloud: break;
+							case modes.randomVertice:
+								if (!randomVertice) randomVertice = new RandomVertice(params);
+								randomVertice.randomAngles; break;
+							case modes.randomCloud: break;
+							default: console.error('Invalid mode = ' + mode);
+								
+						}
+						updateRandomVerticeHyperSphere();
+			
+					},
+			
+				});
+
+			}
+			gui.add(randomVerticeSettings, 'mode', randomVerticeSettings.modes);
+			
+			//////////////////////////////////////////GUI
+
+		}, {
+
+			//orbitControls: { enableRotate: false, },
+			//camera: { position: new THREE.Vector3( 0, 0, 2 ) },
+			//stereoEffect: false,
+			scales: {
+
+				//x: {},
+				//y: {},
+				text: { precision: 1, rect: { displayRect: false, }, }
+
+			},
+			canvas: {
+
+				noButtonFullScreen: true,
+
+			},
+			player: false,
+			playerOptions: {
+				
+				//max: Infinity,
+				//interval: 100,
+				
+			}
+
+		} );
+
+	</script>
+</body>
+</html>
