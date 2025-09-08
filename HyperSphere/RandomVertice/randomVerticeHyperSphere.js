@@ -145,7 +145,7 @@ class RandomVerticeHyperSphere extends RandomVertice {
 					const centralAngle = calculateCentralAngle(vertice, oppositeVertice);
 
 					if (params.debug) {
-						
+
 						//DeepSeek
 						function hyperSphereCentralAngle(alt1, lat1, lon1, alt2, lat2, lon2) {
 						    return Math.acos(Math.cos(alt1)*Math.cos(alt2)*Math.cos(lat1)*Math.cos(lat2)*Math.cos(lon1 - lon2) + 
@@ -431,7 +431,7 @@ class RandomVerticeHyperSphere extends RandomVertice {
 				
 			};
 
-		if (!arrayCircles) {//не выделять this.verticesAngles если нужно вычислить одну случайную точку randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1
+		if (!arraySpheres) {//не выделять this.verticesAngles если нужно вычислить одну случайную точку randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1
 			
 			//Allocate this.verticesAngles memory
 			params.boAllocateMemory = true;
@@ -455,16 +455,16 @@ class RandomVerticeHyperSphere extends RandomVertice {
 			
 			get: () => {
 
-				if (arrayCircles) arrayCircles.length = 0;
+				if (arraySpheres) arraySpheres.length = 0;
 				verticesAngles(false);
 				const randomVerticeId = round(random() * (this.circlesPointsCount - 1))
 
-				if (arrayCircles) {
+				if (arraySpheres) {
 					
 					let verticeId = 0;
-					for (let circleId = 0; circleId < arrayCircles.length; circleId++) {
+					for (let circleId = 0; circleId < arraySpheres.length; circleId++) {
 	
-						const circle = arrayCircles[circleId];
+						const circle = arraySpheres[circleId];
 						verticeId += circle.circleAnglesCount;
 						if (verticeId >= randomVerticeId) {
 	
@@ -509,7 +509,7 @@ class RandomVerticeHyperSphere extends RandomVertice {
 		
 		/////////////////////////////overridden methods
 
-		if (arrayCircles) this.randomAngles;//Вычислить случайную точку если нужна одна случайная точка т.е. randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1
+		if (arraySpheres) this.randomAngles;//Вычислить случайную точку если нужна одна случайная точка т.е. randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1
 		else verticesAngles(false);//Вычислить облако случайных точек
 
 	}
@@ -519,48 +519,6 @@ class RandomVerticeHyperSphere extends RandomVertice {
 	ZeroArray() { return [0, 0, 0]; }
 	Center(params) {
 	
-		const Vertice = (vertice) => {
-		
-			if (vertice.longitude != undefined) return;
-			while (vertice.length < 3) vertice.push(0);
-			Object.defineProperty(vertice, 'longitude', {
-				
-				get: () => { return vertice[2]; },
-				set: (longitude) => {
-		
-					if (vertice[2] === longitude) return true;
-					vertice[2] = longitude;
-					return true;
-		
-				},
-			
-			});
-			Object.defineProperty(vertice, 'latitude', {
-				
-				get: () => { return vertice[1]; },
-				set: (latitude) => {
-		
-					if (vertice[1] === latitude) return true;
-					vertice[1] = latitude;
-					return true;
-		
-				},
-			
-			});
-			Object.defineProperty(vertice, 'altitude', {
-				
-				get: () => { return vertice[0]; },
-				set: (altitude) => {
-		
-					if (vertice[0] === altitude) return true;
-					vertice[0] = altitude;
-					return true;
-		
-				},
-			
-			});
-		
-		}
 		Vertice(params.vertice);
 		Vertice(params.oppositeVertice);
 		
@@ -569,4 +527,48 @@ class RandomVerticeHyperSphere extends RandomVertice {
 	/////////////////////////////overridden methods
 
 }
+const Vertice = (vertice) => {
+
+	if (vertice.longitude != undefined) return;
+	while (vertice.length < 3) vertice.push(0);
+	Object.defineProperty(vertice, 'longitude', {
+		
+		get: () => { return vertice[2]; },
+		set: (longitude) => {
+
+			if (vertice[2] === longitude) return true;
+			vertice[2] = longitude;
+			return true;
+
+		},
+	
+	});
+	Object.defineProperty(vertice, 'latitude', {
+		
+		get: () => { return vertice[1]; },
+		set: (latitude) => {
+
+			if (vertice[1] === latitude) return true;
+			vertice[1] = latitude;
+			return true;
+
+		},
+	
+	});
+	Object.defineProperty(vertice, 'altitude', {
+		
+		get: () => { return vertice[0]; },
+		set: (altitude) => {
+
+			if (vertice[0] === altitude) return true;
+			vertice[0] = altitude;
+			return true;
+
+		},
+	
+	});
+	return vertice;
+
+}
+RandomVerticeHyperSphere.Vertice = Vertice;
 export default RandomVerticeHyperSphere;

@@ -129,19 +129,20 @@
 			*/
 			/**
 			 * Вычисляет полярные координаты антиподальной точки на 3-мерной гиперсфере.
-			 * @param {Object} point1 - Объект, представляющий точку с полярными координатами.
+			 * @param {Object} point1 - Массив, представляющий точку с полярными координатами.
 			 * @param {number} point1.latitude - Широта (зенитный угол) в радианах, от 0 до PI.
 			 * @param {number} point1.longitude - Долгота (азимутальный угол) в радианах, от 0 до 2*PI.
 			 * @param {number} point1.altitude - Полярный угол от оси W в радианах, от 0 до PI.
-			 * @returns {Object} Объект, представляющий антиподальную точку point2 с такими же полями, как point1.
+			 * @returns {Object} Массив, представляющий антиподальную точку point2 с такими же полями, как point1.
 			 */
+/*			
 			const findAntipodalPoint = (point1) => {
 			    
 			    // Проверяем, что входные данные являются действительными числами
 			    if (typeof point1.latitude !== 'number' ||
 			        typeof point1.longitude !== 'number' ||
 			        typeof point1.altitude !== 'number') {
-			        console.error("Неверный формат входных данных. Ожидаются числа.");
+			        console.error("Invalid input data format");
 					return;
 			    }
 			
@@ -160,14 +161,14 @@
 			    // Долгота смещается на PI радиан. Используем операцию по модулю,
 			    // чтобы остаться в диапазоне от 0 до 2*PI.
 			    const longitude2 = (point1.longitude + PI) % (2 * PI);
-			
-			    return {
-			        latitude: latitude2,
-			        longitude: longitude2,
-			        altitude: altitude2
-			    };
-			}
 
+			    return [
+			        altitude2,
+			        latitude2,
+			        longitude2,
+			    ];
+			}
+*/
 			/*
 			// Пример использования:
 			// Задаем координаты point1 в радианах
@@ -186,22 +187,188 @@
 			console.log("\nantipodal point2:");
 			console.log(point2);
 			*/
+
+			const findAntipodalPoint = (point1) => {
+
+/*				
+			  // Проверяем, что point1 имеет все необходимые свойства
+			  if (
+			    typeof point1 !== "object" ||
+			    !point1.hasOwnProperty("latitude") ||
+			    !point1.hasOwnProperty("longitude") ||
+			    !point1.hasOwnProperty("altitude")
+			  ) {
+			    throw new Error(
+			      "point1 должен быть объектом с latitude, longitude и altitude."
+			    );
+			  }
+*/			  
 			
+			  let latitude2 = -point1.latitude;
+			  let longitude2 = point1.longitude + Math.PI;
+			  let altitude2 = Math.PI - point1.altitude;
+			
+			  // Приведение долготы к диапазону от -π до π
+			  if (longitude2 > Math.PI) {
+			    longitude2 -= 2 * Math.PI;
+			  }
+			  if (longitude2 < -Math.PI) {
+			    longitude2 += 2 * Math.PI;
+			  }
+/*			
+			  const point2 = {
+			    latitude: latitude2,
+			    longitude: longitude2,
+			    altitude: altitude2,
+			  };
+			
+			  return point2;
+*/				  
+			    return [
+			        altitude2,
+			        latitude2,
+			        longitude2,
+			    ];
+				
+			}
+			
+			// Пример использования
+			const point1 = {
+			  latitude: Math.PI / 4, // 45 градусов
+			  longitude: Math.PI / 2, // 90 градусов
+			  altitude: Math.PI / 3, // 60 градусов
+			};
+			
+			const point2 = findAntipodalPoint(point1);
+			
+			console.log("Координаты исходной точки (point1):", point1);
+			console.log("Координаты антиподальной точки (point2):", point2);
+			
+			// Дополнительный пример для проверки приведения долготы
+			const point3 = {
+			  latitude: 0,
+			  longitude: 3 * Math.PI / 4, // 135 градусов
+			  altitude: Math.PI / 2,
+			};
+			
+			const point4 = findAntipodalPoint(point3);
+			console.log("\nКоординаты исходной точки (point3):", point3);
+			console.log("Координаты антиподальной точки (point4):", point4);
+			
+			//DeepSeek
+			const calculateAntipodalPoint = (point1) => {
+			    // Антиподальная точка получается добавлением π к каждому углу
+			    // с учетом периодичности углов
+			    
+			    let latitude2 = (point1.latitude + Math.PI) % (2 * Math.PI);
+			    let longitude2 = (point1.longitude + Math.PI) % (2 * Math.PI);
+			    let altitude2 = (point1.altitude + Math.PI) % (2 * Math.PI);
+			    
+			    // Нормализуем углы к стандартным диапазонам
+			    if (latitude2 > Math.PI) {
+			        latitude2 = 2 * Math.PI - latitude2;
+			        longitude2 = (longitude2 + Math.PI) % (2 * Math.PI);
+			        altitude2 = (altitude2 + Math.PI) % (2 * Math.PI);
+			    }
+			    
+			    if (altitude2 > Math.PI) {
+			        altitude2 = 2 * Math.PI - altitude2;
+			        latitude2 = (latitude2 + Math.PI) % (2 * Math.PI);
+			        longitude2 = (longitude2 + Math.PI) % (2 * Math.PI);
+			    }
+			    
+//			    return new HyperSpherePoint(latitude2, longitude2, altitude2);
+			    return [
+			        altitude2,
+			        latitude2,
+			        longitude2,
+			    ];
+				
+			}			
+			// Альтернативный метод через преобразование в декартовы координаты
+			function calculateAntipodalPointViaCartesian(point1) {
+			    // Преобразуем сферические координаты в декартовы
+			    const x = Math.sin(point1.altitude) * Math.sin(point1.latitude) * Math.cos(point1.longitude);
+			    const y = Math.sin(point1.altitude) * Math.sin(point1.latitude) * Math.sin(point1.longitude);
+			    const z = Math.sin(point1.altitude) * Math.cos(point1.latitude);
+			    const w = Math.cos(point1.altitude);
+			    
+			    // Антиподальная точка - противоположная по всем координатам
+			    const x2 = -x;
+			    const y2 = -y;
+			    const z2 = -z;
+			    const w2 = -w;
+			    
+			    // Преобразуем обратно в сферические координаты
+			    const altitude2 = Math.acos(w2);
+			    let latitude2, longitude2;
+			    
+			    if (Math.abs(w2) === 1) {
+			        // Особый случай: на полюсах
+			        latitude2 = 0;
+			        longitude2 = 0;
+			    } else {
+			        latitude2 = Math.acos(z2 / Math.sqrt(x2*x2 + y2*y2 + z2*z2));
+			        longitude2 = Math.atan2(y2, x2);
+			        
+			        // Нормализуем углы
+			        if (longitude2 < 0) longitude2 += 2 * Math.PI;
+			    }
+			    
+//			    return new HyperSpherePoint(latitude2, longitude2, altitude2);
+			    return [
+			        -altitude2,
+			        latitude2,
+			        longitude2,
+			    ];
+				
+			}			
+			// Функция для проверки, что точки действительно антиподальны
+			const areAntipodal = (point1, point2, tolerance = 1e-10) => {
+			    const dx = Math.abs(point1.latitude - ((point2.latitude + Math.PI) % (2 * Math.PI)));
+			    const dy = Math.abs(point1.longitude - ((point2.longitude + Math.PI) % (2 * Math.PI)));
+			    const dz = Math.abs(point1.altitude - ((point2.altitude + Math.PI) % (2 * Math.PI)));
+			    
+			    return dx < tolerance && dy < tolerance && dz < tolerance;
+			}
+			/*
 			const vertice = [
 				0,//altitude
-				pi / 4,//0,//Latitude
+				pi / 4,//Latitude
 				0,//Longitude
 			]
+			*/
+			const vertice = [
+				pi / 6,//altitude
+				pi / 4,//Latitude
+				pi / 3,//Longitude
+			]
+			RandomVertice.Vertice(vertice);
 			
 			const params = {
 
 				//вершины расположены друг против друга по диагонали (antipodal points). arc = π
+				/*
+				vertice: [
+					Math.PI / 2 + Math.PI / 4,//Altitude
+					Math.PI / 4,//Latitude
+					0,//Longitude
+				],
+				oppositeVertice: [
+					Math.PI / 2 + Math.PI / 4,//Altitude
+					-Math.PI / 4,//Latitude
+					Math.PI,//Longitude
+				],
+				*/
 				vertice: vertice,
+				oppositeVertice: findAntipodalPoint(vertice),//calculateAntipodalPointViaCartesian(vertice),//calculateAntipodalPoint(vertice),
+/*				
 				oppositeVertice: [
 					0,//altitude
 					-pi / 4,//0,//Latitude
 					pi,//Longitude
 				],
+*/				
 				/*
 				vertice: [
 					0,//altitude
@@ -217,6 +384,10 @@
 				debug: randomVerticeSettings.debug,
 
 			}
+			RandomVertice.Vertice(params.oppositeVertice);
+
+			//debug
+			if (!areAntipodal(params.vertice, params.oppositeVertice)) console.error('vertice and opposite vertice is not antipodal.');
 			
 			//Random vertice hyperSphere 
 
