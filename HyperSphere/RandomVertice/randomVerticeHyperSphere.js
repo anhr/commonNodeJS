@@ -16,6 +16,7 @@
 import RandomVertice from './randomVertice.js';
 import anglesRange from '../anglesRange.js'
 import * as utils from './utilsSphere.js'
+import RandomCloud from './randomCloudSphere.js';
 
 const sRandomVerticesHyperSphere = 'RandomVerticesHyperSphere',
 	π = Math.PI, abs = Math.abs, round = Math.round, random = Math.random,
@@ -38,7 +39,8 @@ class RandomVerticeHyperSphere extends RandomVertice {
 
 		super(params);
 
-		const arrayCircles = boCloud ? undefined : [];
+//		const arrayCircles = boCloud ? undefined : [];
+		const arraySpheres = boCloud ? undefined : [];
 			
 		if (params.arc === undefined) Object.defineProperty(params, 'arc', {
 	
@@ -46,7 +48,140 @@ class RandomVerticeHyperSphere extends RandomVertice {
 
 					if (params.boAllocateMemory) return π;//Выделяется память для облака точек. arc нужно сделать максимально возможным то есть вершины расположены друг против друга. В этом случае выделяется максимальный объем памяти.
 					const vertice = params.vertice, oppositeVertice = params.oppositeVertice;
+
+					/*
+					gemini.google.com
+					Вычислить центральный угол между двумя точками на поверхности 3-мерной гиперсферы. Координаты точек заданы в полярной системе координат в радианах. Начало координат широты находится на экваторе. Писать все формулы в одну строку.
+
+					Обозначим координаты двух точек на поверхности 3-мерной гиперсферы радиуса R в полярной системе координат:
+					Точка 1: (ψ1,θ1,ϕ1), где ψ1 - гиперширота, θ1 - гипердолгота, ϕ1 - обычная долгота.
+					Точка 2: (ψ2,θ2,ϕ2).
+					Начало координат широты находится на экваторе.
+					Для 3-мерной гиперсферы (вложенной в 4-мерное евклидово пространство) координаты (x,y,z,w) в декартовой системе координат можно выразить через полярные координаты:
+					x=Rcosψcosθcosϕ
+					y=Rcosψcosθsinϕ
+					z=Rcosψsinθ
+					w=Rsinψ
+					Центральный угол Δω между двумя точками на поверхности гиперсферы может быть найден с помощью скалярного произведения векторов, направленных из центра гиперсферы к этим точкам.
+					Эти векторы имеют длину R.
+					v1 =(x1,y1,z1,w1)
+					v2 =(x2,y2,z2,w2)
+					v1 ⋅ v2 =∣v1∣∣v2∣cos(Δω)=R*R cos(Δω)
+					cos(Δω)= (v1 ⋅ 2)/(R * R) =(x1 x2+y1y2+z1 z2+w1 w2)/(R * R)
+					Подставляя выражения для декартовых координат через полярные:
+					cos(Δω)=cosψ1 cosψ2 cosθ1 cosθ2 cosϕ1 cosϕ2 +cosψ1 cosψ2 cosθ1 cosθ2 sinϕ1 sinϕ2 +cosψ1 cosψ2 sinθ1 sinθ2 +sinψ1 sinψ2
+					Сгруппируем слагаемые:
+					cos(Δω)=cosψ1 cosψ2 cosθ1 cosθ2 (cosϕ1 cosϕ2 +sinϕ1 sinϕ2)+cosψ1 cosψ2 sinθ1 sinθ2 +sinψ1 sinψ2
+					Используя тригонометрические тождества cos(A−B)=cosAcosB+sinAsinB:
+					cos(Δω)=cosψ1 cosψ2 cosθ1 cosθ2 cos(ϕ1−ϕ2)+cosψ1 cosψ2 sinθ1 sinθ2+sinψ1 sinψ2
+					Сгруппируем первые два слагаемых:
+					cos(Δω)=cosψ1 cosψ2 (cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2)+sinψ1 sinψ2
+					Это выражение не очень удобное. Перегруппируем по-другому:
+					cos(Δω)=cosψ1 cosψ2 (cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2)+sinψ1 sinψ2 cos(Δω)=(cosψ1 cosθ1 cosϕ1)(cosψ2 cosθ2 cosϕ2)+(cosψ1 cosθ1 sinϕ1)(cosψ2 cosθ2 sinϕ2)+(cosψ1 sinθ1)(cosψ2 sinθ2)+(sinψ1)(sinψ2)
+					Используем cos(A−B)=cosAcosB+sinAsinB:
+					cos(Δω)=cosψ1 cosψ2 cosθ1 cosθ2 cos(ϕ1 −ϕ2)+cosψ1 cosψ2 sinθ1 sinθ2+sinψ1 sinψ2
+					cos(Δω)=cosψ1 cosψ2(cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2)+sinψ1 sinψ2
+					cos(Δω)=cosψ1 cosψ2 cos(Δθ)+sinψ1 sinψ2 ,
+					где
+					cos(Δθ)=cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2.
+					cos(Δθ)=cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2 =cosθ1 cosθ2 cos(Δϕ)+sinθ1 sinθ2.
+					cos(Δω)=cosψ1 cosψ2 cosθ1 cosθ2 cos(ϕ1 −ϕ2)+cosψ1 cosψ2 sinθ1 sinθ2 +sinψ1 sinψ2.
+					cos(Δω)=cosψ1 cosψ2 (cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2)+sinψ1 sinψ2.
+					cos(Δω)=cosψ1 cosψ2 cos(θ1−2)+sinψ1 sinψ2,
+					где
+					cos(θ1−2)=cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2.
+					Используем формулу cos(A−B)=cosAcosB+sinAsinB:
+					cos(Δω)=cosψ1 cosψ2 cosθ1 cosθ2 cos(ϕ1 −ϕ2)+cosψ1 cosψ2 sinθ1 sinθ2 +sinψ1 sinψ2.
+					Используем формулу cos(α1)cos(α2)+sin(α1)sin(α2)=cos(α1−α2).
+					cos(Δω)=cosψ1 cosψ2 (cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2)+sinψ1 sinψ2.
+					cos(Δω)=cosψ1 cosψ2 cos(θ1 −θ2)+sinψ1 sinψ2.
+					Это неверно, т.к. ϕ тоже участвует.
+					Правильная формула:
+					cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2 sinθ1 sinθ2 +cosψ1 cosψ2 cosθ1 cosθ2 cos(ϕ1 −ϕ2).
+					cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2 (sinθ1 sinθ2+cosθ1 cosθ2 cos(ϕ1 −ϕ2)).
+					cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2 cos(θ1 −θ2),
+					где
+					cos(θ1 −θ2) это не то, что нужно.
+					Центральный угол Δω между двумя точками на поверхности 3-мерной гиперсферы с координатами (ψ1,θ1,ϕ) и (ψ2,θ2,ϕ2) равен arccos(sinψ1 sinψ2+cosψ1 cosψ2 cos(θ1 −θ2))
+					если ϕ не участвует, но она есть.
+					cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2 cos(θ1 −θ2) - это формула для 2-сферы (вложенной в 3-мерное пространство).
+					На 3-мерной гиперсфере (в 4-мерном пространстве) центральный угол можно вычислить по формуле:
+					cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2 sinθ1 sinθ2 +cosψ1 cosψ2 cosθ1 cosθ2 cos(ϕ1 −ϕ2).
+					Эту формулу можно упростить, сгруппировав слагаемые.
+					cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2(sinθ1 sinθ2 +cosθ1 cosθ2 cos(ϕ1 −ϕ2)).
+					cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2(cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2).
+					cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2 cos(γ),
+					где
+					cos(γ)=cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2.
+					cos(γ)=cosθ1 cosθ2 cosΔϕ+sinθ1 sinθ2.
+					Тогда:
+					Δω=arccos(sinψ1 sinψ2 +cosψ1 cosψ2 (cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2)).					
 					
+					*/
+					/**
+					 * Вычисляет центральный угол между двумя точками на поверхности 3-мерной гиперсферы.
+					 * Координаты заданы в радианах.
+					 * @param {object} point1 - Первая точка с координатами.
+					 * @param {number} point1.latitude - Широта (зенитный угол).
+					 * @param {number} point1.longitude - Долгота (азимутальный угол).
+					 * @param {number} point1.altitude - Полярный угол от оси W.
+					 * @param {object} point2 - Вторая точка с координатами.
+					 * @param {number} point2.latitude - Широта (зенитный угол).
+					 * @param {number} point2.longitude - Долгота (азимутальный угол).
+					 * @param {number} point2.altitude - Полярный угол от оси W.
+					 * @returns {number} Центральный угол в радианах.
+					 */
+					const calculateCentralAngle = (point1, point2) => {
+					  const { latitude: lat1, longitude: lon1, altitude: alt1 } = point1;
+					  const { latitude: lat2, longitude: lon2, altitude: alt2 } = point2;
+					
+					  const cosDelta = Math.cos(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2) * Math.cos(alt1 - alt2) + Math.sin(lat1) * Math.sin(lat2);
+					
+					  // Ограничиваем значение, чтобы избежать ошибок с плавающей точкой
+					  const clampedCosDelta = Math.max(-1, Math.min(1, cosDelta));
+					  
+					  return Math.acos(clampedCosDelta);
+					}
+					const centralAngle = calculateCentralAngle(vertice, oppositeVertice);
+
+					if (params.debug) {
+						
+						//DeepSeek
+						function hyperSphereCentralAngle(alt1, lat1, lon1, alt2, lat2, lon2) {
+						    return Math.acos(Math.cos(alt1)*Math.cos(alt2)*Math.cos(lat1)*Math.cos(lat2)*Math.cos(lon1 - lon2) + 
+						                    Math.cos(alt1)*Math.cos(alt2)*Math.sin(lat1)*Math.sin(lat2) + 
+						                    Math.sin(alt1)*Math.sin(alt2));
+						}
+						
+						// Тестовый пример
+						const lat1 = vertice.latitude, long1 = vertice.longitude, alt1 = vertice.altitude;
+						const lat2 = oppositeVertice.latitude, long2 = oppositeVertice.longitude, alt2 = oppositeVertice.altitude;
+						const angle = hyperSphereCentralAngle(lat1, long1, alt1, lat2, long2, alt2);
+						if (angle != centralAngle) console.error(sRandomVerticesHyperSphere + ': get params.arc. centralAngle = ' + centralAngle + ' != angle = ' + angle);
+
+					}
+					return centralAngle;
+					/*
+					// Тестовый пример
+					const point1 = {
+					  latitude: 0.5, // 28.6 градуса
+					  longitude: 1.0, // 57.3 градуса
+					  altitude: 1.5, // 85.9 градуса
+					};
+					
+					const point2 = {
+					  latitude: 0.8, // 45.8 градуса
+					  longitude: 1.2, // 68.8 градуса
+					  altitude: 1.7, // 97.4 градуса
+					};
+					
+					const angleInRadians = calculateCentralAngle(point1, point2);
+					const angleInDegrees = angleInRadians * 180 / Math.PI;
+					
+					console.log(`Центральный угол в радианах: ${angleInRadians}`);
+					console.log(`Центральный угол в градусах: ${angleInDegrees}`);
+					*/
+					/*					
 					//DeepSeek. вычислить угол между двумя точками на поверхности шара
 					//векторы
 					//A=(R,ϕ1,λ1 ) - vertice
@@ -60,12 +195,13 @@ class RandomVerticeHyperSphere extends RandomVertice {
 					const θ = arccos(sin(ϕ1) * sin(ϕ2) + cos(ϕ1) * cos(ϕ2) * cos(λ1 - λ2));
 					if (isNaN(θ)) console.error(sSphere + ': getArcAngle. Invalid θ = ' + θ);
 					return θ;
+*/					
 				
 				},
 		
 			});
 		
-		this.latitude = (utils) => {
+		this.altitude = (utils) => {
 
 			const rnd = (params.random === undefined ? random() : params.random),//rng range from 0 to 1
 				b = params.b ? params.b : utils.b(params),
@@ -86,28 +222,8 @@ class RandomVerticeHyperSphere extends RandomVertice {
 			return angle;
 			
 		}
-		this.longitude = (utils) =>
-		{
 
-			const rnd = (params.random === undefined ? random() : params.random),//rng range from 0 to 1
-				b = params.b ? params.b : utils.b(params),
-				angle = (
-						(
-							(atan((
-										(rnd === 0) &&//Первая точка окружности
-										(b === Infinity) ? //Противоположные вершины совпадают
-											1 ://Если сюда не поставить 1, то angle = NaN
-											rnd
-								   ) * b)) /
-							atan(b)//делим на tan(b), что бы при минимальном rnd = 0 и максимальном rnd = 1, p получалось -1 и 1
-						) * 2 - 1//центр графика арктангенса сдвигаю вниз на -1
-					) * π //Умножаем на π что бы при минимальном rnd = 0 и максимальном rnd = 1 долгота получались от -π до π.
-							//Тем самым точки почти равномерно распределяются по окружности когда arc = π, тоесть вершина и противоположная вершина расположены на противоположных сторонах окружности
-			
-			if (isNaN(angle)) console.error(sRandomVerticesHyperSphere + '.anglesCircle: angle = ' + angle);
-			return angle;
-			
-		}
+		const randomCloud = new RandomCloud(params);
 		
 		const anglesIdMax = 50,//Количество точек на окружности, расположенной на экваторе
 			circlesCount = (anglesIdMax / 2) + 1,//количество окружностей
@@ -400,20 +516,20 @@ class RandomVerticeHyperSphere extends RandomVertice {
 	
 	//overridden methods
 	
-	ZeroArray() { return [0, 0]; }
+	ZeroArray() { return [0, 0, 0]; }
 	Center(params) {
 	
 		const Vertice = (vertice) => {
 		
 			if (vertice.longitude != undefined) return;
-			while (vertice.length < 2) vertice.push(0);
+			while (vertice.length < 3) vertice.push(0);
 			Object.defineProperty(vertice, 'longitude', {
 				
-				get: () => { return vertice[1]; },
+				get: () => { return vertice[2]; },
 				set: (longitude) => {
 		
-					if (vertice[1] === longitude) return true;
-					vertice[1] = longitude;
+					if (vertice[2] === longitude) return true;
+					vertice[2] = longitude;
 					return true;
 		
 				},
@@ -421,11 +537,23 @@ class RandomVerticeHyperSphere extends RandomVertice {
 			});
 			Object.defineProperty(vertice, 'latitude', {
 				
-				get: () => { return vertice[0]; },
+				get: () => { return vertice[1]; },
 				set: (latitude) => {
 		
-					if (vertice[0] === latitude) return true;
-					vertice[0] = latitude;
+					if (vertice[1] === latitude) return true;
+					vertice[1] = latitude;
+					return true;
+		
+				},
+			
+			});
+			Object.defineProperty(vertice, 'altitude', {
+				
+				get: () => { return vertice[0]; },
+				set: (altitude) => {
+		
+					if (vertice[0] === altitude) return true;
+					vertice[0] = altitude;
 					return true;
 		
 				},

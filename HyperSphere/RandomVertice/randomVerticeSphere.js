@@ -97,6 +97,7 @@ class RandomVerticeSphere extends RandomVertice {
 			return angle;
 			
 		}
+/*		
 		this.longitude = (utils) =>
 		{
 
@@ -119,6 +120,7 @@ class RandomVerticeSphere extends RandomVertice {
 			return angle;
 			
 		}
+*/		
 		
 		const anglesIdMax = 50,//Количество точек на окружности, расположенной на экваторе
 			circlesCount = (anglesIdMax / 2) + 1,//количество окружностей

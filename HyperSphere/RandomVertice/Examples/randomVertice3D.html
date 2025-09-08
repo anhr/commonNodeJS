@@ -60,23 +60,156 @@
 				mode: 2,
 			
 			};
+			/*https://gemini.google.com/
+			Имеется точка point1 на поверхности 3-мерной гиперсферы встроенной в 4-мерное евклидово пространство. Для обозначения положения точки применим полярную систему координат.
+			Положение точки обозначим как
+			point1.latitude - широта (зенитный угол),
+			point1.longitude - долгота (азимутальный угол) и 
+			point1.altitude - полярный угол от оси W.
+			
+			Вычислить координаты антиподальной точки point2
+
+			Решение:
+			
+			Для 3-мерной гиперсферы, встроенной в 4-мерное евклидово пространство, положение точки можно описать с помощью трех углов:
+			ϕ (point1.altitude) - полярный угол от оси W (от 0 до π).
+			θ (point1.latitude) - широта или зенитный угол (от 0 до π).
+			ψ (point1.longitude) - долгота или азимутальный угол (от 0 до 2π).
+			
+			Координаты точки point1 в 4-мерном евклидовом пространстве (W, X, Y, Z) могут быть выражены как:
+			
+			W=Rcos(ϕ)
+			X=Rsin(ϕ)sin(θ)cos(ψ)
+			Y=Rsin(ϕ)sin(θ)sin(ψ)
+			Z=Rsin(ϕ)cos(θ)
+			
+			Антиподальная точка point2 - это точка, которая находится на противоположной стороне гиперсферы относительно центра. Координаты антиподальной точки просто имеют противоположные знаки:
+			
+			W2=−W1=−Rcos(ϕ)
+			X2=−X1=−Rsin(ϕ)sin(θ)cos(ψ)
+			Y2=−Y1=−Rsin(ϕ)sin(θ)sin(ψ)
+			Z2=−Z1=−Rsin(ϕ)cos(θ)
+			
+			Теперь найдем углы point2.altitude (ϕ2), point2.latitude (θ2) и point2.longitude (ψ2) для антиподальной точки point2.
+			
+			1. Вычисление point2.altitude (ϕ2)
+			Мы знаем, что cos(ϕ2)=W2/R=−Rcos(ϕ)/R=−cos(ϕ).
+			Так как ϕ лежит в диапазоне от 0 до $ \pi $, −cos(ϕ) соответствует cos(π−ϕ).
+			Следовательно, ϕ2=π−ϕ.
+			
+			point2.altitude = π - point1.altitude
+			
+			2. Вычисление point2.latitude (θ2)
+			Мы знаем, что cos(θ2)= Z2/Rsin(ϕ2)=−Rsin(ϕ)cos(θ)/Rsin(π−ϕ).
+			Так как $ \sin(\pi - \phi) = \sin(\phi) $, получаем:
+			cos(θ2)=sin(ϕ)−sin(ϕ)cos(θ)=−cos(θ).
+			Так как θ лежит в диапазоне от 0 до $ \pi $, −cos(θ) соответствует cos(π−θ).
+			Следовательно, θ2=π−θ.
+			
+			point2.latitude = π - point1.latitude
+			
+			3. Вычисление point2.longitude (ψ2)
+			Мы знаем, что tan(ψ2)=Y2/X2=(−Rsin(ϕ)sin(θ)sin(ψ))/(−Rsin(ϕ)sin(θ)cos(ψ))=tan(ψ).
+			Угол ψ может быть в диапазоне от 0 до 2π. Есть два угла, тангенс которых равен $ \tan(\psi) $: ψ и ψ+π.
+			Чтобы определить правильный угол, нужно посмотреть на знаки X2 и Y2.
+			
+			Если ψ в квадрантах 1 и 2 (от 0 до π), то ψ2=ψ+π.
+			
+			Если ψ в квадрантах 3 и 4 (от π до 2π), то ψ2=ψ−π.
+			
+			Это можно объединить в одну формулу, используя оператор по модулю:
+			ψ2=(ψ+π)(mod2π).
+			
+			Итоговый результат:
+			
+			point2.altitude = π - point1.altitude
+			point2.latitude = π - point1.latitude
+			point2.longitude = (point1.longitude + π) $ \pmod{2\pi} $
+			
+			*/
+			/**
+			 * Вычисляет полярные координаты антиподальной точки на 3-мерной гиперсфере.
+			 * @param {Object} point1 - Объект, представляющий точку с полярными координатами.
+			 * @param {number} point1.latitude - Широта (зенитный угол) в радианах, от 0 до PI.
+			 * @param {number} point1.longitude - Долгота (азимутальный угол) в радианах, от 0 до 2*PI.
+			 * @param {number} point1.altitude - Полярный угол от оси W в радианах, от 0 до PI.
+			 * @returns {Object} Объект, представляющий антиподальную точку point2 с такими же полями, как point1.
+			 */
+			const findAntipodalPoint = (point1) => {
+			    
+			    // Проверяем, что входные данные являются действительными числами
+			    if (typeof point1.latitude !== 'number' ||
+			        typeof point1.longitude !== 'number' ||
+			        typeof point1.altitude !== 'number') {
+			        console.error("Неверный формат входных данных. Ожидаются числа.");
+					return;
+			    }
+			
+			    const PI = Math.PI;
+			
+			    // Вычисляем altitude (полярный угол от оси W)
+			    // Антиподальная точка будет находиться на противоположной стороне,
+			    // поэтому угол смещается на PI радиан.
+			    const altitude2 = PI - point1.altitude;
+			    
+			    // Вычисляем latitude (зенитный угол)
+			    // Аналогично, зенитный угол смещается на PI радиан.
+			    const latitude2 = PI - point1.latitude;
+			    
+			    // Вычисляем longitude (азимутальный угол)
+			    // Долгота смещается на PI радиан. Используем операцию по модулю,
+			    // чтобы остаться в диапазоне от 0 до 2*PI.
+			    const longitude2 = (point1.longitude + PI) % (2 * PI);
+			
+			    return {
+			        latitude: latitude2,
+			        longitude: longitude2,
+			        altitude: altitude2
+			    };
+			}
+
+			/*
+			// Пример использования:
+			// Задаем координаты point1 в радианах
+			const point1 = {
+			    latitude: Math.PI / 4,    // 45 градусов
+			    longitude: Math.PI / 2,   // 90 градусов
+			    altitude: Math.PI / 3     // 60 градусов
+			};
+			
+			// Вычисляем координаты антиподальной точки
+			const point2 = findAntipodalPoint(point1);
+			
+			// Выводим результат
+			console.log("point1:");
+			console.log(point1);
+			console.log("\nantipodal point2:");
+			console.log(point2);
+			*/
+			
+			const vertice = [
+				0,//altitude
+				pi / 4,//0,//Latitude
+				0,//Longitude
+			]
+			
 			const params = {
 
-				//вершины расположены друг против друга по диагонали. arc = π
-				vertice: [
-					pi / 4,//0,//Latitude
-					0,//Longitude
-				],
+				//вершины расположены друг против друга по диагонали (antipodal points). arc = π
+				vertice: vertice,
 				oppositeVertice: [
+					0,//altitude
 					-pi / 4,//0,//Latitude
 					pi,//Longitude
 				],
 				/*
 				vertice: [
+					0,//altitude
 					0.785,//Latitude
 					pi,//Longitude
 				],
 				oppositeVertice: [
+					0,//altitude
 					0.051,//0,//Latitude
 					pi,//Longitude
 				],
