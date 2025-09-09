@@ -51,7 +51,8 @@ class RandomVerticeHyperSphere extends RandomVertice {
 
 					/*
 					gemini.google.com
-					Вычислить центральный угол между двумя точками на поверхности 3-мерной гиперсферы. Координаты точек заданы в полярной системе координат в радианах. Начало координат широты находится на экваторе. Писать все формулы в одну строку.
+					Вычислить центральный угол между двумя точками на поверхности 3-мерной гиперсферы. Координаты точек заданы в полярной системе координат в радианах.
+					Начало координат широты находится на экваторе. Писать все формулы в одну строку.
 
 					Обозначим координаты двух точек на поверхности 3-мерной гиперсферы радиуса R в полярной системе координат:
 					Точка 1: (ψ1,θ1,ϕ1), где ψ1 - гиперширота, θ1 - гипердолгота, ϕ1 - обычная долгота.
@@ -131,6 +132,7 @@ class RandomVerticeHyperSphere extends RandomVertice {
 					 * @param {number} point2.altitude - Полярный угол от оси W.
 					 * @returns {number} Центральный угол в радианах.
 					 */
+/*					
 					const calculateCentralAngle = (point1, point2) => {
 					  const { latitude: lat1, longitude: lon1, altitude: alt1 } = point1;
 					  const { latitude: lat2, longitude: lon2, altitude: alt2 } = point2;
@@ -142,8 +144,74 @@ class RandomVerticeHyperSphere extends RandomVertice {
 					  
 					  return Math.acos(clampedCosDelta);
 					}
+*/
+					/*
+					function toRadians(degrees) {
+					  return degrees * Math.PI / 180;
+					}
+					*/
+					/*https://gemini.google.com/
+					Вычислить центральный угол между двумя точками на поверхности 3-мерной гиперсферы встроенной в 4-мерное евклидово пространство.
+					Координаты точек заданы в полярной системе координат в радианах. Положение точек обозначим как
+					point.latitude - широта (зенитный угол) в диапазоне от -π/2 до π/2,
+					point.longitude - долгота (азимутальный угол)  в диапазоне от -π до π,
+					point.altitude - полярный угол от оси W  в диапазоне от 0 до π.
+					Писать все формулы в одну строку.
+					*/
+					const calculateCentralAngle = (point1, point2) => {
+					  const {
+					    latitude: lat1,
+					    longitude: lon1,
+					    altitude: alt1
+					  } = point1;
+					  const {
+					    latitude: lat2,
+					    longitude: lon2,
+					    altitude: alt2
+					  } = point2;
+					
+					  // Convert degrees to radians if necessary
+					  // Assuming input is already in radians based on the prompt
+					  // const lat1Rad = toRadians(lat1);
+					  // const lon1Rad = toRadians(lon1);
+					  // const alt1Rad = toRadians(alt1);
+					  // const lat2Rad = toRadians(lat2);
+					  // const lon2Rad = toRadians(lon2);
+					  // const alt2Rad = toRadians(alt2);
+					
+					  const cosDeltaLambda = Math.cos(lat1) * Math.cos(lat2) + Math.sin(lat1) * Math.sin(lat2) * Math.cos(lon1 - lon2);
+					
+					  const cosTheta = Math.cos(alt1) * Math.cos(alt2) + Math.sin(alt1) * Math.sin(alt2) * cosDeltaLambda;
+					
+					  // Ensure the value is within the valid range for acos to avoid NaN errors
+					  const clampedCosTheta = Math.max(-1, Math.min(1, cosTheta));
+					
+					  // The central angle in radians
+					  const centralAngle = Math.acos(clampedCosTheta);
+					
+					  return centralAngle;
+					}
+					/*
+					// Example usage with points in radians
+					const point1 = {
+					  latitude: 0,
+					  longitude: 0,
+					  altitude: 0
+					};
+					const point2 = {
+					  latitude: Math.PI / 2,
+					  longitude: Math.PI / 2,
+					  altitude: Math.PI / 2
+					};
+					
+					const angle = calculateCentralAngle(point1, point2);
+					console.log(`Центральный угол между точками в радианах: ${angle}`);
+					console.log(`Центральный угол между точками в градусах: ${angle * 180 / Math.PI}`);
+					*/
+					
 					const centralAngle = calculateCentralAngle(vertice, oppositeVertice);
 
+					/*
 					if (params.debug) {
 
 						//DeepSeek
@@ -160,6 +228,7 @@ class RandomVerticeHyperSphere extends RandomVertice {
 						if (angle != centralAngle) console.error(sRandomVerticesHyperSphere + ': get params.arc. centralAngle = ' + centralAngle + ' != angle = ' + angle);
 
 					}
+					*/
 					return centralAngle;
 					/*
 					// Тестовый пример

@@ -231,7 +231,7 @@
 			    ];
 				
 			}
-			
+			/*
 			// Пример использования
 			const point1 = {
 			  latitude: Math.PI / 4, // 45 градусов
@@ -254,8 +254,10 @@
 			const point4 = findAntipodalPoint(point3);
 			console.log("\nКоординаты исходной точки (point3):", point3);
 			console.log("Координаты антиподальной точки (point4):", point4);
+			*/
 			
 			//DeepSeek
+			/*
 			const calculateAntipodalPoint = (point1) => {
 			    // Антиподальная точка получается добавлением π к каждому углу
 			    // с учетом периодичности углов
@@ -331,6 +333,7 @@
 			    
 			    return dx < tolerance && dy < tolerance && dz < tolerance;
 			}
+			*/
 			/*
 			const vertice = [
 				0,//altitude
@@ -387,7 +390,7 @@
 			RandomVertice.Vertice(params.oppositeVertice);
 
 			//debug
-			if (!areAntipodal(params.vertice, params.oppositeVertice)) console.error('vertice and opposite vertice is not antipodal.');
+			//if (!areAntipodal(params.vertice, params.oppositeVertice)) console.error('vertice and opposite vertice is not antipodal.');
 			
 			//Random vertice hyperSphere 
 
@@ -455,7 +458,7 @@
 					}
 					
 				}
-			updateRandomVerticeHyperSphere();
+			//updateRandomVerticeHyperSphere();
 	
 			//Vertices hyperSphere 
 			
@@ -485,7 +488,7 @@
 					object: {
 
 						name: 'Vertices',
-						color: 'white',
+						//color: 'white',
 						geometry: { angles: [params.vertice, params.oppositeVertice], },
 
 					},
