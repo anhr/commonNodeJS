@@ -178,7 +178,7 @@ export class RandomVerticeSphere extends RandomVertice {
 
 				//rotate angles
 				
-				if (params.rotate) return params.rotate(randomVerticeAngles);
+				if (params.rotate) return params.rotate(randomVerticeAngles, params.oppositeVertice);
 
 				/*Есть точка на поверхности сферы в полярной системе координат. Начало полярной системы координат находится в центре сферы.
 				Написать на javascript исходный код поворота этой точки на произвольный угол с использованием углов Эйлера.

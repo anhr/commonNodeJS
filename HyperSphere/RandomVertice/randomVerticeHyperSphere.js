@@ -301,7 +301,7 @@ class RandomVerticeHyperSphere extends RandomVertice {
 			k = spheresCount === 1 ? 1 : 1 / (spheresCount - 1),//for params.random = k * circleId;
 			getRandomVerticeAnglesParams = (altitude, angleStep) => {
 
-				params.rotate = () => {
+				params.rotate = (point, rotationAngles) => {
 
 					/*https://https://gemini.google.com/app/45b136829aad53e4
 Есть точка на поверхности 3-мерной гиперсферы встроенной в 4-мерное евклидово пространство в полярной системе координат. Начало полярной системы координат находится в центре сферы.
@@ -348,18 +348,23 @@ point.altitude - полярный угол от оси W  в диапазоне
 					
 					    if (altitude === 0) {
 					        // Случай, когда точка находится на оси W.
+/*							
 					        return {
 					            latitude: 0,
 					            longitude: 0,
 					            altitude: 0
 					        };
+*/
+							return Vertice([0, 0, 0]);
 					    }
 					
 					    const sinAlt = Math.sin(altitude);
 					    const latitude = Math.asin(z / sinAlt);
 					    const longitude = Math.atan2(y, x);
 					
-					    return { latitude, longitude, altitude };
+//					    return { latitude, longitude, altitude };
+						return Vertice([altitude, latitude, longitude]);
+						
 					}
 					
 					/**
@@ -397,7 +402,8 @@ point.altitude - полярный угол от оси W  в диапазоне
 					
 					    return toPolar4D({ x, y, z, w });
 					}
-					
+
+					/*
 					// Пример использования
 					const myPoint = {
 					    latitude: Math.PI / 4,    // 45 градусов
@@ -415,6 +421,13 @@ point.altitude - полярный угол от оси W  в диапазоне
 					
 					console.log('Начальная точка:', myPoint);
 					console.log('Повернутая точка:', rotatedPoint);
+					*/
+					const eulerAngles = {
+					    xy: rotationAngles.latitude,    // Поворот в плоскости XY
+					    xz: rotationAngles.longitude,    // Поворот в плоскости XZ
+					    yz: rotationAngles.altitude    // Поворот в плоскости YZ
+					};
+					return rotatePoint(Vertice(point), eulerAngles);
 					
 				};
 				const randomCloudSphere = new RandomCloudSphere(params);
