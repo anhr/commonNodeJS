@@ -29,7 +29,8 @@
 		import MyThree from '../../../myThree/myThree.js';
 		MyThree.three.THREE = THREE;
 
-		import RandomVertice from '../randomVerticeSphere.js';
+		//import RandomVertice from '../randomVerticeSphere.js';
+		import { RandomVerticeSphere as RandomVertice } from '../randomVerticeSphere.js';
 		import RandomCloud from '../randomCloudSphere.js';
 		import Cloud from '../cloudSphere.js';
 		import HyperSphere from '../../sphere.js';
@@ -45,7 +46,7 @@
 				//R: 0.5,
 				debug: {
 					
-					//notRandomVertices: true,
+					notRandomVertices: true,
 				
 				},
 //				cloud: true,
@@ -106,7 +107,13 @@
 						log: false,
 						
 					}
-					if (randomVertice.getHyperSphere) hsRandomVertice = randomVertice.getHyperSphere(options, {projectParams: { scene: scene }, debug: debug });
+					if (randomVertice.getHyperSphere) hsRandomVertice = randomVertice.getHyperSphere(options, {
+						
+							projectParams: { scene: scene },
+							debug: debug,
+							r: randomVerticeSettings.R,
+						
+						});
 					else
 						hsRandomVertice = getHyperSphere(HyperSphere, options, scene, randomVertice, { debug: debug, r: randomVerticeSettings.R, name: name });
 /*					

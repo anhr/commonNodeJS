@@ -23,13 +23,14 @@ const sRandomVerticesSphere = 'RandomVerticesSphere',
 	π = Math.PI, abs = Math.abs, round = Math.round, random = Math.random,
 	sin = Math.sin, asin = Math.asin, cos = Math.cos, tan = Math.tan, atan = Math.atan, atan2 = Math.atan2,
 	range = anglesRange.longitude.range;
+export const anglesIdMax = 50;//Количество точек на окружности, расположенной на экваторе
 
 /**
  * Generates a random vertice near the opposite vertice in 2D hypersphere.
  * @class
  * @extends RandomVertice
  */
-class RandomVerticeSphere extends RandomVertice {
+export class RandomVerticeSphere extends RandomVertice {
 
 	/**
 	 * Generates a random vertice near the opposite vertice in 2D hypersphere.
@@ -37,19 +38,11 @@ class RandomVerticeSphere extends RandomVertice {
 	 * @param {boolean} [boCloud=false] true - generates a random vertice cloud.
 	 * @param {boolean} [boInitRandomAngles=true] true - init random angles.
 	 */
-	constructor(params, boCloud = false, boInitRandomAngles = true) {
+	constructor(params={}, boCloud = false, boInitRandomAngles = true) {
 
 		super(params);
 
 		const arrayCircles = boCloud ? undefined : [];
-/*		
-		const arrayCircles = (
-			randomVerticeSettings.mode != undefined) &&
-			(
-				(randomVerticeSettings.mode === randomVerticeSettings.modes.randomVertice) ||
-				(randomVerticeSettings.mode === randomVerticeSettings.modes.randomCloud)
-			) ? [] : undefined;
-*/			
 			
 		if (params.arc === undefined) Object.defineProperty(params, 'arc', {
 	
@@ -97,33 +90,9 @@ class RandomVerticeSphere extends RandomVertice {
 			return angle;
 			
 		}
-/*		
-		this.longitude = (utils) =>
-		{
-
-			const rnd = (params.random === undefined ? random() : params.random),//rng range from 0 to 1
-				b = params.b ? params.b : utils.b(params),
-				angle = (
-						(
-							(atan((
-										(rnd === 0) &&//Первая точка окружности
-										(b === Infinity) ? //Противоположные вершины совпадают
-											1 ://Если сюда не поставить 1, то angle = NaN
-											rnd
-								   ) * b)) /
-							atan(b)//делим на tan(b), что бы при минимальном rnd = 0 и максимальном rnd = 1, p получалось -1 и 1
-						) * 2 - 1//центр графика арктангенса сдвигаю вниз на -1
-					) * π //Умножаем на π что бы при минимальном rnd = 0 и максимальном rnd = 1 долгота получались от -π до π.
-							//Тем самым точки почти равномерно распределяются по окружности когда arc = π, тоесть вершина и противоположная вершина расположены на противоположных сторонах окружности
-			
-			if (isNaN(angle)) console.error(sRandomVerticesSphere + '.anglesCircle: angle = ' + angle);
-			return angle;
-			
-		}
-*/		
 		
-		const anglesIdMax = 50,//Количество точек на окружности, расположенной на экваторе
-			circlesCount = (anglesIdMax / 2) + 1,//количество окружностей
+		const circlesCount = round(//найти ближайшее целое число
+				(anglesIdMax / 2) + 1),//количество окружностей
 			k = 1 / (circlesCount - 1),//for params.random = k * circleId;
 /*			
 			sin = Math.sin, cos = Math.cos, asin = Math.asin, atan = Math.atan, atan2 = Math.atan2,
@@ -206,6 +175,10 @@ class RandomVerticeSphere extends RandomVertice {
 
 				//Когда вычисляется одна точка arrayCircles != undefined или randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1 то this.verticesAngles пустой
 				if (!arrayCircles && (this.circlesPointsCount >= this.verticesAngles.length)) console.error(sRandomVerticesSphere + '.verticesAngles: Allocate memory failed! this.circlesPointsCount = ' + this.circlesPointsCount + ' >= this.verticesAngles.length = ' + this.verticesAngles.length);
+
+				//rotate angles
+				
+				if (params.rotate) return params.rotate(randomVerticeAngles);
 
 				/*Есть точка на поверхности сферы в полярной системе координат. Начало полярной системы координат находится в центре сферы.
 				Написать на javascript исходный код поворота этой точки на произвольный угол с использованием углов Эйлера.
@@ -620,4 +593,5 @@ class RandomVerticeSphere extends RandomVertice {
 	/////////////////////////////overridden methods
 
 }
-export default RandomVerticeSphere;
+//RandomVerticeSphere.anglesIdMax = anglesIdMax;
+//export default RandomVerticeSphere;

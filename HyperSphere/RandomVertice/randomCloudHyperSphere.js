@@ -40,7 +40,7 @@ class RandomCloudHyperSphere extends RandomCloud
 		super(params);
 
 		this.circlesPointsCount = 750;//количество точек в облаке
-		const randomVertice = new RandomVertice(params, boCloud),
+		const randomVertice = new RandomVertice(params, boCloud, false),
 			verticesAngles = (/*boAllocateMemory*/) => {
 
 				for (let anglesId = 0; anglesId < this.circlesPointsCount; anglesId++) {

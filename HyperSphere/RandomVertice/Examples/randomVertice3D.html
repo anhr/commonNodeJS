@@ -342,7 +342,7 @@
 			]
 			*/
 			const vertice = [
-				pi / 6,//altitude
+				pi,//pi / 6,//altitude. Если 0 или pi, то arc = pi
 				pi / 4,//Latitude
 				pi / 3,//Longitude
 			]
@@ -412,7 +412,13 @@
 						log: false,
 						
 					}
-					if (randomVertice.getHyperSphere) hsRandomVertice = randomVertice.getHyperSphere(options, {projectParams: { scene: scene }, debug: debug });
+					if (randomVertice.getHyperSphere) hsRandomVertice = randomVertice.getHyperSphere(options, {
+						
+							projectParams: { scene: scene },
+							debug: debug,
+							r: randomVerticeSettings.R,
+						
+						});
 					else
 						hsRandomVertice = getHyperSphere(HyperSphere, options, scene, randomVertice, { debug: debug, r: randomVerticeSettings.R, name: name });
 					
@@ -458,7 +464,7 @@
 					}
 					
 				}
-			//updateRandomVerticeHyperSphere();
+			updateRandomVerticeHyperSphere();
 	
 			//Vertices hyperSphere 
 			

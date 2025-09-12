@@ -14,9 +14,11 @@
 */
 
 import RandomVertice from './randomVertice.js';
+import { anglesIdMax } from './randomVerticeSphere.js';
 import anglesRange from '../anglesRange.js'
-import * as utils from './utilsSphere.js'
-import RandomCloud from './randomCloudSphere.js';
+import * as utils from './utilsHyperSphere.js'
+import RandomCloud from './randomCloudHyperSphere.js';
+import RandomCloudSphere from './randomCloudSphere.js';
 
 const sRandomVerticesHyperSphere = 'RandomVerticesHyperSphere',
 	π = Math.PI, abs = Math.abs, round = Math.round, random = Math.random,
@@ -34,8 +36,9 @@ class RandomVerticeHyperSphere extends RandomVertice {
 	 * Generates a random vertice near the opposite vertice in 3D hypersphere.
 	 * @param {object} [params={}] See the <b>params</b> of the <a href="./module-RandomVertice-RandomVertice.html" target="_blank"><b>RandomVertice</b></a> constructor for details.
 	 * @param {object} [boCloud=false] true - generates a random vertice cloud.
+	 * @param {boolean} [boInitRandomAngles=true] true - init random angles.
 	 */
-	constructor(params, boCloud = false) {
+	constructor(params, boCloud = false, boInitRandomAngles = true) {
 
 		super(params);
 
@@ -277,61 +280,181 @@ class RandomVerticeHyperSphere extends RandomVertice {
 				angle = (
 						(
 							(atan((
-										(rnd === 0) &&//Первая точка окружности
+										(rnd === 0) &&//Первая точка сферы
 										(b === Infinity) ? //Противоположные вершины совпадают
 											1 ://Если сюда не поставить 1, то angle = NaN
 											rnd
 								   ) * b)) /
 							atan(b)//делим на tan(b), что бы при минимальном rnd = 0 и максимальном rnd = 1, p получалось -1 и 1
 						) * 2 - 1//центр графика арктангенса сдвигаю вниз на -1
-					) * π / 2//Умножаем на π/2 что бы при минимальном rnd = 0 и максимальном rnd = 1  углы попадали на полюса сферы т.е. широта получались от -π/2 до π/2.
-							//Тем самым точки почти равномерно распределяются по окружности когда arc = π, тоесть вершина и противоположная вершина расположены на противоположных сторонах окружности
+					) * π / 2 + π / 2//Умножаем на π/2 и плюс π / 2 что бы при минимальном rnd = 0 и максимальном rnd = 1  углы попадали на полюса гиперсферы т.е. радиус сферы равен 0 и высота получались от 0 до π.
+							//Тем самым точки почти равномерно распределяются по сфере когда arc = π, тоесть вершина и противоположная вершина расположены на противоположных сторонах гиперсферы
 			
 			if (isNaN(angle)) console.error(sRandomVerticesHyperSphere + '.anglesCircle: angle = ' + angle);
 			return angle;
 			
 		}
 
-		const randomCloud = new RandomCloud(params);
-		
-		const anglesIdMax = 50,//Количество точек на окружности, расположенной на экваторе
-			circlesCount = (anglesIdMax / 2) + 1,//количество окружностей
-			k = 1 / (circlesCount - 1),//for params.random = k * circleId;
-			getRandomVerticeAnglesParams = (latitude, angleStep) => {
+//		const anglesIdMax = 50,//Количество точек на окружности, расположенной на экваторе
+		const spheresCount = round(//найти ближайшее целое число
+				(anglesIdMax / 2) + 1),//количество окружностей
+			k = spheresCount === 1 ? 1 : 1 / (spheresCount - 1),//for params.random = k * circleId;
+			getRandomVerticeAnglesParams = (altitude, angleStep) => {
 
-				//Количество точек на текущей окружности равно длинну окружности поделить на угол между соседними точками на окружности, расположенной на экваторе
+				params.rotate = () => {
+
+					/*https://https://gemini.google.com/app/45b136829aad53e4
+Есть точка на поверхности 3-мерной гиперсферы встроенной в 4-мерное евклидово пространство в полярной системе координат. Начало полярной системы координат находится в центре сферы.
+
+Положение точки обозначить как
+point.latitude - широта (зенитный угол) в диапазоне от -π/2 до π/2,
+point.longitude - долгота (азимутальный угол)  в диапазоне от -π до π,
+point.altitude - полярный угол от оси W  в диапазоне от 0 до π.
+
+Написать на javascript исходный код поворота этой точки на произвольный угол с использованием углов Эйлера. Включить в исходный код пример использования.
+Результат поворота должен быть в полярной системе коодинат. Положение точки и результат поворота измеряется в радианах.
+					*/
+					/**
+					 * Преобразует полярные координаты в 4D декартовы.
+					 * @param {number} latitude - Широта (зенитный угол), от -PI/2 до PI/2.
+					 * @param {number} longitude - Долгота (азимутальный угол), от -PI до PI.
+					 * @param {number} altitude - Полярный угол от оси W, от 0 до PI.
+					 * @returns {{x: number, y: number, z: number, w: number}} - 4D декартовы координаты.
+					 */
+					function toCartesian4D(latitude, longitude, altitude) {
+					    const cosAlt = Math.cos(altitude);
+					    const sinAlt = Math.sin(altitude);
+					    const cosLat = Math.cos(latitude);
+					    const sinLat = Math.sin(latitude);
+					    const cosLong = Math.cos(longitude);
+					    const sinLong = Math.sin(longitude);
+					
+					    return {
+					        x: cosLong * cosLat * sinAlt,
+					        y: sinLong * cosLat * sinAlt,
+					        z: sinLat * sinAlt,
+					        w: cosAlt
+					    };
+					}
+					
+					/**
+					 * Преобразует 4D декартовы координаты в полярные.
+					 * @param {{x: number, y: number, z: number, w: number}} point - 4D декартовы координаты.
+					 * @returns {{latitude: number, longitude: number, altitude: number}} - Полярные координаты.
+					 */
+					function toPolar4D(point) {
+					    const { x, y, z, w } = point;
+					    const altitude = Math.acos(w);
+					
+					    if (altitude === 0) {
+					        // Случай, когда точка находится на оси W.
+					        return {
+					            latitude: 0,
+					            longitude: 0,
+					            altitude: 0
+					        };
+					    }
+					
+					    const sinAlt = Math.sin(altitude);
+					    const latitude = Math.asin(z / sinAlt);
+					    const longitude = Math.atan2(y, x);
+					
+					    return { latitude, longitude, altitude };
+					}
+					
+					/**
+					 * Поворачивает точку на 3-мерной гиперсфере с использованием углов Эйлера.
+					 * @param {{latitude: number, longitude: number, altitude: number}} point - Полярные координаты точки.
+					 * @param {{xy: number, xz: number, yz: number}} eulerAngles - Углы поворота в радианах для плоскостей XY, XZ и YZ.
+					 * @returns {{latitude: number, longitude: number, altitude: number}} - Повернутая точка в полярных координатах.
+					 */
+					function rotatePoint(point, eulerAngles) {
+					    let { x, y, z, w } = toCartesian4D(point.latitude, point.longitude, point.altitude);
+					
+					    // Матрица поворота для плоскости XY (поворот вокруг оси ZW)
+					    const cosXY = Math.cos(eulerAngles.xy);
+					    const sinXY = Math.sin(eulerAngles.xy);
+					    const newX = x * cosXY - y * sinXY;
+					    const newY = x * sinXY + y * cosXY;
+					    x = newX;
+					    y = newY;
+					
+					    // Матрица поворота для плоскости XZ (поворот вокруг оси YW)
+					    const cosXZ = Math.cos(eulerAngles.xz);
+					    const sinXZ = Math.sin(eulerAngles.xz);
+					    const newX2 = x * cosXZ - z * sinXZ;
+					    const newZ = x * sinXZ + z * cosXZ;
+					    x = newX2;
+					    z = newZ;
+					
+					    // Матрица поворота для плоскости YZ (поворот вокруг оси XW)
+					    const cosYZ = Math.cos(eulerAngles.yz);
+					    const sinYZ = Math.sin(eulerAngles.yz);
+					    const newY2 = y * cosYZ - z * sinYZ;
+					    const newZ2 = y * sinYZ + z * cosYZ;
+					    y = newY2;
+					    z = newZ2;
+					
+					    return toPolar4D({ x, y, z, w });
+					}
+					
+					// Пример использования
+					const myPoint = {
+					    latitude: Math.PI / 4,    // 45 градусов
+					    longitude: Math.PI / 2,   // 90 градусов
+					    altitude: Math.PI / 3     // 60 градусов
+					};
+					
+					const rotationAngles = {
+					    xy: Math.PI / 6,    // Поворот на 30 градусов в плоскости XY
+					    xz: Math.PI / 4,    // Поворот на 45 градусов в плоскости XZ
+					    yz: -Math.PI / 3    // Поворот на -60 градусов в плоскости YZ
+					};
+					
+					const rotatedPoint = rotatePoint(myPoint, rotationAngles);
+					
+					console.log('Начальная точка:', myPoint);
+					console.log('Повернутая точка:', rotatedPoint);
+					
+				};
+				const randomCloudSphere = new RandomCloudSphere(params);
+				delete params.rotate;
+				//Количество точек на текущей сфере равно сумме количества точек на каждой окружности, находящейся на сфере
+				let sphereAnglesCount = randomCloudSphere.circlesPointsCount;
+/*				
 				let circleAnglesCount = round(//найти ближайшее целое число
-						cos(latitude) *//радиус текущей окружности
+						cos(altitude) * //радиус текущей окружности
 						2 * π / //длинна текущей окружности
 						angleStep
 					);
-				const angleStep1 = 1 / circleAnglesCount,
-					boSouthernCircle = latitude - angleStep < anglesRange.latitude.min,
-					boNorthernCircle = latitude + angleStep > anglesRange.latitude.max,
-					latitudeMin = boSouthernCircle ? latitude : (angleStep * (0 - 0.5) + latitude),//Минимальная граница широты окружности
-					latitudeMax = boNorthernCircle ? latitude : (angleStep * (1 - 0.5) + latitude),//Максимальная граница широты окружности
-					latitudeStep = latitudeMax - latitudeMin,//Ширина широты окружности
-					latitudeMid = latitudeMin + latitudeStep / 2;//Средняя широта окружности
+*/				
+				const angleStep1 = 1 / sphereAnglesCount,
+					boSouthernSphere = altitude - angleStep < anglesRange.altitude.min,
+					boNorthernSphere = altitude + angleStep > anglesRange.altitude.max,
+					altitudeMin = boSouthernSphere ? altitude : (angleStep * (0 - 0.5) + altitude),//Минимальная граница высоты сферы
+					altitudeMax = boNorthernSphere ? altitude : (angleStep * (1 - 0.5) + altitude),//Максимальная граница высоты сферы
+					altitudeStep = altitudeMax - altitudeMin,//Ширина высоты сферы
+					altitudeMid = altitudeMin + altitudeStep / 2;//Средняя высота сферы
 				if (
-					(circleAnglesCount === 0) ||//добавить по одной точке на полюсах
+					(sphereAnglesCount === 0) ||//добавить по одной точке на полюсах
 					(
 						!params.boAllocateMemory &&
 						(
-							!arrayCircles && 
-							(circleAnglesCount > this.verticesAngles.length)
+							!arraySpheres && 
+							(sphereAnglesCount > this.verticesAngles.length)
 						) || (
-							arrayCircles &&//Вычисляется одна случайная точка. Т.е. randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1
-							(circleAnglesCount === Infinity)
+							arraySpheres &&//Вычисляется одна случайная точка. Т.е. randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1
+							(sphereAnglesCount === Infinity)
 						)
 					)
 				)
-					circleAnglesCount = 1;//когда длинна дуги приближается к нулю, тоесть вершины совпадают, то angleStep стремится к нулю и circleAnglesCount стремится к бесконечности и массив this.verticesAngles переполняется.
-											//или когда окружность находится на полюсе т.е. circleAnglesCount === 0
-											//Делаем один угол в окружности
-				return { angleStep1, latitudeMin, latitudeMax, latitudeStep, latitudeMid, boSouthernCircle, boNorthernCircle, circleAnglesCount };
+					sphereAnglesCount = 1;//когда длинна дуги приближается к нулю, тоесть вершины совпадают, то angleStep стремится к нулю и sphereAnglesCount стремится к бесконечности и массив this.verticesAngles переполняется.
+											//или когда сфера находится на полюсе т.е. sphereAnglesCount === 0
+											//Делаем один угол на сфере
+				return { angleStep1, altitudeMin, altitudeMax, altitudeStep, altitudeMid, boSouthernSphere, boNorthernSphere, sphereAnglesCount };
 
 			},
-			getRandomVerticeAngles = (latitude, latitudeStep, latitudeMid, circleAnglesCount, angleStep1, angleId) => {
+			getRandomVerticeAngles = (altitude, altitudeStep, altitudeMid, circleAnglesCount, angleStep1, angleId) => {
 				
 				const randomVerticeAngles = [
 
@@ -448,25 +571,30 @@ class RandomVerticeHyperSphere extends RandomVertice {
 			},
 			verticesAngles = (boAllocateMemory) => {
 
-				//Сфера случайных точек состоит из набора окружностей.
+				//Гиперсфера случайных точек состоит из набора сфер.
 				
 				const arc = params.arc;
 				this.circlesPointsCount = boAllocateMemory ? undefined : //Во время выделения памяти в массив this.verticesAngles добавляется новый item
 					0;//в противном случае в массиве this.verticesAngles редактируется item с индексом this.circlesPointsCount
-				let latitudePrev = 0;//широта предыдущей окружности
-				for(let circleId = 0; circleId < circlesCount; circleId++){
+				let altitudePrev = 0;//высота предыдущей сферы
+				for(
+					let sphereId = 0;
+sphereId < 1;//для отладки делаем одну сферу
+					//sphereId < spheresCount;
+					sphereId++
+				){
 
-					params.random = k * circleId;
+					params.random = k * sphereId;
 
-					const latitude = this.latitude(utils),
-						angleStep = abs(latitude - latitudePrev),//угол между соседними точками на окружности
-						randomVerticeAnglesParams = getRandomVerticeAnglesParams(latitude, angleStep);
-					latitudePrev = latitude; 
-					if (arrayCircles && !boAllocateMemory) {
+					const altitude = this.altitude(utils),
+						angleStep = abs(altitude - altitudePrev),//угол между соседними точками на сфере
+						randomVerticeAnglesParams = getRandomVerticeAnglesParams(altitude, angleStep);
+					altitudePrev = altitude; 
+					if (arraySpheres && !boAllocateMemory) {
 
-						const circleAnglesCount = randomVerticeAnglesParams.circleAnglesCount;
-						arrayCircles.push({ latitude, angleStep, latitudeStep: randomVerticeAnglesParams.latitudeStep, latitudeMid: randomVerticeAnglesParams.latitudeMid, circleAnglesCount });
-						this.circlesPointsCount += circleAnglesCount;
+						const sphereAnglesCount = randomVerticeAnglesParams.sphereAnglesCount;
+						arraySpheres.push({ altitude, angleStep, altitudeStep: randomVerticeAnglesParams.altitudeStep, altitudeMid: randomVerticeAnglesParams.altitudeMid, sphereAnglesCount });
+						this.circlesPointsCount += sphereAnglesCount;
 						continue;
 
 					}
@@ -531,15 +659,15 @@ class RandomVerticeHyperSphere extends RandomVertice {
 				if (arraySpheres) {
 					
 					let verticeId = 0;
-					for (let circleId = 0; circleId < arraySpheres.length; circleId++) {
+					for (let sphereId = 0; sphereId < arraySpheres.length; sphereId++) {
 	
-						const circle = arraySpheres[circleId];
-						verticeId += circle.circleAnglesCount;
+						const sphere = arraySpheres[sphereId];
+						verticeId += sphere.sphereAnglesCount;
 						if (verticeId >= randomVerticeId) {
 	
-							//случайная вершина находится на текущей окружности.
-							const randomVerticeAnglesParams = getRandomVerticeAnglesParams(circle.latitude, circle.angleStep),
-								rotated = getRandomVerticeAngles(circle.latitude, circle.latitudeStep, circle.latitudeMid, circle.circleAnglesCount, randomVerticeAnglesParams.angleStep1, randomVerticeId - (verticeId - circle.circleAnglesCount));//verticeId - randomVerticeId);
+							//случайная вершина находится на текущей сфере.
+							const randomVerticeAnglesParams = getRandomVerticeAnglesParams(sphere.altitude, sphere.angleStep),
+								rotated = getRandomVerticeAngles(sphere.altitude, sphere.altitudeStep, sphere.altitudeMid, sphere.sphereAnglesCount, randomVerticeAnglesParams.angleStep1, randomVerticeId - (verticeId - sphere.sphereAnglesCount));
 							if (randomAngles) {
 								
 								this.angles[0] = rotated;
@@ -578,8 +706,15 @@ class RandomVerticeHyperSphere extends RandomVertice {
 		
 		/////////////////////////////overridden methods
 
-		if (arraySpheres) this.randomAngles;//Вычислить случайную точку если нужна одна случайная точка т.е. randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1
-		else verticesAngles(false);//Вычислить облако случайных точек
+		if (arraySpheres) {
+			
+			//Когда создается облако случайных точек randomVerticeSettings.mode = randomVerticeSettings.modes.randomCloud = 2, то boInitRandomAngles = false и не нужно инициализировать случайные точки для экономии времени.
+			//Если создается одна случайная точка randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1, то boInitRandomAngles = true и нужно инициализировать случайные точки.
+			//Иначе при изменении положения вершины или противоположной вершины почему то появляется несколько случайных точек.
+			if (boInitRandomAngles)
+				this.randomAngles;//Вычислить случайную точку если нужна одна случайная точка т.е. randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1 или randomVerticeSettings.mode = randomVerticeSettings.modes.randomCloud = 2
+			
+		} else verticesAngles(false);//Вычислить облако случайных точек
 
 	}
 	
