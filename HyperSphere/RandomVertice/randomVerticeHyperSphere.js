@@ -17,7 +17,7 @@ import RandomVertice from './randomVertice.js';
 import { anglesIdMax } from './randomVerticeSphere.js';
 import anglesRange from '../anglesRange.js'
 import * as utils from './utilsHyperSphere.js'
-import RandomCloud from './randomCloudHyperSphere.js';
+//import RandomCloud from './randomCloudHyperSphere.js';
 import RandomCloudSphere from './randomCloudSphere.js';
 
 const sRandomVerticesHyperSphere = 'RandomVerticesHyperSphere',
@@ -436,9 +436,11 @@ class RandomVerticeHyperSphere extends RandomVertice {
 
 				}
 				const randomCloudSphere = new RandomCloudSphere(params);
-				delete params.hyperSphere;
+//				delete params.hyperSphere;
 				//Количество точек на текущей сфере равно сумме количества точек на каждой окружности, находящейся на сфере
-				let sphereAnglesCount = randomCloudSphere.circlesPointsCount;
+				let sphereAnglesCount = 0;
+//				let sphereAnglesCount = randomCloudSphere.circlesPointsCount;
+				randomCloudSphere.arrayCircles.forEach((circle) => { sphereAnglesCount += circle.circleAnglesCount; });
 /*				
 				let circleAnglesCount = round(//найти ближайшее целое число
 						cos(altitude) * //радиус текущей окружности
@@ -469,7 +471,7 @@ class RandomVerticeHyperSphere extends RandomVertice {
 					sphereAnglesCount = 1;//когда длинна дуги приближается к нулю, тоесть вершины совпадают, то angleStep стремится к нулю и sphereAnglesCount стремится к бесконечности и массив this.verticesAngles переполняется.
 											//или когда сфера находится на полюсе т.е. sphereAnglesCount === 0
 											//Делаем один угол на сфере
-				return { angleStep1, altitudeMin, altitudeMax, altitudeStep, altitudeMid, boSouthernSphere, boNorthernSphere, sphereAnglesCount };
+				return { angleStep1, altitudeMin, altitudeMax, altitudeStep, altitudeMid, boSouthernSphere, boNorthernSphere, sphereAnglesCount, randomCloudSphere };
 
 			},
 			getRandomVerticeAngles = (altitude, altitudeStep, altitudeMid, circleAnglesCount, angleStep1, angleId) => {
@@ -611,7 +613,7 @@ sphereId < 1;//для отладки делаем одну сферу
 					if (arraySpheres && !boAllocateMemory) {
 
 						const sphereAnglesCount = randomVerticeAnglesParams.sphereAnglesCount;
-						arraySpheres.push({ altitude, angleStep, altitudeStep: randomVerticeAnglesParams.altitudeStep, altitudeMid: randomVerticeAnglesParams.altitudeMid, sphereAnglesCount });
+						arraySpheres.push({ altitude, angleStep, altitudeStep: randomVerticeAnglesParams.altitudeStep, altitudeMid: randomVerticeAnglesParams.altitudeMid, sphereAnglesCount, randomCloudSphere: randomVerticeAnglesParams.randomCloudSphere, });
 						this.circlesPointsCount += sphereAnglesCount;
 						continue;
 
@@ -684,6 +686,8 @@ sphereId < 1;//для отладки делаем одну сферу
 						if (verticeId >= randomVerticeId) {
 	
 							//случайная вершина находится на текущей сфере.
+							sphere.randomCloudSphere.randomAngles;
+/*							
 							const randomVerticeAnglesParams = getRandomVerticeAnglesParams(sphere.altitude, sphere.angleStep),
 								rotated = getRandomVerticeAngles(sphere.altitude, sphere.altitudeStep, sphere.altitudeMid, sphere.sphereAnglesCount, randomVerticeAnglesParams.angleStep1, randomVerticeId - (verticeId - sphere.sphereAnglesCount));
 							if (randomAngles) {
@@ -693,6 +697,8 @@ sphereId < 1;//для отладки делаем одну сферу
 								
 							}else randomAngles = [rotated];
 							return this.angles;
+*/							
+							return this.verticesAngles;
 							
 						}
 	

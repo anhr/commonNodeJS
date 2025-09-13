@@ -41,8 +41,9 @@ class RandomCloudSphere extends RandomCloud
 		super(params);
 
 		this.circlesPointsCount = 750;//количество точек в облаке
+		let boAllocateMemory = false;
 		const randomVertice = new RandomVertice(params, boCloud, false),
-			verticesAngles = (/*boAllocateMemory*/) => {
+			verticesAngles = () => {
 
 				const verticesAngles = params.hyperSphere ? params.hyperSphere.verticesAngles : this.verticesAngles;
 				for (let anglesId = 0; anglesId < this.circlesPointsCount; anglesId++) {
@@ -72,9 +73,22 @@ class RandomCloudSphere extends RandomCloud
 		
 		/////////////////////////////overridden methods
 
-		let boAllocateMemory = true;
-		this.randomAngles;
-		boAllocateMemory = false;
+		if (params.hyperSphere) {
+
+			//Этот экземпляр RandomCloudSphere вызывается из RandomVerticeHyperSphere когда создается гиперсфера. Гиперсфера состоит из набора сфер.
+			//Для каждой сферы создается только массив RandomVerticeSphere.arrayCircles в котором хранятся парамерты отдельной окружности.
+			//Сами окружности, которые хранятся в verticesAngles создавать не надо.
+			
+			this.arrayCircles = randomVertice.сirclesParams;
+//verticesAngles();//false);
+			
+		} else {
+			
+			boAllocateMemory = true;
+			this.randomAngles;
+			boAllocateMemory = false;
+
+		}
 		
 	}
 	
