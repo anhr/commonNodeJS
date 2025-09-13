@@ -16,8 +16,8 @@
 import RandomCloud from './randomCloud.js';
 //import RandomVertice from './randomVerticeSphere.js';
 import { RandomVerticeSphere as RandomVertice } from './randomVerticeSphere.js';
-import * as utils from './utilsSphere.js'
-import anglesRange from '../anglesRange.js'
+//import * as utils from './utilsSphere.js'
+//import anglesRange from '../anglesRange.js'
 import HyperSphere from '../sphere.js';
 
 const sRandomCloudSphere = 'RandomCloudSphere';
@@ -40,32 +40,21 @@ class RandomCloudSphere extends RandomCloud
 
 		super(params);
 
-/*		
-		const anglesIdMax = 50,//Количество точек на окружности, расположенной на экваторе
-			circlesCount = (anglesIdMax / 2) + 1,//количество окружностей
-			k = 1 / (circlesCount - 1),//for params.random = k * circleId;
-			sin = Math.sin, cos = Math.cos, asin = Math.asin, atan = Math.atan, atan2 = Math.atan2,
-			round = Math.round, random = Math.random, abs = Math.abs,
-			range = anglesRange.latitude.range,// latitudeMax = anglesRange.latitude.max, latitudeMin = anglesRange.latitude.min,
-*/			
 		this.circlesPointsCount = 750;//количество точек в облаке
 		const randomVertice = new RandomVertice(params, boCloud, false),
 			verticesAngles = (/*boAllocateMemory*/) => {
 
-//				params.range = π;
+				const verticesAngles = params.hyperSphere ? params.hyperSphere.verticesAngles : this.verticesAngles;
 				for (let anglesId = 0; anglesId < this.circlesPointsCount; anglesId++) {
 
 					const randomAngles = randomVertice.randomAngles;
-					if (boAllocateMemory) this.verticesAngles.push(randomAngles[0]);
-					else this.verticesAngles[anglesId] = randomAngles[0];
+					if (boAllocateMemory) verticesAngles.push(randomAngles[0]);
+					else verticesAngles[anglesId] = randomAngles[0];
 
 				}
 				
 			};
 
-		//Allocate this.verticesAngles memory
-//		verticesAngles(true);
-		
 		//overridden methods
 
 		Object.defineProperty(this, 'randomAngles', {
@@ -91,58 +80,7 @@ class RandomCloudSphere extends RandomCloud
 	
 	//overridden methods
 	
-	getHyperSphere(options, classSettings, color) {
-
-		return this.getHyperSphereBase(HyperSphere, options, classSettings, color);
-/*		
-		//Localization
-
-		const lang = {
-
-			name: 'Middle vertice cloud',
-			
-		}
-
-		switch (options.getLanguageCode()) {
-
-			case 'ru'://Russian language
-
-				lang.name = 'Облако средней точки';
-
-				break;
-			default://Custom language
-
-		}
-		
-		let hsRandomVertice;
-		hsRandomVertice = new HyperSphere(options, {
-
-			boRemove: false,//Если не установить этот флаг, то при замене старого hsRandomVertice на новый будут удаляться все гиперсферы на scene. То есть удалится hsVertices
-			r: classSettings.r,
-			edges: false,
-			//randomArc: true,
-			projectParams: { scene: classSettings.projectParams.scene, },
-//				debug: debug,
-			debug: classSettings.debug,
-			//debug: false,
-			settings: {
-
-				object: {
-
-					name: this.getHyperSphereName(options),//lang.name,
-					color: color,
-					geometry: this,//randomVertice,
-
-				},
-				overriddenProperties: { setDrawRange: (start, count) => { if (hsRandomVertice) hsRandomVertice.bufferGeometry.setDrawRange(start, count); } },
-
-			},
-
-		});
-		return hsRandomVertice;
-*/		
-		
-	}
+	getHyperSphere(options, classSettings, color) { return this.getHyperSphereBase(HyperSphere, options, classSettings, color); }
 	
 	/////////////////////////////overridden methods
 
