@@ -329,7 +329,38 @@ export class RandomVerticeSphere extends RandomVertice {
 			set: (anglesNew) => {},
 			
 		});
-		
+		this.getRandomAngle = (randomVerticeId) => {
+
+			let verticeId = 0;
+			for (let circleId = 0; circleId < arrayCircles.length; circleId++) {
+	
+				const circle = arrayCircles[circleId];
+				verticeId += circle.circleAnglesCount;
+				if (verticeId >= randomVerticeId) {
+	
+					//случайная вершина находится на текущей окружности.
+					const randomVerticeAnglesParams = getRandomVerticeAnglesParams(circle.latitude, circle.angleStep),
+						rotated = getRandomVerticeAngles(circle.latitude, circle.latitudeStep, circle.latitudeMid, circle.circleAnglesCount, randomVerticeAnglesParams.angleStep1, randomVerticeId - (verticeId - circle.circleAnglesCount));//verticeId - randomVerticeId);
+					if (randomAngles) this.angles[0] = rotated;
+					else {
+
+						if (params.hyperSphere){
+
+							//случайная вершина вычисляется для гиперсферы. Т.е. this.getRandomAngle вызывается из randomVerticeHyperSphere
+							params.hyperSphere.verticesAngles.push(rotated);
+							
+						}
+						else randomAngles = [rotated];
+
+					}
+					return this.angles;
+					
+				}
+	
+			}
+			console.error(sRandomVerticesSphere + '.getRandomAngle. Random vertice was not found.');
+			
+		}
 		Object.defineProperty(this, 'randomAngles', {
 			
 			get: () => {
@@ -339,7 +370,9 @@ export class RandomVerticeSphere extends RandomVertice {
 				const randomVerticeId = round(random() * (this.circlesPointsCount - 1))
 
 				if (arrayCircles) {
-					
+
+					return this.getRandomAngle(randomVerticeId);
+/*					
 					let verticeId = 0;
 					for (let circleId = 0; circleId < arrayCircles.length; circleId++) {
 	
@@ -362,6 +395,7 @@ export class RandomVerticeSphere extends RandomVertice {
 	
 					}
 					console.error(sRandomVerticesSphere + ': get randomAngles. rotated was not found.');
+*/					
 
 				} else {
 					

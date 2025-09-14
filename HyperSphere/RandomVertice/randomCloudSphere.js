@@ -73,14 +73,22 @@ class RandomCloudSphere extends RandomCloud
 		
 		/////////////////////////////overridden methods
 
+		this.getRandomAngle = (randomVerticeId) => { return randomVertice.getRandomAngle(randomVerticeId); }
+		
 		if (params.hyperSphere) {
 
 			//Этот экземпляр RandomCloudSphere вызывается из RandomVerticeHyperSphere когда создается гиперсфера. Гиперсфера состоит из набора сфер.
 			//Для каждой сферы создается только массив RandomVerticeSphere.arrayCircles в котором хранятся парамерты отдельной окружности.
 			//Сами окружности, которые хранятся в verticesAngles создавать не надо.
 			
-			this.arrayCircles = randomVertice.сirclesParams;
-//verticesAngles();//false);
+//			this.arrayCircles = randomVertice.сirclesParams;
+			Object.defineProperty(this, 'sphereAnglesCount', { get: () => {
+
+				let sphereAnglesCount = 0;
+				randomVertice.сirclesParams.forEach((circle) => { sphereAnglesCount += circle.circleAnglesCount; });
+				return sphereAnglesCount;
+			
+			}, });
 			
 		} else {
 			
