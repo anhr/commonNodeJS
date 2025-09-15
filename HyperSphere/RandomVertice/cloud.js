@@ -27,10 +27,21 @@ class Cloud {
 	 */
 	constructor(params) {
 
+		params.verticesAngles.length = 0;
 		Object.defineProperty(this, 'angles', {
 			
-			get: () => { return this.verticesAngles; },
-			set: (anglesNew) => { this.verticesAngles = anglesNew; },
+			get: () => {
+				
+				return params.verticesAngles;
+//				return this.verticesAngles;
+			
+			},
+			set: (anglesNew) => {
+				
+				params.verticesAngles = anglesNew;
+//				this.verticesAngles = anglesNew;
+			
+			},
 			
 		});
 		this.anglesCircle = (anglesIdMax, randomVertice, utils) => {

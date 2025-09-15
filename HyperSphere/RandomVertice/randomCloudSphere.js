@@ -45,12 +45,14 @@ class RandomCloudSphere extends RandomCloud
 		const randomVertice = new RandomVertice(params, boCloud, false),
 			verticesAngles = () => {
 
-				const verticesAngles = params.hyperSphere ? params.hyperSphere.verticesAngles : this.verticesAngles;
+//				const verticesAngles = params.hyperSphere ? params.hyperSphere.verticesAngles : this.verticesAngles;
 				for (let anglesId = 0; anglesId < this.circlesPointsCount; anglesId++) {
 
 					const randomAngles = randomVertice.randomAngles;
+/*					
 					if (boAllocateMemory) verticesAngles.push(randomAngles[0]);
 					else verticesAngles[anglesId] = randomAngles[0];
+*/					
 
 				}
 				
@@ -63,7 +65,8 @@ class RandomCloudSphere extends RandomCloud
 			get: () => {
 
 				verticesAngles();//false);
-				return this.verticesAngles;
+				return params.verticesAngles;
+//				return this.verticesAngles;
 				
 			},
 			

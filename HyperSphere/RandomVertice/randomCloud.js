@@ -31,8 +31,18 @@ class RandomCloud {
 
 		Object.defineProperty(this, 'angles', {
 			
-			get: () => { return this.verticesAngles; },
-			set: (anglesNew) => { this.verticesAngles = anglesNew; },
+			get: () => {
+
+				return params.verticesAngles;
+//				return this.verticesAngles;
+			
+			},
+			set: (anglesNew) => {
+
+				params.verticesAngles = anglesNew;
+//				this.verticesAngles = anglesNew;
+			
+			},
 			
 		});
 		this.anglesCircle = (anglesIdMax, randomVertice, utils) => {
@@ -58,7 +68,7 @@ class RandomCloud {
 		}
 		
 	}
-	verticesAngles = [];
+//	verticesAngles = [];
 	circlesPointsCount;
 	getHyperSphereBase(HyperSphere, options, classSettings, color) {
 

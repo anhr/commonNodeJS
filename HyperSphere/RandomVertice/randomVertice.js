@@ -33,6 +33,7 @@ class RandomVertice {
 
 		params.vertice ||= this.ZeroArray();
 		params.oppositeVertice ||= this.ZeroArray();
+		params.verticesAngles ||= [];
 		this.Center(params);
 /*
 		this.anglesCircle = (anglesIdMax, randomVertice, utils) => {
@@ -59,7 +60,7 @@ class RandomVertice {
 */		
 		
 	}
-	verticesAngles = [];
+//	verticesAngles = [];
 	circlesPointsCount;
 	
 	//overridden methods

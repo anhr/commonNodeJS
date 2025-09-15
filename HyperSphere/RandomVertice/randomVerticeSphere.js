@@ -115,7 +115,8 @@ export class RandomVerticeSphere extends RandomVertice {
 						!params.boAllocateMemory &&
 						(
 							!arrayCircles && 
-							(circleAnglesCount > this.verticesAngles.length)
+//							(circleAnglesCount > this.verticesAngles.length)
+							(circleAnglesCount > params.verticesAngles.length)
 						) || (
 							arrayCircles &&//Вычисляется одна случайная точка. Т.е. randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1
 							(circleAnglesCount === Infinity)
@@ -162,7 +163,8 @@ export class RandomVerticeSphere extends RandomVertice {
 				//console.log('randomVerticeAngles = ' + randomVerticeAngles.toString());
 
 				//Когда вычисляется одна точка arrayCircles != undefined или randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1 то this.verticesAngles пустой
-				if (!arrayCircles && (this.circlesPointsCount >= this.verticesAngles.length)) console.error(sRandomVerticesSphere + '.verticesAngles: Allocate memory failed! this.circlesPointsCount = ' + this.circlesPointsCount + ' >= this.verticesAngles.length = ' + this.verticesAngles.length);
+				if (!arrayCircles && (this.circlesPointsCount >= params.verticesAngles.length)) console.error(sRandomVerticesSphere + '.verticesAngles: Allocate memory failed! this.circlesPointsCount = ' + this.circlesPointsCount + ' >= params.verticesAngles.length = ' + params.verticesAngles.length);
+//				if (!arrayCircles && (this.circlesPointsCount >= this.verticesAngles.length)) console.error(sRandomVerticesSphere + '.verticesAngles: Allocate memory failed! this.circlesPointsCount = ' + this.circlesPointsCount + ' >= this.verticesAngles.length = ' + this.verticesAngles.length);
 
 				//rotate angles
 				
@@ -280,11 +282,13 @@ export class RandomVerticeSphere extends RandomVertice {
 					
 					for (let angleId = 0; angleId < circleAnglesCount; angleId++) {
 
-						if (boAllocateMemory) this.verticesAngles.push(this.ZeroArray());//allocate memory
+//						if (boAllocateMemory) this.verticesAngles.push(this.ZeroArray());//allocate memory
+						if (boAllocateMemory) params.verticesAngles.push(this.ZeroArray());//allocate memory
 						else {//edit memory
 
 							const rotated = getRandomVerticeAngles(latitude, latitudeStep, latitudeMid, circleAnglesCount, angleStep1, angleId);
-							this.verticesAngles[this.circlesPointsCount] = rotated;
+//							this.verticesAngles[this.circlesPointsCount] = rotated;
+							params.verticesAngles[this.circlesPointsCount] = rotated;
 							this.circlesPointsCount++;
 							
 						}
@@ -344,6 +348,8 @@ export class RandomVerticeSphere extends RandomVertice {
 					if (randomAngles) this.angles[0] = rotated;
 					else {
 
+						params.verticesAngles.push(rotated);
+/*						
 						if (params.hyperSphere){
 
 							//случайная вершина вычисляется для гиперсферы. Т.е. this.getRandomAngle вызывается из randomVerticeHyperSphere
@@ -351,6 +357,7 @@ export class RandomVerticeSphere extends RandomVertice {
 							
 						}
 						else randomAngles = [rotated];
+*/						
 
 					}
 					return this.angles;
