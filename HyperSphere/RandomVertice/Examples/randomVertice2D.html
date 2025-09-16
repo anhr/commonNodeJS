@@ -58,7 +58,7 @@
 					randomCloud: 2,
 					
 				},
-				mode: 1,
+				mode: 2,
 			
 			};
 //			randomVerticeSettings.cloud ||= false;
@@ -92,6 +92,7 @@
 			let hsRandomVertice;
 			const createRandomVerticeHyperSphere = (randomVertice, name) => {
 
+console.log(randomVertice.angles);
 				if (hsRandomVertice) {
 					
 					hsRandomVertice.setPositionAttributeFromPoints(randomVertice.randomAngles, true);
@@ -166,8 +167,8 @@
 				} else hsRandomVertice.setVerticesRange(0, randomVertice.circlesPointsCount != undefined ? randomVertice.circlesPointsCount : 1);
 	
 			}
-			let prevObject = undefined;
 /*			
+			let prevObject = undefined;
 			const updateRandomVerticeHyperSphere = () => {
 
 //				if (prevObject != undefined) delete prevObject;

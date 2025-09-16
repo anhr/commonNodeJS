@@ -316,8 +316,18 @@ export class RandomVerticeSphere extends RandomVertice {
 
 		Object.defineProperty(this, 'angles', {
 			
-			get: () => { return randomAngles; },
-			set: (anglesNew) => { randomAngles = anglesNew; },
+			get: () => {
+
+				return params.verticesAngles;
+//				return randomAngles;
+			
+			},
+			set: (anglesNew) => {
+				
+				params.verticesAngles = anglesNew;
+//				randomAngles = anglesNew;
+			
+			},
 			
 		});
 		
