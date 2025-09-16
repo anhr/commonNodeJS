@@ -27,7 +27,7 @@ class Cloud {
 	 */
 	constructor(params) {
 
-		params.verticesAngles.length = 0;
+		if (params.verticesAngles) params.verticesAngles.length = 0;
 		Object.defineProperty(this, 'angles', {
 			
 			get: () => {

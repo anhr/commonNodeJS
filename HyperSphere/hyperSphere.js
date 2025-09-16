@@ -602,7 +602,8 @@ class HyperSphere extends MyObject {
 						else _this.project();
 						return true;
 					case 'length':
-						console.warn(sHyperSphere + ': set geometry.angles.length. Use guiLength instead')
+//						console.warn(sHyperSphere + ': set geometry.angles.length. Use guiLength instead')
+						aAngles.length = value;
 						return true;
 
 				}

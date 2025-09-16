@@ -48,6 +48,7 @@ class RandomCloudSphere extends RandomCloud
 //				const verticesAngles = params.hyperSphere ? params.hyperSphere.verticesAngles : this.verticesAngles;
 				for (let anglesId = 0; anglesId < this.circlesPointsCount; anglesId++) {
 
+					if (!boAllocateMemory) params.editAnglesId = anglesId;
 					const randomAngles = randomVertice.randomAngles;
 /*					
 					if (boAllocateMemory) verticesAngles.push(randomAngles[0]);
@@ -55,6 +56,7 @@ class RandomCloudSphere extends RandomCloud
 */					
 
 				}
+				delete params.editAnglesId;
 				
 			};
 

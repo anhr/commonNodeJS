@@ -348,7 +348,8 @@ export class RandomVerticeSphere extends RandomVertice {
 					if (randomAngles) this.angles[0] = rotated;
 					else {
 
-						params.verticesAngles.push(rotated);
+						if (params.editAnglesId === undefined) params.verticesAngles.push(rotated);
+						else params.verticesAngles[params.editAnglesId] = rotated;
 /*						
 						if (params.hyperSphere){
 
