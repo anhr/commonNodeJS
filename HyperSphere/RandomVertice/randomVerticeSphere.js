@@ -310,7 +310,7 @@ export class RandomVerticeSphere extends RandomVertice {
 
 		}
 		
-		let randomAngles;
+//		let randomAngles;
 
 		//overridden methods
 
@@ -355,22 +355,22 @@ export class RandomVerticeSphere extends RandomVertice {
 					//случайная вершина находится на текущей окружности.
 					const randomVerticeAnglesParams = getRandomVerticeAnglesParams(circle.latitude, circle.angleStep),
 						rotated = getRandomVerticeAngles(circle.latitude, circle.latitudeStep, circle.latitudeMid, circle.circleAnglesCount, randomVerticeAnglesParams.angleStep1, randomVerticeId - (verticeId - circle.circleAnglesCount));//verticeId - randomVerticeId);
-					if (randomAngles) this.angles[0] = rotated;
-					else {
+//					if (randomAngles) this.angles[0] = rotated;
+//					else {
 
-						if (params.editAnglesId === undefined) params.verticesAngles.push(rotated);
-						else params.verticesAngles[params.editAnglesId] = rotated;
+					if (params.editAnglesId === undefined) params.verticesAngles.push(rotated);
+					else params.verticesAngles[params.editAnglesId] = rotated;
 /*						
-						if (params.hyperSphere){
+					if (params.hyperSphere){
 
-							//случайная вершина вычисляется для гиперсферы. Т.е. this.getRandomAngle вызывается из randomVerticeHyperSphere
-							params.hyperSphere.verticesAngles.push(rotated);
-							
-						}
-						else randomAngles = [rotated];
+						//случайная вершина вычисляется для гиперсферы. Т.е. this.getRandomAngle вызывается из randomVerticeHyperSphere
+						params.hyperSphere.verticesAngles.push(rotated);
+						
+					}
+					else randomAngles = [rotated];
 */						
 
-					}
+//					}
 					return this.angles;
 					
 				}
@@ -417,7 +417,7 @@ export class RandomVerticeSphere extends RandomVertice {
 
 				} else {
 					
-					this.angles = this.verticesAngles;
+//					this.angles = this.verticesAngles;
 					return this.angles;
 
 				}
@@ -432,7 +432,8 @@ export class RandomVerticeSphere extends RandomVertice {
 			get: () => {
 
 				verticesAngles(false);
-				return this.verticesAngles;
+				return params.verticesAngles;
+//				return this.verticesAngles;
 				
 			},
 			

@@ -213,8 +213,11 @@ console.log('this.circlesPointsCount = ' + this.circlesPointsCount)
 			get: () => {
 
 				randomVertice.randomAngles;
+				return randomVertice.angles;
+/*				
 				this.verticesAngles = randomVertice.cloud;
 				return this.verticesAngles;
+*/				
 				
 			},
 			
