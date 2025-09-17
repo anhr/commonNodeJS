@@ -193,22 +193,27 @@
 			let randomCloud, cloud, randomVertice;//сразу не создаю эти объекты потому что они могут не понадобиться и потому, что так легче отлаживать
 			const updateRandomVerticeHyperSphere = () => {
 
-					if (params.verticesAngles) params.verticesAngles.length = 0;
+//					if (params.verticesAngles) params.verticesAngles.length = 0;
 					const modes = randomVerticeSettings.modes;
 					switch (randomVerticeSettings.mode){
 
 						case modes.cloud:
 //							if (!cloud)
 							cloud = new Cloud(params);
-							createRandomVerticeHyperSphere(cloud, 'Cloud'); break;
+							createRandomVerticeHyperSphere(cloud, 'Cloud');
+							randomVertice = undefined;
+							break;
 						case modes.randomVertice:
-//							if (!randomVertice)
-							randomVertice = new RandomVertice(params);
+//							if (params.verticesAngles) params.verticesAngles.length = 0;
+							if (!randomVertice)//Если не делать эту проверку, то при редактировании положения точки появляется две точки
+								randomVertice = new RandomVertice(params);
 							createRandomVerticeHyperSphere(randomVertice, 'Random vertice'); break;
 						case modes.randomCloud: 
 //							if (!randomCloud)
 							randomCloud = new RandomCloud(params);
-							createRandomVerticeHyperSphere(randomCloud, 'Random Cloud'); break;
+							createRandomVerticeHyperSphere(randomCloud, 'Random Cloud');
+							randomVertice = undefined;
+							break;
 						default: console.error('Invalid mode = ' + mode);
 							
 					}
@@ -298,7 +303,8 @@
 							case modes.cloud: break;
 							case modes.randomVertice:
 								if (!randomVertice) randomVertice = new RandomVertice(params);
-								randomVertice.randomAngles; break;
+								else randomVertice.randomAngles;
+								break;
 							case modes.randomCloud: break;
 							default: console.error('Invalid mode = ' + mode);
 								
