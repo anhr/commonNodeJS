@@ -498,7 +498,7 @@ class MyObject {
 			const attributes = settings.bufferGeometry.attributes, positionData = this.getPositionData(i, timeId),
 				positionBlockLength = positionData.positionBlockLength;
 			let itemSize = positionData.itemSize, positionId = positionData.positionId, array = attributes.position.array;
-			                  array [positionId] = vertice.x != undefined ? vertice.x : vertice[0] != undefined ? vertice[0] : 0;
+							  array [positionId] = vertice.x != undefined ? vertice.x : vertice[0] != undefined ? vertice[0] : 0;
 			if (itemSize > 1) array [++positionId] = vertice.y != undefined ? vertice.y : vertice[1] != undefined ? vertice[1] : 0;
 			if (itemSize > 2) array [++positionId] = vertice.z != undefined ? vertice.z : vertice[2] != undefined ? vertice[2] : 0;
 			const w = vertice.w != undefined ? vertice.w : vertice[3];
@@ -551,6 +551,11 @@ class MyObject {
 
 			//opacity
 			if (attributes.color.itemSize > 3) this.verticeOpacity(i);
+
+			//Необходимо для того, что бы отоборажалась информация о вершине при наведении на нее мышки
+			//Внимание. Иногда эта функция работает и без удаления boundingSphere
+			delete settings.bufferGeometry.boundingSphere;
+			settings.bufferGeometry.boundingSphere = null;
 
 			return vertice;
 			
