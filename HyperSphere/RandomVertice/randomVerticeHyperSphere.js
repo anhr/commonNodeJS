@@ -435,22 +435,11 @@ class RandomVerticeHyperSphere extends RandomVertice {
 					verticesAngles: this.verticesAngles,
 
 				}
+				params.verticesAngles.boNoNew = true;
 				const randomCloudSphere = new RandomCloudSphere(params);
-//				delete params.hyperSphere;
+				delete params.verticesAngles.boNoNew;
 				//Количество точек на текущей сфере равно сумме количества точек на каждой окружности, находящейся на сфере
 				let sphereAnglesCount = randomCloudSphere.sphereAnglesCount;
-/*				
-				let sphereAnglesCount = 0;
-//				let sphereAnglesCount = randomCloudSphere.circlesPointsCount;
-				randomCloudSphere.arrayCircles.forEach((circle) => { sphereAnglesCount += circle.circleAnglesCount; });
-*/				
-/*				
-				let circleAnglesCount = round(//найти ближайшее целое число
-						cos(altitude) * //радиус текущей окружности
-						2 * π / //длинна текущей окружности
-						angleStep
-					);
-*/				
 				const angleStep1 = 1 / sphereAnglesCount,
 					boSouthernSphere = altitude - angleStep < anglesRange.altitude.min,
 					boNorthernSphere = altitude + angleStep > anglesRange.altitude.max,
@@ -597,8 +586,8 @@ class RandomVerticeHyperSphere extends RandomVertice {
 				//Гиперсфера случайных точек состоит из набора сфер.
 				
 				const arc = params.arc;
-				this.circlesPointsCount = boAllocateMemory ? undefined : //Во время выделения памяти в массив this.verticesAngles добавляется новый item
-					0;//в противном случае в массиве this.verticesAngles редактируется item с индексом this.circlesPointsCount
+				this.circlesPointsCount = boAllocateMemory ? undefined : //Во время выделения памяти в массив params.verticesAngles добавляется новый item
+					0;//в противном случае в массиве params.verticesAngles редактируется item с индексом this.circlesPointsCount
 				let altitudePrev = 0;//высота предыдущей сферы
 				for(
 					let sphereId = 0;
@@ -692,18 +681,8 @@ sphereId < 1;//для отладки делаем одну сферу
 	
 							//случайная вершина находится на текущей сфере.
 							sphere.randomCloudSphere.getRandomAngle(randomVerticeId - verticeIdPrev);
-/*							
-							const randomVerticeAnglesParams = getRandomVerticeAnglesParams(sphere.altitude, sphere.angleStep),
-								rotated = getRandomVerticeAngles(sphere.altitude, sphere.altitudeStep, sphere.altitudeMid, sphere.sphereAnglesCount, randomVerticeAnglesParams.angleStep1, randomVerticeId - (verticeId - sphere.sphereAnglesCount));
-							if (randomAngles) {
-								
-								this.angles[0] = rotated;
-								//randomAngles[0] = rotated;
-								
-							}else randomAngles = [rotated];
-							return this.angles;
-*/							
-							return this.verticesAngles;
+//							return this.verticesAngles;
+							return params.verticesAngles;
 							
 						}
 	

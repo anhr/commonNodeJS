@@ -29,7 +29,7 @@ class RandomCloud {
 	 */
 	constructor(params) {
 
-		if (params.verticesAngles) params.verticesAngles.length = 0;
+		if (params.verticesAngles && !params.verticesAngles.boNoNew) params.verticesAngles.length = 0;
 		params.editAnglesId = undefined;
 		Object.defineProperty(this, 'angles', {
 			

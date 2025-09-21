@@ -34,7 +34,7 @@ class RandomVertice {
 		params.vertice ||= this.ZeroArray();
 		params.oppositeVertice ||= this.ZeroArray();
 		
-		if (params.verticesAngles) params.verticesAngles.length = 0;
+		if (params.verticesAngles && !params.verticesAngles.boNoNew) params.verticesAngles.length = 0;
 		params.verticesAngles ||= [];
 		
 		this.Center(params);
