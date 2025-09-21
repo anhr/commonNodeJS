@@ -49,7 +49,8 @@ class RandomCloud {
 		});
 		this.anglesCircle = (anglesIdMax, randomVertice, utils) => {
 			
-			const boUpdate = this.verticesAngles.length === 0 ? false : true;
+//			const boUpdate = this.verticesAngles.length === 0 ? false : true;
+			const boUpdate = params.verticesAngles.length === 0 ? false : true;
 	
 			//что бы не делать повторяющихся вычислений
 			params.b = utils.b(params);
@@ -59,13 +60,18 @@ class RandomCloud {
 				if (params.debug && params.debug.notRandomVertices) params.random = (1 / anglesIdMax) * i;//для замены случайной точки на регулярную
 				
 				const randomVerticeAngles = randomVertice.randomAngles;
+/*				
 				if (boUpdate) this.verticesAngles[i] = randomVerticeAngles;
 				else this.verticesAngles.push(randomVerticeAngles);
+*/				
+				if (boUpdate) params.verticesAngles[i] = randomVerticeAngles;
+				else params.verticesAngles.push(randomVerticeAngles);
 	
 			}
 			delete params.random;
 			delete params.b;
-			return this.verticesAngles;
+//			return this.verticesAngles;
+			return params.verticesAngles;
 			
 		}
 		
