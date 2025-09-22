@@ -745,7 +745,9 @@ sphereId < 1;//для отладки делаем одну сферу
 const Vertice = (vertice) => {
 
 	if (vertice.longitude != undefined) return;
-	while (vertice.length < 3) vertice.push(0);
+	while (vertice.length < 3)
+		vertice.unshift(π / 2);//если тут поставить 0, то в гиперсфере без указания altitude все точки окажутся в начале координат
+//		vertice.push(0);
 	Object.defineProperty(vertice, 'longitude', {
 		
 		get: () => { return vertice[2]; },
