@@ -453,7 +453,8 @@ class RandomVerticeHyperSphere extends RandomVertice {
 						!params.boAllocateMemory &&
 						(
 							!arraySpheres && 
-							(sphereAnglesCount > this.verticesAngles.length)
+//							(sphereAnglesCount > this.verticesAngles.length)
+							(sphereAnglesCount > params.verticesAngles.length)
 						) || (
 							arraySpheres &&//Вычисляется одна случайная точка. Т.е. randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1
 							(sphereAnglesCount === Infinity)
@@ -611,23 +612,25 @@ sphereId < 1;//для отладки делаем одну сферу
 
 					}
 					const angleStep1 = randomVerticeAnglesParams.angleStep1,
-						boSouthernCircle = randomVerticeAnglesParams.boSouthernCircle,
-						boNorthernCircle = randomVerticeAnglesParams.boNorthernCircle,
-						latitudeMin = randomVerticeAnglesParams.latitudeMin,//Минимальная граница широты окружности
-						latitudeMax = randomVerticeAnglesParams.latitudeMax,//Максимальная граница широты окружности
-						latitudeStep = randomVerticeAnglesParams.latitudeStep,//Ширина широты окружности
-						latitudeMid = randomVerticeAnglesParams.latitudeMid,//Средняя широта окружности
-						circleAnglesCount = randomVerticeAnglesParams.circleAnglesCount;
-					//console.log('latitude = ' + latitude + ', latitudePrev = ' + latitudePrev + ', circleAnglesCount = ' + circleAnglesCount);
-					//console.log('boFirstOrLastCircle = ' + (boSouthernCircle || boNorthernCircle) + ', latitude = ' + latitude + ', latitudeMin = ' + latitudeMin + ', latitudeMax = ' + latitudeMax);
+//						boSouthernSphere = randomVerticeAnglesParams.boSouthernSphere,
+//						boNorthernSphere = randomVerticeAnglesParams.boNorthernSphere,
+//						altitudeMin = randomVerticeAnglesParams.altitudeMin,//Минимальная граница широты окружности
+//						altitudeMax = randomVerticeAnglesParams.altitudeMax,//Максимальная граница широты окружности
+						altitudeStep = randomVerticeAnglesParams.altitudeStep,//Ширина широты окружности
+						altitudeMid = randomVerticeAnglesParams.altitudeMid,//Средняя широта окружности
+						sphereAnglesCount = randomVerticeAnglesParams.sphereAnglesCount;
+					//console.log('altitude = ' + altitude + ', altitudePrev = ' + altitudePrev + ', sphereAnglesCount = ' + sphereAnglesCount);
+					//console.log('boFirstOrLastCircle = ' + (boSouthernSphere || boNorthernSphere) + ', latitude = ' + latitude + ', altitudeMin = ' + altitudeMin + ', altitudeMax = ' + altitudeMax);
 					
-					for (let angleId = 0; angleId < circleAnglesCount; angleId++) {
+					for (let angleId = 0; angleId < sphereAnglesCount; angleId++) {
 
-						if (boAllocateMemory) this.verticesAngles.push(this.ZeroArray());//allocate memory
+//						if (boAllocateMemory) this.verticesAngles.push(this.ZeroArray());
+						if (boAllocateMemory) params.verticesAngles.push(this.ZeroArray());
 						else {//edit memory
 
-							const rotated = getRandomVerticeAngles(latitude, latitudeStep, latitudeMid, circleAnglesCount, angleStep1, angleId);
-							this.verticesAngles[this.circlesPointsCount] = rotated;
+							const rotated = getRandomVerticeAngles(altitude, altitudeStep, altitudeMid, sphereAnglesCount, angleStep1, angleId);
+//							this.verticesAngles[this.circlesPointsCount] = rotated;
+							params.verticesAngles[this.circlesPointsCount] = rotated;
 							this.circlesPointsCount++;
 							
 						}

@@ -13,10 +13,9 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 
-//import RandomCloud from './randomCloud.js';
 import Cloud from './cloud.js';
-//import RandomVertice from './randomVerticeSphere.js';
-import { RandomVerticeSphere as RandomVertice } from './randomVerticeSphere.js';
+//import { RandomVerticeSphere as RandomVertice } from './randomVerticeSphere.js';
+import RandomVertice from './randomVerticeHyperSphere.js';
 import * as utils from './utilsSphere.js'
 import anglesRange from '../anglesRange.js'
 

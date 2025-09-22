@@ -46,7 +46,7 @@
 				//R: 0.5,
 				debug: {
 					
-					//notRandomVertices: true,
+					notRandomVertices: true,
 				
 				},
 				
@@ -447,11 +447,7 @@
 					switch (randomVerticeSettings.mode){
 
 						case modes.cloud:
-							if (!cloud) {
-								
-								cloud = new Cloud(params);
-
-							}
+							if (!cloud) cloud = new Cloud(params);
 							createRandomVerticeHyperSphere(cloud, 'Cloud'); break;
 						case modes.randomVertice:
 							if (!randomVertice) randomVertice = new RandomVertice(params);
