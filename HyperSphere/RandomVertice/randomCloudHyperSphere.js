@@ -68,7 +68,8 @@ class RandomCloudHyperSphere extends RandomCloud
 			get: () => {
 
 				verticesAngles();//false);
-				return this.verticesAngles;
+//				return this.verticesAngles;
+				return params.verticesAngles;
 				
 			},
 			

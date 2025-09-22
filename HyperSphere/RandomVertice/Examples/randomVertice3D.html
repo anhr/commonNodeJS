@@ -508,7 +508,8 @@
 
 					hsVertices.setPositionAttributeFromPoint(verticeId);
 					hsVertices.update(verticeId, 0);
-					
+
+					params.verticesAngles.length = 0;
 					updateRandomVerticeHyperSphere();
 					
 				};
@@ -521,7 +522,7 @@
 
 			//oppositeVertice
 			const fOppositeVertice = gui.addFolder('Opposite Vertice');
-			fOppositeVertice.add(params.oppositeVertice, 'altitude', anglesRange.altitude.min, anglesRange.altitude.max, 0.001).onChange(() => { onChangeVertice(0); });
+			fOppositeVertice.add(params.oppositeVertice, 'altitude', anglesRange.altitude.min, anglesRange.altitude.max, 0.001).onChange(() => { onChangeVertice(1); });
 			fOppositeVertice.add(params.oppositeVertice, 'latitude', anglesRange.latitude.min, anglesRange.latitude.max, 0.001).onChange(() => { onChangeVertice(1); });
 			fOppositeVertice.add(params.oppositeVertice, 'longitude', anglesRange.longitude.min, anglesRange.longitude.max, 0.001).onChange(() => { onChangeVertice(1); });
 
