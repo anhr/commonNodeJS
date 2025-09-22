@@ -15,9 +15,8 @@
 
 import RandomCloud from './randomCloud.js';
 import RandomVertice from './randomVerticeHyperSphere.js';
-//import * as utils from './utilsSphere.js'
-//import anglesRange from '../anglesRange.js'
-import HyperSphere from '../sphere.js';
+//import HyperSphere from '../sphere.js';
+import HyperSphere from '../hyperSphere3D.js';
 
 //const sRandomCloudHyperSphere = 'RandomCloudHyperSphere';
 const π = Math.PI;
