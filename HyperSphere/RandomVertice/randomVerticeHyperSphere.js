@@ -429,7 +429,7 @@ class RandomVerticeHyperSphere extends RandomVertice {
 					    xz: rotationAngles.longitude,    // Поворот в плоскости XZ
 					    yz: rotationAngles.altitude    // Поворот в плоскости YZ
 					};
-					return rotatePoint(Vertice(point), eulerAngles);
+					return rotatePoint(Vertice(point, params.altitude), eulerAngles);
 					
 					},
 					verticesAngles: this.verticesAngles,
@@ -592,8 +592,8 @@ class RandomVerticeHyperSphere extends RandomVertice {
 				let altitudePrev = 0;//высота предыдущей сферы
 				for(
 					let sphereId = 0;
-sphereId < 1;//для отладки делаем одну сферу
-					//sphereId < spheresCount;
+//sphereId < 1;//для отладки делаем одну сферу
+					sphereId < spheresCount;
 					sphereId++
 				){
 
@@ -602,12 +602,13 @@ sphereId < 1;//для отладки делаем одну сферу
 					const altitude = this.altitude(utils),
 						angleStep = abs(altitude - altitudePrev),//угол между соседними точками на сфере
 						randomVerticeAnglesParams = getRandomVerticeAnglesParams(altitude, angleStep);
-					altitudePrev = altitude; 
 					if (arraySpheres && !boAllocateMemory) {
 
 						const sphereAnglesCount = randomVerticeAnglesParams.sphereAnglesCount;
+if ((altitudePrev < params.oppositeVertice.altitude) && (altitude >= params.oppositeVertice.altitude))
 						arraySpheres.push({ altitude, angleStep, altitudeStep: randomVerticeAnglesParams.altitudeStep, altitudeMid: randomVerticeAnglesParams.altitudeMid, sphereAnglesCount, randomCloudSphere: randomVerticeAnglesParams.randomCloudSphere, });
 						this.circlesPointsCount += sphereAnglesCount;
+						altitudePrev = altitude; 
 						continue;
 
 					}
@@ -621,6 +622,7 @@ sphereId < 1;//для отладки делаем одну сферу
 						sphereAnglesCount = randomVerticeAnglesParams.sphereAnglesCount;
 					//console.log('altitude = ' + altitude + ', altitudePrev = ' + altitudePrev + ', sphereAnglesCount = ' + sphereAnglesCount);
 					//console.log('boFirstOrLastCircle = ' + (boSouthernSphere || boNorthernSphere) + ', latitude = ' + latitude + ', altitudeMin = ' + altitudeMin + ', altitudeMax = ' + altitudeMax);
+					altitudePrev = altitude; 
 					
 					for (let angleId = 0; angleId < sphereAnglesCount; angleId++) {
 
@@ -683,7 +685,10 @@ sphereId < 1;//для отладки делаем одну сферу
 						if (verticeId >= randomVerticeId) {
 	
 							//случайная вершина находится на текущей сфере.
+
+							params.altitude = sphere.altitude;
 							sphere.randomCloudSphere.getRandomAngle(randomVerticeId - verticeIdPrev);
+							delete params.altitude;
 //							return this.verticesAngles;
 							return params.verticesAngles;
 							
@@ -742,11 +747,11 @@ sphereId < 1;//для отладки делаем одну сферу
 	/////////////////////////////overridden methods
 
 }
-const Vertice = (vertice) => {
+const Vertice = (vertice, altitude) => {
 
 	if (vertice.longitude != undefined) return;
 	while (vertice.length < 3)
-		vertice.unshift(π / 2);//если тут поставить 0, то в гиперсфере без указания altitude все точки окажутся в начале координат
+		vertice.unshift((vertice.length === 2) && (altitude != undefined) ? altitude : 0);
 //		vertice.push(0);
 	Object.defineProperty(vertice, 'longitude', {
 		
