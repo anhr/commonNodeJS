@@ -15,14 +15,16 @@
 
 import anglesRange from '../anglesRange.js'
 
-const range = anglesRange.longitude.range, latitudeMax = anglesRange.latitude.max, latitudeMin = anglesRange.latitude.min, π = Math.PI;
+const π = Math.PI,
+	latitudeRange = anglesRange.latitude.range, latitudeMax = anglesRange.latitude.max, latitudeMin = anglesRange.latitude.min,
+	longitudeRange = anglesRange.longitude.range, longitudeMax = anglesRange.longitude.max, longitudeMin = anglesRange.longitude.min;
 
 /**
- * normalize a circle angle to range between anglesRange.longitude.min and anglesRange.longitude.max.
+ * normalize a latitude to range between anglesRange.longitude.min and anglesRange.longitude.max.
  * @param {float} angle angle for normalization.
  * @returns normalized angle.
  */
-export const normalizeAngle = (angle) => {
+export const normalizeLatitude = (angle) => {
 
 	if (angle > latitudeMax) {
 

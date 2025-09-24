@@ -471,7 +471,33 @@ class RandomVerticeHyperSphere extends RandomVertice {
 				
 				const randomVerticeAngles = [
 
+					//altitude
+					params.debug && params.debug.notRandomVertices ?
+					
+						altitude : //сфера расположна на одной высоте
+
+						//сфера расположна на случайной высоте в диапазоне от altitude до latitude - altitudeStep. Нужно, что бы сфера случайных точек немного гуляла по высоте от latitude до altitude - altitudeStep. Тогда поверхность гиперсферы будет случайно заполнена точками.
+						//Если это не делать то случайные точки будут располагаться слоями по высоте.
+						altitudeStep * (random() - 0.5) + altitudeMid,
+
 					//latitude
+					utils.normalizeLatitude(
+						(
+							(
+								params.debug && params.debug.notRandomVertices ?
+
+									//Положение текущей точки зависит от порядкового номера точки angleId
+									(
+										circleAnglesCount === 1 ?
+										 0 ://Эта точка расположена на полюсе
+										 angleStep1 * angleId
+									) :
+								
+									random()//случайное положение текущей точки
+							) - 0.5//отнимаем 0.5 что бы диапазон возможных точек был между -0.5 и 0.5. Сразу такой диапазон нельзя вычислять потому что Math.random() имеет диапазон от 0 до 1
+						) * π//диапазон возможных углов от -0.5 до 0.5 мняем на диапазон от -π / 2 до π / 2
+					),
+/*					
 					params.debug && params.debug.notRandomVertices ?
 					
 						latitude : //окружность расположна на одной широте
@@ -479,6 +505,7 @@ class RandomVerticeHyperSphere extends RandomVertice {
 						//окружность расположна на случайной широте в диапазоне от latitude до latitude - angleStep. Нужно, что бы окружность случайных точек немного гуляла по широте от latitude до latitude - angleStep. Тогда поверхность сферы будет случайно заполнена точками.
 						//Если это не делать то случайные точки будут располагаться слоями по широте.
 						latitudeStep * (random() - 0.5) + latitudeMid,
+*/						
 
 					//longitude
 					utils.normalizeAngle(
