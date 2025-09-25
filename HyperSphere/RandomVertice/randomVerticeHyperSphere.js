@@ -19,6 +19,7 @@ import anglesRange from '../anglesRange.js'
 import * as utils from './utilsHyperSphere.js'
 //import RandomCloud from './randomCloudHyperSphere.js';
 import RandomCloudSphere from './randomCloudSphere.js';
+import CloudSphere from './cloudSphere.js';
 
 const sRandomVerticesHyperSphere = 'RandomVerticesHyperSphere',
 	π = Math.PI, abs = Math.abs, round = Math.round, random = Math.random,
@@ -436,10 +437,10 @@ class RandomVerticeHyperSphere extends RandomVertice {
 
 				}
 				params.verticesAngles.boNoNew = true;
-				const randomCloudSphere = new RandomCloudSphere(params);
+				const cloudSphere = params.boCloudSphere ? new CloudSphere(params) : new RandomCloudSphere(params);
 				delete params.verticesAngles.boNoNew;
 				//Количество точек на текущей сфере равно сумме количества точек на каждой окружности, находящейся на сфере
-				let sphereAnglesCount = randomCloudSphere.sphereAnglesCount;
+				let sphereAnglesCount = cloudSphere.sphereAnglesCount;
 				const angleStep1 = 1 / sphereAnglesCount,
 					boSouthernSphere = altitude - angleStep < anglesRange.altitude.min,
 					boNorthernSphere = altitude + angleStep > anglesRange.altitude.max,
@@ -464,7 +465,7 @@ class RandomVerticeHyperSphere extends RandomVertice {
 					sphereAnglesCount = 1;//когда длинна дуги приближается к нулю, тоесть вершины совпадают, то angleStep стремится к нулю и sphereAnglesCount стремится к бесконечности и массив this.verticesAngles переполняется.
 											//или когда сфера находится на полюсе т.е. sphereAnglesCount === 0
 											//Делаем один угол на сфере
-				return { angleStep1, altitudeMin, altitudeMax, altitudeStep, altitudeMid, boSouthernSphere, boNorthernSphere, sphereAnglesCount, randomCloudSphere };
+				return { angleStep1, altitudeMin, altitudeMax, altitudeStep, altitudeMid, boSouthernSphere, boNorthernSphere, sphereAnglesCount, cloudSphere };
 
 			},
 			getRandomVerticeAngles = (altitude, altitudeStep, altitudeMid, circleAnglesCount, angleStep1, angleId) => {
@@ -633,7 +634,7 @@ class RandomVerticeHyperSphere extends RandomVertice {
 
 						const sphereAnglesCount = randomVerticeAnglesParams.sphereAnglesCount;
 if ((altitudePrev < params.oppositeVertice.altitude) && (altitude >= params.oppositeVertice.altitude))
-						arraySpheres.push({ altitude, angleStep, altitudeStep: randomVerticeAnglesParams.altitudeStep, altitudeMid: randomVerticeAnglesParams.altitudeMid, sphereAnglesCount, randomCloudSphere: randomVerticeAnglesParams.randomCloudSphere, });
+						arraySpheres.push({ altitude, angleStep, altitudeStep: randomVerticeAnglesParams.altitudeStep, altitudeMid: randomVerticeAnglesParams.altitudeMid, sphereAnglesCount, cloudSphere: randomVerticeAnglesParams.cloudSphere, });
 						this.circlesPointsCount += sphereAnglesCount;
 						altitudePrev = altitude; 
 						continue;
@@ -650,21 +651,20 @@ if ((altitudePrev < params.oppositeVertice.altitude) && (altitude >= params.oppo
 					//console.log('altitude = ' + altitude + ', altitudePrev = ' + altitudePrev + ', sphereAnglesCount = ' + sphereAnglesCount);
 					//console.log('boFirstOrLastCircle = ' + (boSouthernSphere || boNorthernSphere) + ', latitude = ' + latitude + ', altitudeMin = ' + altitudeMin + ', altitudeMax = ' + altitudeMax);
 					altitudePrev = altitude; 
-					
+/*					
 					for (let angleId = 0; angleId < sphereAnglesCount; angleId++) {
 
-//						if (boAllocateMemory) this.verticesAngles.push(this.ZeroArray());
 						if (boAllocateMemory) params.verticesAngles.push(this.ZeroArray());
 						else {//edit memory
 
 							const rotated = getRandomVerticeAngles(altitude, altitudeStep, altitudeMid, sphereAnglesCount, angleStep1, angleId);
-//							this.verticesAngles[this.circlesPointsCount] = rotated;
 							params.verticesAngles[this.circlesPointsCount] = rotated;
 							this.circlesPointsCount++;
 							
 						}
 			
 					}
+*/					
 					
 				}
 				delete params.random;
@@ -714,7 +714,7 @@ if ((altitudePrev < params.oppositeVertice.altitude) && (altitude >= params.oppo
 							//случайная вершина находится на текущей сфере.
 
 							params.altitude = sphere.altitude;
-							sphere.randomCloudSphere.getRandomAngle(randomVerticeId - verticeIdPrev);
+							sphere.cloudSphere.getRandomAngle(randomVerticeId - verticeIdPrev);
 							delete params.altitude;
 //							return this.verticesAngles;
 							return params.verticesAngles;

@@ -225,6 +225,14 @@ console.log('this.circlesPointsCount = ' + this.circlesPointsCount)
 		
 		/////////////////////////////overridden methods
 
+		if (params.hyperSphere) {
+
+			//Этот экземпляр CloudSphere вызывается из RandomVerticeHyperSphere когда создается гиперсфера. Гиперсфера состоит из набора сфер.
+			
+			Object.defineProperty(this, 'sphereAnglesCount', { get: () => { return randomVertice.circlesPointsCount }, });
+			
+		}
+		
 //		this.randomAngles;
 		
 	}
