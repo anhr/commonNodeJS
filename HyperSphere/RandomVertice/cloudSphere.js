@@ -39,6 +39,7 @@ class CloudSphere extends Cloud
 
 		super(params);
 
+		params.pointsCount = 0;//Количество точек в облаке. Нужно для построения облака из нескольких сфер, то есть для построения гиперсферы. После построения облака совпадает с randomVertice.circlesPointsCount если облако состоит из одной сферы, тоесть облако это сфера.
 		const randomVertice = new RandomVertice(params, true);
 //		this.verticesAngles = randomVertice.cloud;
 		Object.defineProperty(this, 'verticesAngles', {

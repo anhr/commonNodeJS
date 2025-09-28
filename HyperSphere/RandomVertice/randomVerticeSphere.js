@@ -288,7 +288,9 @@ export class RandomVerticeSphere extends RandomVertice {
 
 							const rotated = getRandomVerticeAngles(latitude, latitudeStep, latitudeMid, circleAnglesCount, angleStep1, angleId);
 //							this.verticesAngles[this.circlesPointsCount] = rotated;
-							params.verticesAngles[this.circlesPointsCount] = rotated;
+//							params.verticesAngles[this.circlesPointsCount] = rotated;
+							params.verticesAngles[params.pointsCount] = rotated;
+							params.pointsCount++;
 							this.circlesPointsCount++;
 							
 						}
@@ -358,8 +360,12 @@ export class RandomVerticeSphere extends RandomVertice {
 //					if (randomAngles) this.angles[0] = rotated;
 //					else {
 
-					if (params.editAnglesId === undefined) params.verticesAngles.push(rotated);
-					else params.verticesAngles[params.editAnglesId] = rotated;
+					if (params.editAnglesId === undefined) {
+						
+						params.verticesAngles.push(rotated);
+						params.pointsCount++;
+						
+					} else params.verticesAngles[params.editAnglesId] = rotated;
 /*						
 					if (params.hyperSphere){
 

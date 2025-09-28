@@ -40,7 +40,8 @@ class RandomCloudSphere extends RandomCloud
 
 		super(params);
 
-		this.circlesPointsCount = 750;//количество точек в облаке
+		this.circlesPointsCount = 750;//количество точек в сфере
+		params.pointsCount = 0;//Количество точек в облаке. Нужно для построения облака из нескольких сфер, то есть для построения гиперсферы. После построения облака совпадает с this.circlesPointsCount если облако состоит из одной сферы, тоесть облако это сфера.
 		let boAllocateMemory = false;
 		const randomVertice = new RandomVertice(params, boCloud, false),
 			verticesAngles = () => {

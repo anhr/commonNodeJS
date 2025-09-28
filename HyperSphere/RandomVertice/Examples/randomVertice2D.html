@@ -159,12 +159,15 @@
 
 					hsRandomVertice.classSettings.overriddenProperties.onCreateEdgesCompleted = () => {
 
-						hsRandomVertice.setDrawRange(0, randomCloud.circlesPointsCount * 2 - 1);//Умножаем на 2 потому что на каждую точку облака случайных точек приходится два ребра
+//						hsRandomVertice.setDrawRange(0, randomCloud.circlesPointsCount * 2 - 1);//Умножаем на 2 потому что на каждую точку облака случайных точек приходится два ребра
+						hsRandomVertice.setDrawRange(0, params.pointsCount * 2 - 1, 1);//Умножаем на 2 потому что на каждую точку облака случайных точек приходится два ребра
 						delete hsRandomVertice.classSettings.overriddenProperties.onCreateEdgesCompleted;
 						
 					}
 					
-				} else hsRandomVertice.setVerticesRange(0, randomVertice.circlesPointsCount != undefined ? randomVertice.circlesPointsCount : 1);
+				} else 
+					hsRandomVertice.setVerticesRange(0, params.pointsCount != undefined ? params.pointsCount : 1);
+//					hsRandomVertice.setVerticesRange(0, randomVertice.circlesPointsCount != undefined ? randomVertice.circlesPointsCount : 1);
 	
 			}
 /*			
