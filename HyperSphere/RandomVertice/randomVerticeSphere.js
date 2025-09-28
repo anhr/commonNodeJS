@@ -453,7 +453,8 @@ export class RandomVerticeSphere extends RandomVertice {
 			//Если создается одна случайная точка randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1, то boInitRandomAngles = true и нужно инициализировать случайные точки.
 			//Иначе при изменении положения вершины или противоположной вершины почему то появляется несколько случайных точек.
 			if (boInitRandomAngles) {
-				
+
+				params.pointsCount = 0;
 				this.randomAngles;//Вычислить случайную точку если нужна одна случайная точка т.е. randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1 или randomVerticeSettings.mode = randomVerticeSettings.modes.randomCloud = 2
 				params.editAnglesId = 0;
 
