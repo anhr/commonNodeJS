@@ -17,6 +17,7 @@ import RandomCloud from './randomCloud.js';
 import RandomVertice from './randomVerticeHyperSphere.js';
 //import HyperSphere from '../sphere.js';
 import HyperSphere from '../hyperSphere3D.js';
+import RandomCloudSphere from './randomCloudSphere.js';
 
 //const sRandomCloudHyperSphere = 'RandomCloudHyperSphere';
 const π = Math.PI;
@@ -42,8 +43,10 @@ class RandomCloudHyperSphere extends RandomCloud
 		const randomVertice = new RandomVertice(params, boCloud, false),
 			verticesAngles = () => {
 
+				params.CloudSphere = RandomCloudSphere;
 				for (let anglesId = 0; anglesId < this.circlesPointsCount; anglesId++)
 					randomVertice.randomAngles;
+				delete params.CloudSphere;
 				
 			};
 
