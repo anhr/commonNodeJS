@@ -438,7 +438,9 @@ class RandomVerticeHyperSphere extends RandomVertice {
 				}
 				params.verticesAngles.boNoNew = true;
 //				const cloudSphere = params.boCloudSphere ? new CloudSphere(params) : new RandomCloudSphere(params);
+				params.altitude = altitude;
 				const cloudSphere = new params.CloudSphere(params);
+				delete params.altitude;
 				delete params.verticesAngles.boNoNew;
 				//Количество точек на текущей сфере равно сумме количества точек на каждой окружности, находящейся на сфере
 				let sphereAnglesCount = cloudSphere.sphereAnglesCount;
@@ -651,7 +653,11 @@ if ((altitudePrev < params.oppositeVertice.altitude) && (altitude >= params.oppo
 						sphereAnglesCount = randomVerticeAnglesParams.sphereAnglesCount;
 					//console.log('altitude = ' + altitude + ', altitudePrev = ' + altitudePrev + ', sphereAnglesCount = ' + sphereAnglesCount);
 					//console.log('boFirstOrLastCircle = ' + (boSouthernSphere || boNorthernSphere) + ', latitude = ' + latitude + ', altitudeMin = ' + altitudeMin + ', altitudeMax = ' + altitudeMax);
-					altitudePrev = altitude; 
+					altitudePrev = altitude;
+/*					
+					const cloudSphere = new params.CloudSphere(params);
+console.log(cloudSphere)
+*/
 /*					
 					for (let angleId = 0; angleId < sphereAnglesCount; angleId++) {
 
@@ -758,7 +764,7 @@ if ((altitudePrev < params.oppositeVertice.altitude) && (altitude >= params.oppo
 			if (boInitRandomAngles)
 				this.randomAngles;//Вычислить случайную точку если нужна одна случайная точка т.е. randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1 или randomVerticeSettings.mode = randomVerticeSettings.modes.randomCloud = 2
 			
-		} else verticesAngles(false);//Вычислить облако случайных точек
+		}// else verticesAngles(false);//Вычислить облако случайных точек
 
 	}
 	

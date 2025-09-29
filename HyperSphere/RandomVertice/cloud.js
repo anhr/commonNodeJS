@@ -27,7 +27,19 @@ class Cloud {
 	 */
 	constructor(params) {
 
-		if (params.verticesAngles) params.verticesAngles.length = 0;
+		if (params.verticesAngles) {
+			
+			if (params.altitude === undefined) {
+
+				//Удалять облако только если облако это сфера. Для гиперсферры облако точек состоит из нескольких сфер. Поэтому точки сфер надо суммировать.
+				
+				params.verticesAngles.length = 0;
+				params.pointsCount = 0;//Количество точек в облаке. Нужно для построения облака из нескольких сфер, то есть для построения гиперсферы. После построения облака совпадает с randomVertice.circlesPointsCount если облако состоит из одной сферы, тоесть облако это сфера.
+				
+			}
+
+		}
+		if (params.pointsCount === undefined) params.pointsCount = 0;
 		Object.defineProperty(this, 'angles', {
 			
 			get: () => {

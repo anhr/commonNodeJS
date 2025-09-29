@@ -350,40 +350,21 @@
 			
 			const params = {
 
-				//вершины расположены друг против друга по диагонали (antipodal points). arc = π
 				/*
-				vertice: [
-					Math.PI / 2 + Math.PI / 4,//Altitude
-					Math.PI / 4,//Latitude
-					0,//Longitude
-				],
-				oppositeVertice: [
-					Math.PI / 2 + Math.PI / 4,//Altitude
-					-Math.PI / 4,//Latitude
-					Math.PI,//Longitude
-				],
-				*/
+				//вершины расположены друг против друга по диагонали (antipodal points). arc = π
 				vertice: vertice,
 				oppositeVertice: findAntipodalPoint(vertice),//calculateAntipodalPointViaCartesian(vertice),//calculateAntipodalPoint(vertice),
-/*				
-				oppositeVertice: [
-					0,//altitude
-					-pi / 4,//0,//Latitude
-					pi,//Longitude
-				],
-*/				
-				/*
+				*/
 				vertice: [
-					0,//altitude
+					pi / 6,//altitude
 					0.785,//Latitude
 					pi,//Longitude
 				],
 				oppositeVertice: [
-					0,//altitude
+					pi / 6,//altitude
 					0.051,//0,//Latitude
 					pi,//Longitude
 				],
-				*/
 				debug: randomVerticeSettings.debug,
 
 			}
@@ -437,7 +418,9 @@
 						
 					}
 					
-				} else hsRandomVertice.setVerticesRange(0, randomVertice.circlesPointsCount != undefined ? randomVertice.circlesPointsCount : 1);
+				} else
+					hsRandomVertice.setVerticesRange(0, params.pointsCount != undefined ? params.pointsCount : 1);
+//					hsRandomVertice.setVerticesRange(0, randomVertice.circlesPointsCount != undefined ? randomVertice.circlesPointsCount : 1);
 	
 			}
 			let randomCloud, cloud, randomVertice;//сразу не создаю эти объекты потому что они могут не понадобиться и потому, что так легче отлаживать
