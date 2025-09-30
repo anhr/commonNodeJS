@@ -18,7 +18,7 @@ import { anglesIdMax } from './randomVerticeSphere.js';
 import anglesRange from '../anglesRange.js'
 import * as utils from './utilsHyperSphere.js'
 //import RandomCloud from './randomCloudHyperSphere.js';
-//import RandomCloudSphere from './randomCloudSphere.js';
+import RandomCloudSphere from './randomCloudSphere.js';
 //import CloudSphere from './cloudSphere.js';
 
 const sRandomVerticesHyperSphere = 'RandomVerticesHyperSphere',
@@ -439,7 +439,7 @@ class RandomVerticeHyperSphere extends RandomVertice {
 				params.verticesAngles.boNoNew = true;
 //				const cloudSphere = params.boCloudSphere ? new CloudSphere(params) : new RandomCloudSphere(params);
 				params.altitude = altitude;
-				const cloudSphere = new params.CloudSphere(params);
+				const cloudSphere = params.CloudSphere ? new params.CloudSphere(params) : new RandomCloudSphere(params);
 				delete params.altitude;
 				delete params.verticesAngles.boNoNew;
 				//Количество точек на текущей сфере равно сумме количества точек на каждой окружности, находящейся на сфере
