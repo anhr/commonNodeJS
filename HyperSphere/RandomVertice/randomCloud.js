@@ -40,7 +40,7 @@ class RandomCloud {
 		if (params.pointsCount === undefined) params.pointsCount = 0;
 		
 		if (params.verticesAngles && !params.verticesAngles.boNoNew) params.verticesAngles.length = 0;
-		params.editAnglesId = undefined;
+//		params.editAnglesId = undefined;//если оставить эту строку, то в режиме отображения одной случайной точки randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1 при каждом изменении положения вершины будет добавляться новая точка
 		Object.defineProperty(this, 'angles', {
 			
 			get: () => {

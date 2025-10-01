@@ -621,12 +621,7 @@ class RandomVerticeHyperSphere extends RandomVertice {
 				this.circlesPointsCount = boAllocateMemory ? undefined : //Во время выделения памяти в массив params.verticesAngles добавляется новый item
 					0;//в противном случае в массиве params.verticesAngles редактируется item с индексом this.circlesPointsCount
 				let altitudePrev = 0;//высота предыдущей сферы
-				for(
-					let sphereId = 0;
-//sphereId < 1;//для отладки делаем одну сферу
-					sphereId < spheresCount;
-					sphereId++
-				){
+				for( let sphereId = 0; sphereId < spheresCount; sphereId++ ) {
 
 					params.random = k * sphereId;
 
@@ -636,7 +631,7 @@ class RandomVerticeHyperSphere extends RandomVertice {
 					if (arraySpheres && !boAllocateMemory) {
 
 						const sphereAnglesCount = randomVerticeAnglesParams.sphereAnglesCount;
-if ((altitudePrev < params.oppositeVertice.altitude) && (altitude >= params.oppositeVertice.altitude))
+//if ((altitudePrev < params.oppositeVertice.altitude) && (altitude >= params.oppositeVertice.altitude))
 						arraySpheres.push({ altitude, angleStep, altitudeStep: randomVerticeAnglesParams.altitudeStep, altitudeMid: randomVerticeAnglesParams.altitudeMid, sphereAnglesCount, cloudSphere: randomVerticeAnglesParams.cloudSphere, });
 						this.circlesPointsCount += sphereAnglesCount;
 						altitudePrev = altitude; 
@@ -761,8 +756,17 @@ console.log(cloudSphere)
 			//Когда создается облако случайных точек randomVerticeSettings.mode = randomVerticeSettings.modes.randomCloud = 2, то boInitRandomAngles = false и не нужно инициализировать случайные точки для экономии времени.
 			//Если создается одна случайная точка randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1, то boInitRandomAngles = true и нужно инициализировать случайные точки.
 			//Иначе при изменении положения вершины или противоположной вершины почему то появляется несколько случайных точек.
+			if (boInitRandomAngles) {
+
+				params.pointsCount = 0;
+				this.randomAngles;//Вычислить случайную точку если нужна одна случайная точка т.е. randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1 или randomVerticeSettings.mode = randomVerticeSettings.modes.randomCloud = 2
+				params.editAnglesId = 0;
+
+			}
+/*
 			if (boInitRandomAngles)
 				this.randomAngles;//Вычислить случайную точку если нужна одна случайная точка т.е. randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1 или randomVerticeSettings.mode = randomVerticeSettings.modes.randomCloud = 2
+*/
 			
 		}// else verticesAngles(false);//Вычислить облако случайных точек
 
