@@ -151,7 +151,8 @@
 				}
 				hsRandomVertice.classSettings.settings.bufferGeometry.userData.drawRange = () => {
 
-					return { start: 0, count: params.verticesAngles.length };//устанавливает количество точек в органе управления 'Meshes\Points'
+					return { start: 0, count: params.pointsCount };//устанавливает количество точек в органе управления 'Meshes\Points'
+//					return { start: 0, count: params.verticesAngles.length };//устанавливает количество точек в органе управления 'Meshes\Points'
 //					return { start: 0, count: randomVertice.circlesPointsCount != undefined ? randomVertice.circlesPointsCount : 1 };//устанавливает количество точек в органе управления 'Meshes\Points'
 					
 				}
