@@ -44,9 +44,14 @@ class RandomCloudHyperSphere extends RandomCloud
 			verticesAngles = () => {
 
 				params.CloudSphere = RandomCloudSphere;
-				for (let anglesId = 0; anglesId < this.circlesPointsCount; anglesId++)
+				for (let anglesId = 0; anglesId < this.circlesPointsCount; anglesId++) {
+					
+					if (!boAllocateMemory) params.editAnglesId = anglesId;
 					randomVertice.randomAngles;
+
+				}
 				delete params.CloudSphere;
+				delete params.editAnglesId;
 				
 			};
 
