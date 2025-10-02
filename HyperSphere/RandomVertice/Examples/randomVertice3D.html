@@ -524,6 +524,10 @@
 
 						hsRandomVertice.removeHyperSphere();
 						hsRandomVertice = undefined;
+
+						delete params.verticesAngles;
+						delete params.pointsCount;
+						delete params.editAnglesId;
 						
 						mode = parseInt(modeNew);
 						const modes = randomVerticeSettings.modes;
