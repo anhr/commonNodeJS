@@ -211,6 +211,7 @@ class CloudSphere extends Cloud
 			
 			get: () => {
 
+				params.pointsCount = 0;
 				randomVertice.randomAngles;
 				return randomVertice.angles;
 /*				
