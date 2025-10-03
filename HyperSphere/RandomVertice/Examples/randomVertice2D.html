@@ -58,7 +58,7 @@
 					randomCloud: 2,
 					
 				},
-				mode: 1,
+				mode: 0,
 			
 			};
 //			randomVerticeSettings.cloud ||= false;
@@ -202,19 +202,18 @@
 					switch (randomVerticeSettings.mode){
 
 						case modes.cloud:
-//							if (!cloud)
-							cloud = new Cloud(params);
+							if (!cloud)
+								cloud = new Cloud(params);
 							createRandomVerticeHyperSphere(cloud, 'Cloud');
 							randomVertice = undefined;
 							break;
 						case modes.randomVertice:
-//							if (params.verticesAngles) params.verticesAngles.length = 0;
 							if (!randomVertice)//Если не делать эту проверку, то при редактировании положения точки появляется две точки
 								randomVertice = new RandomVertice(params);
 							createRandomVerticeHyperSphere(randomVertice, 'Random vertice'); break;
 						case modes.randomCloud: 
-//							if (!randomCloud)
-							randomCloud = new RandomCloud(params);
+							if (!randomCloud)
+								randomCloud = new RandomCloud(params);
 							createRandomVerticeHyperSphere(randomCloud, 'Random Cloud');
 							randomVertice = undefined;
 							break;
@@ -300,7 +299,16 @@
 						hsRandomVertice.removeHyperSphere();
 						hsRandomVertice = undefined;
 						
+						delete params.verticesAngles;
+						delete params.pointsCount;
+						delete params.editAnglesId;
+
+						randomCloud = undefined;
+						cloud = undefined;
+						randomVertice = undefined;
+
 						mode = parseInt(modeNew);
+/*						
 						const modes = randomVerticeSettings.modes;
 						switch (mode){
 
@@ -313,6 +321,7 @@
 							default: console.error('Invalid mode = ' + mode);
 								
 						}
+*/						
 						
 						updateRandomVerticeHyperSphere();
 			

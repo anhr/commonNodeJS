@@ -54,10 +54,13 @@ class CloudHyperSphere extends Cloud
 		Object.defineProperty(this, 'randomAngles', {
 			
 			get: () => {
-
+				
 				randomVertice.randomAngles;
+				return randomVertice.angles;
+/*				
 				this.verticesAngles = randomVertice.cloud;
 				return this.verticesAngles;
+*/				
 				
 			},
 			

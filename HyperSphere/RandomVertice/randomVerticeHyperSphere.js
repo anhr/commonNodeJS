@@ -738,7 +738,8 @@ console.log(cloudSphere)
 
 				} else {
 					
-					this.angles = this.verticesAngles;
+//					this.angles = this.verticesAngles;
+					this.angles = params.verticesAngles;
 					return this.angles;
 
 				}
