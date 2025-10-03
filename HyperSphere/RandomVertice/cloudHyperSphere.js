@@ -39,11 +39,9 @@ class CloudHyperSphere extends Cloud
 
 		super(params);
 
-//		params.boCloudSphere = true;
 		params.CloudSphere = CloudSphere;
 		const randomVertice = new RandomVertice(params, true);
-//		delete params.boCloudSphere;
-		delete params.CloudSphere;
+//		delete params.CloudSphere;
 		Object.defineProperty(this, 'verticesAngles', {
 			
 			get: () => { return randomVertice.verticesAngles; },
@@ -54,8 +52,10 @@ class CloudHyperSphere extends Cloud
 		Object.defineProperty(this, 'randomAngles', {
 			
 			get: () => {
-				
+
+				params.boCloud = true;
 				randomVertice.randomAngles;
+				delete params.boCloud;
 				return randomVertice.angles;
 /*				
 				this.verticesAngles = randomVertice.cloud;

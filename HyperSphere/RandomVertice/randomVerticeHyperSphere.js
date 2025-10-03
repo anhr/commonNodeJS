@@ -439,7 +439,7 @@ class RandomVerticeHyperSphere extends RandomVertice {
 				params.verticesAngles.boNoNew = true;
 //				const cloudSphere = params.boCloudSphere ? new CloudSphere(params) : new RandomCloudSphere(params);
 				params.altitude = altitude;
-				const cloudSphere = params.CloudSphere ? new params.CloudSphere(params) : new RandomCloudSphere(params);
+				const cloudSphere = params.CloudSphere ? new params.CloudSphere(params) : new RandomCloudSphere(params, params.boCloud);
 				delete params.altitude;
 				delete params.verticesAngles.boNoNew;
 				//Количество точек на текущей сфере равно сумме количества точек на каждой окружности, находящейся на сфере
@@ -649,6 +649,11 @@ class RandomVerticeHyperSphere extends RandomVertice {
 					//console.log('altitude = ' + altitude + ', altitudePrev = ' + altitudePrev + ', sphereAnglesCount = ' + sphereAnglesCount);
 					//console.log('boFirstOrLastCircle = ' + (boSouthernSphere || boNorthernSphere) + ', latitude = ' + latitude + ', altitudeMin = ' + altitudeMin + ', altitudeMax = ' + altitudeMax);
 					altitudePrev = altitude;
+/*					
+					params.altitude = altitude;
+					randomVerticeAnglesParams.cloudSphere.randomAngles;
+					delete params.altitude;
+*/					
 /*					
 					const cloudSphere = new params.CloudSphere(params);
 console.log(cloudSphere)

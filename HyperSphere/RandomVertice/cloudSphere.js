@@ -180,7 +180,6 @@ class CloudSphere extends Cloud
 					}
 					
 				}
-console.log('this.circlesPointsCount = ' + this.circlesPointsCount)
 				delete params.random;
 				delete params.b;
 				
