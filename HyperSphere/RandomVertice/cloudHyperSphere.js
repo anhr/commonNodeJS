@@ -53,9 +53,12 @@ class CloudHyperSphere extends Cloud
 			
 			get: () => {
 
+				//сюда попадает только когда изменяется положение вершин и нужно обновить не случайное облако гиперсферы. Неслучайное облако гиперсферы создается при randomVerticeSettings.mode = randomVerticeSettings.modes.cloud = 0
+				params.noCreateCloudSphere = true;//поэтому не нужно создавать новые облака сфер CloudSphere а брать их из arrayCloudSpheres, которые были созданы при создании неслучайного облака гиперсферы.
 				params.boCloud = true;
 				randomVertice.randomAngles;
 				delete params.boCloud;
+				delete params.noCreateCloudSphere;
 				return randomVertice.angles;
 /*				
 				this.verticesAngles = randomVertice.cloud;

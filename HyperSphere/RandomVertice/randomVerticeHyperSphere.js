@@ -44,7 +44,8 @@ class RandomVerticeHyperSphere extends RandomVertice {
 		super(params);
 
 //		const arrayCircles = boCloud ? undefined : [];
-		const arraySpheres = boCloud ? undefined : [];
+		const arraySpheres = boCloud ? undefined : [],
+			arrayCloudSpheres = arraySpheres ? undefined : [];
 			
 		if (params.arc === undefined) Object.defineProperty(params, 'arc', {
 	
@@ -440,6 +441,7 @@ class RandomVerticeHyperSphere extends RandomVertice {
 //				const cloudSphere = params.boCloudSphere ? new CloudSphere(params) : new RandomCloudSphere(params);
 				params.altitude = altitude;
 				const cloudSphere = params.CloudSphere ? new params.CloudSphere(params) : new RandomCloudSphere(params, params.boCloud);
+				if (arrayCloudSpheres) arrayCloudSpheres.push(cloudSphere);
 				delete params.altitude;
 				delete params.verticesAngles.boNoNew;
 				//Количество точек на текущей сфере равно сумме количества точек на каждой окружности, находящейся на сфере
@@ -621,13 +623,14 @@ class RandomVerticeHyperSphere extends RandomVertice {
 				this.circlesPointsCount = boAllocateMemory ? undefined : //Во время выделения памяти в массив params.verticesAngles добавляется новый item
 					0;//в противном случае в массиве params.verticesAngles редактируется item с индексом this.circlesPointsCount
 				let altitudePrev = 0;//высота предыдущей сферы
+				if (params.noCreateCloudSphere) params.pointsCount = 0;//обновляется гиперсфера после изменения положения вершин
 				for( let sphereId = 0; sphereId < spheresCount; sphereId++ ) {
 
 					params.random = k * sphereId;
 
 					const altitude = this.altitude(utils),
 						angleStep = abs(altitude - altitudePrev),//угол между соседними точками на сфере
-						randomVerticeAnglesParams = getRandomVerticeAnglesParams(altitude, angleStep);
+						randomVerticeAnglesParams = params.noCreateCloudSphere ? undefined : getRandomVerticeAnglesParams(altitude, angleStep);
 					if (arraySpheres && !boAllocateMemory) {
 
 						const sphereAnglesCount = randomVerticeAnglesParams.sphereAnglesCount;
@@ -638,40 +641,22 @@ class RandomVerticeHyperSphere extends RandomVertice {
 						continue;
 
 					}
+					if (!randomVerticeAnglesParams) {
+
+						//обновляется гиперсфера после изменения положения вершин
+						
+						params.altitude = altitude;
+						arrayCloudSpheres[sphereId].randomAngles;
+						delete params.altitude;
+						
+					}
+/*					
 					const angleStep1 = randomVerticeAnglesParams.angleStep1,
-//						boSouthernSphere = randomVerticeAnglesParams.boSouthernSphere,
-//						boNorthernSphere = randomVerticeAnglesParams.boNorthernSphere,
-//						altitudeMin = randomVerticeAnglesParams.altitudeMin,//Минимальная граница широты окружности
-//						altitudeMax = randomVerticeAnglesParams.altitudeMax,//Максимальная граница широты окружности
 						altitudeStep = randomVerticeAnglesParams.altitudeStep,//Ширина широты окружности
 						altitudeMid = randomVerticeAnglesParams.altitudeMid,//Средняя широта окружности
 						sphereAnglesCount = randomVerticeAnglesParams.sphereAnglesCount;
-					//console.log('altitude = ' + altitude + ', altitudePrev = ' + altitudePrev + ', sphereAnglesCount = ' + sphereAnglesCount);
-					//console.log('boFirstOrLastCircle = ' + (boSouthernSphere || boNorthernSphere) + ', latitude = ' + latitude + ', altitudeMin = ' + altitudeMin + ', altitudeMax = ' + altitudeMax);
 					altitudePrev = altitude;
-/*					
-					params.altitude = altitude;
-					randomVerticeAnglesParams.cloudSphere.randomAngles;
-					delete params.altitude;
-*/					
-/*					
-					const cloudSphere = new params.CloudSphere(params);
-console.log(cloudSphere)
-*/
-/*					
-					for (let angleId = 0; angleId < sphereAnglesCount; angleId++) {
-
-						if (boAllocateMemory) params.verticesAngles.push(this.ZeroArray());
-						else {//edit memory
-
-							const rotated = getRandomVerticeAngles(altitude, altitudeStep, altitudeMid, sphereAnglesCount, angleStep1, angleId);
-							params.verticesAngles[this.circlesPointsCount] = rotated;
-							this.circlesPointsCount++;
-							
-						}
-			
-					}
-*/					
+*/						
 					
 				}
 				delete params.random;

@@ -211,7 +211,7 @@ class CloudSphere extends Cloud
 			
 			get: () => {
 
-				params.pointsCount = 0;
+				if (params.altitude === undefined) params.pointsCount = 0;//обнулять только если обновляется облако сферы, которое находится в составе облака гиперсферы. Тоесть если создается облако сферы а не облако гиперсферы
 				randomVertice.randomAngles;
 				return randomVertice.angles;
 /*				
