@@ -16,8 +16,8 @@
 import Cloud from './cloud.js';
 //import { RandomVerticeSphere as RandomVertice } from './randomVerticeSphere.js';
 import RandomVertice from './randomVerticeHyperSphere.js';
-import * as utils from './utilsSphere.js'
-import anglesRange from '../anglesRange.js'
+//import * as utils from './utilsSphere.js'
+//import anglesRange from '../anglesRange.js'
 import CloudSphere from './cloudSphere.js';
 
 //const sCloudHyperSphere = 'CloudHyperSphere';
@@ -41,7 +41,6 @@ class CloudHyperSphere extends Cloud
 
 		params.CloudSphere = CloudSphere;
 		const randomVertice = new RandomVertice(params, true);
-//		delete params.CloudSphere;
 		Object.defineProperty(this, 'verticesAngles', {
 			
 			get: () => { return randomVertice.verticesAngles; },
@@ -60,10 +59,6 @@ class CloudHyperSphere extends Cloud
 				delete params.boCloud;
 				delete params.noCreateCloudSphere;
 				return randomVertice.angles;
-/*				
-				this.verticesAngles = randomVertice.cloud;
-				return this.verticesAngles;
-*/				
 				
 			},
 			
