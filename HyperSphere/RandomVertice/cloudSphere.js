@@ -47,7 +47,7 @@ class CloudSphere extends Cloud
 		Object.defineProperty(this, 'circlesPointsCount', { get: () => { return randomVertice.circlesPointsCount; }, });
 		
 		//overridden methods
-
+/*
 		Object.defineProperty(this, 'randomAngles', {
 			
 			get: () => {
@@ -59,6 +59,7 @@ class CloudSphere extends Cloud
 			},
 			
 		});
+*/		
 		
 		/////////////////////////////overridden methods
 
@@ -71,6 +72,17 @@ class CloudSphere extends Cloud
 		}
 		
 	}
+	//overridden methods
+	
+	getRandomVertice(params) { return new RandomVertice(params, true); }
+	getRandomVerticeAngles(randomVertice, params) {
+
+		if (params.altitude === undefined) params.pointsCount = 0;//обнулять только если обновляется облако сферы, которое находится в составе облака гиперсферы. Тоесть если создается облако сферы а не облако гиперсферы
+		randomVertice.randomAngles;
+		
+	}
+
+	/////////////////////////////overridden methods
 
 }
 export default CloudSphere;

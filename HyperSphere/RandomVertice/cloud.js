@@ -20,10 +20,12 @@ const sCloud = 'Cloud',
  * @class
  */
 class Cloud {
+	
+	// * @param {class} RandomVertice RandomVerticeHyperSphere class for CloudHyperSphere child class or RandomVerticeSphere class for CloudSphere child class
 
 	/**
 	 * Generates a cloud of the vertices around opposite vertice.
-	 * @param {object} [params={}] See the <b>params</b> of the <a href="./module-RandomVertice-RandomVertice.html" target="_blank"><b>RandomVertice</b></a> constructor for details.
+	 * @param {object} params See the <b>params</b> of the <a href="./module-RandomVertice-RandomVertice.html" target="_blank"><b>RandomVertice</b></a> constructor for details.
 	 */
 	constructor(params) {
 
@@ -77,6 +79,27 @@ class Cloud {
 			return this.verticesAngles;
 			
 		}
+		Object.defineProperty(this, 'randomAngles', {
+			
+			get: () => {
+
+				//сюда попадает только когда изменяется положение вершин и нужно обновить не случайное облако гиперсферы. Неслучайное облако гиперсферы создается при randomVerticeSettings.mode = randomVerticeSettings.modes.cloud = 0
+/*				
+				params.noCreateCloudSphere = true;//поэтому не нужно создавать новые облака сфер CloudSphere а брать их из arrayCloudSpheres, которые были созданы при создании неслучайного облака гиперсферы.
+				params.boCloud = true;
+				randomVertice.randomAngles;
+				delete params.boCloud;
+				delete params.noCreateCloudSphere;
+*/	
+				this.getRandomVerticeAngles(randomVertice, params);
+				return randomVertice.angles;
+				
+			},
+			
+		});
+		
+//		this.randomVertice = new RandomVertice(params, true);
+		const randomVertice = this.getRandomVertice(params);
 		
 	}
 //	verticesAngles = [];
@@ -86,6 +109,8 @@ class Cloud {
 	
 	get angles() { console.error(sCloud + sOver.replace('%s', 'get angles')) }
 	get randomAngles() { console.error(sCloud + sOver.replace('%s', 'get randomAngles')) }
+	getRandomVertice() { console.error(sCloud + sOver.replace('%s', 'getRandomVertice')) }
+	getRandomVerticeAngles() { console.error(sCloud + sOver.replace('%s', 'getRandomVerticeAngles')) }
 	
 	/////////////////////////////overridden methods
 

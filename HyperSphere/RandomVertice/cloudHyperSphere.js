@@ -37,10 +37,11 @@ class CloudHyperSphere extends Cloud
 	 */
 	constructor(params) {
 
-		super(params);
-
 		params.CloudSphere = CloudSphere;
-		const randomVertice = new RandomVertice(params, true);
+		
+		super(params, RandomVertice);
+
+//		const randomVertice = new RandomVertice(params, true);
 		Object.defineProperty(this, 'verticesAngles', {
 			
 			get: () => { return randomVertice.verticesAngles; },
@@ -48,6 +49,7 @@ class CloudHyperSphere extends Cloud
 		
 		});
 		Object.defineProperty(this, 'circlesPointsCount', { get: () => { return randomVertice.circlesPointsCount; }, });
+/*
 		Object.defineProperty(this, 'randomAngles', {
 			
 			get: () => {
@@ -63,8 +65,24 @@ class CloudHyperSphere extends Cloud
 			},
 			
 		});
+*/		
+		
+	}
+	
+	//overridden methods
+	
+	getRandomVertice(params) { return new RandomVertice(params, true); }
+	getRandomVerticeAngles(randomVertice, params) {
+
+		params.noCreateCloudSphere = true;//поэтому не нужно создавать новые облака сфер CloudSphere а брать их из arrayCloudSpheres, которые были созданы при создании неслучайного облака гиперсферы.
+		params.boCloud = true;
+		randomVertice.randomAngles;
+		delete params.boCloud;
+		delete params.noCreateCloudSphere;
 		
 	}
 
+	/////////////////////////////overridden methods
+	
 }
 export default CloudHyperSphere;
