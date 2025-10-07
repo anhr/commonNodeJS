@@ -69,7 +69,7 @@
 
 			let hsRandomVertice;
 			const createRandomVerticeHyperSphere = (randomVertice, name) => {
-
+				
 				if (hsRandomVertice) {
 
 					hsRandomVertice.setPositionAttributeFromPoints(randomVertice.randomAngles, true);
@@ -121,9 +121,20 @@
 */				
 	
 			}
-			const randomCloud = new RandomCloud(params), randomVertice = new RandomVertice(params),
-				createRandomCloud = () => { createRandomVerticeHyperSphere(randomCloud, 'Random cloud'); },
-				createRandomVertice = () => { createRandomVerticeHyperSphere(randomVertice, 'Random vertice'); },
+			let randomCloud, randomVertice;//сразу не создаю эти объекты потому что они могут не понадобиться и потому, что так легче отлаживать, и потому что присоздании randomVertice обнуляется params.verticesAngles
+//			const randomCloud = new RandomCloud(params), randomVertice = new RandomVertice(params),
+			const createRandomCloud = () => {
+
+					if (!randomCloud) randomCloud = new RandomCloud(params);
+					createRandomVerticeHyperSphere(randomCloud, 'Random cloud');
+				
+				},
+				createRandomVertice = () => {
+
+					if (!randomVertice) randomVertice = new RandomVertice(params);
+					createRandomVerticeHyperSphere(randomVertice, 'Random vertice');
+				
+				},
 				updateRandomVerticeHyperSphere = () => {
 
 					if (randomVerticeSettings.cloud) createRandomCloud();
@@ -206,16 +217,15 @@
 						hsRandomVertice.removeHyperSphere();
 						hsRandomVertice = undefined;
 
-						if (!cloud) randomVertice.randomAngles;
+//						if (!cloud) randomVertice.randomAngles;
+						delete params.verticesAngles;
+						delete params.pointsCount;
+						delete params.editAnglesId;
+
+						randomCloud = undefined;
+						randomVertice = undefined;
 						
 						updateRandomVerticeHyperSphere();
-/*						
-						hsRandomVertice.removeHyperSphere();
-						hsRandomVertice = undefined;
-						if (cloud) createRandomCloud();
-						else createRandomVertice();
-*/						
-//						return true;
 			
 					},
 			
