@@ -101,6 +101,14 @@ class Cloud {
 //		this.randomVertice = new RandomVertice(params, true);
 		const randomVertice = this.getRandomVertice(params);
 		
+		if (params.hyperSphere) {
+
+			//Этот экземпляр CloudSphere вызывается из RandomVerticeHyperSphere когда создается гиперсфера. Гиперсфера состоит из набора сфер.
+			
+			Object.defineProperty(this, 'sphereAnglesCount', { get: () => { return randomVertice.circlesPointsCount }, });
+			
+		}
+		
 	}
 //	verticesAngles = [];
 //	circlesPointsCount;

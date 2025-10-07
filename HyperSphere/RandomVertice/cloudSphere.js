@@ -37,7 +37,8 @@ class CloudSphere extends Cloud
 
 		super(params);
 
-		const randomVertice = new RandomVertice(params, true);
+//		const randomVertice = new RandomVertice(params, true);
+/*		
 		Object.defineProperty(this, 'verticesAngles', {
 			
 			get: () => { return randomVertice.verticesAngles; },
@@ -45,6 +46,7 @@ class CloudSphere extends Cloud
 		
 		});
 		Object.defineProperty(this, 'circlesPointsCount', { get: () => { return randomVertice.circlesPointsCount; }, });
+*/		
 		
 		//overridden methods
 /*
@@ -62,7 +64,7 @@ class CloudSphere extends Cloud
 */		
 		
 		/////////////////////////////overridden methods
-
+/*
 		if (params.hyperSphere) {
 
 			//Этот экземпляр CloudSphere вызывается из RandomVerticeHyperSphere когда создается гиперсфера. Гиперсфера состоит из набора сфер.
@@ -70,6 +72,7 @@ class CloudSphere extends Cloud
 			Object.defineProperty(this, 'sphereAnglesCount', { get: () => { return randomVertice.circlesPointsCount }, });
 			
 		}
+*/		
 		
 	}
 	//overridden methods
