@@ -62,7 +62,6 @@ class RandomCloudHyperSphere extends RandomCloud
 			get: () => {
 
 				verticesAngles();//false);
-//				return this.verticesAngles;
 				return params.verticesAngles;
 				
 			},
@@ -81,11 +80,7 @@ class RandomCloudHyperSphere extends RandomCloud
 	
 	//overridden methods
 	
-	getHyperSphere(options, classSettings, color) {
-
-		return this.getHyperSphereBase(HyperSphere, options, classSettings, color);
-		
-	}
+	getHyperSphere(options, classSettings, color) { return this.getHyperSphereBase(HyperSphere, options, classSettings, color); }
 	
 	/////////////////////////////overridden methods
 

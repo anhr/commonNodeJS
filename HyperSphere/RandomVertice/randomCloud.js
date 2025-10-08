@@ -40,26 +40,14 @@ class RandomCloud {
 		if (params.pointsCount === undefined) params.pointsCount = 0;
 		
 		if (params.verticesAngles && !params.verticesAngles.boNoNew) params.verticesAngles.length = 0;
-//		params.editAnglesId = undefined;//если оставить эту строку, то в режиме отображения одной случайной точки randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1 при каждом изменении положения вершины будет добавляться новая точка
 		Object.defineProperty(this, 'angles', {
 			
-			get: () => {
-
-				return params.verticesAngles;
-//				return this.verticesAngles;
-			
-			},
-			set: (anglesNew) => {
-
-				params.verticesAngles = anglesNew;
-//				this.verticesAngles = anglesNew;
-			
-			},
+			get: () => { return params.verticesAngles; },
+			set: (anglesNew) => { params.verticesAngles = anglesNew; },
 			
 		});
 		this.anglesCircle = (anglesIdMax, randomVertice, utils) => {
 			
-//			const boUpdate = this.verticesAngles.length === 0 ? false : true;
 			const boUpdate = params.verticesAngles.length === 0 ? false : true;
 	
 			//что бы не делать повторяющихся вычислений
@@ -70,23 +58,17 @@ class RandomCloud {
 				if (params.debug && params.debug.notRandomVertices) params.random = (1 / anglesIdMax) * i;//для замены случайной точки на регулярную
 				
 				const randomVerticeAngles = randomVertice.randomAngles;
-/*				
-				if (boUpdate) this.verticesAngles[i] = randomVerticeAngles;
-				else this.verticesAngles.push(randomVerticeAngles);
-*/				
 				if (boUpdate) params.verticesAngles[i] = randomVerticeAngles;
 				else params.verticesAngles.push(randomVerticeAngles);
 	
 			}
 			delete params.random;
 			delete params.b;
-//			return this.verticesAngles;
 			return params.verticesAngles;
 			
 		}
 		
 	}
-//	verticesAngles = [];
 	circlesPointsCount;
 	getHyperSphereBase(HyperSphere, options, classSettings, color) {
 
@@ -110,34 +92,6 @@ class RandomCloud {
 		}
 
 		return getHyperSphere(HyperSphere, options, classSettings.projectParams.scene, this, { debug: classSettings.debug, r: classSettings.r, name: lang.name, color: color });
-/*		
-		let hsRandomVertice;
-		hsRandomVertice = new HyperSphere(options, {
-
-			boRemove: false,//Если не установить этот флаг, то при замене старого hsRandomVertice на новый будут удаляться все гиперсферы на scene. То есть удалится hsVertices
-			r: classSettings.r,
-			edges: false,
-			//randomArc: true,
-			projectParams: { scene: classSettings.projectParams.scene, },
-//				debug: debug,
-			debug: classSettings.debug,
-			//debug: false,
-			settings: {
-
-				object: {
-
-					name: lang.name,
-					color: color,
-					geometry: this,//randomVertice,
-
-				},
-				overriddenProperties: { setDrawRange: (start, count) => { if (hsRandomVertice) hsRandomVertice.bufferGeometry.setDrawRange(start, count); } },
-
-			},
-
-		});
-		return hsRandomVertice;
-*/		
 		
 	}
 	

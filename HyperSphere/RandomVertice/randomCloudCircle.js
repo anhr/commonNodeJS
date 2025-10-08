@@ -53,58 +53,7 @@ class RandomCloudCircle extends RandomCloud {
 	
 	//overridden methods
 	
-	getHyperSphere(options, classSettings, color) {
-
-		return this.getHyperSphereBase(HyperSphere, options, classSettings, color);
-/*		
-		//Localization
-
-		const lang = {
-
-			name: 'Middle vertice cloud',
-			
-		}
-
-		switch (options.getLanguageCode()) {
-
-			case 'ru'://Russian language
-
-				lang.name = 'Облако средней точки';
-
-				break;
-			default://Custom language
-
-		}
-		
-		let hsRandomVertice;
-		hsRandomVertice = new HyperSphere(options, {
-
-			boRemove: false,//Если не установить этот флаг, то при замене старого hsRandomVertice на новый будут удаляться все гиперсферы на scene. То есть удалится hsVertices
-			r: classSettings.r,
-			edges: false,
-			//randomArc: true,
-			projectParams: { scene: classSettings.projectParams.scene, },
-//				debug: debug,
-			debug: classSettings.debug,
-			//debug: false,
-			settings: {
-
-				object: {
-
-					name: this.getHyperSphereName(options),//
-					color: color,
-					geometry: this,//randomVertice,
-
-				},
-				overriddenProperties: { setDrawRange: (start, count) => { if (hsRandomVertice) hsRandomVertice.bufferGeometry.setDrawRange(start, count); } },
-
-			},
-
-		});
-		return hsRandomVertice;
-*/		
-		
-	}
+	getHyperSphere(options, classSettings, color) { return this.getHyperSphereBase(HyperSphere, options, classSettings, color); }
 	
 	/////////////////////////////overridden methods
 
