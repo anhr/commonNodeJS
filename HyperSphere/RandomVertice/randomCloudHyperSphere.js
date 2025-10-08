@@ -15,12 +15,11 @@
 
 import RandomCloud from './randomCloud.js';
 import RandomVertice from './randomVerticeHyperSphere.js';
-//import HyperSphere from '../sphere.js';
 import HyperSphere from '../hyperSphere3D.js';
 import RandomCloudSphere from './randomCloudSphere.js';
 
 //const sRandomCloudHyperSphere = 'RandomCloudHyperSphere';
-const π = Math.PI;
+//const π = Math.PI;
 
 /**
  * Generates a cloud of random vertices near the opposite vertice in 3D hypersphere.
@@ -61,7 +60,7 @@ class RandomCloudHyperSphere extends RandomCloud
 			
 			get: () => {
 
-				verticesAngles();//false);
+				verticesAngles();
 				return params.verticesAngles;
 				
 			},

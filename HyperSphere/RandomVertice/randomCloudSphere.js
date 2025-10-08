@@ -14,14 +14,11 @@
 */
 
 import RandomCloud from './randomCloud.js';
-//import RandomVertice from './randomVerticeSphere.js';
 import { RandomVerticeSphere as RandomVertice } from './randomVerticeSphere.js';
-//import * as utils from './utilsSphere.js'
-//import anglesRange from '../anglesRange.js'
 import HyperSphere from '../sphere.js';
 
-const sRandomCloudSphere = 'RandomCloudSphere';
-const π = Math.PI;
+//const sRandomCloudSphere = 'RandomCloudSphere';
+//const π = Math.PI;
 
 /**
  * Generates a cloud of random vertices near the opposite vertice in 2D hypersphere.
