@@ -13,16 +13,14 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 
-//import RandomVertice from './randomVertice.js';
 import RandomVertice from './randomVertice.js';
 import anglesRange from '../anglesRange.js'
 import * as utils from './utilsSphere.js'
-//import * as utilsCircle from './utilsCircle.js'
 
 const sRandomVerticesSphere = 'RandomVerticesSphere',
 	π = Math.PI, abs = Math.abs, round = Math.round, random = Math.random,
-	sin = Math.sin, asin = Math.asin, cos = Math.cos, tan = Math.tan, atan = Math.atan, atan2 = Math.atan2,
-	range = anglesRange.longitude.range;
+	sin = Math.sin, asin = Math.asin, cos = Math.cos, tan = Math.tan, atan = Math.atan, atan2 = Math.atan2;
+//	range = anglesRange.longitude.range;
 export const anglesIdMax = 50;//Количество точек на окружности, расположенной на экваторе
 
 /**
@@ -115,7 +113,6 @@ export class RandomVerticeSphere extends RandomVertice {
 						!params.boAllocateMemory &&
 						(
 							!arrayCircles && 
-//							(circleAnglesCount > this.verticesAngles.length)
 							(circleAnglesCount > params.verticesAngles.length)
 						) || (
 							arrayCircles &&//Вычисляется одна случайная точка. Т.е. randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1
@@ -164,7 +161,6 @@ export class RandomVerticeSphere extends RandomVertice {
 
 				//Когда вычисляется одна точка arrayCircles != undefined или randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1 то this.verticesAngles пустой
 				if (!arrayCircles && (this.circlesPointsCount >= params.verticesAngles.length)) console.error(sRandomVerticesSphere + '.verticesAngles: Allocate memory failed! this.circlesPointsCount = ' + this.circlesPointsCount + ' >= params.verticesAngles.length = ' + params.verticesAngles.length);
-//				if (!arrayCircles && (this.circlesPointsCount >= this.verticesAngles.length)) console.error(sRandomVerticesSphere + '.verticesAngles: Allocate memory failed! this.circlesPointsCount = ' + this.circlesPointsCount + ' >= this.verticesAngles.length = ' + this.verticesAngles.length);
 
 				//rotate angles
 				
@@ -277,18 +273,13 @@ export class RandomVerticeSphere extends RandomVertice {
 						latitudeStep = randomVerticeAnglesParams.latitudeStep,//Ширина широты окружности
 						latitudeMid = randomVerticeAnglesParams.latitudeMid,//Средняя широта окружности
 						circleAnglesCount = randomVerticeAnglesParams.circleAnglesCount;
-					//console.log('latitude = ' + latitude + ', latitudePrev = ' + latitudePrev + ', circleAnglesCount = ' + circleAnglesCount);
-					//console.log('boFirstOrLastCircle = ' + (boSouthernCircle || boNorthernCircle) + ', latitude = ' + latitude + ', latitudeMin = ' + latitudeMin + ', latitudeMax = ' + latitudeMax);
 					
 					for (let angleId = 0; angleId < circleAnglesCount; angleId++) {
 
-//						if (boAllocateMemory) this.verticesAngles.push(this.ZeroArray());//allocate memory
 						if (boAllocateMemory) params.verticesAngles.push(this.ZeroArray());//allocate memory
 						else {//edit memory
 
 							const rotated = getRandomVerticeAngles(latitude, latitudeStep, latitudeMid, circleAnglesCount, angleStep1, angleId);
-//							this.verticesAngles[this.circlesPointsCount] = rotated;
-//							params.verticesAngles[this.circlesPointsCount] = rotated;
 							params.verticesAngles[params.pointsCount] = rotated;
 							params.pointsCount++;
 							this.circlesPointsCount++;
@@ -311,28 +302,32 @@ export class RandomVerticeSphere extends RandomVertice {
 			delete params.boAllocateMemory;
 
 		}
-		
-//		let randomAngles;
 
 		//overridden methods
 
 		Object.defineProperty(this, 'angles', {
 			
-			get: () => {
-
-				return params.verticesAngles;
-//				return randomAngles;
-			
-			},
-			set: (anglesNew) => {
-				
-				params.verticesAngles = anglesNew;
-//				randomAngles = anglesNew;
-			
-			},
+			get: () => { return params.verticesAngles; },
+			set: (anglesNew) => { params.verticesAngles = anglesNew; },
 			
 		});
 		
+		Object.defineProperty(this, 'randomAngles', {
+
+			get: () => {
+
+				if (arrayCircles) arrayCircles.length = 0;
+				verticesAngles(false);
+				const randomVerticeId = round(random() * (this.circlesPointsCount - 1))
+
+				if (arrayCircles) return this.getRandomAngle(randomVerticeId);
+				else return this.angles;
+
+			},
+			set: (anglesNew) => { },
+
+		});
+
 		Object.defineProperty(this, 'сirclesParams', {
 			
 			get: () => {
@@ -357,8 +352,6 @@ export class RandomVerticeSphere extends RandomVertice {
 					//случайная вершина находится на текущей окружности.
 					const randomVerticeAnglesParams = getRandomVerticeAnglesParams(circle.latitude, circle.angleStep),
 						rotated = getRandomVerticeAngles(circle.latitude, circle.latitudeStep, circle.latitudeMid, circle.circleAnglesCount, randomVerticeAnglesParams.angleStep1, randomVerticeId - (verticeId - circle.circleAnglesCount));//verticeId - randomVerticeId);
-//					if (randomAngles) this.angles[0] = rotated;
-//					else {
 
 					if (params.editAnglesId === undefined) {
 						
@@ -366,17 +359,6 @@ export class RandomVerticeSphere extends RandomVertice {
 						params.pointsCount++;
 						
 					} else params.verticesAngles[params.editAnglesId] = rotated;
-/*						
-					if (params.hyperSphere){
-
-						//случайная вершина вычисляется для гиперсферы. Т.е. this.getRandomAngle вызывается из randomVerticeHyperSphere
-						params.hyperSphere.verticesAngles.push(rotated);
-						
-					}
-					else randomAngles = [rotated];
-*/						
-
-//					}
 					return this.angles;
 					
 				}
@@ -385,53 +367,6 @@ export class RandomVerticeSphere extends RandomVertice {
 			console.error(sRandomVerticesSphere + '.getRandomAngle. Random vertice was not found.');
 			
 		}
-		Object.defineProperty(this, 'randomAngles', {
-			
-			get: () => {
-
-				if (arrayCircles) arrayCircles.length = 0;
-				verticesAngles(false);
-				const randomVerticeId = round(random() * (this.circlesPointsCount - 1))
-
-				if (arrayCircles) {
-
-					return this.getRandomAngle(randomVerticeId);
-/*					
-					let verticeId = 0;
-					for (let circleId = 0; circleId < arrayCircles.length; circleId++) {
-	
-						const circle = arrayCircles[circleId];
-						verticeId += circle.circleAnglesCount;
-						if (verticeId >= randomVerticeId) {
-	
-							//случайная вершина находится на текущей окружности.
-							const randomVerticeAnglesParams = getRandomVerticeAnglesParams(circle.latitude, circle.angleStep),
-								rotated = getRandomVerticeAngles(circle.latitude, circle.latitudeStep, circle.latitudeMid, circle.circleAnglesCount, randomVerticeAnglesParams.angleStep1, randomVerticeId - (verticeId - circle.circleAnglesCount));//verticeId - randomVerticeId);
-							if (randomAngles) {
-								
-								this.angles[0] = rotated;
-								//randomAngles[0] = rotated;
-								
-							}else randomAngles = [rotated];
-							return this.angles;
-							
-						}
-	
-					}
-					console.error(sRandomVerticesSphere + ': get randomAngles. rotated was not found.');
-*/					
-
-				} else {
-					
-//					this.angles = this.verticesAngles;
-					return this.angles;
-
-				}
-				
-			},
-			set: (anglesNew) => {},
-			
-		});
 		
 		Object.defineProperty(this, 'cloud', {
 			
@@ -439,7 +374,6 @@ export class RandomVerticeSphere extends RandomVertice {
 
 				verticesAngles(false);
 				return params.verticesAngles;
-//				return this.verticesAngles;
 				
 			},
 			
@@ -507,5 +441,3 @@ export class RandomVerticeSphere extends RandomVertice {
 	/////////////////////////////overridden methods
 
 }
-//RandomVerticeSphere.anglesIdMax = anglesIdMax;
-//export default RandomVerticeSphere;

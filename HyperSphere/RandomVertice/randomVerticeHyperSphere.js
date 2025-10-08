@@ -17,14 +17,12 @@ import RandomVertice from './randomVertice.js';
 import { anglesIdMax } from './randomVerticeSphere.js';
 import anglesRange from '../anglesRange.js'
 import * as utils from './utilsHyperSphere.js'
-//import RandomCloud from './randomCloudHyperSphere.js';
 import RandomCloudSphere from './randomCloudSphere.js';
-//import CloudSphere from './cloudSphere.js';
 
 const sRandomVerticesHyperSphere = 'RandomVerticesHyperSphere',
 	π = Math.PI, abs = Math.abs, round = Math.round, random = Math.random,
-	sin = Math.sin, asin = Math.asin, cos = Math.cos, tan = Math.tan, atan = Math.atan, atan2 = Math.atan2,
-	range = anglesRange.longitude.range;
+	sin = Math.sin, asin = Math.asin, cos = Math.cos, atan = Math.atan, atan2 = Math.atan2;// tan = Math.tan;
+//	range = anglesRange.longitude.range;
 
 /**
  * Generates a random vertice near the opposite vertice in 3D hypersphere.
@@ -43,7 +41,6 @@ class RandomVerticeHyperSphere extends RandomVertice {
 
 		super(params);
 
-//		const arrayCircles = boCloud ? undefined : [];
 		const arraySpheres = boCloud ? undefined : [],
 			arrayCloudSpheres = arraySpheres ? undefined : [];
 			
@@ -137,19 +134,6 @@ class RandomVerticeHyperSphere extends RandomVertice {
 					 * @param {number} point2.altitude - Полярный угол от оси W.
 					 * @returns {number} Центральный угол в радианах.
 					 */
-/*					
-					const calculateCentralAngle = (point1, point2) => {
-					  const { latitude: lat1, longitude: lon1, altitude: alt1 } = point1;
-					  const { latitude: lat2, longitude: lon2, altitude: alt2 } = point2;
-					
-					  const cosDelta = Math.cos(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2) * Math.cos(alt1 - alt2) + Math.sin(lat1) * Math.sin(lat2);
-					
-					  // Ограничиваем значение, чтобы избежать ошибок с плавающей точкой
-					  const clampedCosDelta = Math.max(-1, Math.min(1, cosDelta));
-					  
-					  return Math.acos(clampedCosDelta);
-					}
-*/
 					/*
 					function toRadians(degrees) {
 					  return degrees * Math.PI / 180;
@@ -269,7 +253,7 @@ class RandomVerticeHyperSphere extends RandomVertice {
 					const θ = arccos(sin(ϕ1) * sin(ϕ2) + cos(ϕ1) * cos(ϕ2) * cos(λ1 - λ2));
 					if (isNaN(θ)) console.error(sSphere + ': getArcAngle. Invalid θ = ' + θ);
 					return θ;
-*/					
+					*/					
 				
 				},
 		
@@ -297,7 +281,6 @@ class RandomVerticeHyperSphere extends RandomVertice {
 			
 		}
 
-//		const anglesIdMax = 50,//Количество точек на окружности, расположенной на экваторе
 		const spheresCount = round(//найти ближайшее целое число
 				(anglesIdMax / 2) + 1),//количество окружностей
 			k = spheresCount === 1 ? 1 : 1 / (spheresCount - 1),//for params.random = k * circleId;
@@ -347,26 +330,19 @@ class RandomVerticeHyperSphere extends RandomVertice {
 					 * @returns {{latitude: number, longitude: number, altitude: number}} - Полярные координаты.
 					 */
 					function toPolar4D(point) {
-					    const { x, y, z, w } = point;
-					    const altitude = Math.acos(w);
+						const { x, y, z, w } = point;
+						const altitude = Math.acos(w);
 					
-					    if (altitude === 0) {
-					        // Случай, когда точка находится на оси W.
-/*							
-					        return {
-					            latitude: 0,
-					            longitude: 0,
-					            altitude: 0
-					        };
-*/
+						if (altitude === 0) {
+							// Случай, когда точка находится на оси W.
 							return Vertice([0, 0, 0]);
-					    }
+
+						}
 					
-					    const sinAlt = Math.sin(altitude);
-					    const latitude = Math.asin(z / sinAlt);
-					    const longitude = Math.atan2(y, x);
+						const sinAlt = Math.sin(altitude);
+						const latitude = Math.asin(z / sinAlt);
+						const longitude = Math.atan2(y, x);
 					
-//					    return { latitude, longitude, altitude };
 						return Vertice([altitude, latitude, longitude]);
 						
 					}
@@ -438,7 +414,6 @@ class RandomVerticeHyperSphere extends RandomVertice {
 
 				}
 				params.verticesAngles.boNoNew = true;
-//				const cloudSphere = params.boCloudSphere ? new CloudSphere(params) : new RandomCloudSphere(params);
 				params.altitude = altitude;
 				const cloudSphere = params.CloudSphere ? new params.CloudSphere(params) : new RandomCloudSphere(params, params.boCloud);
 				if (arrayCloudSpheres) arrayCloudSpheres.push(cloudSphere);
@@ -459,7 +434,6 @@ class RandomVerticeHyperSphere extends RandomVertice {
 						!params.boAllocateMemory &&
 						(
 							!arraySpheres && 
-//							(sphereAnglesCount > this.verticesAngles.length)
 							(sphereAnglesCount > params.verticesAngles.length)
 						) || (
 							arraySpheres &&//Вычисляется одна случайная точка. Т.е. randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1
@@ -503,15 +477,6 @@ class RandomVerticeHyperSphere extends RandomVertice {
 							) - 0.5//отнимаем 0.5 что бы диапазон возможных точек был между -0.5 и 0.5. Сразу такой диапазон нельзя вычислять потому что Math.random() имеет диапазон от 0 до 1
 						) * π//диапазон возможных углов от -0.5 до 0.5 мняем на диапазон от -π / 2 до π / 2
 					),
-/*					
-					params.debug && params.debug.notRandomVertices ?
-					
-						latitude : //окружность расположна на одной широте
-
-						//окружность расположна на случайной широте в диапазоне от latitude до latitude - angleStep. Нужно, что бы окружность случайных точек немного гуляла по широте от latitude до latitude - angleStep. Тогда поверхность сферы будет случайно заполнена точками.
-						//Если это не делать то случайные точки будут располагаться слоями по широте.
-						latitudeStep * (random() - 0.5) + latitudeMid,
-*/						
 
 					//longitude
 					utils.normalizeAngle(
@@ -634,7 +599,6 @@ class RandomVerticeHyperSphere extends RandomVertice {
 					if (arraySpheres && !boAllocateMemory) {
 
 						const sphereAnglesCount = randomVerticeAnglesParams.sphereAnglesCount;
-//if ((altitudePrev < params.oppositeVertice.altitude) && (altitude >= params.oppositeVertice.altitude))
 						arraySpheres.push({ altitude, angleStep, altitudeStep: randomVerticeAnglesParams.altitudeStep, altitudeMid: randomVerticeAnglesParams.altitudeMid, sphereAnglesCount, cloudSphere: randomVerticeAnglesParams.cloudSphere, });
 						this.circlesPointsCount += sphereAnglesCount;
 						altitudePrev = altitude; 
@@ -650,13 +614,6 @@ class RandomVerticeHyperSphere extends RandomVertice {
 						delete params.altitude;
 						
 					}
-/*					
-					const angleStep1 = randomVerticeAnglesParams.angleStep1,
-						altitudeStep = randomVerticeAnglesParams.altitudeStep,//Ширина широты окружности
-						altitudeMid = randomVerticeAnglesParams.altitudeMid,//Средняя широта окружности
-						sphereAnglesCount = randomVerticeAnglesParams.sphereAnglesCount;
-					altitudePrev = altitude;
-*/						
 					
 				}
 				delete params.random;
@@ -679,18 +636,8 @@ class RandomVerticeHyperSphere extends RandomVertice {
 
 		Object.defineProperty(this, 'angles', {
 			
-			get: () => {
-				
-				return params.verticesAngles;
-//				return randomAngles;
-			
-			},
-			set: (anglesNew) => {
-				
-				params.verticesAngles = anglesNew;
-//				randomAngles = anglesNew;
-			
-			},
+			get: () => { return params.verticesAngles; },
+			set: (anglesNew) => { params.verticesAngles = anglesNew; },
 			
 		});
 		
@@ -710,7 +657,6 @@ class RandomVerticeHyperSphere extends RandomVertice {
 						const sphere = arraySpheres[sphereId];
 						verticeIdPrev = verticeId;
 						verticeId += sphere.sphereAnglesCount;
-//						verticeId += sphere.randomCloudSphere.sphereAnglesCount;
 						if (verticeId >= randomVerticeId) {
 	
 							//случайная вершина находится на текущей сфере.
@@ -718,7 +664,6 @@ class RandomVerticeHyperSphere extends RandomVertice {
 							params.altitude = sphere.altitude;
 							sphere.cloudSphere.getRandomAngle(randomVerticeId - verticeIdPrev);
 							delete params.altitude;
-//							return this.verticesAngles;
 							return params.verticesAngles;
 							
 						}
@@ -728,7 +673,6 @@ class RandomVerticeHyperSphere extends RandomVertice {
 
 				} else {
 					
-//					this.angles = this.verticesAngles;
 					this.angles = params.verticesAngles;
 					return this.angles;
 
@@ -764,12 +708,8 @@ class RandomVerticeHyperSphere extends RandomVertice {
 				params.editAnglesId = 0;
 
 			}
-/*
-			if (boInitRandomAngles)
-				this.randomAngles;//Вычислить случайную точку если нужна одна случайная точка т.е. randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1 или randomVerticeSettings.mode = randomVerticeSettings.modes.randomCloud = 2
-*/
 			
-		}// else verticesAngles(false);//Вычислить облако случайных точек
+		}
 
 	}
 	
@@ -791,7 +731,6 @@ const Vertice = (vertice, altitude) => {
 	if (vertice.longitude != undefined) return;
 	while (vertice.length < 3)
 		vertice.unshift((vertice.length === 2) && (altitude != undefined) ? altitude : 0);
-//		vertice.push(0);
 	Object.defineProperty(vertice, 'longitude', {
 		
 		get: () => { return vertice[2]; },
