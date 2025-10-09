@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: utilsSphere.js</title>
+    <title>JSDoc: Source: randomCloudHSphere.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: utilsSphere.js</h1>
+    <h1 class="page-title">Source: randomCloudHSphere.js</h1>
 
     
 
@@ -27,8 +27,8 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @module utils
- * @description utilities which is used to calculate randomAngles for sphere.
+ * @module RandomCloudHSphere
+ * @description Generates a cloud of random vertices near the opposite vertice in 3D hypersphere.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
@@ -41,53 +41,78 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 
-import anglesRange from '../anglesRange.js'
+import RandomCloud from './randomCloud.js';
+import RandomVertice from './randomVerticeHSphere.js';
+import HyperSphere from '../hyperSphere3D.js';
+import RandomCloudSphere from './randomCloudSphere.js';
 
-const range = anglesRange.longitude.range, latitudeMax = anglesRange.latitude.max, latitudeMin = anglesRange.latitude.min, π = Math.PI;
+//const sRandomCloudHSphere = 'RandomCloudHSphere';
+//const π = Math.PI;
 
 /**
- * normalize a circle angle to range between anglesRange.longitude.min and anglesRange.longitude.max.
- * @param {float} angle angle for normalization.
- * @returns normalized angle.
+ * Generates a cloud of random vertices near the opposite vertice in 3D hypersphere.
+ * @class
+ * @extends RandomCloud
  */
-export const normalizeAngle = (angle) => {
+class RandomCloudHSphere extends RandomCloud
+{
 
-	if (angle > latitudeMax) {
+	/**
+	 * Generates a cloud of random vertices near the opposite vertice in 3D hypersphere.
+	 * @param {object} [params={}] See the &lt;b>params&lt;/b> of the &lt;a href="./module-RandomVertice-RandomVertice.html" target="_blank">&lt;b>RandomVertice&lt;/b>&lt;/a> constructor for details.
+	 * @param {object} [boCloud=false] true - generates a random vertice cloud.
+	 */
+	constructor(params, boCloud) {
 
-//console.error('angle > ' + latitudeMax);							
-		angle -= range;
-		if (angle > latitudeMax)
-			console.error('angle > ' + latitudeMax);
+		super(params);
 
-	} else {
+		this.circlesPointsCount = 750;//количество точек в облаке
+		const randomVertice = new RandomVertice(params, boCloud, false),
+			verticesAngles = () => {
 
-		if (angle &lt; latitudeMin) {
+				params.CloudSphere = RandomCloudSphere;
+				for (let anglesId = 0; anglesId &lt; this.circlesPointsCount; anglesId++) {
+					
+					if (!boAllocateMemory) params.editAnglesId = anglesId;
+					randomVertice.randomAngles;
+
+				}
+				delete params.CloudSphere;
+				delete params.editAnglesId;
+				
+			};
+
+		//overridden methods
+
+		Object.defineProperty(this, 'randomAngles', {
 			
-//console.error('angle &lt; ' + latitudeMin);
-			angle += range;
-			if (angle &lt; latitudeMin)
-				console.error('angle &lt; ' + latitudeMin);
+			get: () => {
 
-		}
-
-	}
-	return angle;
-
-}
-//parameters for b = arc * a + c,
-//const a = (1 / π) - 1, c = π;
-
-/**
- * The multiplier for calculating the tangent, which is used to calculate randomAngles.
- * @param {object} [params={}] See the &lt;b>params&lt;/b> of the &lt;a href="./module-RandomVertice-RandomVertice.html" target="_blank">&lt;b>RandomVertice&lt;/b>&lt;/a> constructor for details.
- * @returns multiplier.
- */
-export const b = (params) => {
-
-	//for atan((random + 0.5) * b)
-	return π / params.arc;
+				verticesAngles();
+				return params.verticesAngles;
+				
+			},
+			
+			set: (anglesNew) => { verticesAngles = anglesNew; },
+			
+		});
 		
+		/////////////////////////////overridden methods
+
+		let boAllocateMemory = true;
+		this.randomAngles;
+		boAllocateMemory = false;
+		
+	}
+	
+	//overridden methods
+	
+	getHyperSphere(options, classSettings, color) { return this.getHyperSphereBase(HyperSphere, options, classSettings, color); }
+	
+	/////////////////////////////overridden methods
+
 }
+export default RandomCloudHSphere;
 </code></pre>
         </article>
     </section>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: RandomCloudCircle</title>
+    <title>JSDoc: Class: RandomVerticeHSphere</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: RandomCloudCircle</h1>
+    <h1 class="page-title">Class: RandomVerticeHSphere</h1>
 
     
 
@@ -29,9 +29,9 @@
 <header>
     
         <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="module-RandomCloudCircle.html">RandomCloudCircle</a>~</span>RandomCloudCircle<span class="signature">(params<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+            <span class="ancestors"><a href="module-RandomVerticeHSphere.html">RandomVerticeHSphere</a>~</span>RandomVerticeHSphere<span class="signature">(params<span class="signature-attributes">opt</span>, boCloud<span class="signature-attributes">opt</span>, boInitRandomAngles<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
-            <div class="class-description"><div class="class-diagram"> <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="355.96875" height="116"> <defs> <style type="text/css"> text { font-size: initial; } rect { stroke-width: 2; stroke: black; fill: white; } marker { overflow: visible; } marker rect { stroke: none; stroke-width: 0 } marker path { fill: white; stroke: black; } a { cursor: pointer; } a text { fill: blue; text-decoration: underline; } polyline, line { stroke-width: 2; stroke: black; fill: none; } .child rect, .parent rect { stroke: blue; } .interface rect { stroke: blueviolet; } .mixin rect { stroke: green; } .no-ref rect { fill: lightgray; } </style> <marker id="inheritance" refX="5" refY="3" orient="auto-start-reverse"> <rect width="6" height="5"></rect> <path d="M 0 0 L 5 3 L 0 6 z"></path> </marker> </defs> <g transform="translate(177.984375, 73)"><g transform="translate(0, -58)"><polyline class="inherit" marker-end="url(#inheritance)" points="0,58 0,28"></polyline><g class="parent no-ref" transform="translate(-56.671875, 0)"><rect height="28" width="113.34375"></rect><text y="20" text-anchor="middle" x="56.671875">RandomCloud</text></g></g><g class="noi" transform="translate(-172.984375, 0)"><rect height="28" width="345.96875"></rect><text y="20" text-anchor="middle" x="172.984375">module:RandomCloudCircle~RandomCloudCircle</text></g></g> </svg></div>Generates a cloud of random vertices near the opposite vertice in 1D hypersphere.</div>
+            <div class="class-description"><div class="class-diagram"> <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="402.125" height="116"> <defs> <style type="text/css"> text { font-size: initial; } rect { stroke-width: 2; stroke: black; fill: white; } marker { overflow: visible; } marker rect { stroke: none; stroke-width: 0 } marker path { fill: white; stroke: black; } a { cursor: pointer; } a text { fill: blue; text-decoration: underline; } polyline, line { stroke-width: 2; stroke: black; fill: none; } .child rect, .parent rect { stroke: blue; } .interface rect { stroke: blueviolet; } .mixin rect { stroke: green; } .no-ref rect { fill: lightgray; } </style> <marker id="inheritance" refX="5" refY="3" orient="auto-start-reverse"> <rect width="6" height="5"></rect> <path d="M 0 0 L 5 3 L 0 6 z"></path> </marker> </defs> <g transform="translate(201.0625, 73)"><g transform="translate(0, -58)"><polyline class="inherit" marker-end="url(#inheritance)" points="0,58 0,28"></polyline><g class="parent no-ref" transform="translate(-59.765625, 0)"><rect height="28" width="119.53125"></rect><text y="20" text-anchor="middle" x="59.765625">RandomVertice</text></g></g><g class="noi" transform="translate(-196.0625, 0)"><rect height="28" width="392.125"></rect><text y="20" text-anchor="middle" x="196.0625">module:RandomVerticeHSphere~RandomVerticeHSphere</text></g></g> </svg></div>Generates a random vertice near the opposite vertice in 3D hypersphere.</div>
         
     
 </header>
@@ -46,7 +46,7 @@
     
 
     
-    <h4 class="name" id="RandomCloudCircle"><span class="type-signature"></span>new RandomCloudCircle<span class="signature">(params<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="RandomVerticeHSphere"><span class="type-signature"></span>new RandomVerticeHSphere<span class="signature">(params<span class="signature-attributes">opt</span>, boCloud<span class="signature-attributes">opt</span>, boInitRandomAngles<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -54,7 +54,7 @@
 
 
 <div class="description">
-    Generates a cloud of random vertices near the opposite vertice in 1D hypersphere.
+    Generates a random vertice near the opposite vertice in 3D hypersphere.
 </div>
 
 
@@ -130,6 +130,84 @@
         </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>boCloud</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last">true - generates a random vertice cloud.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>boInitRandomAngles</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+
+            <td class="description last">true - init random angles.</td>
+        </tr>
+
+    
     </tbody>
 </table>
 
@@ -167,7 +245,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="randomCloudCircle.js.html">randomCloudCircle.js</a>, <a href="randomCloudCircle.js.html#line27">line 27</a>
+        <a href="randomVerticeHSphere.js.html">randomVerticeHSphere.js</a>, <a href="randomVerticeHSphere.js.html#line32">line 32</a>
     </li></ul></dd>
     
 
@@ -207,7 +285,7 @@
 
 
     <ul>
-        <li>RandomCloud</li>
+        <li>RandomVertice</li>
     </ul>
 
 

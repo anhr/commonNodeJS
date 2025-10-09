@@ -57,15 +57,26 @@ class RandomCloud {
 	 */
 	constructor(params) {
 
+		if (params.verticesAngles &amp;&amp; (params.altitude === undefined)) {
+			
+			//Удалять облако только если облако это сфера. Для гиперсферры облако точек состоит из нескольких сфер. Поэтому точки сфер надо суммировать.
+			
+			params.verticesAngles.length = 0;
+			params.pointsCount = 0;//Количество точек в облаке. Нужно для построения облака из нескольких сфер, то есть для построения гиперсферы. После построения облака совпадает с randomVertice.circlesPointsCount если облако состоит из одной сферы, тоесть облако это сфера.
+
+		}
+		if (params.pointsCount === undefined) params.pointsCount = 0;
+		
+		if (params.verticesAngles &amp;&amp; !params.verticesAngles.boNoNew) params.verticesAngles.length = 0;
 		Object.defineProperty(this, 'angles', {
 			
-			get: () => { return this.verticesAngles; },
-			set: (anglesNew) => { this.verticesAngles = anglesNew; },
+			get: () => { return params.verticesAngles; },
+			set: (anglesNew) => { params.verticesAngles = anglesNew; },
 			
 		});
 		this.anglesCircle = (anglesIdMax, randomVertice, utils) => {
 			
-			const boUpdate = this.verticesAngles.length === 0 ? false : true;
+			const boUpdate = params.verticesAngles.length === 0 ? false : true;
 	
 			//что бы не делать повторяющихся вычислений
 			params.b = utils.b(params);
@@ -75,18 +86,17 @@ class RandomCloud {
 				if (params.debug &amp;&amp; params.debug.notRandomVertices) params.random = (1 / anglesIdMax) * i;//для замены случайной точки на регулярную
 				
 				const randomVerticeAngles = randomVertice.randomAngles;
-				if (boUpdate) this.verticesAngles[i] = randomVerticeAngles;
-				else this.verticesAngles.push(randomVerticeAngles);
+				if (boUpdate) params.verticesAngles[i] = randomVerticeAngles;
+				else params.verticesAngles.push(randomVerticeAngles);
 	
 			}
 			delete params.random;
 			delete params.b;
-			return this.verticesAngles;
+			return params.verticesAngles;
 			
 		}
 		
 	}
-	verticesAngles = [];
 	circlesPointsCount;
 	getHyperSphereBase(HyperSphere, options, classSettings, color) {
 
@@ -110,34 +120,6 @@ class RandomCloud {
 		}
 
 		return getHyperSphere(HyperSphere, options, classSettings.projectParams.scene, this, { debug: classSettings.debug, r: classSettings.r, name: lang.name, color: color });
-/*		
-		let hsRandomVertice;
-		hsRandomVertice = new HyperSphere(options, {
-
-			boRemove: false,//Если не установить этот флаг, то при замене старого hsRandomVertice на новый будут удаляться все гиперсферы на scene. То есть удалится hsVertices
-			r: classSettings.r,
-			edges: false,
-			//randomArc: true,
-			projectParams: { scene: classSettings.projectParams.scene, },
-//				debug: debug,
-			debug: classSettings.debug,
-			//debug: false,
-			settings: {
-
-				object: {
-
-					name: lang.name,
-					color: color,
-					geometry: this,//randomVertice,
-
-				},
-				overriddenProperties: { setDrawRange: (start, count) => { if (hsRandomVertice) hsRandomVertice.bufferGeometry.setDrawRange(start, count); } },
-
-			},
-
-		});
-		return hsRandomVertice;
-*/		
 		
 	}
 	
@@ -161,13 +143,13 @@ export default RandomCloud;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Cloud.html">Cloud</a></li><li><a href="module-CloudSphere.html">CloudSphere</a></li><li><a href="module-RandomCloud.html">RandomCloud</a></li><li><a href="module-RandomCloudCircle.html">RandomCloudCircle</a></li><li><a href="module-RandomCloudSphere.html">RandomCloudSphere</a></li><li><a href="module-RandomVertice.html">RandomVertice</a></li><li><a href="module-RandomVerticeCircle.html">RandomVerticeCircle</a></li><li><a href="module-RandomVerticeSphere.html">RandomVerticeSphere</a></li><li><a href="module-getHyperSphere.html">getHyperSphere</a></li><li><a href="module-utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="module-CloudSphere-CloudSphere.html">CloudSphere</a></li><li><a href="module-Cloud-Cloud.html">Cloud</a></li><li><a href="module-RandomCloudCircle-RandomCloudCircle.html">RandomCloudCircle</a></li><li><a href="module-RandomCloudSphere-RandomCloudSphere.html">RandomCloudSphere</a></li><li><a href="module-RandomCloud-RandomCloud.html">RandomCloud</a></li><li><a href="module-RandomVerticeCircle-RandomVerticeCircle.html">RandomVerticeCircle</a></li><li><a href="module-RandomVerticeSphere-RandomVerticeSphere.html">RandomVerticeSphere</a></li><li><a href="module-RandomVertice-RandomVertice.html">RandomVertice</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Cloud.html">Cloud</a></li><li><a href="module-CloudSphere.html">CloudSphere</a></li><li><a href="module-RandomCloud.html">RandomCloud</a></li><li><a href="module-RandomCloudCircle.html">RandomCloudCircle</a></li><li><a href="module-RandomCloudHSphere.html">RandomCloudHSphere</a></li><li><a href="module-RandomCloudSphere.html">RandomCloudSphere</a></li><li><a href="module-RandomVertice.html">RandomVertice</a></li><li><a href="module-RandomVerticeCircle.html">RandomVerticeCircle</a></li><li><a href="module-RandomVerticeHSphere.html">RandomVerticeHSphere</a></li><li><a href="module-RandomVerticeSphere.html">RandomVerticeSphere</a></li><li><a href="module-getHyperSphere.html">getHyperSphere</a></li><li><a href="module-utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="module-CloudSphere-CloudSphere.html">CloudSphere</a></li><li><a href="module-Cloud-Cloud.html">Cloud</a></li><li><a href="module-RandomCloudCircle-RandomCloudCircle.html">RandomCloudCircle</a></li><li><a href="module-RandomCloudHSphere-RandomCloudHSphere.html">RandomCloudHSphere</a></li><li><a href="module-RandomCloudSphere-RandomCloudSphere.html">RandomCloudSphere</a></li><li><a href="module-RandomCloud-RandomCloud.html">RandomCloud</a></li><li><a href="module-RandomVerticeCircle-RandomVerticeCircle.html">RandomVerticeCircle</a></li><li><a href="module-RandomVerticeHSphere-RandomVerticeHSphere.html">RandomVerticeHSphere</a></li><li><a href="module-RandomVerticeSphere.RandomVerticeSphere.html">RandomVerticeSphere</a></li><li><a href="module-RandomVertice-RandomVertice.html">RandomVertice</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sat Sep 06 2025 09:05:24 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Thu Oct 09 2025 07:42:50 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

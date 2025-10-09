@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: RandomCloudCircle</title>
+    <title>JSDoc: Class: RandomCloudHSphere</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: RandomCloudCircle</h1>
+    <h1 class="page-title">Class: RandomCloudHSphere</h1>
 
     
 
@@ -29,9 +29,9 @@
 <header>
     
         <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="module-RandomCloudCircle.html">RandomCloudCircle</a>~</span>RandomCloudCircle<span class="signature">(params<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+            <span class="ancestors"><a href="module-RandomCloudHSphere.html">RandomCloudHSphere</a>~</span>RandomCloudHSphere<span class="signature">(params<span class="signature-attributes">opt</span>, boCloud<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
-            <div class="class-description"><div class="class-diagram"> <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="355.96875" height="116"> <defs> <style type="text/css"> text { font-size: initial; } rect { stroke-width: 2; stroke: black; fill: white; } marker { overflow: visible; } marker rect { stroke: none; stroke-width: 0 } marker path { fill: white; stroke: black; } a { cursor: pointer; } a text { fill: blue; text-decoration: underline; } polyline, line { stroke-width: 2; stroke: black; fill: none; } .child rect, .parent rect { stroke: blue; } .interface rect { stroke: blueviolet; } .mixin rect { stroke: green; } .no-ref rect { fill: lightgray; } </style> <marker id="inheritance" refX="5" refY="3" orient="auto-start-reverse"> <rect width="6" height="5"></rect> <path d="M 0 0 L 5 3 L 0 6 z"></path> </marker> </defs> <g transform="translate(177.984375, 73)"><g transform="translate(0, -58)"><polyline class="inherit" marker-end="url(#inheritance)" points="0,58 0,28"></polyline><g class="parent no-ref" transform="translate(-56.671875, 0)"><rect height="28" width="113.34375"></rect><text y="20" text-anchor="middle" x="56.671875">RandomCloud</text></g></g><g class="noi" transform="translate(-172.984375, 0)"><rect height="28" width="345.96875"></rect><text y="20" text-anchor="middle" x="172.984375">module:RandomCloudCircle~RandomCloudCircle</text></g></g> </svg></div>Generates a cloud of random vertices near the opposite vertice in 1D hypersphere.</div>
+            <div class="class-description"><div class="class-diagram"> <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="389.75" height="116"> <defs> <style type="text/css"> text { font-size: initial; } rect { stroke-width: 2; stroke: black; fill: white; } marker { overflow: visible; } marker rect { stroke: none; stroke-width: 0 } marker path { fill: white; stroke: black; } a { cursor: pointer; } a text { fill: blue; text-decoration: underline; } polyline, line { stroke-width: 2; stroke: black; fill: none; } .child rect, .parent rect { stroke: blue; } .interface rect { stroke: blueviolet; } .mixin rect { stroke: green; } .no-ref rect { fill: lightgray; } </style> <marker id="inheritance" refX="5" refY="3" orient="auto-start-reverse"> <rect width="6" height="5"></rect> <path d="M 0 0 L 5 3 L 0 6 z"></path> </marker> </defs> <g transform="translate(194.875, 73)"><g transform="translate(0, -58)"><polyline class="inherit" marker-end="url(#inheritance)" points="0,58 0,28"></polyline><g class="parent no-ref" transform="translate(-56.671875, 0)"><rect height="28" width="113.34375"></rect><text y="20" text-anchor="middle" x="56.671875">RandomCloud</text></g></g><g class="noi" transform="translate(-189.875, 0)"><rect height="28" width="379.75"></rect><text y="20" text-anchor="middle" x="189.875">module:RandomCloudHSphere~RandomCloudHSphere</text></g></g> </svg></div>Generates a cloud of random vertices near the opposite vertice in 3D hypersphere.</div>
         
     
 </header>
@@ -46,7 +46,7 @@
     
 
     
-    <h4 class="name" id="RandomCloudCircle"><span class="type-signature"></span>new RandomCloudCircle<span class="signature">(params<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="RandomCloudHSphere"><span class="type-signature"></span>new RandomCloudHSphere<span class="signature">(params<span class="signature-attributes">opt</span>, boCloud<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -54,7 +54,7 @@
 
 
 <div class="description">
-    Generates a cloud of random vertices near the opposite vertice in 1D hypersphere.
+    Generates a cloud of random vertices near the opposite vertice in 3D hypersphere.
 </div>
 
 
@@ -130,6 +130,45 @@
         </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>boCloud</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last">true - generates a random vertice cloud.</td>
+        </tr>
+
+    
     </tbody>
 </table>
 
@@ -167,7 +206,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="randomCloudCircle.js.html">randomCloudCircle.js</a>, <a href="randomCloudCircle.js.html#line27">line 27</a>
+        <a href="randomCloudHSphere.js.html">randomCloudHSphere.js</a>, <a href="randomCloudHSphere.js.html#line29">line 29</a>
     </li></ul></dd>
     
 

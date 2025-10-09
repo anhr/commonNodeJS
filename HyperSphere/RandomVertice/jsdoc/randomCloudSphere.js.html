@@ -42,13 +42,11 @@
 */
 
 import RandomCloud from './randomCloud.js';
-import RandomVertice from './randomVerticeSphere.js';
-import * as utils from './utilsSphere.js'
-import anglesRange from '../anglesRange.js'
+import { RandomVerticeSphere as RandomVertice } from './randomVerticeSphere.js';
 import HyperSphere from '../sphere.js';
 
-const sRandomCloudSphere = 'RandomCloudSphere';
-const π = Math.PI;
+//const sRandomCloudSphere = 'RandomCloudSphere';
+//const π = Math.PI;
 
 /**
  * Generates a cloud of random vertices near the opposite vertice in 2D hypersphere.
@@ -61,174 +59,35 @@ class RandomCloudSphere extends RandomCloud
 	/**
 	 * Generates a cloud of random vertices near the opposite vertice in 2D hypersphere.
 	 * @param {object} [params={}] See the &lt;b>params&lt;/b> of the &lt;a href="./module-RandomVertice-RandomVertice.html" target="_blank">&lt;b>RandomVertice&lt;/b>&lt;/a> constructor for details.
-	 * @param {object} [boCloud=false] true - generates a random vertice cloud.
+	 * @param {object} [boCloud] true - generates a random vertice cloud.
 	 */
 	constructor(params, boCloud) {
 
 		super(params);
 
-/*		
-		const anglesIdMax = 50,//Количество точек на окружности, расположенной на экваторе
-			circlesCount = (anglesIdMax / 2) + 1,//количество окружностей
-			k = 1 / (circlesCount - 1),//for params.random = k * circleId;
-			sin = Math.sin, cos = Math.cos, asin = Math.asin, atan = Math.atan, atan2 = Math.atan2,
-			round = Math.round, random = Math.random, abs = Math.abs,
-			range = anglesRange.latitude.range,// latitudeMax = anglesRange.latitude.max, latitudeMin = anglesRange.latitude.min,
-*/			
-		this.circlesPointsCount = 750;//количество точек в облаке
+		this.circlesPointsCount = 750;//количество точек в сфере
+		let boAllocateMemory = false;
 		const randomVertice = new RandomVertice(params, boCloud, false),
-			verticesAngles = (/*boAllocateMemory*/) => {
+			verticesAngles = () => {
 
-//				params.range = π;
 				for (let anglesId = 0; anglesId &lt; this.circlesPointsCount; anglesId++) {
 
-					const randomAngles = randomVertice.randomAngles;
-					if (boAllocateMemory) this.verticesAngles.push(randomAngles[0]);
-					else this.verticesAngles[anglesId] = randomAngles[0];
+					if (!boAllocateMemory) params.editAnglesId = anglesId;
+					randomVertice.randomAngles;
 
 				}
-//				delete params.range;
-
-/*				
-				//Сфера случайных точек состоит из набора окружностей.
-				
-				const arc = boAllocateMemory ?
-					π ://Когда выделяется память для облака случайных точек (boAllocateMemory = true), надо сделать максимальное расстояние между вершинами (arc = π).
-						//В этом случае размер выделяемой памяти будет максимальным
-					params.arc;
-				this.circlesPointsCount = boAllocateMemory ? undefined : //Во время выделения памяти в массив this.verticesAngles добавляется новый item
-					0;//в противном случае в массиве this.verticesAngles редактируется item с индексом this.circlesPointsCount
-				let latitudePrev = 0;//широта предыдущей окружности
-				for(let circleId = 0; circleId &lt; circlesCount; circleId++){
-
-					params.random = k * circleId;
-
-					const latitude = randomVertice.anglesCircle(utils),
-						angleStep = abs(latitude - latitudePrev);//угол между соседними точками на окружности
-					//Количество точек на текущей окружности равно длинну окружности поделить на угол между соседними точками на окружности, расположенной на экваторе
-					let circleAnglesCount = round(//найти ближайшее целое число
-							cos(latitude) * //радиус текущей окружности
-							2 * π / //длинна текущей окружности
-							angleStep
-						);
-					const angleStep1 = 1 / circleAnglesCount,
-						boSouthernCircle = latitude - angleStep &lt; anglesRange.latitude.min,
-						boNorthernCircle = latitude + angleStep > anglesRange.latitude.max,
-						latitudeMin = boSouthernCircle ? latitude : (angleStep * (0 - 0.5) + latitude),//Минимальная граница широты окружности
-						latitudeMax = boNorthernCircle ? latitude : (angleStep * (1 - 0.5) + latitude),//Максимальная граница широты окружности
-						latitudeStep = latitudeMax - latitudeMin,//Ширина широты окружности
-						latitudeMid = latitudeMin + latitudeStep / 2;//Средняя широта окружности
-					if (!boAllocateMemory &amp;&amp; (circleAnglesCount > this.verticesAngles.length))
-						circleAnglesCount = 1;//когда длинна дуги приближается к нулю, тоесть вершины совпадают, то angleStep стремится к нулю и circleAnglesCount стремится к бесконечности и массив this.verticesAngles переполняется.
-												//Делаем один угол в окружности
-					//console.log('latitude = ' + latitude + ', latitudePrev = ' + latitudePrev + ', circleAnglesCount = ' + circleAnglesCount);
-					latitudePrev = latitude; 
-					//console.log('boFirstOrLastCircle = ' + (boSouthernCircle || boNorthernCircle) + ', latitude = ' + latitude + ', latitudeMin = ' + latitudeMin + ', latitudeMax = ' + latitudeMax);
-					
-					for (let angleId = 0; angleId &lt; circleAnglesCount; angleId++) {
-
-						if (this.circlesPointsCount === undefined) this.verticesAngles.push(randomVertice.ZeroArray());//allocate memory
-						else {//edit memory
-
-							const randomVerticeAngles = [
-	
-								//latitude
-								params.debug &amp;&amp; params.debug.notRandomVertices ?
-								
-									latitude : //окружность расположна на одной широте
-	
-									//окружность расположна на случайной широте в диапазоне от latitude до latitude - angleStep. Нужно, что бы окружность случайных точек немного гуляла по широте от latitude до latitude - angleStep. Тогда поверхность сферы будет случайно заполнена точками.
-									//Если это не делать то случайные точки будут располагаться слоями по широте.
-									latitudeStep * (random() - 0.5) + latitudeMid,
-	
-								//longitude
-								utils.normalizeAngle(
-									(
-										(
-											params.debug &amp;&amp; params.debug.notRandomVertices ?
-	
-												//Положение текущей точки зависит от порядкового номера точки angleId
-												(circleAnglesCount === 0 ?
-													 0 ://Эта точка расположена на полюсе
-													 angleStep1 * angleId) :
-											
-												random()//случайное положение текущей точки
-										) - 0.5//отнимаем 0.5 что бы диапазон возможных точек был между -0.5 и 0.5. Сразу такой диапазон нельзя вычислять потому что Math.random() имеет диапазон от 0 до 1
-									) * π * 2//диапазон возможных углов от -0.5 до 0.5 мняем на диапазон от -π до π
-								)
-							];
-							//console.log('randomVerticeAngles = ' + randomVerticeAngles.toString());
-							
-							if (this.circlesPointsCount >= this.verticesAngles.length) console.error(sRandomCloudSphere + '.verticesAngles: Allocate memory failed! this.circlesPointsCount = ' + this.circlesPointsCount + ' >= this.verticesAngles.length = ' + this.verticesAngles.length);
-
-							const rotatePointWithEulerAngles = (latitude, longitude, α, β, γ) => {
-							    // 1. Преобразование полярных координат в декартовы
-							    const x = cos(latitude) * cos(longitude),
-								    y = cos(latitude) * sin(longitude),
-								    z = sin(latitude),
-							    
-							    // 2. Применение поворотов с использованием углов Эйлера (Z-X-Z)
-							    // Поворот α вокруг оси Z
-								    x1 = α === 0 ? x : x * cos(α) - y * sin(α),
-								    y1 = α === 0 ? y : x * sin(α) + y * cos(α),
-								    z1 = z,
-							    
-							    // Поворот β вокруг новой оси X
-								    x2 = x1,
-								    y2 = y1 * cos(β) - z1 * sin(β),
-								    z2 = y1 * sin(β) + z1 * cos(β),
-							    
-							    // Поворот γ вокруг новой оси Z
-								    x3 = x2 * cos(γ) - y2 * sin(γ),
-								    y3 = x2 * sin(γ) + y2 * cos(γ),
-								    z3 = z2,
-							    
-							    // 3. Преобразование обратно в полярные координаты
-								    newLatitude = asin(z3), // В диапазоне [-π/2, π/2]
-								    newLongitude = atan2(y3, x3), // В диапазоне [-π, π]
-
-									arrayAngles = [newLatitude, newLongitude];
-								
-								Object.defineProperty(arrayAngles, 'longitude', { get: () => { return arrayAngles[1]; }, });
-								Object.defineProperty(arrayAngles, 'latitude' , { get: () => { return arrayAngles[0]; }, });
-								
-							    return arrayAngles;
-							}
-
-							const initialLatitude = randomVerticeAngles[0],
-								initialLongitude = randomVerticeAngles[1],
-							
-							// Поворот
-								α = 0,
-								β = params.oppositeVertice.latitude - π / 2,
-								γ = params.oppositeVertice.longitude - π / 2,
-								rotated = rotatePointWithEulerAngles(initialLatitude, initialLongitude, α, β, γ);
-							//this.verticesAngles[this.circlesPointsCount] = [rotated.latitude, rotated.longitude];
-							this.verticesAngles[this.circlesPointsCount] = rotated;
-							this.circlesPointsCount++;
-							
-						}
-			
-					}
-					
-				}
-				delete params.random;
-				delete params.b;
-*/				
+				delete params.editAnglesId;
 				
 			};
 
-		//Allocate this.verticesAngles memory
-//		verticesAngles(true);
-		
 		//overridden methods
 
 		Object.defineProperty(this, 'randomAngles', {
 			
 			get: () => {
 
-				verticesAngles();//false);
-				return this.verticesAngles;
+				verticesAngles();
+				return params.verticesAngles;
 				
 			},
 			
@@ -238,66 +97,35 @@ class RandomCloudSphere extends RandomCloud
 		
 		/////////////////////////////overridden methods
 
-		let boAllocateMemory = true;
-		this.randomAngles;
-		boAllocateMemory = false;
+		this.getRandomAngle = (randomVerticeId) => { return randomVertice.getRandomAngle(randomVerticeId); }
+		
+		if (params.hyperSphere) {
+
+			//Этот экземпляр RandomCloudSphere вызывается из RandomVerticeHyperSphere когда создается гиперсфера. Гиперсфера состоит из набора сфер.
+			//Для каждой сферы создается только массив RandomVerticeSphere.arrayCircles в котором хранятся парамерты отдельной окружности.
+			//Сами окружности, которые хранятся в verticesAngles создавать не надо.
+			
+			Object.defineProperty(this, 'sphereAnglesCount', { get: () => {
+
+				let sphereAnglesCount = 0;
+				randomVertice.сirclesParams.forEach((circle) => { sphereAnglesCount += circle.circleAnglesCount; });
+				return sphereAnglesCount;
+			
+			}, });
+			
+		} else {
+			
+			boAllocateMemory = true;
+			this.randomAngles;
+			boAllocateMemory = false;
+
+		}
 		
 	}
 	
 	//overridden methods
 	
-	getHyperSphere(options, classSettings, color) {
-
-		return this.getHyperSphereBase(HyperSphere, options, classSettings, color);
-/*		
-		//Localization
-
-		const lang = {
-
-			name: 'Middle vertice cloud',
-			
-		}
-
-		switch (options.getLanguageCode()) {
-
-			case 'ru'://Russian language
-
-				lang.name = 'Облако средней точки';
-
-				break;
-			default://Custom language
-
-		}
-		
-		let hsRandomVertice;
-		hsRandomVertice = new HyperSphere(options, {
-
-			boRemove: false,//Если не установить этот флаг, то при замене старого hsRandomVertice на новый будут удаляться все гиперсферы на scene. То есть удалится hsVertices
-			r: classSettings.r,
-			edges: false,
-			//randomArc: true,
-			projectParams: { scene: classSettings.projectParams.scene, },
-//				debug: debug,
-			debug: classSettings.debug,
-			//debug: false,
-			settings: {
-
-				object: {
-
-					name: this.getHyperSphereName(options),//lang.name,
-					color: color,
-					geometry: this,//randomVertice,
-
-				},
-				overriddenProperties: { setDrawRange: (start, count) => { if (hsRandomVertice) hsRandomVertice.bufferGeometry.setDrawRange(start, count); } },
-
-			},
-
-		});
-		return hsRandomVertice;
-*/		
-		
-	}
+	getHyperSphere(options, classSettings, color) { return this.getHyperSphereBase(HyperSphere, options, classSettings, color); }
 	
 	/////////////////////////////overridden methods
 
@@ -313,13 +141,13 @@ export default RandomCloudSphere;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Cloud.html">Cloud</a></li><li><a href="module-CloudSphere.html">CloudSphere</a></li><li><a href="module-RandomCloud.html">RandomCloud</a></li><li><a href="module-RandomCloudCircle.html">RandomCloudCircle</a></li><li><a href="module-RandomCloudSphere.html">RandomCloudSphere</a></li><li><a href="module-RandomVertice.html">RandomVertice</a></li><li><a href="module-RandomVerticeCircle.html">RandomVerticeCircle</a></li><li><a href="module-RandomVerticeSphere.html">RandomVerticeSphere</a></li><li><a href="module-getHyperSphere.html">getHyperSphere</a></li><li><a href="module-utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="module-CloudSphere-CloudSphere.html">CloudSphere</a></li><li><a href="module-Cloud-Cloud.html">Cloud</a></li><li><a href="module-RandomCloudCircle-RandomCloudCircle.html">RandomCloudCircle</a></li><li><a href="module-RandomCloudSphere-RandomCloudSphere.html">RandomCloudSphere</a></li><li><a href="module-RandomCloud-RandomCloud.html">RandomCloud</a></li><li><a href="module-RandomVerticeCircle-RandomVerticeCircle.html">RandomVerticeCircle</a></li><li><a href="module-RandomVerticeSphere-RandomVerticeSphere.html">RandomVerticeSphere</a></li><li><a href="module-RandomVertice-RandomVertice.html">RandomVertice</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Cloud.html">Cloud</a></li><li><a href="module-CloudSphere.html">CloudSphere</a></li><li><a href="module-RandomCloud.html">RandomCloud</a></li><li><a href="module-RandomCloudCircle.html">RandomCloudCircle</a></li><li><a href="module-RandomCloudHSphere.html">RandomCloudHSphere</a></li><li><a href="module-RandomCloudSphere.html">RandomCloudSphere</a></li><li><a href="module-RandomVertice.html">RandomVertice</a></li><li><a href="module-RandomVerticeCircle.html">RandomVerticeCircle</a></li><li><a href="module-RandomVerticeHSphere.html">RandomVerticeHSphere</a></li><li><a href="module-RandomVerticeSphere.html">RandomVerticeSphere</a></li><li><a href="module-getHyperSphere.html">getHyperSphere</a></li><li><a href="module-utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="module-CloudSphere-CloudSphere.html">CloudSphere</a></li><li><a href="module-Cloud-Cloud.html">Cloud</a></li><li><a href="module-RandomCloudCircle-RandomCloudCircle.html">RandomCloudCircle</a></li><li><a href="module-RandomCloudHSphere-RandomCloudHSphere.html">RandomCloudHSphere</a></li><li><a href="module-RandomCloudSphere-RandomCloudSphere.html">RandomCloudSphere</a></li><li><a href="module-RandomCloud-RandomCloud.html">RandomCloud</a></li><li><a href="module-RandomVerticeCircle-RandomVerticeCircle.html">RandomVerticeCircle</a></li><li><a href="module-RandomVerticeHSphere-RandomVerticeHSphere.html">RandomVerticeHSphere</a></li><li><a href="module-RandomVerticeSphere.RandomVerticeSphere.html">RandomVerticeSphere</a></li><li><a href="module-RandomVertice-RandomVertice.html">RandomVertice</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sat Sep 06 2025 09:05:24 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Thu Oct 09 2025 07:42:50 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
