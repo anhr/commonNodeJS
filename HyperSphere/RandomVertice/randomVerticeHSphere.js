@@ -1,5 +1,5 @@
 /**
- * @module RandomVerticeHyperSphere
+ * @module RandomVerticeHSphere
  * @description Generates a random vertice near the opposite vertice in 3D hypersphere.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
@@ -29,7 +29,7 @@ const sRandomVerticesHyperSphere = 'RandomVerticesHyperSphere',
  * @class
  * @extends RandomVertice
  */
-class RandomVerticeHyperSphere extends RandomVertice {
+class RandomVerticeHSphere extends RandomVertice {
 
 	/**
 	 * Generates a random vertice near the opposite vertice in 3D hypersphere.
@@ -770,5 +770,5 @@ const Vertice = (vertice, altitude) => {
 	return vertice;
 
 }
-RandomVerticeHyperSphere.Vertice = Vertice;
-export default RandomVerticeHyperSphere;
+RandomVerticeHSphere.Vertice = Vertice;
+export default RandomVerticeHSphere;

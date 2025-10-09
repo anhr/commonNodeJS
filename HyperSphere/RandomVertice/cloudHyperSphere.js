@@ -14,10 +14,7 @@
 */
 
 import Cloud from './cloud.js';
-//import { RandomVerticeSphere as RandomVertice } from './randomVerticeSphere.js';
-import RandomVertice from './randomVerticeHyperSphere.js';
-//import * as utils from './utilsSphere.js'
-//import anglesRange from '../anglesRange.js'
+import RandomVertice from './randomVerticeHSphere.js';
 import CloudSphere from './cloudSphere.js';
 
 //const sCloudHyperSphere = 'CloudHyperSphere';
@@ -41,7 +38,6 @@ class CloudHyperSphere extends Cloud
 		
 		super(params, RandomVertice);
 
-//		const randomVertice = new RandomVertice(params, true);
 		Object.defineProperty(this, 'verticesAngles', {
 			
 			get: () => { return randomVertice.verticesAngles; },
@@ -49,23 +45,6 @@ class CloudHyperSphere extends Cloud
 		
 		});
 		Object.defineProperty(this, 'circlesPointsCount', { get: () => { return randomVertice.circlesPointsCount; }, });
-/*
-		Object.defineProperty(this, 'randomAngles', {
-			
-			get: () => {
-
-				//сюда попадает только когда изменяется положение вершин и нужно обновить не случайное облако гиперсферы. Неслучайное облако гиперсферы создается при randomVerticeSettings.mode = randomVerticeSettings.modes.cloud = 0
-				params.noCreateCloudSphere = true;//поэтому не нужно создавать новые облака сфер CloudSphere а брать их из arrayCloudSpheres, которые были созданы при создании неслучайного облака гиперсферы.
-				params.boCloud = true;
-				randomVertice.randomAngles;
-				delete params.boCloud;
-				delete params.noCreateCloudSphere;
-				return randomVertice.angles;
-				
-			},
-			
-		});
-*/		
 		
 	}
 	

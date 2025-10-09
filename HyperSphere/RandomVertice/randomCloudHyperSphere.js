@@ -14,7 +14,7 @@
 */
 
 import RandomCloud from './randomCloud.js';
-import RandomVertice from './randomVerticeHyperSphere.js';
+import RandomVertice from './randomVerticeHSphere.js';
 import HyperSphere from '../hyperSphere3D.js';
 import RandomCloudSphere from './randomCloudSphere.js';
 
