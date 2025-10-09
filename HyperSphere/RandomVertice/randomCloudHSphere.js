@@ -1,5 +1,5 @@
 /**
- * @module RandomCloudHyperSphere
+ * @module RandomCloudHSphere
  * @description Generates a cloud of random vertices near the opposite vertice in 3D hypersphere.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
@@ -18,7 +18,7 @@ import RandomVertice from './randomVerticeHSphere.js';
 import HyperSphere from '../hyperSphere3D.js';
 import RandomCloudSphere from './randomCloudSphere.js';
 
-//const sRandomCloudHyperSphere = 'RandomCloudHyperSphere';
+//const sRandomCloudHSphere = 'RandomCloudHSphere';
 //const π = Math.PI;
 
 /**
@@ -26,7 +26,7 @@ import RandomCloudSphere from './randomCloudSphere.js';
  * @class
  * @extends RandomCloud
  */
-class RandomCloudHyperSphere extends RandomCloud
+class RandomCloudHSphere extends RandomCloud
 {
 
 	/**
@@ -84,4 +84,4 @@ class RandomCloudHyperSphere extends RandomCloud
 	/////////////////////////////overridden methods
 
 }
-export default RandomCloudHyperSphere;
+export default RandomCloudHSphere;

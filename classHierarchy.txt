@@ -4,11 +4,11 @@ Cloud //Generates a cloud of the vertices around opposite vertice.
 RandomCloud //Generates a cloud of the random vertices around opposite vertice.
 	RandomCloudCircle extends RandomCloud //Generates a cloud of random vertices near the opposite vertice in 1D hypersphere.
 	RandomCloudSphere extends RandomCloud //Generates a cloud of random vertices near the opposite vertice in 2D hypersphere.
-	RandomCloudHyperSphere extends RandomCloud //Generates a cloud of random vertices near the opposite vertice in 3D hypersphere.
+	RandomCloudHSphere extends RandomCloud //Generates a cloud of random vertices near the opposite vertice in 3D hypersphere.
 RandomVertice //Generates random angles between a vertice and its opposite vertice.
 	RandomVerticeCircle extends RandomVertice //Generates a random vertice near the opposite vertice in 1D hypersphere.
 	RandomVerticeSphere extends RandomVertice //Generates a random vertice near the opposite vertice in 2D hypersphere.
-	RandomVerticeHyperSphere extends RandomVertice //Generates a random vertice near the opposite vertice in 3D hypersphere.
+	RandomVerticeHSphere extends RandomVertice //Generates a random vertice near the opposite vertice in 3D hypersphere.
 MyObject
 	HyperSphere extends MyObject //Base class for n dimensional [hypersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
 		Circle extends HyperSphere //1 dimensional [hypersphere]{@link https://en.wikipedia.org/wiki/N-sphere}. All the vertices form a circle.
