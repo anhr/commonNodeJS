@@ -13,7 +13,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 
-import RandomCloud from './randomCloud.js';
+//import RandomCloud from './randomCloud.js';
+import RandomCloudBase from './randomCloudBase.js';
 import { RandomVerticeSphere as RandomVertice } from './randomVerticeSphere.js';
 import HyperSphere from '../sphere.js';
 
@@ -25,7 +26,7 @@ import HyperSphere from '../sphere.js';
  * @class
  * @extends RandomCloud
  */
-class RandomCloudSphere extends RandomCloud
+class RandomCloudSphere extends RandomCloudBase
 {
 
 	/**
@@ -35,12 +36,13 @@ class RandomCloudSphere extends RandomCloud
 	 */
 	constructor(params, boCloud) {
 
-		super(params);
+		super(params, boCloud);
 
-		this.circlesPointsCount = 750;//количество точек в сфере
-		let boAllocateMemory = false;
-		const randomVertice = new RandomVertice(params, boCloud, false),
-			verticesAngles = () => {
+//		this.circlesPointsCount = 750;//количество точек в сфере
+//		let boAllocateMemory = false;
+//		const randomVertice = new RandomVertice(params, boCloud, false);
+/*		
+		const verticesAngles = () => {
 
 				for (let anglesId = 0; anglesId < this.circlesPointsCount; anglesId++) {
 
@@ -51,9 +53,10 @@ class RandomCloudSphere extends RandomCloud
 				delete params.editAnglesId;
 				
 			};
+*/			
 
 		//overridden methods
-
+/*
 		Object.defineProperty(this, 'randomAngles', {
 			
 			get: () => {
@@ -66,11 +69,12 @@ class RandomCloudSphere extends RandomCloud
 			set: (anglesNew) => { verticesAngles = anglesNew; },
 			
 		});
+*/		
 		
 		/////////////////////////////overridden methods
 
-		this.getRandomAngle = (randomVerticeId) => { return randomVertice.getRandomAngle(randomVerticeId); }
-		
+//		this.getRandomAngle = (randomVerticeId) => { return randomVertice.getRandomAngle(randomVerticeId); }
+/*		
 		if (params.hyperSphere) {
 
 			//Этот экземпляр RandomCloudSphere вызывается из RandomVerticeHyperSphere когда создается гиперсфера. Гиперсфера состоит из набора сфер.
@@ -92,12 +96,25 @@ class RandomCloudSphere extends RandomCloud
 			boAllocateMemory = false;
 
 		}
+*/		
 		
 	}
 	
 	//overridden methods
-	
+
+	newRandomVertice(params, boCloud) { return new RandomVertice(params, boCloud, false); }
 	getHyperSphere(options, classSettings, color) { return this.getHyperSphereBase(HyperSphere, options, classSettings, color); }
+	verticesAngles(params, randomVertice, boAllocateMemory) {
+
+		for (let anglesId = 0; anglesId < this.circlesPointsCount; anglesId++) {
+
+			if (!boAllocateMemory) params.editAnglesId = anglesId;
+			randomVertice.randomAngles;
+
+		}
+		delete params.editAnglesId;
+		
+	};
 	
 	/////////////////////////////overridden methods
 

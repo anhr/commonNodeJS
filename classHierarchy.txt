@@ -1,10 +1,11 @@
 Cloud //Generates a cloud of the vertices around opposite vertice.
 	CloudHyperSphere extends Cloud //Generates a cloud of vertices near the opposite vertice in 3D hypersphere.
 	CloudSphere extends Cloud //Generates a cloud of vertices near the opposite vertice in 2D hypersphere.
-RandomCloud //Generates a cloud of the random vertices around opposite vertice.
+RandomCloud //Generates a cloud of the random vertices around opposite vertice. Base class for RandomCloudCircle and RandomCloudBase
 	RandomCloudCircle extends RandomCloud //Generates a cloud of random vertices near the opposite vertice in 1D hypersphere.
-	RandomCloudSphere extends RandomCloud //Generates a cloud of random vertices near the opposite vertice in 2D hypersphere.
-	RandomCloudHSphere extends RandomCloud //Generates a cloud of random vertices near the opposite vertice in 3D hypersphere.
+	RandomCloudBase extends RandomCloud //Generates a cloud of the random vertices around opposite vertice. Base class for RandomCloudSphere and RandomCloudHSphere
+		RandomCloudSphere extends RandomCloudBase //Generates a cloud of random vertices near the opposite vertice in 2D hypersphere.
+		RandomCloudHSphere extends RandomCloudBase //Generates a cloud of random vertices near the opposite vertice in 3D hypersphere.
 RandomVertice //Generates random angles between a vertice and its opposite vertice.
 	RandomVerticeCircle extends RandomVertice //Generates a random vertice near the opposite vertice in 1D hypersphere.
 	RandomVerticeSphere extends RandomVertice //Generates a random vertice near the opposite vertice in 2D hypersphere.

@@ -13,7 +13,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 
-import RandomCloud from './randomCloud.js';
+//import RandomCloud from './randomCloud.js';
+import RandomCloudBase from './randomCloudBase.js';
 import RandomVertice from './randomVerticeHSphere.js';
 import HyperSphere from '../hyperSphere3D.js';
 import RandomCloudSphere from './randomCloudSphere.js';
@@ -26,7 +27,7 @@ import RandomCloudSphere from './randomCloudSphere.js';
  * @class
  * @extends RandomCloud
  */
-class RandomCloudHSphere extends RandomCloud
+class RandomCloudHSphere extends RandomCloudBase
 {
 
 	/**
@@ -38,6 +39,7 @@ class RandomCloudHSphere extends RandomCloud
 
 		super(params);
 
+/*		
 		this.circlesPointsCount = 750;//количество точек в облаке
 		const randomVertice = new RandomVertice(params, boCloud, false),
 			verticesAngles = () => {
@@ -53,9 +55,10 @@ class RandomCloudHSphere extends RandomCloud
 				delete params.editAnglesId;
 				
 			};
+*/			
 
 		//overridden methods
-
+/*
 		Object.defineProperty(this, 'randomAngles', {
 			
 			get: () => {
@@ -68,18 +71,34 @@ class RandomCloudHSphere extends RandomCloud
 			set: (anglesNew) => { verticesAngles = anglesNew; },
 			
 		});
+*/		
 		
 		/////////////////////////////overridden methods
-
+/*
 		let boAllocateMemory = true;
 		this.randomAngles;
 		boAllocateMemory = false;
+*/		
 		
 	}
 	
 	//overridden methods
 	
+	newRandomVertice(params, boCloud) { return new RandomVertice(params, boCloud, false); }
 	getHyperSphere(options, classSettings, color) { return this.getHyperSphereBase(HyperSphere, options, classSettings, color); }
+	verticesAngles(params, randomVertice, boAllocateMemory) {
+		
+		params.CloudSphere = RandomCloudSphere;
+		for (let anglesId = 0; anglesId < this.circlesPointsCount; anglesId++) {
+			
+			if (!boAllocateMemory) params.editAnglesId = anglesId;
+			randomVertice.randomAngles;
+
+		}
+		delete params.CloudSphere;
+		delete params.editAnglesId;
+		
+	}
 	
 	/////////////////////////////overridden methods
 
