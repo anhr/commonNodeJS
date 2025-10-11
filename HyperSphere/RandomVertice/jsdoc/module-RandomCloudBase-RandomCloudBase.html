@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: RandomCloudSphere</title>
+    <title>JSDoc: Class: RandomCloudBase</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: RandomCloudSphere</h1>
+    <h1 class="page-title">Class: RandomCloudBase</h1>
 
     
 
@@ -29,9 +29,9 @@
 <header>
     
         <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="module-RandomCloudSphere.html">RandomCloudSphere</a>~</span>RandomCloudSphere<span class="signature">(params<span class="signature-attributes">opt</span>, boCloud<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+            <span class="ancestors"><a href="module-RandomCloudBase.html">RandomCloudBase</a>~</span>RandomCloudBase<span class="signature">(params, boCloud)</span><span class="type-signature"></span></h2>
         
-            <div class="class-description"><div class="class-diagram"> <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="366.625" height="116"> <defs> <style type="text/css"> text { font-size: initial; } rect { stroke-width: 2; stroke: black; fill: white; } marker { overflow: visible; } marker rect { stroke: none; stroke-width: 0 } marker path { fill: white; stroke: black; } a { cursor: pointer; } a text { fill: blue; text-decoration: underline; } polyline, line { stroke-width: 2; stroke: black; fill: none; } .child rect, .parent rect { stroke: blue; } .interface rect { stroke: blueviolet; } .mixin rect { stroke: green; } .no-ref rect { fill: lightgray; } </style> <marker id="inheritance" refX="5" refY="3" orient="auto-start-reverse"> <rect width="6" height="5"></rect> <path d="M 0 0 L 5 3 L 0 6 z"></path> </marker> </defs> <g transform="translate(183.3125, 73)"><g transform="translate(0, -58)"><polyline class="inherit" marker-end="url(#inheritance)" points="0,58 0,28"></polyline><g class="parent no-ref" transform="translate(-56.671875, 0)"><rect height="28" width="113.34375"></rect><text y="20" text-anchor="middle" x="56.671875">RandomCloud</text></g></g><g class="noi" transform="translate(-178.3125, 0)"><rect height="28" width="356.625"></rect><text y="20" text-anchor="middle" x="178.3125">module:RandomCloudSphere~RandomCloudSphere</text></g></g> </svg></div>Generates a cloud of random vertices near the opposite vertice in 2D hypersphere.</div>
+            <div class="class-description"><div class="class-diagram"> <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="339.96875" height="58"> <defs> <style type="text/css"> text { font-size: initial; } rect { stroke-width: 2; stroke: black; fill: white; } marker { overflow: visible; } marker rect { stroke: none; stroke-width: 0 } marker path { fill: white; stroke: black; } a { cursor: pointer; } a text { fill: blue; text-decoration: underline; } polyline, line { stroke-width: 2; stroke: black; fill: none; } .child rect, .parent rect { stroke: blue; } .interface rect { stroke: blueviolet; } .mixin rect { stroke: green; } .no-ref rect { fill: lightgray; } </style> <marker id="inheritance" refX="5" refY="3" orient="auto-start-reverse"> <rect width="6" height="5"></rect> <path d="M 0 0 L 5 3 L 0 6 z"></path> </marker> </defs> <g transform="translate(169.984375, 15)"><g class="noi" transform="translate(-164.984375, 0)"><rect height="28" width="329.96875"></rect><text y="20" text-anchor="middle" x="164.984375">module:RandomCloudBase~RandomCloudBase</text></g></g> </svg></div>Generates a cloud of the random vertices around opposite vertice. Base class for <b>RandomCloudSphere</b> and <b>RandomCloudHSphere</b>.</div>
         
     
 </header>
@@ -46,7 +46,7 @@
     
 
     
-    <h4 class="name" id="RandomCloudSphere"><span class="type-signature"></span>new RandomCloudSphere<span class="signature">(params<span class="signature-attributes">opt</span>, boCloud<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="RandomCloudBase"><span class="type-signature"></span>new RandomCloudBase<span class="signature">(params, boCloud)</span><span class="type-signature"></span></h4>
     
 
     
@@ -54,7 +54,7 @@
 
 
 <div class="description">
-    Generates a cloud of random vertices near the opposite vertice in 2D hypersphere.
+    Generates a cloud of the random vertices around opposite vertice. Base class for <b>RandomCloudSphere</b> and <b>RandomCloudHSphere</b>.
 </div>
 
 
@@ -78,11 +78,7 @@
         <th>Type</th>
 
         
-        <th>Attributes</th>
-        
 
-        
-        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -107,23 +103,7 @@
             </td>
 
             
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
 
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    {}
-                
-                </td>
             
 
             <td class="description last">See the <b>params</b> of the <a href="./module-RandomVertice-RandomVertice.html" target="_blank"><b>RandomVertice</b></a> constructor for details.</td>
@@ -139,28 +119,14 @@
             <td class="type">
             
                 
-<span class="param-type">object</span>
+<span class="param-type">boolean</span>
 
 
             
             </td>
 
             
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
 
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
             
 
             <td class="description last">true - generates a random vertice cloud.</td>
@@ -204,7 +170,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="randomCloudSphere.js.html">randomCloudSphere.js</a>, <a href="randomCloudSphere.js.html#line29">line 29</a>
+        <a href="randomCloudBase.js.html">randomCloudBase.js</a>, <a href="randomCloudBase.js.html#line26">line 26</a>
     </li></ul></dd>
     
 
@@ -236,17 +202,6 @@
 
     
     </div>
-
-    
-        <h3 class="subsection-title">Extends</h3>
-
-        
-
-
-    <ul>
-        <li>RandomCloud</li>
-    </ul>
-
 
     
 

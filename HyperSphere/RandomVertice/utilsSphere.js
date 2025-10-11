@@ -1,5 +1,5 @@
 /**
- * @module utils
+ * @module utilsSphere
  * @description utilities which is used to calculate randomAngles for sphere.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}

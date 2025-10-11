@@ -1,6 +1,6 @@
 /**
  * @module RandomCloudBase
- * @description Generates a cloud of the random vertices around opposite vertice. Base class for RandomCloudSphere and RandomCloudHSphere
+ * @description Generates a cloud of the random vertices around opposite vertice. Base class for <b>RandomCloudSphere</b> and <b>RandomCloudHSphere</b>.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
@@ -20,13 +20,13 @@ import RandomCloud from './randomCloud.js';
 //const sRandomCloudBase = 'RandomCloudBase',
 //	sOver = ': Please, override %s method in your ' + sRandomCloudBase + ' child class.';
 /**
- * Generates a cloud of the random vertices around opposite vertice. Base class for RandomCloudSphere and RandomCloudHSphere
+ * Generates a cloud of the random vertices around opposite vertice. Base class for <b>RandomCloudSphere</b> and <b>RandomCloudHSphere</b>.
  * @class
  */
 class RandomCloudBase extends RandomCloud {
 
 	/**
-	 * Generates a cloud of the random vertices around opposite vertice. Base class for RandomCloudSphere and RandomCloudHSphere
+	 * Generates a cloud of the random vertices around opposite vertice. Base class for <b>RandomCloudSphere</b> and <b>RandomCloudHSphere</b>.
 	 * @param {object} params See the <b>params</b> of the <a href="./module-RandomVertice-RandomVertice.html" target="_blank"><b>RandomVertice</b></a> constructor for details.
 	 * @param {boolean} boCloud true - generates a random vertice cloud.
 	 */

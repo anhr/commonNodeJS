@@ -1,6 +1,6 @@
 /**
- * @module utils
- * @description utilities which is used to calculate randomAngles for sphere.
+ * @module utilsHyperSphere
+ * @description utilities which is used to calculate randomAngles for hypersphere.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *

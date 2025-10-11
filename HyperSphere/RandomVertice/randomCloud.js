@@ -1,6 +1,6 @@
 /**
  * @module RandomCloud
- * @description Generates a cloud of the random vertices around opposite vertice. Base class for RandomCloudCircle and RandomCloudBase
+ * @description Generates a cloud of the random vertices around opposite vertice. Base class for <b>RandomCloudCircle</b> and <b>RandomCloudBase</b>.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
@@ -18,13 +18,13 @@ import getHyperSphere from './getHyperSphere.js'
 const sRandomCloud = 'RandomCloud',
 	sOver = ': Please, override %s method in your ' + sRandomCloud + ' child class.';
 /**
- * Generates a cloud of the random vertices around opposite vertice. Base class for RandomCloudCircle and RandomCloudBase
+ * Generates a cloud of the random vertices around opposite vertice. Base class for <b>RandomCloudCircle</b> and <b>RandomCloudBase</b>.
  * @class
  */
 class RandomCloud {
 
 	/**
-	 * Generates a cloud of the random vertices around opposite vertice. Base class for RandomCloudCircle and RandomCloudBase
+	 * Generates a cloud of the random vertices around opposite vertice. Base class for <b>RandomCloudCircle</b> and <b>RandomCloudBase</b>.
 	 * @param {object} [params={}] See the <b>params</b> of the <a href="./module-RandomVertice-RandomVertice.html" target="_blank"><b>RandomVertice</b></a> constructor for details.
 	 */
 	constructor(params) {

@@ -1,5 +1,5 @@
 /**
- * @module utils
+ * @module utilsCircle
  * @description utilities which is used to calculate randomAngles for circle.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}

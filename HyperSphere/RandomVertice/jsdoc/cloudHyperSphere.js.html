@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Module: Cloud</title>
+    <title>JSDoc: Source: cloudHyperSphere.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,152 +17,85 @@
 
 <div id="main">
 
-    <h1 class="page-title">Module: Cloud</h1>
+    <h1 class="page-title">Source: cloudHyperSphere.js</h1>
 
     
 
 
 
-
-<section>
-
-<header>
     
-        
-            
-        
-    
-</header>
-
-<article>
-    <div class="container-overview">
-    
-        
-            <div class="description">Generates a cloud of the vertices around opposite vertice.</div>
-        
-
-        
-            
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-author">Author:</dt>
-    <dd class="tag-author">
-        <ul>
-            <li><a href="https://github.com/anhr">Andrej Hristoliubov</a></li>
-        </ul>
-    </dd>
-    
-
-    
-    <dt class="tag-copyright">Copyright:</dt>
-    <dd class="tag-copyright"><ul class="dummy"><li>2011 Data Arts Team, Google Creative Lab</li></ul></dd>
-    
-
-    
-    <dt class="tag-license">License:</dt>
-    <dd class="tag-license"><ul class="dummy"><li>under the Apache License, Version 2.0 (the "License");you may not use this file except in compliance with the License.You may obtain a copy of the License athttp://www.apache.org/licenses/LICENSE-2.0</li></ul></dd>
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="cloud.js.html">cloud.js</a>, <a href="cloud.js.html#line1">line 1</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-        <h3 class="subsection-title">Classes</h3>
-
-        <dl>
-            <dt><a href="module-Cloud-Cloud.html">Cloud</a></dt>
-            <dd></dd>
-        </dl>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
-</section>
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module CloudHyperSphere
+ * @description Generates a cloud of vertices near the opposite vertice in 3D hypersphere.
+ *
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
+ *
+ * @copyright 2011 Data Arts Team, Google Creative Lab
+ *
+ * @license under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+*/
+
+import Cloud from './cloud.js';
+import RandomVertice from './randomVerticeHSphere.js';
+import CloudSphere from './cloudSphere.js';
+
+//const sCloudHyperSphere = 'CloudHyperSphere';
+//const π = Math.PI;
+
+/**
+ * Generates a cloud of vertices near the opposite vertice in 3D hypersphere.
+ * @class
+ * @extends Cloud
+ */
+class CloudHyperSphere extends Cloud
+{
+
+	/**
+	 * Generates a cloud of vertices near the opposite vertice in 3D hypersphere.
+	 * @param {object} [params={}] See the &lt;b>params&lt;/b> of the &lt;a href="./module-RandomVertice-RandomVertice.html" target="_blank">&lt;b>RandomVertice&lt;/b>&lt;/a> constructor for details.
+	 */
+	constructor(params) {
+
+		params.CloudSphere = CloudSphere;
+		
+		super(params, RandomVertice);
+
+		Object.defineProperty(this, 'verticesAngles', {
+			
+			get: () => { return randomVertice.verticesAngles; },
+			set: (anglesNew) => { randomVertice.verticesAngles = anglesNew; },
+		
+		});
+		Object.defineProperty(this, 'circlesPointsCount', { get: () => { return randomVertice.circlesPointsCount; }, });
+		
+	}
+	
+	//overridden methods
+	
+	getRandomVertice(params) { return new RandomVertice(params, true); }
+	getRandomVerticeAngles(randomVertice, params) {
+
+		params.noCreateCloudSphere = true;//поэтому не нужно создавать новые облака сфер CloudSphere а брать их из arrayCloudSpheres, которые были созданы при создании неслучайного облака гиперсферы.
+		params.boCloud = true;
+		randomVertice.randomAngles;
+		delete params.boCloud;
+		delete params.noCreateCloudSphere;
+		
+	}
+
+	/////////////////////////////overridden methods
+	
+}
+export default CloudHyperSphere;
+</code></pre>
+        </article>
+    </section>
 
 
 

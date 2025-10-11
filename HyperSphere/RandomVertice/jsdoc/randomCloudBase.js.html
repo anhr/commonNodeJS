@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: randomCloudHSphere.js</title>
+    <title>JSDoc: Source: randomCloudBase.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: randomCloudHSphere.js</h1>
+    <h1 class="page-title">Source: randomCloudBase.js</h1>
 
     
 
@@ -27,8 +27,8 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @module RandomCloudHSphere
- * @description Generates a cloud of random vertices near the opposite vertice in 3D hypersphere.
+ * @module RandomCloudBase
+ * @description Generates a cloud of the random vertices around opposite vertice. Base class for &lt;b>RandomCloudSphere&lt;/b> and &lt;b>RandomCloudHSphere&lt;/b>.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
@@ -41,57 +41,34 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 
-//import RandomCloud from './randomCloud.js';
-import RandomCloudBase from './randomCloudBase.js';
-import RandomVertice from './randomVerticeHSphere.js';
-import HyperSphere from '../hyperSphere3D.js';
-import RandomCloudSphere from './randomCloudSphere.js';
+//import getHyperSphere from './getHyperSphere.js'
+import RandomCloud from './randomCloud.js';
 
-//const sRandomCloudHSphere = 'RandomCloudHSphere';
-//const π = Math.PI;
 
+//const sRandomCloudBase = 'RandomCloudBase',
+//	sOver = ': Please, override %s method in your ' + sRandomCloudBase + ' child class.';
 /**
- * Generates a cloud of random vertices near the opposite vertice in 3D hypersphere.
+ * Generates a cloud of the random vertices around opposite vertice. Base class for &lt;b>RandomCloudSphere&lt;/b> and &lt;b>RandomCloudHSphere&lt;/b>.
  * @class
- * @extends RandomCloud
  */
-class RandomCloudHSphere extends RandomCloudBase
-{
+class RandomCloudBase extends RandomCloud {
 
 	/**
-	 * Generates a cloud of random vertices near the opposite vertice in 3D hypersphere.
-	 * @param {object} [params={}] See the &lt;b>params&lt;/b> of the &lt;a href="./module-RandomVertice-RandomVertice.html" target="_blank">&lt;b>RandomVertice&lt;/b>&lt;/a> constructor for details.
-	 * @param {object} [boCloud=false] true - generates a random vertice cloud.
+	 * Generates a cloud of the random vertices around opposite vertice. Base class for &lt;b>RandomCloudSphere&lt;/b> and &lt;b>RandomCloudHSphere&lt;/b>.
+	 * @param {object} params See the &lt;b>params&lt;/b> of the &lt;a href="./module-RandomVertice-RandomVertice.html" target="_blank">&lt;b>RandomVertice&lt;/b>&lt;/a> constructor for details.
+	 * @param {boolean} boCloud true - generates a random vertice cloud.
 	 */
 	constructor(params, boCloud) {
 
 		super(params);
-
-/*		
 		this.circlesPointsCount = 750;//количество точек в облаке
-		const randomVertice = new RandomVertice(params, boCloud, false),
-			verticesAngles = () => {
-
-				params.CloudSphere = RandomCloudSphere;
-				for (let anglesId = 0; anglesId &lt; this.circlesPointsCount; anglesId++) {
-					
-					if (!boAllocateMemory) params.editAnglesId = anglesId;
-					randomVertice.randomAngles;
-
-				}
-				delete params.CloudSphere;
-				delete params.editAnglesId;
-				
-			};
-*/			
-
-		//overridden methods
-/*
+		let boAllocateMemory = false;
+		const randomVertice = this.newRandomVertice(params, boCloud);
 		Object.defineProperty(this, 'randomAngles', {
 			
 			get: () => {
 
-				verticesAngles();
+				this.verticesAngles(params, randomVertice, boAllocateMemory);
 				return params.verticesAngles;
 				
 			},
@@ -99,39 +76,32 @@ class RandomCloudHSphere extends RandomCloudBase
 			set: (anglesNew) => { verticesAngles = anglesNew; },
 			
 		});
-*/		
-		
-		/////////////////////////////overridden methods
-/*
-		let boAllocateMemory = true;
-		this.randomAngles;
-		boAllocateMemory = false;
-*/		
-		
-	}
-	
-	//overridden methods
-	
-	newRandomVertice(params, boCloud) { return new RandomVertice(params, boCloud, false); }
-	getHyperSphere(options, classSettings, color) { return this.getHyperSphereBase(HyperSphere, options, classSettings, color); }
-	verticesAngles(params, randomVertice, boAllocateMemory) {
-		
-		params.CloudSphere = RandomCloudSphere;
-		for (let anglesId = 0; anglesId &lt; this.circlesPointsCount; anglesId++) {
+		this.getRandomAngle = (randomVerticeId) => { return randomVertice.getRandomAngle(randomVerticeId); }
+		if (params.hyperSphere) {
+
+			//Этот экземпляр RandomCloudSphereBase вызывается из RandomVerticeHyperSphere когда создается гиперсфера. Гиперсфера состоит из набора сфер.
+			//Для каждой сферы создается только массив RandomVerticeSphere.arrayCircles в котором хранятся парамерты отдельной окружности.
+			//Сами окружности, которые хранятся в verticesAngles создавать не надо.
 			
-			if (!boAllocateMemory) params.editAnglesId = anglesId;
-			randomVertice.randomAngles;
+			Object.defineProperty(this, 'sphereAnglesCount', { get: () => {
+
+				let sphereAnglesCount = 0;
+				randomVertice.сirclesParams.forEach((circle) => { sphereAnglesCount += circle.circleAnglesCount; });
+				return sphereAnglesCount;
+			
+			}, });
+			
+		} else {
+			
+			boAllocateMemory = true;
+			this.randomAngles;
+			boAllocateMemory = false;
 
 		}
-		delete params.CloudSphere;
-		delete params.editAnglesId;
-		
 	}
-	
-	/////////////////////////////overridden methods
 
 }
-export default RandomCloudHSphere;
+export default RandomCloudBase;
 </code></pre>
         </article>
     </section>
