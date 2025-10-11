@@ -354,33 +354,34 @@ class RandomVerticeHSphere extends RandomVertice {
 					 * @returns {{latitude: number, longitude: number, altitude: number}} - Повернутая точка в полярных координатах.
 					 */
 					function rotatePoint(point, eulerAngles) {
-					    let { x, y, z, w } = toCartesian4D(point.latitude, point.longitude, point.altitude);
+
+						let { x, y, z, w } = toCartesian4D(point.latitude, point.longitude, point.altitude);
 					
-					    // Матрица поворота для плоскости XY (поворот вокруг оси ZW)
-					    const cosXY = Math.cos(eulerAngles.xy);
-					    const sinXY = Math.sin(eulerAngles.xy);
-					    const newX = x * cosXY - y * sinXY;
-					    const newY = x * sinXY + y * cosXY;
-					    x = newX;
-					    y = newY;
+						// Матрица поворота для плоскости XY (поворот вокруг оси ZW)
+						const cosXY = Math.cos(eulerAngles.xy);
+						const sinXY = Math.sin(eulerAngles.xy);
+						const newX = x * cosXY - y * sinXY;
+						const newY = x * sinXY + y * cosXY;
+						x = newX;
+						y = newY;
 					
-					    // Матрица поворота для плоскости XZ (поворот вокруг оси YW)
-					    const cosXZ = Math.cos(eulerAngles.xz);
-					    const sinXZ = Math.sin(eulerAngles.xz);
-					    const newX2 = x * cosXZ - z * sinXZ;
-					    const newZ = x * sinXZ + z * cosXZ;
-					    x = newX2;
-					    z = newZ;
+						// Матрица поворота для плоскости XZ (поворот вокруг оси YW)
+						const cosXZ = Math.cos(eulerAngles.xz);
+						const sinXZ = Math.sin(eulerAngles.xz);
+						const newX2 = x * cosXZ - z * sinXZ;
+						const newZ = x * sinXZ + z * cosXZ;
+						x = newX2;
+						z = newZ;
 					
-					    // Матрица поворота для плоскости YZ (поворот вокруг оси XW)
-					    const cosYZ = Math.cos(eulerAngles.yz);
-					    const sinYZ = Math.sin(eulerAngles.yz);
-					    const newY2 = y * cosYZ - z * sinYZ;
-					    const newZ2 = y * sinYZ + z * cosYZ;
-					    y = newY2;
-					    z = newZ2;
+						// Матрица поворота для плоскости YZ (поворот вокруг оси XW)
+						const cosYZ = Math.cos(eulerAngles.yz);
+						const sinYZ = Math.sin(eulerAngles.yz);
+						const newY2 = y * cosYZ - z * sinYZ;
+						const newZ2 = y * sinYZ + z * cosYZ;
+						y = newY2;
+						z = newZ2;
 					
-					    return toPolar4D({ x, y, z, w });
+						return toPolar4D({ x, y, z, w });
 					}
 
 					/*

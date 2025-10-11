@@ -14,10 +14,11 @@
 */
 
 import RandomVertice from './randomVertice.js';
-//import anglesRange from '../anglesRange.js'
 import * as utils from './utilsCircle.js'
 
 //const sRandomVerticeCircle = 'RandomVerticeCircle';
+const π = Math.PI, tan = Math.tan;
+
 /**
  * Generates a random vertice near the opposite vertice in 1D hypersphere.
  * @class
@@ -33,8 +34,6 @@ class RandomVerticeCircle extends RandomVertice {
 
 		super(params);
 
-		const π = Math.PI, tan = Math.tan;
-//			range = anglesRange.longitude.range;
 		let randomAngles;
 		
 		this.anglesCircle = (utils) => {
@@ -98,7 +97,6 @@ class RandomVerticeCircle extends RandomVertice {
 		
 					if (vertice[0] === longitude) return true;
 					vertice[0] = longitude;
-//					if (params.randomVertices) params.randomVertices.changeCirclesPoints();
 					return true;
 		
 				},
