@@ -635,13 +635,17 @@ class RandomVerticeHSphere extends RandomVertice {
 
 		//overridden methods
 
+/*		
 		Object.defineProperty(this, 'angles', {
 			
 			get: () => { return params.verticesAngles; },
 			set: (anglesNew) => { params.verticesAngles = anglesNew; },
 			
 		});
-		
+*/		
+		this.getAngles = () => { return params.verticesAngles; }
+		this.setAngles = (anglesNew) => { params.verticesAngles = anglesNew; }
+/*		
 		Object.defineProperty(this, 'randomAngles', {
 			
 			get: () => {
@@ -683,6 +687,43 @@ class RandomVerticeHSphere extends RandomVertice {
 			set: (anglesNew) => {},
 			
 		});
+*/		
+		this.getRandomAngles = () => {
+			
+			if (arraySpheres) arraySpheres.length = 0;
+			verticesAngles(false);
+			const randomVerticeId = round(random() * (this.circlesPointsCount - 1))
+
+			if (arraySpheres) {
+				
+				let verticeId = 0, verticeIdPrev;
+				for (let sphereId = 0; sphereId < arraySpheres.length; sphereId++) {
+
+					const sphere = arraySpheres[sphereId];
+					verticeIdPrev = verticeId;
+					verticeId += sphere.sphereAnglesCount;
+					if (verticeId >= randomVerticeId) {
+
+						//случайная вершина находится на текущей сфере.
+
+						params.altitude = sphere.altitude;
+						sphere.cloudSphere.getRandomAngle(randomVerticeId - verticeIdPrev);
+						delete params.altitude;
+						return params.verticesAngles;
+						
+					}
+
+				}
+				console.error(sRandomVerticesHyperSphere + ': get randomAngles. rotated was not found.');
+
+			} else {
+				
+				this.angles = params.verticesAngles;
+				return this.angles;
+
+			}
+			
+		}
 		
 		Object.defineProperty(this, 'cloud', {
 			

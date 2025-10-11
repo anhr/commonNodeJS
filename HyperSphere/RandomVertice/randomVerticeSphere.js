@@ -305,13 +305,17 @@ export class RandomVerticeSphere extends RandomVertice {
 
 		//overridden methods
 
+/*		
 		Object.defineProperty(this, 'angles', {
 			
 			get: () => { return params.verticesAngles; },
 			set: (anglesNew) => { params.verticesAngles = anglesNew; },
 			
 		});
-		
+*/
+		this.getAngles = () => { return params.verticesAngles; }
+		this.setAngles = (anglesNew) => { params.verticesAngles = anglesNew; }
+/*		
 		Object.defineProperty(this, 'randomAngles', {
 
 			get: () => {
@@ -327,6 +331,17 @@ export class RandomVerticeSphere extends RandomVertice {
 			set: (anglesNew) => { },
 
 		});
+*/		
+		this.getRandomAngles = () => {
+			
+			if (arrayCircles) arrayCircles.length = 0;
+			verticesAngles(false);
+			const randomVerticeId = round(random() * (this.circlesPointsCount - 1))
+
+			if (arrayCircles) return this.getRandomAngle(randomVerticeId);
+			else return this.angles;
+			
+		}
 
 		Object.defineProperty(this, 'сirclesParams', {
 			

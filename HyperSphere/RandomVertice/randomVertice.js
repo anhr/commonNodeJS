@@ -38,6 +38,18 @@ class RandomVertice {
 		params.verticesAngles ||= [];
 		
 		this.Center(params);
+		Object.defineProperty(this, 'angles', {
+			
+			get: () => { return this.getAngles(); },
+			set: (anglesNew) => { this.setAngles(anglesNew); },
+			
+		});
+		Object.defineProperty(this, 'randomAngles', {
+
+			get: () => { return this.getRandomAngles(); },
+			set: (anglesNew) => { },
+
+		});
 		
 	}
 	circlesPointsCount;

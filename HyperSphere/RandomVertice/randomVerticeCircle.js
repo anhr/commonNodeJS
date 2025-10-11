@@ -56,13 +56,17 @@ class RandomVerticeCircle extends RandomVertice {
 
 		//overridden methods
 
+/*		
 		Object.defineProperty(this, 'angles', {
 			
 			get: () => { return randomAngles; },
 			set: (anglesNew) => { randomAngles = anglesNew; },
 			
 		});
-		
+*/
+		this.getAngles = () => { return randomAngles; }
+		this.setAngles = (anglesNew) => { randomAngles = anglesNew; }
+/*		
 		Object.defineProperty(this, 'randomAngles', {
 			
 			get: () => {
@@ -74,6 +78,13 @@ class RandomVerticeCircle extends RandomVertice {
 			set: (anglesNew) => {},
 			
 		});
+*/		
+		this.getRandomAngles = () => {
+			
+			randomAngles = [[this.anglesCircle(utils)]];
+			return randomAngles[0];
+			
+		}
 		
 		/////////////////////////////overridden methods
 
