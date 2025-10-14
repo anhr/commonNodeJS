@@ -417,7 +417,13 @@ class RandomVerticeHSphere extends RandomVertice {
 				params.verticesAngles.boNoNew = true;
 				params.altitude = altitude;
 				const cloudSphere = params.CloudSphere ? new params.CloudSphere(params) : new RandomCloudSphere(params, params.boCloud);
-				if (arrayCloudSpheres) arrayCloudSpheres.push(cloudSphere);
+				if (arrayCloudSpheres) {
+					
+					arrayCloudSpheres.push(cloudSphere);
+					params.speresPointsCount ||= [];
+					params.speresPointsCount.push(params.pointsCount);
+
+				}
 				delete params.altitude;
 				delete params.verticesAngles.boNoNew;
 				//Количество точек на текущей сфере равно сумме количества точек на каждой окружности, находящейся на сфере
@@ -589,7 +595,14 @@ class RandomVerticeHSphere extends RandomVertice {
 				this.circlesPointsCount = boAllocateMemory ? undefined : //Во время выделения памяти в массив params.verticesAngles добавляется новый item
 					0;//в противном случае в массиве params.verticesAngles редактируется item с индексом this.circlesPointsCount
 				let altitudePrev = 0;//высота предыдущей сферы
-				if (params.noCreateCloudSphere) params.pointsCount = 0;//обновляется гиперсфера после изменения положения вершин
+				if (params.noCreateCloudSphere) {
+
+					//обновляется гиперсфера после изменения положения вершин
+					
+					params.pointsCount = 0;
+					params.speresPointsCount.length = 0;
+
+				}
 				for( let sphereId = 0; sphereId < spheresCount; sphereId++ ) {
 
 					params.random = k * sphereId;
@@ -613,6 +626,8 @@ class RandomVerticeHSphere extends RandomVertice {
 						params.altitude = altitude;
 						arrayCloudSpheres[sphereId].randomAngles;
 						delete params.altitude;
+						
+						params.speresPointsCount.push(params.pointsCount);
 						
 					}
 					

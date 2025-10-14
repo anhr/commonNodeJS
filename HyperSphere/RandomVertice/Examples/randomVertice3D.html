@@ -57,7 +57,7 @@
 					randomCloud: 2,
 					
 				},
-				mode: 2,
+				mode: 0,
 			
 			};
 			/*https://gemini.google.com/
@@ -497,6 +497,19 @@
 
 //					params.verticesAngles.length = 0;//Если оставить эту строку, то в режиме отображения одной точки randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1 эта точка будет исчезать
 					updateRandomVerticeHyperSphere();
+
+					//select sphere
+					const modes = randomVerticeSettings.modes;
+					switch (randomVerticeSettings.mode){
+
+						case modes.cloud:
+							spheres.onChangeVertice();
+							break;
+						case modes.randomVertice:
+						case modes.randomCloud: break;
+						default: console.error('Invalid mode = ' + mode);
+							
+					}
 					
 				};
 
@@ -522,6 +535,9 @@
 					get: () => { return mode; },
 					set: (modeNew) => {
 
+						spheres.selectSphere(-1);
+						delete params.speresPointsCount;
+						
 						hsRandomVertice.removeHyperSphere();
 						hsRandomVertice = undefined;
 
@@ -536,6 +552,7 @@
 						randomVertice = undefined;
 
 						mode = parseInt(modeNew);
+						spheres.display(parseInt(modeNew) === randomVerticeSettings.modes.cloud);
 /*						
 						const modes = randomVerticeSettings.modes;
 						switch (mode){
@@ -550,6 +567,7 @@
 						}
 */						
 						updateRandomVerticeHyperSphere();
+						spheres.cSpheresAppendChild();
 			
 					},
 			
@@ -557,6 +575,94 @@
 
 			}
 			gui.add(randomVerticeSettings, 'mode', randomVerticeSettings.modes);
+
+			//Divide hypersphere to spheres
+			const Spheres = (fParent, getLanguageCode = () => { return 'en' }, dat = { controllerNameAndTitle: () => {}}) => {
+
+				//Localization
+		
+				const lang = {
+		
+					notSelected: 'not selected',
+		
+					randomVertices: 'Random vertices',
+					
+					spheres: 'Spheres',
+					spheresTitle: 'Spheres of the random vertices',
+				
+				};
+		
+				const _languageCode = getLanguageCode();
+		
+				switch (_languageCode) {
+		
+					case 'ru'://Russian language
+		
+						lang.notSelected = 'Не выбрана';
+						
+						lang.randomVertices = 'Случайные вершины';
+						
+						lang.spheres = 'Сферы';
+						lang.spheresTitle = 'Сферы случайных вершин';
+		
+						break;
+					default://Custom language
+		
+				}
+//				let aSphere;
+				const fRandomVertices = fParent.addFolder(lang.randomVertices),
+					cSpheres = fRandomVertices.add({ Spheres: lang.notSelected }, 'Spheres', { [lang.notSelected]: -1 }).onChange((value) => {
+		
+						const sphereId = parseInt(value);
+						const verticesRange = { start: 0, count: 0, }
+						if (sphereId != -1) {
+
+							verticesRange.start = sphereId > 0 ? params.speresPointsCount[sphereId - 1] : 0;
+							verticesRange.count = params.speresPointsCount[sphereId] - verticesRange.start;
+		
+						} else {
+		
+							verticesRange.start = 0;
+							verticesRange.count = params.pointsCount;
+		
+						}
+						hsRandomVertice.setVerticesRange(verticesRange.start, verticesRange.count);
+						
+					});
+				cSpheres.__select[0].selected = true;
+				dat.controllerNameAndTitle(cSpheres, lang.spheres, lang.spheresTitle);
+				const cSpheresAppendChild = () => {
+		
+					if (
+						!params.speresPointsCount ||//Список сфер не нужен
+						(cSpheres.__select.length != 1 )//Список сфер уже создан
+					) return;
+					const appendItem = (innerHTML, value = innerHTML) => {
+						
+						const opt = document.createElement('option');
+						opt.innerHTML = innerHTML;
+						opt.setAttribute('value', value);
+						cSpheres.__select.appendChild(opt);
+						
+					};
+					let itemId = 0;
+					appendItem(itemId++);
+					for (; itemId < params.speresPointsCount.length; itemId++) { appendItem(itemId); }
+							
+				}
+				cSpheresAppendChild();
+				return {
+					
+					onChangeVertice: () => { cSpheres.__onChange(cSpheres.__select.selectedIndex - 1); },
+					selectSphere: (index) => { cSpheres.setValue(index); },
+					display: () => { fRandomVertices.domElement.style.display = randomVerticeSettings.mode === randomVerticeSettings.modes.cloud ? 'block' : 'none'; },
+					cSpheresAppendChild: cSpheresAppendChild,
+
+				}
+				
+			}
+			const spheres = Spheres(gui);
+			spheres.display(randomVerticeSettings.mode === randomVerticeSettings.modes.cloud);
 			
 			//////////////////////////////////////////GUI
 
