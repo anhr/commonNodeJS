@@ -585,7 +585,7 @@
 		
 					notSelected: 'not selected',
 		
-					randomVertices: 'Random vertices',
+//					randomVertices: 'Random vertices',
 					
 					spheres: 'Spheres',
 					spheresTitle: 'Spheres of the random vertices',
@@ -600,7 +600,7 @@
 		
 						lang.notSelected = 'Не выбрана';
 						
-						lang.randomVertices = 'Случайные вершины';
+//						lang.randomVertices = 'Случайные вершины';
 						
 						lang.spheres = 'Сферы';
 						lang.spheresTitle = 'Сферы случайных вершин';
@@ -609,9 +609,8 @@
 					default://Custom language
 		
 				}
-//				let aSphere;
-				const fRandomVertices = fParent.addFolder(lang.randomVertices),
-					cSpheres = fRandomVertices.add({ Spheres: lang.notSelected }, 'Spheres', { [lang.notSelected]: -1 }).onChange((value) => {
+//				const fRandomVertices = fParent.addFolder(lang.randomVertices),
+				const cSpheres = fParent.add({ Spheres: lang.notSelected }, 'Spheres', { [lang.notSelected]: -1 }).onChange((value) => {
 		
 						const sphereId = parseInt(value);
 						const verticesRange = { start: 0, count: 0, }
@@ -655,7 +654,7 @@
 					
 					onChangeVertice: () => { cSpheres.__onChange(cSpheres.__select.selectedIndex - 1); },
 					selectSphere: (index) => { cSpheres.setValue(index); },
-					display: () => { fRandomVertices.domElement.style.display = randomVerticeSettings.mode === randomVerticeSettings.modes.cloud ? 'block' : 'none'; },
+					display: () => { cSpheres.domElement.parentElement.parentElement.style.display = randomVerticeSettings.mode === randomVerticeSettings.modes.cloud ? 'block' : 'none'; },
 					cSpheresAppendChild: cSpheresAppendChild,
 
 				}
