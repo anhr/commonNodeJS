@@ -603,6 +603,7 @@ class RandomVerticeHSphere extends RandomVertice {
 					params.speresPointsCount.length = 0;
 
 				}
+/*				
 				for( let sphereId = 0; sphereId < spheresCount; sphereId++ ) {
 
 					params.random = k * sphereId;
@@ -632,7 +633,7 @@ class RandomVerticeHSphere extends RandomVertice {
 					}
 					
 				}
-/*				
+*/				
 				const sphereId = Math.round(spheresCount / 2);
 				params.random = k * sphereId;
 
@@ -659,7 +660,7 @@ arrayCloudSpheres[0].randomAngles;
 					params.speresPointsCount.push(params.pointsCount);
 					
 				}
-*/				
+				
 				delete params.random;
 				delete params.b;
 				
