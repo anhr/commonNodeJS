@@ -632,6 +632,34 @@ class RandomVerticeHSphere extends RandomVertice {
 					}
 					
 				}
+/*				
+				const sphereId = Math.round(spheresCount / 2);
+				params.random = k * sphereId;
+
+				const altitude = this.altitude(utils),
+					angleStep = abs(altitude - altitudePrev),//угол между соседними точками на сфере
+					randomVerticeAnglesParams = params.noCreateCloudSphere ? undefined : getRandomVerticeAnglesParams(altitude, angleStep);
+				if (arraySpheres && !boAllocateMemory) {
+
+					const sphereAnglesCount = randomVerticeAnglesParams.sphereAnglesCount;
+					arraySpheres.push({ altitude, angleStep, altitudeStep: randomVerticeAnglesParams.altitudeStep, altitudeMid: randomVerticeAnglesParams.altitudeMid, sphereAnglesCount, cloudSphere: randomVerticeAnglesParams.cloudSphere, });
+					this.circlesPointsCount += sphereAnglesCount;
+					altitudePrev = altitude; 
+
+				}
+				else if (!randomVerticeAnglesParams) {
+
+					//обновляется гиперсфера после изменения положения вершин
+					
+					params.altitude = altitude;
+//					arrayCloudSpheres[sphereId].randomAngles;
+arrayCloudSpheres[0].randomAngles;
+					delete params.altitude;
+					
+					params.speresPointsCount.push(params.pointsCount);
+					
+				}
+*/				
 				delete params.random;
 				delete params.b;
 				
