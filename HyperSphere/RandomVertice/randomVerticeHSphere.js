@@ -16,13 +16,13 @@
 import RandomVertice from './randomVertice.js';
 import { anglesIdMax } from './randomVerticeSphere.js';
 import anglesRange from '../anglesRange.js'
-import * as utils from './utilsHyperSphere.js'
+//import * as utils from './utilsHyperSphere.js'
 import RandomCloudSphere from './randomCloudSphere.js';
 
 const sRandomVerticesHyperSphere = 'RandomVerticesHyperSphere',
 	π = Math.PI, abs = Math.abs, round = Math.round, random = Math.random,
-	sin = Math.sin, asin = Math.asin, cos = Math.cos, atan = Math.atan, atan2 = Math.atan2;// tan = Math.tan;
-//	range = anglesRange.longitude.range;
+//	sin = Math.sin, asin = Math.asin, cos = Math.cos, atan2 = Math.atan2,
+	atan = Math.atan;
 
 /**
  * Generates a random vertice near the opposite vertice in 3D hypersphere.
@@ -148,37 +148,43 @@ class RandomVerticeHSphere extends RandomVertice {
 					Писать все формулы в одну строку.
 					*/
 					const calculateCentralAngle = (point1, point2) => {
-					  const {
-					    latitude: lat1,
-					    longitude: lon1,
-					    altitude: alt1
-					  } = point1;
-					  const {
-					    latitude: lat2,
-					    longitude: lon2,
-					    altitude: alt2
-					  } = point2;
+
+						const {
+
+							latitude: lat1,
+							longitude: lon1,
+							altitude: alt1
+
+						} = point1;
+						const {
+
+							latitude: lat2,
+							longitude: lon2,
+							altitude: alt2
+
+						} = point2;
 					
-					  // Convert degrees to radians if necessary
-					  // Assuming input is already in radians based on the prompt
-					  // const lat1Rad = toRadians(lat1);
-					  // const lon1Rad = toRadians(lon1);
-					  // const alt1Rad = toRadians(alt1);
-					  // const lat2Rad = toRadians(lat2);
-					  // const lon2Rad = toRadians(lon2);
-					  // const alt2Rad = toRadians(alt2);
+						// Convert degrees to radians if necessary
+						// Assuming input is already in radians based on the prompt
+						// const lat1Rad = toRadians(lat1);
+						// const lon1Rad = toRadians(lon1);
+						// const alt1Rad = toRadians(alt1);
+						// const lat2Rad = toRadians(lat2);
+						// const lon2Rad = toRadians(lon2);
+						// const alt2Rad = toRadians(alt2);
 					
-					  const cosDeltaLambda = Math.cos(lat1) * Math.cos(lat2) + Math.sin(lat1) * Math.sin(lat2) * Math.cos(lon1 - lon2);
+						const cosDeltaLambda = Math.cos(lat1) * Math.cos(lat2) + Math.sin(lat1) * Math.sin(lat2) * Math.cos(lon1 - lon2);
 					
-					  const cosTheta = Math.cos(alt1) * Math.cos(alt2) + Math.sin(alt1) * Math.sin(alt2) * cosDeltaLambda;
+						const cosTheta = Math.cos(alt1) * Math.cos(alt2) + Math.sin(alt1) * Math.sin(alt2) * cosDeltaLambda;
 					
-					  // Ensure the value is within the valid range for acos to avoid NaN errors
-					  const clampedCosTheta = Math.max(-1, Math.min(1, cosTheta));
+						// Ensure the value is within the valid range for acos to avoid NaN errors
+						const clampedCosTheta = Math.max(-1, Math.min(1, cosTheta));
 					
-					  // The central angle in radians
-					  const centralAngle = Math.acos(clampedCosTheta);
+						// The central angle in radians
+						const centralAngle = Math.acos(clampedCosTheta);
 					
-					  return centralAngle;
+						return centralAngle;
+
 					}
 					/*
 					// Example usage with points in radians
@@ -290,125 +296,135 @@ class RandomVerticeHSphere extends RandomVertice {
 
 					rotate: (point, rotationAngles) => {
 
-					/*https://https://gemini.google.com/app/45b136829aad53e4
-					Есть точка на поверхности 3-мерной гиперсферы встроенной в 4-мерное евклидово пространство в полярной системе координат. Начало полярной системы координат находится в центре сферы.
+						/*https://https://gemini.google.com/app/45b136829aad53e4
+						Есть точка на поверхности 3-мерной гиперсферы встроенной в 4-мерное евклидово пространство в полярной системе координат. Начало полярной системы координат находится в центре сферы.
 
-					Положение точки обозначить как
-					point.latitude - широта (зенитный угол) в диапазоне от -π/2 до π/2,
-					point.longitude - долгота (азимутальный угол)  в диапазоне от -π до π,
-					point.altitude - полярный угол от оси W  в диапазоне от 0 до π.
+						Положение точки обозначить как
+						point.latitude - широта (зенитный угол) в диапазоне от -π/2 до π/2,
+						point.longitude - долгота (азимутальный угол)  в диапазоне от -π до π,
+						point.altitude - полярный угол от оси W  в диапазоне от 0 до π.
 
-					Написать на javascript исходный код поворота этой точки на произвольный угол с использованием углов Эйлера. Включить в исходный код пример использования.
-					Результат поворота должен быть в полярной системе коодинат. Положение точки и результат поворота измеряется в радианах.
-					*/
-					/**
-					 * Преобразует полярные координаты в 4D декартовы.
-					 * @param {number} latitude - Широта (зенитный угол), от -PI/2 до PI/2.
-					 * @param {number} longitude - Долгота (азимутальный угол), от -PI до PI.
-					 * @param {number} altitude - Полярный угол от оси W, от 0 до PI.
-					 * @returns {{x: number, y: number, z: number, w: number}} - 4D декартовы координаты.
-					 */
-					function toCartesian4D(latitude, longitude, altitude) {
-					    const cosAlt = Math.cos(altitude);
-					    const sinAlt = Math.sin(altitude);
-					    const cosLat = Math.cos(latitude);
-					    const sinLat = Math.sin(latitude);
-					    const cosLong = Math.cos(longitude);
-					    const sinLong = Math.sin(longitude);
+						Написать на javascript исходный код поворота этой точки на произвольный угол с использованием углов Эйлера. Включить в исходный код пример использования.
+						Результат поворота должен быть в полярной системе коодинат. Положение точки и результат поворота измеряется в радианах.
+						*/
+						/**
+						 * Преобразует полярные координаты в 4D декартовы.
+						 * @param {number} latitude - Широта (зенитный угол), от -PI/2 до PI/2.
+						 * @param {number} longitude - Долгота (азимутальный угол), от -PI до PI.
+						 * @param {number} altitude - Полярный угол от оси W, от 0 до PI.
+						 * @returns {{x: number, y: number, z: number, w: number}} - 4D декартовы координаты.
+						 */
+						const toCartesian4D = (latitude, longitude, altitude) => {
+
+							const cosAlt = Math.cos(altitude);
+							const sinAlt = Math.sin(altitude);
+							const cosLat = Math.cos(latitude);
+							const sinLat = Math.sin(latitude);
+							const cosLong = Math.cos(longitude);
+							const sinLong = Math.sin(longitude);
 					
-					    return {
-					        x: cosLong * cosLat * sinAlt,
-					        y: sinLong * cosLat * sinAlt,
-					        z: sinLat * sinAlt,
-					        w: cosAlt
-					    };
-					}
-					
-					/**
-					 * Преобразует 4D декартовы координаты в полярные.
-					 * @param {{x: number, y: number, z: number, w: number}} point - 4D декартовы координаты.
-					 * @returns {{latitude: number, longitude: number, altitude: number}} - Полярные координаты.
-					 */
-					function toPolar4D(point) {
-						const { x, y, z, w } = point;
-						const altitude = Math.acos(w);
-					
-						if (altitude === 0) {
-							// Случай, когда точка находится на оси W.
-							return Vertice([0, 0, 0]);
+							return {
+								x: cosLong * cosLat * sinAlt,
+								y: sinLong * cosLat * sinAlt,
+								z: sinLat * sinAlt,
+								w: cosAlt
+							};
 
 						}
 					
-						const sinAlt = Math.sin(altitude);
-						const latitude = Math.asin(z / sinAlt);
-						const longitude = Math.atan2(y, x);
+						/**
+						 * Преобразует 4D декартовы координаты в полярные.
+						 * @param {{x: number, y: number, z: number, w: number}} point - 4D декартовы координаты.
+						 * @returns {{latitude: number, longitude: number, altitude: number}} - Полярные координаты.
+						 */
+						const toPolar4D = (point) => {
+
+							const { x, y, z, w } = point;
+							const altitude = Math.acos(w);
 					
-						return Vertice([altitude, latitude, longitude]);
+							if (altitude === 0) {
+								// Случай, когда точка находится на оси W.
+								return Vertice([0, 0, 0]);
+
+							}
+					
+							const sinAlt = Math.sin(altitude);
+							const latitude = Math.asin(z / sinAlt);
+							const longitude = Math.atan2(y, x);
+					
+							return Vertice([altitude, latitude, longitude]);
 						
-					}
+						}
 					
-					/**
-					 * Поворачивает точку на 3-мерной гиперсфере с использованием углов Эйлера.
-					 * @param {{latitude: number, longitude: number, altitude: number}} point - Полярные координаты точки.
-					 * @param {{xy: number, xz: number, yz: number}} eulerAngles - Углы поворота в радианах для плоскостей XY, XZ и YZ.
-					 * @returns {{latitude: number, longitude: number, altitude: number}} - Повернутая точка в полярных координатах.
-					 */
-					function rotatePoint(point, eulerAngles) {
+						/**
+						 * Поворачивает точку на 3-мерной гиперсфере с использованием углов Эйлера.
+						 * @param {{latitude: number, longitude: number, altitude: number}} point - Полярные координаты точки.
+						 * @param {{xy: number, xz: number, yz: number}} eulerAngles - Углы поворота в радианах для плоскостей XY, XZ и YZ.
+						 * @returns {{latitude: number, longitude: number, altitude: number}} - Повернутая точка в полярных координатах.
+						 */
+						const rotatePoint = (point, eulerAngles) => {
 
-						let { x, y, z, w } = toCartesian4D(point.latitude, point.longitude, point.altitude);
+							let { x, y, z, w } = toCartesian4D(point.latitude, point.longitude, point.altitude);
 					
-						// Матрица поворота для плоскости XY (поворот вокруг оси ZW)
-						const cosXY = Math.cos(eulerAngles.xy);
-						const sinXY = Math.sin(eulerAngles.xy);
-						const newX = x * cosXY - y * sinXY;
-						const newY = x * sinXY + y * cosXY;
-						x = newX;
-						y = newY;
+							// Матрица поворота для плоскости XY (поворот вокруг оси ZW)
+							const cosXY = Math.cos(eulerAngles.xy);
+							const sinXY = Math.sin(eulerAngles.xy);
+							const newX = x * cosXY - y * sinXY;
+							const newY = x * sinXY + y * cosXY;
+							x = newX;
+							y = newY;
 					
-						// Матрица поворота для плоскости XZ (поворот вокруг оси YW)
-						const cosXZ = Math.cos(eulerAngles.xz);
-						const sinXZ = Math.sin(eulerAngles.xz);
-						const newX2 = x * cosXZ - z * sinXZ;
-						const newZ = x * sinXZ + z * cosXZ;
-						x = newX2;
-						z = newZ;
+							// Матрица поворота для плоскости XZ (поворот вокруг оси YW)
+							const cosXZ = Math.cos(eulerAngles.xz);
+							const sinXZ = Math.sin(eulerAngles.xz);
+							const newX2 = x * cosXZ - z * sinXZ;
+							const newZ = x * sinXZ + z * cosXZ;
+							x = newX2;
+							z = newZ;
 					
-						// Матрица поворота для плоскости YZ (поворот вокруг оси XW)
-						const cosYZ = Math.cos(eulerAngles.yz);
-						const sinYZ = Math.sin(eulerAngles.yz);
-						const newY2 = y * cosYZ - z * sinYZ;
-						const newZ2 = y * sinYZ + z * cosYZ;
-						y = newY2;
-						z = newZ2;
+							// Матрица поворота для плоскости YZ (поворот вокруг оси XW)
+							const cosYZ = Math.cos(eulerAngles.yz);
+							const sinYZ = Math.sin(eulerAngles.yz);
+							const newY2 = y * cosYZ - z * sinYZ;
+							const newZ2 = y * sinYZ + z * cosYZ;
+							y = newY2;
+							z = newZ2;
 					
-						return toPolar4D({ x, y, z, w });
-					}
+							return toPolar4D({ x, y, z, w });
 
-					/*
-					// Пример использования
-					const myPoint = {
-					    latitude: Math.PI / 4,    // 45 градусов
-					    longitude: Math.PI / 2,   // 90 градусов
-					    altitude: Math.PI / 3     // 60 градусов
-					};
+						}
+
+						/*
+						// Пример использования
+						const myPoint = {
+
+							latitude: Math.PI / 4,// 45 градусов
+							longitude: Math.PI / 2,// 90 градусов
+							altitude: Math.PI / 3// 60 градусов
+
+						};
 					
-					const rotationAngles = {
-					    xy: Math.PI / 6,    // Поворот на 30 градусов в плоскости XY
-					    xz: Math.PI / 4,    // Поворот на 45 градусов в плоскости XZ
-					    yz: -Math.PI / 3    // Поворот на -60 градусов в плоскости YZ
-					};
+						const rotationAngles = {
+
+							xy: Math.PI / 6,// Поворот на 30 градусов в плоскости XY
+							xz: Math.PI / 4,// Поворот на 45 градусов в плоскости XZ
+							yz: -Math.PI / 3// Поворот на -60 градусов в плоскости YZ
+
+						};
 					
-					const rotatedPoint = rotatePoint(myPoint, rotationAngles);
+						const rotatedPoint = rotatePoint(myPoint, rotationAngles);
 					
-					console.log('Начальная точка:', myPoint);
-					console.log('Повернутая точка:', rotatedPoint);
-					*/
-					const eulerAngles = {
-					    xy: rotationAngles.latitude,    // Поворот в плоскости XY
-					    xz: rotationAngles.longitude,    // Поворот в плоскости XZ
-					    yz: rotationAngles.altitude    // Поворот в плоскости YZ
-					};
-					return rotatePoint(Vertice(point, params.altitude), eulerAngles);
+						console.log('Начальная точка:', myPoint);
+						console.log('Повернутая точка:', rotatedPoint);
+						*/
+						const eulerAngles = {
+
+							xy: rotationAngles.latitude - π / 4,// Поворот в плоскости XY
+							xz: -rotationAngles.longitude - π / 2,// Поворот в плоскости XZ
+							yz: rotationAngles.altitude// Поворот в плоскости YZ
+
+						};
+						return rotatePoint(Vertice(point, params.altitude), eulerAngles);
 					
 					},
 					verticesAngles: this.verticesAngles,
@@ -454,6 +470,7 @@ class RandomVerticeHSphere extends RandomVertice {
 				return { angleStep1, altitudeMin, altitudeMax, altitudeStep, altitudeMid, boSouthernSphere, boNorthernSphere, sphereAnglesCount, cloudSphere };
 
 			},
+/*
 			getRandomVerticeAngles = (altitude, altitudeStep, altitudeMid, circleAnglesCount, angleStep1, angleId) => {
 				
 				const randomVerticeAngles = [
@@ -507,7 +524,7 @@ class RandomVerticeHSphere extends RandomVertice {
 
 				//Когда вычисляется одна точка arrayCircles != undefined или randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1 то this.verticesAngles пустой
 				if (!arrayCircles && (this.circlesPointsCount >= this.verticesAngles.length)) console.error(sRandomVerticesHyperSphere + '.verticesAngles: Allocate memory failed! this.circlesPointsCount = ' + this.circlesPointsCount + ' >= this.verticesAngles.length = ' + this.verticesAngles.length);
-
+*/
 				/*Есть точка на поверхности сферы в полярной системе координат. Начало полярной системы координат находится в центре сферы.
 				Написать на javascript исходный код поворота этой точки на произвольный угол с использованием углов Эйлера.
 				Полярный угол должен быть в диапазоне от π/2 на северном полюсе до -π/2 на южном полюсе. Азимутальный угол должен быть в диапазоне от -π до π.
@@ -523,6 +540,7 @@ class RandomVerticeHSphere extends RandomVertice {
 				 * @param {number} γ - Угол Эйлера вокруг оси Z (поворот по Z)
 				 * @returns {Object} Новые полярные координаты {latitude, longitude}
 				 */
+/*
 				const rotatePointWithEulerAngles = (latitude, longitude, α, β, γ) => {
 					// 1. Преобразование полярных координат в декартовы
 					const x = cos(latitude) * cos(longitude),
@@ -556,7 +574,7 @@ class RandomVerticeHSphere extends RandomVertice {
 					
 					return arrayAngles;
 				}
-
+*/
 				/*
 				// Пример использования:
 				const initialLatitude = Math.PI/4; // 45 градусов от экватора
@@ -577,6 +595,7 @@ class RandomVerticeHSphere extends RandomVertice {
 				});
 				console.log("После поворота:", rotated);
 				*/
+/*
 				const initialLatitude = randomVerticeAngles[0],
 					initialLongitude = randomVerticeAngles[1],
 				
@@ -587,6 +606,7 @@ class RandomVerticeHSphere extends RandomVertice {
 				return rotatePointWithEulerAngles(initialLatitude, initialLongitude, α, β, γ);
 				
 			},
+*/
 			verticesAngles = (boAllocateMemory) => {
 
 				//Гиперсфера случайных точек состоит из набора сфер.
@@ -637,7 +657,8 @@ class RandomVerticeHSphere extends RandomVertice {
 				const sphereId = Math.round(spheresCount / 2);
 				params.random = k * sphereId;
 
-				const altitude = this.altitude(utils),
+//				const altitude = this.altitude(utils),
+				const altitude = params.oppositeVertice.altitude,
 					angleStep = abs(altitude - altitudePrev),//угол между соседними точками на сфере
 					randomVerticeAnglesParams = params.noCreateCloudSphere ? undefined : getRandomVerticeAnglesParams(altitude, angleStep);
 				if (arraySpheres && !boAllocateMemory) {
