@@ -668,9 +668,12 @@ arrayCloudSpheres[0].randomAngles;
 		if (!arraySpheres) {//не выделять this.verticesAngles если нужно вычислить одну случайную точку randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1
 			
 			//Allocate this.verticesAngles memory
+/*			
 			params.boAllocateMemory = true;
 			verticesAngles(params.boAllocateMemory);
 			delete params.boAllocateMemory;
+*/			
+			verticesAngles(true);
 
 		}
 		
