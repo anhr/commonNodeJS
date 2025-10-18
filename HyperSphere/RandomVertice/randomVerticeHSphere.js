@@ -21,7 +21,7 @@ import RandomCloudSphere from './randomCloudSphere.js';
 
 const sRandomVerticesHyperSphere = 'RandomVerticesHyperSphere',
 	π = Math.PI, abs = Math.abs, round = Math.round, random = Math.random,
-//	sin = Math.sin, asin = Math.asin, cos = Math.cos, atan2 = Math.atan2,
+//	sin = Math.sin, cos = Math.cos, asin = Math.asin, atan2 = Math.atan2,
 	atan = Math.atan;
 
 /**
@@ -294,7 +294,320 @@ class RandomVerticeHSphere extends RandomVertice {
 
 				params.hyperSphere = {
 
-					rotate: (point, rotationAngles) => {
+					vertice: (point) => { return Vertice(point, params.altitude); },
+/*
+ 					rotateDeepseek: (point, rotationAngles) => {
+
+						point = Vertice(point);
+						point.altitude = params.altitude
+*/
+						/*https://chat.deepseek.com/a/chat/s/acc2252d-64ac-4963-94e9-89b37d7482dd
+						Есть точка на поверхности 3-мерной гиперсферы встроенной в 4-мерное евклидово пространство в полярной системе координат. Начало полярной системы координат находится в центре сферы.
+
+						Положение точки обозначить как
+						point.latitude - широта (зенитный угол) в диапазоне от -π/2 до π/2,
+						point.longitude - долгота (азимутальный угол)  в диапазоне от -π до π,
+						point.altitude - полярный угол от оси W  в диапазоне от 0 до π.
+
+						Написать на javascript исходный код поворота этой точки на произвольный угол с использованием углов Эйлера. Включить в исходный код пример использования.
+						Результат поворота должен быть в полярной системе коодинат. Положение точки и результат поворота измеряется в радианах.
+						*/
+/*
+						class HyperSpherePoint {
+							constructor(latitude, longitude, altitude) {
+								this.latitude = latitude;   // зенитный угол (-π/2 до π/2)
+								this.longitude = longitude; // азимутальный угол (-π до π)
+								this.altitude = altitude;   // полярный угол от оси W (0 до π)
+							}
+
+							// Преобразование полярных координат в декартовы (4D)
+							toCartesian() {
+								const cosAlt = Math.cos(this.altitude);
+								const sinAlt = Math.sin(this.altitude);
+								const cosLat = Math.cos(this.latitude);
+								const sinLat = Math.sin(this.latitude);
+								const cosLon = Math.cos(this.longitude);
+								const sinLon = Math.sin(this.longitude);
+
+								// Координаты в 4D пространстве
+								const w = cosAlt;
+								const x = sinAlt * cosLat * cosLon;
+								const y = sinAlt * cosLat * sinLon;
+								const z = sinAlt * sinLat;
+
+								return { w, x, y, z };
+							}
+
+							// Преобразование декартовых координат в полярные
+							static fromCartesian(w, x, y, z) {
+								const alt = Math.acos(w); // altitude (0 до π)
+
+								if (alt === 0 || alt === Math.PI) {
+									// Особый случай: точка на полюсах
+									return new HyperSpherePoint(0, 0, alt);
+								}
+
+								const lat = Math.asin(z / Math.sin(alt)); // latitude (-π/2 до π/2)
+
+								let lon = Math.atan2(y, x); // longitude (-π до π)
+
+								return new HyperSpherePoint(lat, lon, alt);
+							}
+
+							// Нормализация углов в допустимые диапазоны
+							normalize() {
+								// Нормализация долготы в диапазон [-π, π]
+								let lon = this.longitude;
+								while (lon > Math.PI) lon -= 2 * Math.PI;
+								while (lon < -Math.PI) lon += 2 * Math.PI;
+
+								// Обеспечение корректности широты
+								let lat = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, this.latitude));
+
+								// Обеспечение корректности полярного угла
+								let alt = Math.max(0, Math.min(Math.PI, this.altitude));
+
+								return new HyperSpherePoint(lat, lon, alt);
+							}
+						}
+
+						class HyperSphereRotation {
+							// Матрица поворота для углов Эйлера в 4D пространстве
+							static eulerRotationMatrix(alpha, beta, gamma) {
+								// Повороты вокруг осей XY, XZ, XW, YZ, YW, ZW
+								// Для простоты используем последовательность поворотов: XY, XZ, YZ
+
+								const cosA = Math.cos(alpha);
+								const sinA = Math.sin(alpha);
+								const cosB = Math.cos(beta);
+								const sinB = Math.sin(beta);
+								const cosC = Math.cos(gamma);
+								const sinC = Math.sin(gamma);
+
+								// Матрица поворота 4x4
+								return [
+									[
+										cosA * cosB,
+										cosA * sinB * sinC - sinA * cosC,
+										cosA * sinB * cosC + sinA * sinC,
+										0
+									],
+									[
+										sinA * cosB,
+										sinA * sinB * sinC + cosA * cosC,
+										sinA * sinB * cosC - cosA * sinC,
+										0
+									],
+									[
+										-sinB,
+										cosB * sinC,
+										cosB * cosC,
+										0
+									],
+									[
+										0, 0, 0, 1
+									]
+								];
+							}
+
+							// Применение матрицы поворота к точке
+							static applyRotation(point, rotationMatrix) {
+								const cartesian = point.toCartesian();
+								const vec = [cartesian.w, cartesian.x, cartesian.y, cartesian.z];
+								const result = [0, 0, 0, 0];
+
+								// Умножение матрицы на вектор
+								for (let i = 0; i < 4; i++) {
+									for (let j = 0; j < 4; j++) {
+										result[i] += rotationMatrix[i][j] * vec[j];
+									}
+								}
+
+								// Преобразование обратно в полярные координаты
+								return HyperSpherePoint.fromCartesian(result[0], result[1], result[2], result[3]).normalize();
+								
+							}
+
+							// Поворот точки с использованием углов Эйлера
+							static rotatePoint(point, alpha, beta, gamma) {
+								const rotationMatrix = this.eulerRotationMatrix(alpha, beta, gamma);
+								return this.applyRotation(point, rotationMatrix);
+							}
+						}
+
+						// Создание начальной точки
+						const initialPoint = new HyperSpherePoint( point.latitude, point.longitude, point.altitude, );
+
+						// Углы Эйлера для поворота
+						const alpha = rotationAngles.longitude;
+						const beta = rotationAngles.latitude;
+						const gamma = rotationAngles.altitude;
+
+						// Применение поворота
+						const rotatedPoint = HyperSphereRotation.rotatePoint(initialPoint, alpha, beta, gamma);
+
+						return Vertice([rotatedPoint.altitude, rotatedPoint.latitude, rotatedPoint.longitude]);
+*/
+						/*
+						// Пример использования
+						function example() {
+							console.log("=== Поворот точки на гиперсфере ===");
+
+							// Создание начальной точки
+							const initialPoint = new HyperSpherePoint(
+								Math.PI / 6,  // latitude: 30°
+								Math.PI / 4,  // longitude: 45°
+								Math.PI / 3   // altitude: 60°
+							);
+
+							console.log("Начальная точка:");
+							console.log(`Широта: ${initialPoint.latitude.toFixed(4)} рад`);
+							console.log(`Долгота: ${initialPoint.longitude.toFixed(4)} рад`);
+							console.log(`Полярный угол: ${initialPoint.altitude.toFixed(4)} рад`);
+
+							// Углы Эйлера для поворота
+							const alpha = Math.PI / 6;  // 30°
+							const beta = Math.PI / 4;   // 45°
+							const gamma = Math.PI / 3;  // 60°
+
+							console.log("\nУглы поворота Эйлера:");
+							console.log(`alpha: ${alpha.toFixed(4)} рад`);
+							console.log(`beta: ${beta.toFixed(4)} рад`);
+							console.log(`gamma: ${gamma.toFixed(4)} рад`);
+
+							// Применение поворота
+							const rotatedPoint = HyperSphereRotation.rotatePoint(initialPoint, alpha, beta, gamma);
+
+							console.log("\nПовёрнутая точка:");
+							console.log(`Широта: ${rotatedPoint.latitude.toFixed(4)} рад`);
+							console.log(`Долгота: ${rotatedPoint.longitude.toFixed(4)} рад`);
+							console.log(`Полярный угол: ${rotatedPoint.altitude.toFixed(4)} рад`);
+
+							// Проверка преобразований
+							console.log("\n=== Проверка преобразований ===");
+							const cartesian = initialPoint.toCartesian();
+							console.log("Декартовы координаты начальной точки:");
+							console.log(`w: ${cartesian.w.toFixed(4)}, x: ${cartesian.x.toFixed(4)}, y: ${cartesian.y.toFixed(4)}, z: ${cartesian.z.toFixed(4)}`);
+
+							const backToPolar = HyperSpherePoint.fromCartesian(cartesian.w, cartesian.x, cartesian.y, cartesian.z);
+							console.log("Обратное преобразование в полярные:");
+							console.log(`Широта: ${backToPolar.latitude.toFixed(4)} рад`);
+							console.log(`Долгота: ${backToPolar.longitude.toFixed(4)} рад`);
+							console.log(`Полярный угол: ${backToPolar.altitude.toFixed(4)} рад`);
+						}
+
+						// Дополнительный пример с различными углами
+						function advancedExample() {
+							console.log("\n=== Расширенный пример ===");
+
+							// Точка на экваторе
+							const equatorPoint = new HyperSpherePoint(0, 0, Math.PI / 2);
+							console.log("Точка на экваторе:");
+							console.log(`Широта: ${equatorPoint.latitude.toFixed(4)} рад`);
+
+							// Поворот на 90 градусов вокруг разных осей
+							const rotated1 = HyperSphereRotation.rotatePoint(equatorPoint, Math.PI / 2, 0, 0);
+							console.log("\nПосле поворота на 90° вокруг первой оси:");
+							console.log(`Широта: ${rotated1.latitude.toFixed(4)} рад`);
+
+							const rotated2 = HyperSphereRotation.rotatePoint(equatorPoint, 0, Math.PI / 2, 0);
+							console.log("\nПосле поворота на 90° вокруг второй оси:");
+							console.log(`Широта: ${rotated2.latitude.toFixed(4)} рад`);
+						}
+
+						// Запуск примеров
+						example();
+						advancedExample();
+						*/
+
+//						return point;
+
+//					},
+//					rotate: (point, rotationAngles) => {
+
+						/*Есть точка на поверхности сферы в полярной системе координат. Начало полярной системы координат находится в центре сферы.
+						Написать на javascript исходный код поворота этой точки на произвольный угол с использованием углов Эйлера.
+						Полярный угол должен быть в диапазоне от π/2 на северном полюсе до -π/2 на южном полюсе. Азимутальный угол должен быть в диапазоне от -π до π.
+						Результат поворота должен быть в полярной системе коодинат.
+						*/
+
+						/**
+						 * Поворот точки на поверхности сферы с использованием углов Эйлера
+						 * @param {number} latitude - Полярный угол (θ) в диапазоне [-π/2, π/2]
+						 * @param {number} longitude - Азимутальный угол (φ) в диапазоне [-π, π]
+						 * @param {number} α - Угол Эйлера вокруг оси Z (поворот по Z). Поворот вокруг собственной оси
+						 * @param {number} β - Угол Эйлера вокруг оси X (поворот по X)
+						 * @param {number} γ - Угол Эйлера вокруг оси Z (поворот по Z)
+						 * @returns {Object} Новые полярные координаты {latitude, longitude}
+						 */
+/*
+						const rotatePointWithEulerAngles = (latitude, longitude, α, β, γ) => {
+							// 1. Преобразование полярных координат в декартовы
+							const x = cos(latitude) * cos(longitude),
+								y = cos(latitude) * sin(longitude),
+								z = sin(latitude),
+							
+							// 2. Применение поворотов с использованием углов Эйлера (Z-X-Z)
+							// Поворот α вокруг оси Z
+								x1 = α === 0 ? x : x * cos(α) - y * sin(α),
+								y1 = α === 0 ? y : x * sin(α) + y * cos(α),
+								z1 = z,
+							
+							// Поворот β вокруг новой оси X
+								x2 = x1,
+								y2 = y1 * cos(β) - z1 * sin(β),
+								z2 = y1 * sin(β) + z1 * cos(β),
+							
+							// Поворот γ вокруг новой оси Z
+								x3 = x2 * cos(γ) - y2 * sin(γ),
+								y3 = x2 * sin(γ) + y2 * cos(γ),
+								z3 = z2,
+							
+							// 3. Преобразование обратно в полярные координаты
+								newLatitude = asin(z3), // В диапазоне [-π/2, π/2]
+								newLongitude = atan2(y3, x3), // В диапазоне [-π, π]
+		
+								arrayAngles = [newLatitude, newLongitude];
+							
+//							Object.defineProperty(arrayAngles, 'longitude', { get: () => { return arrayAngles[1]; }, });
+//							Object.defineProperty(arrayAngles, 'latitude' , { get: () => { return arrayAngles[0]; }, });
+							
+							return arrayAngles;
+						}
+*/
+						/*
+						// Пример использования:
+						const initialLatitude = Math.PI/4; // 45 градусов от экватора
+						const initialLongitude = Math.PI/2; // 90 градусов восточной долготы
+						
+						// Поворот на 30 градусов по всем осям Эйлера
+						const α = Math.PI/6; // 30 градусов
+						const β = Math.PI/6;  // 30 градусов
+						const γ = Math.PI/6; // 30 градусов
+						
+						const rotated = rotatePointWithEulerAngles(
+							initialLatitude, initialLongitude, α, β, γ
+						);
+						
+						console.log("Исходные координаты:", {
+							polar: initialLatitude,
+							azimuthal: initialLongitude
+						});
+						console.log("После поворота:", rotated);
+						*/
+/*
+						const initialLatitude = point[0],
+							initialLongitude = point[1],
+						
+						// Поворот
+							α = 0,
+							β = params.oppositeVertice.latitude - π / 2,
+							γ = params.oppositeVertice.longitude - π / 2;
+						return Vertice(rotatePointWithEulerAngles(initialLatitude, initialLongitude, α, β, γ), params.altitude);
+						
+					},
+*/
+//					rotateGemini: (point, rotationAngles) => {
 
 						/*https://https://gemini.google.com/app/45b136829aad53e4
 						Есть точка на поверхности 3-мерной гиперсферы встроенной в 4-мерное евклидово пространство в полярной системе координат. Начало полярной системы координат находится в центре сферы.
@@ -314,6 +627,7 @@ class RandomVerticeHSphere extends RandomVertice {
 						 * @param {number} altitude - Полярный угол от оси W, от 0 до PI.
 						 * @returns {{x: number, y: number, z: number, w: number}} - 4D декартовы координаты.
 						 */
+/*
 						const toCartesian4D = (latitude, longitude, altitude) => {
 
 							const cosAlt = Math.cos(altitude);
@@ -331,12 +645,13 @@ class RandomVerticeHSphere extends RandomVertice {
 							};
 
 						}
-					
+*/
 						/**
 						 * Преобразует 4D декартовы координаты в полярные.
 						 * @param {{x: number, y: number, z: number, w: number}} point - 4D декартовы координаты.
 						 * @returns {{latitude: number, longitude: number, altitude: number}} - Полярные координаты.
 						 */
+/*
 						const toPolar4D = (point) => {
 
 							const { x, y, z, w } = point;
@@ -355,13 +670,14 @@ class RandomVerticeHSphere extends RandomVertice {
 							return Vertice([altitude, latitude, longitude]);
 						
 						}
-					
+*/
 						/**
 						 * Поворачивает точку на 3-мерной гиперсфере с использованием углов Эйлера.
 						 * @param {{latitude: number, longitude: number, altitude: number}} point - Полярные координаты точки.
 						 * @param {{xy: number, xz: number, yz: number}} eulerAngles - Углы поворота в радианах для плоскостей XY, XZ и YZ.
 						 * @returns {{latitude: number, longitude: number, altitude: number}} - Повернутая точка в полярных координатах.
 						 */
+/*
 						const rotatePoint = (point, eulerAngles) => {
 
 							let { x, y, z, w } = toCartesian4D(point.latitude, point.longitude, point.altitude);
@@ -393,7 +709,7 @@ class RandomVerticeHSphere extends RandomVertice {
 							return toPolar4D({ x, y, z, w });
 
 						}
-
+*/
 						/*
 						// Пример использования
 						const myPoint = {
@@ -417,6 +733,7 @@ class RandomVerticeHSphere extends RandomVertice {
 						console.log('Начальная точка:', myPoint);
 						console.log('Повернутая точка:', rotatedPoint);
 						*/
+/*
 						const eulerAngles = {
 
 							xy: rotationAngles.latitude - π / 4,// Поворот в плоскости XY
@@ -427,6 +744,7 @@ class RandomVerticeHSphere extends RandomVertice {
 						return rotatePoint(Vertice(point, params.altitude), eulerAngles);
 					
 					},
+*/
 					verticesAngles: this.verticesAngles,
 
 				}
