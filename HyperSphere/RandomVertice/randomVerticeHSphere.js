@@ -149,20 +149,22 @@ class RandomVerticeHSphere extends RandomVertice {
 					*/
 					const calculateCentralAngle = (point1, point2) => {
 
-						const {
+						let {
 
 							latitude: lat1,
 							longitude: lon1,
 							altitude: alt1
 
 						} = point1;
-						const {
+						lat1 += π / 2;
+						let {
 
 							latitude: lat2,
 							longitude: lon2,
 							altitude: alt2
 
 						} = point2;
+						lat2 += π / 2;
 					
 						// Convert degrees to radians if necessary
 						// Assuming input is already in radians based on the prompt
