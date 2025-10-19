@@ -227,41 +227,6 @@ class RandomVerticeHSphere extends RandomVertice {
 					}
 					*/
 					return centralAngle;
-					/*
-					// Тестовый пример
-					const point1 = {
-					  latitude: 0.5, // 28.6 градуса
-					  longitude: 1.0, // 57.3 градуса
-					  altitude: 1.5, // 85.9 градуса
-					};
-					
-					const point2 = {
-					  latitude: 0.8, // 45.8 градуса
-					  longitude: 1.2, // 68.8 градуса
-					  altitude: 1.7, // 97.4 градуса
-					};
-					
-					const angleInRadians = calculateCentralAngle(point1, point2);
-					const angleInDegrees = angleInRadians * 180 / Math.PI;
-					
-					console.log(`Центральный угол в радианах: ${angleInRadians}`);
-					console.log(`Центральный угол в градусах: ${angleInDegrees}`);
-					*/
-					/*					
-					//DeepSeek. вычислить угол между двумя точками на поверхности шара
-					//векторы
-					//A=(R,ϕ1,λ1 ) - vertice
-					const ϕ1 = vertice[0], λ1 = vertice[1];
-					//B=(R,ϕ2,λ2 ) - oppositeVertice
-					const ϕ2 = oppositeVertice[0], λ2 = oppositeVertice[1];
-					//где
-					//ϕ — широта (от −90° до 90°),
-					//λ — долгота (от −180° до 180°),
-					const arccos = Math.acos, sin = Math.sin, cos = Math.cos;
-					const θ = arccos(sin(ϕ1) * sin(ϕ2) + cos(ϕ1) * cos(ϕ2) * cos(λ1 - λ2));
-					if (isNaN(θ)) console.error(sSphere + ': getArcAngle. Invalid θ = ' + θ);
-					return θ;
-					*/					
 				
 				},
 		
