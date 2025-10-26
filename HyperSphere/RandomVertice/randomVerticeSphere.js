@@ -271,8 +271,10 @@ console.log(rotated)
 
 					params.random = k * circleId;
 
-					const latitude = this.latitude(utils),
-						angleStep = abs(latitude - latitudePrev),//угол между соседними точками на окружности
+					const latitude = this.latitude(utils);
+					if (!boAllocateMemory && params.hyperSphere)
+						params.hyperSphere.middleSphere.aLatitude.push(latitude);//Создается сфера для облака случайных точек гиперсферы, которая находится на высоте противоположной вершины params.oppositeVertice.altitude = params.altitude
+					const angleStep = abs(latitude - latitudePrev),//угол между соседними точками на окружности
 						randomVerticeAnglesParams = getRandomVerticeAnglesParams(latitude, angleStep);
 					latitudePrev = latitude; 
 					if (arrayCircles && !boAllocateMemory) {
