@@ -19,6 +19,7 @@ import HyperSphere from './hyperSphere.js';
 import three from '../three.js'
 import RandomVertice from './RandomVertice/randomVerticeCircle.js';
 import RandomCloud from './RandomVertice/randomCloudCircle.js';
+import anglesRange from './anglesRange.js'
 
 const sCircle = 'Circle',
 	π = Math.PI;
@@ -133,6 +134,19 @@ class Circle extends HyperSphere {
 
 	//Overridden methods from base class
 
+	normalizeAngles(angles){
+
+		angles.forEach((verticeAngles) => {
+
+			verticeAngles.longitude = verticeAngles.longitude % (anglesRange.longitude.range);//(2 * Math.PI);
+			if (verticeAngles.longitude > anglesRange.longitude.max)
+				verticeAngles.longitude -= anglesRange.longitude.range;//2 * Math.PI;
+			else if (verticeAngles.longitude < anglesRange.longitude.min)
+				verticeAngles.longitude += anglesRange.longitude.range;//2 * Math.PI;
+			
+		});
+		
+	}
 	get verticeEdgesLengthMax() { return 2; }//нельзя добавлть новое ребро если у вершины уже 2 ребра
 	get dimension() { return 2; }//space dimension
 	get verticesCountMin() { return 3; }

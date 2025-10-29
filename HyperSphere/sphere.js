@@ -18,6 +18,7 @@
 import Circle from './circle.js';
 import three from '../three.js'
 import RandomCloud from './RandomVertice/randomCloudSphere.js';
+import anglesRange from './anglesRange.js'
 
 const sSphere = 'Sphere',
 	π = Math.PI;
@@ -142,6 +143,238 @@ class Sphere extends Circle {
 
 	//Overridden methods from base class
 
+	normalizeAngles(angles){
+
+		/*https://chat.deepseek.com/a/chat/s/26327d17-c346-476d-9199-a0814f3a7a0a
+		Есть точка на поверхности сферы в полярной системе координат. Начало полярной системы координат находится в центре сферы.
+		Положение точки обозначить как
+		point.latitude - широта в диапазоне от -π/2 до π/2,
+		point.longitude - долгота в диапазоне от -π до π,
+		Пусть положение точки point задано за пределами допустимого диапазона углов.
+		Написать функцию на javascript с названием normalize, которая нормализует положение точки point в допустимый диапазон.
+
+		Как работает функция:
+
+		Долгота нормализуется в диапазон [-π, π] с помощью операции взятия по модулю
+
+		Широта сначала также нормализуется по модулю, но если она выходит за пределы [-π/2, π/2], то:
+
+		Широта отражается относительно полюсов
+
+		Долгота сдвигается на π (антиподальная точка)
+
+		Долгота снова нормализуется после сдвига
+
+		Это обеспечивает корректное отображение любой точки на поверхности сферы в допустимый диапазон координат.
+		*/
+		const normalize = (normalized) => {
+
+/*
+			// Создаем копию точки, чтобы не изменять оригинал
+			const normalized = {
+				latitude: point.latitude,
+				longitude: point.longitude
+			};
+*/
+			// Нормализация долготы в диапазон [-π, π]
+			normalized.longitude = normalized.longitude % (2 * Math.PI);
+			if (normalized.longitude > Math.PI) {
+				normalized.longitude -= 2 * Math.PI;
+			} else if (normalized.longitude < -Math.PI) {
+				normalized.longitude += 2 * Math.PI;
+			}
+
+			// Нормализация широты в диапазон [-π/2, π/2]
+			normalized.latitude = normalized.latitude % (2 * Math.PI);
+
+			// Если широта выходит за пределы [-π/2, π/2], отражаем ее
+			if (Math.abs(normalized.latitude) > Math.PI / 2) {
+				if (normalized.latitude > 0) {
+					normalized.latitude = Math.PI - normalized.latitude;
+				} else {
+					normalized.latitude = -Math.PI - normalized.latitude;
+				}
+
+				// После отражения, сдвигаем долготу на π
+				normalized.longitude += Math.PI;
+
+				// Снова нормализуем долготу после сдвига
+				normalized.longitude = normalized.longitude % (2 * Math.PI);
+				if (normalized.longitude > Math.PI) {
+					normalized.longitude -= 2 * Math.PI;
+				} else if (normalized.longitude < -Math.PI) {
+					normalized.longitude += 2 * Math.PI;
+				}
+			}
+/*
+			// Нормализация долготы в диапазон [-π, π]
+			const normalizedLongitude = () => {
+				
+				normalized.longitude = normalized.longitude % (anglesRange.longitude.range);//(2 * Math.PI);
+				if (normalized.longitude > anglesRange.longitude.max)
+					normalized.longitude -= anglesRange.longitude.range;//2 * Math.PI;
+				else if (normalized.longitude < anglesRange.longitude.mi)
+					normalized.longitude += anglesRange.longitude.range;
+
+			}
+			normalizedLongitude();
+
+			// Нормализация широты в диапазон [-π/2, π/2]
+			normalized.latitude = normalized.latitude % (2 * anglesRange.latitude.range);//(2 * Math.PI);
+
+			// Если широта выходит за пределы [-π/2, π/2], отражаем ее
+			if (Math.abs(normalized.latitude) > anglesRange.latitude.max) {
+				
+				if (normalized.latitude > 0) 
+					normalized.latitude = Math.PI - normalized.latitude;
+				else
+					normalized.latitude = -Math.PI - normalized.latitude;
+
+				// После отражения, сдвигаем долготу на π
+				normalized.longitude += Math.PI;
+
+				// Снова нормализуем долготу после сдвига
+				normalizedLongitude();
+				
+			}
+*/
+//			return normalized;
+		}
+
+		// Тестовые случаи
+		const point1DeepSeek = { latitude: 3, longitude: 5 }
+		normalize(point1DeepSeek);
+		console.log(point1DeepSeek);
+		// {latitude: ~1.1416, longitude: ~-1.2832}
+
+		const point2DeepSeek = { latitude: -2, longitude: 4 }
+		normalize(point2DeepSeek);
+		console.log(normalize(point2DeepSeek));
+		// {latitude: ~-2, longitude: ~-2.2832}
+
+		const point3DeepSeek = { latitude: Math.PI, longitude: 2 * Math.PI }
+		normalize(point3DeepSeek);
+		console.log(normalize(point3DeepSeek));
+		// {latitude: ~0, longitude: ~0}
+
+		const point4DeepSeek = { latitude: -3 * Math.PI / 2, longitude: -3 * Math.PI }
+		normalize(point4DeepSeek);
+		console.log(normalize(point4DeepSeek));
+		// {latitude: ~0, longitude: ~0}
+
+		//https://gemini.google.com/app/64aa493066e3b07e
+		/**
+		 * Нормализует широту и долготу точки в допустимые диапазоны.
+		 * point.latitude: широта, от -π/2 до π/2
+		 * point.longitude: долгота, от -π до π
+		 * @param {object} point Объект с полями latitude и longitude.
+		 * @param {number} point.latitude Текущая широта.
+		 * @param {number} point.longitude Текущая долгота.
+		 * @returns {object} Новый объект с нормализованными latitude и longitude.
+		 */
+		function normalizeGemini(point) {
+			const PI = Math.PI;
+
+			// 1. Нормализация долготы (longitude) в диапазон (-π, π]
+			let normalizedLongitude = point.longitude % (2 * PI);
+			if (normalizedLongitude > PI) {
+				normalizedLongitude -= 2 * PI;
+			} else if (normalizedLongitude <= -PI) {
+				normalizedLongitude += 2 * PI;
+			}
+			// Примечание: Если нужно строго (-π, π), то случай -π обрабатывается как π,
+			// но в геодезии обычно используют (-180, 180], что соответствует (-π, π].
+			// Для строгого (-π, π) нужно поменять <= на < в последнем условии,
+			// но при % (2 * PI) и последующих операциях крайние случаи обычно попадают в π или -π.
+			// Если point.longitude изначально кратно 2*PI, то % даст 0, что корректно.
+
+			// 2. Нормализация широты (latitude)
+			let normalizedLatitude = point.latitude;
+
+			// Сначала приводим широту к диапазону [-π/2, 3π/2] (или аналогичному),
+			// чтобы учесть "переход через полюса".
+			let revs = Math.floor((normalizedLatitude + PI / 2) / (2 * PI));
+			let adjustedLatitude = normalizedLatitude - revs * 2 * PI;
+
+			// Проверяем, в какой полуоборот попадает широта
+			if (adjustedLatitude > PI / 2 && adjustedLatitude <= 3 * PI / 2) {
+				// Переход через Северный полюс (π/2) или Южный полюс (-π/2 после приведения)
+
+				// Меняем полушарие
+				normalizedLatitude = PI - adjustedLatitude;
+
+				// Также нужно сдвинуть долготу на π (180 градусов), т.к. мы перешли на противоположную сторону
+				normalizedLongitude = normalizedLongitude + PI;
+
+				// Повторная нормализация долготы после сдвига
+				normalizedLongitude = normalizedLongitude % (2 * PI);
+				if (normalizedLongitude > PI) {
+					normalizedLongitude -= 2 * PI;
+				} else if (normalizedLongitude <= -PI) { // Используем <= для включения -π в случай сдвига, если исходная была π
+					normalizedLongitude += 2 * PI;
+				}
+
+			} else {
+				// Широта уже в диапазоне [-π/2, π/2]
+				normalizedLatitude = adjustedLatitude;
+			}
+
+			// Финальная проверка на крайние случаи (хотя должно быть уже корректно)
+			// Ограничение широты:
+			if (normalizedLatitude > PI / 2) {
+				normalizedLatitude = PI / 2;
+			} else if (normalizedLatitude < -PI / 2) {
+				normalizedLatitude = -PI / 2;
+			}
+
+			return {
+				latitude: normalizedLatitude,
+				longitude: normalizedLongitude
+			};
+		}
+
+		// Пример использования:
+		const point1 = { latitude: 5 * Math.PI / 2 + 0.1, longitude: 3 * Math.PI }; // Широта больше π/2, Долгота больше π
+		const normalized1 = normalizeGemini(point1);
+		console.log(`Исходная: lat=${point1.latitude.toFixed(3)}, lon=${point1.longitude.toFixed(3)}`);
+		console.log(`Нормализованная: lat=${normalized1.latitude.toFixed(3)} (~${Math.PI / 2 - 0.1}), lon=${normalized1.longitude.toFixed(3)} (~0)`);
+		// Ожидаемый результат: lat: π/2 - 0.1 (полюс + обратный путь), lon: 0 (3π -> π -> -π -> 0)
+		// После 2*π оборота: lat: π/2 + 0.1, lon: π.
+		// Переход через полюс: new_lat = π - (π/2 + 0.1) = π/2 - 0.1. new_lon = π + π = 2π -> 0.
+
+		const point2 = { latitude: -Math.PI, longitude: -5 * Math.PI / 2 }; // Широта меньше -π/2, Долгота меньше -π
+		const normalized2 = normalizeGemini(point2);
+		console.log(`\nИсходная: lat=${point2.latitude.toFixed(3)}, lon=${point2.longitude.toFixed(3)}`);
+		console.log(`Нормализованная: lat=${normalized2.latitude.toFixed(3)} (~0), lon=${normalized2.longitude.toFixed(3)} (~-π/2)`);
+		// Ожидаемый результат: lat: 0, lon: -π/2
+		// После 2*π оборота: lat: -π, lon: -π/2.
+		// Переход через полюс: lat: -π, adjusted = -π. revs = -1. adjustedLatitude = -π - (-1 * 2π) = π.
+		// 0 < π/2 && π <= 3π/2. new_lat = π - π = 0. new_lon = -π/2 + π = π/2.
+
+		const point3 = { latitude: 0, longitude: 2.5 * Math.PI };
+		const normalized3 = normalizeGemini(point3);
+		console.log(`\nИсходная: lat=${point3.latitude.toFixed(3)}, lon=${point3.longitude.toFixed(3)}`);
+		console.log(`Нормализованная: lat=${normalized3.latitude.toFixed(3)} (~0), lon=${normalized3.longitude.toFixed(3)} (~π/2)`);
+		// Ожидаемый результат: lat: 0, lon: 0.5π
+
+		const point4 = { latitude: Math.PI / 2 + 0.1, longitude: 0 };
+		const normalized4 = normalizeGemini(point4);
+		console.log(`\nИсходная: lat=${point4.latitude.toFixed(3)}, lon=${point4.longitude.toFixed(3)}`);
+		console.log(`Нормализованная: lat=${normalized4.latitude.toFixed(3)} (~π/2 - 0.1), lon=${normalized4.longitude.toFixed(3)} (~π)`);
+		// Ожидаемый результат: lat: π/2 - 0.1, lon: π. (Переход через Северный полюс)
+
+		const point5 = { latitude: -Math.PI / 2 - 0.1, longitude: Math.PI / 2 };
+		const normalized5 = normalizeGemini(point5);
+		console.log(`\nИсходная: lat=${point5.latitude.toFixed(3)}, lon=${point5.longitude.toFixed(3)}`);
+		console.log(`Нормализованная: lat=${normalized5.latitude.toFixed(3)} (~-π/2 + 0.1), lon=${normalized5.longitude.toFixed(3)} (~-π/2)`);
+		// Ожидаемый результат: lat: -π/2 + 0.1, lon: -π/2. (Переход через Южный полюс)
+
+		angles.forEach((verticeAngles) => {
+
+			
+		});
+		
+	}
 	get verticeEdgesLengthMax() { return 3/*6*/; }//нельзя добавлть новое ребро если у вершины уже 6 ребра
 	get dimension() { return 3; }//space dimension
 	get verticesCountMin() { return 4; }

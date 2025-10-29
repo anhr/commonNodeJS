@@ -1034,7 +1034,8 @@ class HyperSphere extends MyObject {
 							_this.normalizeVerticeAngles(verticeAngles).forEach(angle => sLog = sLog + angle + ', ');
 							console.log(sLog + ']');
 							*/
-							
+
+/*сейчас использую _this.normalizeAngles переопределенную для гиперсферы разной размерности и которая работает не только в отладочной версии
 							for (let angleId = 0; angleId < verticeAngles.length; angleId++) {
 
 								const angle = verticeAngles[angleId];
@@ -1047,6 +1048,7 @@ class HyperSphere extends MyObject {
 								}
 
 							}
+*/							
 							
 							const vertice = settings.object.geometry.position[verticeId], strVerticeId = 'geometry.position[' + verticeId + ']'
 							_this.TestVertice(vertice, strVerticeId);
@@ -1591,6 +1593,8 @@ this.object = () => {
 			}
 
 			this.Test();
+
+			this.normalizeAngles(classSettings.settings.object.geometry.angles);
 
 			this.color();
 
