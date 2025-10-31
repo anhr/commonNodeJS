@@ -19,7 +19,8 @@ import HyperSphere from './hyperSphere.js';
 import three from '../three.js'
 import RandomVertice from './RandomVertice/randomVerticeCircle.js';
 import RandomCloud from './RandomVertice/randomCloudCircle.js';
-import anglesRange from './anglesRange.js'
+//import anglesRange from './anglesRange.js'
+import Vertice from './VerticeCircle.js'
 
 const sCircle = 'Circle',
 	π = Math.PI;
@@ -134,6 +135,181 @@ class Circle extends HyperSphere {
 
 	//Overridden methods from base class
 
+	/**
+	 * Converts a vertice position to vertice angles.
+	 * @param {array} vertice array of the vertice axes
+	 * @returns Vertice angles.
+	 */
+	vertice2angles(vertice) {
+
+/*		
+		const x = [],//для разных размерностей гиперсферы координаты вершины расположены в разном порядке в соответствии с this.axes.indices
+		for (let index = 0; index < vertice.length; index++) x.push(vertice[this.axes.indices[index]]);
+*/
+		/*https://gemini.google.com/app/5f9589d755b1c43f
+		Задана точка на окружности в декартовой системе координат. Начало координат находится в центре окружности.
+		Положение точки обозначить как vertice.x и vertice.y
+		Вычислить координаты точки в полярной системе координат.
+		Написать код на javascript
+		*/
+//		 * @returns {object} Объект с полярными координатами: { r: радиус, theta: угол в радианах }
+		/**
+		 * Преобразует декартовы координаты (x, y) в полярные координаты (r, theta).
+		 * Центр окружности предполагается в начале координат (0, 0).
+		 *
+		 * @param {object|array} vertice - Объект или массив с декартовыми координатами.
+		 * @param {number} vertice.x - Координата X точки.
+		 * @param {number} vertice.y - Координата Y точки.
+		 * @param {object} circle - Circle class instance.
+		 * @returns {array} Масcив с полярными координатами: [theta: угол в радианах ]
+		 */
+		function cartesianToPolar(vertice, circle) {
+
+			if (Array.isArray(vertice)) vertice = { x: vertice[circle.axes.indices[0]], y: vertice[circle.axes.indices[1]] }
+/*			
+			// 1. Вычисление радиуса (r)
+			// Math.hypot(x, y) - это более читабельный и часто более точный способ
+			// вычисления квадратного корня из (x^2 + y^2).
+			const r = Math.hypot(vertice.x, vertice.y);
+*/				
+
+			// 2. Вычисление угла (theta) в радианах
+			// Math.atan2(y, x) корректно обрабатывает все квадранты.
+			const theta = Math.atan2(vertice.y, vertice.x);
+
+/*			
+			return {
+				r: r,
+				theta: theta
+			};
+*/			
+//			return [theta];
+/*			
+			const aAngles = [theta];
+			Object.defineProperty(aAngles, 'longitude', {
+				
+				get: () => { return aAngles[0]; },
+				set: (longitude) => {
+		
+					if (aAngles[0] === longitude) return true;
+					aAngles[0] = longitude;
+					return true;
+		
+				},
+			
+			});
+			return aAngles;
+*/
+			return Vertice([theta]);
+			
+		}
+
+		/*
+		// --- Пример использования ---
+
+		const vertice1 = {
+			x: 3,
+			y: 4
+		};
+
+		const polarCoordinates = cartesianToPolar(vertice1);
+
+		console.log(`Декартовы координаты: (${vertice1.x}, ${vertice1.y})`);
+		console.log(`Полярные координаты:`);
+		console.log(`  Радиус (r): ${polarCoordinates.r}`);
+		console.log(`  Угол (theta) в радианах: ${polarCoordinates.theta}`);
+
+		// Для справки: перевод радиан в градусы
+		const angleInDegrees = polarCoordinates.theta * (180 / Math.PI);
+		console.log(`  Угол (theta) в градусах: ${angleInDegrees}`);
+
+
+		// --- Дополнительный пример (второй квадрант) ---
+
+		const vertice2 = {
+			x: -2,
+			y: 2
+		};
+
+		const polarCoordinates2 = cartesianToPolar(vertice2);
+
+		console.log("\n-------------------------");
+		console.log(`Декартовы координаты: (${vertice2.x}, ${vertice2.y})`);
+		console.log(`Полярные координаты:`);
+		console.log(`  Радиус (r): ${polarCoordinates2.r}`);
+		console.log(`  Угол (theta) в радианах: ${polarCoordinates2.theta}`);
+		console.log(`  Угол (theta) в градусах: ${polarCoordinates2.theta * (180 / Math.PI)}`);	
+		*/
+		return cartesianToPolar(vertice, this);
+
+	}
+		
+	a2v(angles, r){
+
+		/*https://gemini.google.com/app/1d5ef1a7e3d3d45f
+		Задана точка на окружности в полярной системе координат. Начало координат находится в центре окружности.
+		Положение точки обозначить как
+		angles.longitude - долгота в диапазоне от -π до π.
+		Радиус окружности обозначить как r.
+		Долгота может выходить из заданного диапазона.
+		Вычислить координаты точки в декартовой системе координат.
+		Написать код на javascript
+		*/
+		/**
+		 * Вычисляет декартовы координаты (x, y) точки,
+		 * заданной в полярной системе координат (r, angles.longitude).
+		 * Начало координат находится в центре окружности.
+		 *
+		 * @param {number} r Радиус окружности.
+		 * @param {object} angles Объект, содержащий долготу.
+		 * @param {number} angles.longitude Долгота в радианах (может выходить за пределы [-π, π]).
+		 * @returns {{x: number, y: number}} Объект с декартовыми координатами x и y.
+		 */
+		function polarToCartesian(r, angles) {
+			
+			const longitude = angles.longitude;
+
+			// Вычисление декартовых координат
+			// Math.cos() и Math.sin() корректно обрабатывают углы вне диапазона [-π, π]
+			const x = r * Math.cos(longitude);
+			const y = r * Math.sin(longitude);
+
+//			return { x: x, y: y };
+			return [ y, x ];
+			
+		}
+
+		/*
+		// --- Пример использования ---
+
+		const radius = 5;
+		const position1 = { longitude: Math.PI / 2 }; // Долгота: π/2 (90 градусов)
+		const position2 = { longitude: 3 * Math.PI };   // Долгота: 3π (то же, что π)
+		const position3 = { longitude: -0.5 };        // Долгота: -0.5 радиан
+
+		const coords1 = polarToCartesian(radius, position1);
+		const coords2 = polarToCartesian(radius, position2);
+		const coords3 = polarToCartesian(radius, position3);
+
+		console.log(`\n**Пример 1: r=${radius}, longitude=${position1.longitude} (90°)**`);
+		//console.log(`x: ${coords1.x.toFixed(4)}, y: ${coords1.y.toFixed(4)}`);
+		console.log(coords1);
+		// Ожидаемый результат: x ≈ 0, y = 5
+
+		console.log(`\n**Пример 2: r=${radius}, longitude=${position2.longitude} (540°)**`);
+		//console.log(`x: ${coords2.x.toFixed(4)}, y: ${coords2.y.toFixed(4)}`);
+		console.log(coords2);
+		// Ожидаемый результат: x = -5, y ≈ 0 (3π эквивалентно π)
+
+		console.log(`\n**Пример 3: r=${radius}, longitude=${position3.longitude}**`);
+		//console.log(`x: ${coords3.x.toFixed(4)}, y: ${coords3.y.toFixed(4)}`);
+		console.log(coords3);
+		// Ожидаемый результат: x ≈ 4.7766, y ≈ -2.3971
+		*/
+		return polarToCartesian(r, angles);
+		
+	}
+/*	
 	normalizeAngles(angles){
 
 		angles.forEach((verticeAngles) => {
@@ -147,6 +323,7 @@ class Circle extends HyperSphere {
 		});
 		
 	}
+*/	
 	get verticeEdgesLengthMax() { return 2; }//нельзя добавлть новое ребро если у вершины уже 2 ребра
 	get dimension() { return 2; }//space dimension
 	get verticesCountMin() { return 3; }

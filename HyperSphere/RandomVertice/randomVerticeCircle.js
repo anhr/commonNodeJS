@@ -15,6 +15,7 @@
 
 import RandomVertice from './randomVertice.js';
 import * as utils from './utilsCircle.js'
+import Vertice from '../VerticeCircle.js'
 
 //const sRandomVerticeCircle = 'RandomVerticeCircle';
 const π = Math.PI, tan = Math.tan;
@@ -96,7 +97,8 @@ class RandomVerticeCircle extends RandomVertice {
 	
 	ZeroArray() { return [0]; }
 	Center(params) {
-	
+
+/*		
 		const Vertice = (vertice) => {
 		
 			if (vertice.longitude != undefined) return;
@@ -115,6 +117,7 @@ class RandomVerticeCircle extends RandomVertice {
 			});
 		
 		}
+*/		
 		Vertice(params.vertice);
 		Vertice(params.oppositeVertice);
 		

@@ -1133,60 +1133,62 @@ class HyperSphere extends MyObject {
 		this.getPoint = (anglesId, timeId) => {
 
 			const r = classSettings.overriddenProperties.r(timeId),
-				angles = typeof anglesId === "number" ? classSettings.overriddenProperties.angles(anglesId, timeId) : anglesId,
-				a2v = (angles) => {
+				angles = typeof anglesId === "number" ? classSettings.overriddenProperties.angles(anglesId, timeId) : anglesId;
+/*			
+a2v = (angles) => {
+
+	//https://en.wikipedia.org/wiki/N-sphere#Spherical_coordinates
+	const n = this.dimension, φ = [],//angles,
+		x = [], cos = Math.cos, sin = Math.sin;
+	if (angles.length != (n - 1)) console.error(sHyperSphere + ': getPoint. angles.length != ' + (n - 1));
+	//нужно для того, чтобы начало координат широты находилось на экваторе
+	for (let i = 0; i < angles.length; i++) {
+
+		const rotateLatitude = this.getRotateLatitude(i);
+		φ.push((rotateLatitude === 0 ? 1 : - 1) * angles[i] - rotateLatitude);//Для широты меняем знак угола что бы положительная широта была в северном полушарии
+
+	}
+
+	//добавляем оси
 	
-					//https://en.wikipedia.org/wiki/N-sphere#Spherical_coordinates
-					const n = this.dimension, φ = [],//angles,
-						x = [], cos = Math.cos, sin = Math.sin;
-					if (angles.length != (n - 1)) console.error(sHyperSphere + ': getPoint. angles.length != ' + (n - 1));
-					//нужно для того, чтобы начало координат широты находилось на экваторе
-					for (let i = 0; i < angles.length; i++) {
-		
-						const rotateLatitude = this.getRotateLatitude(i);
-						φ.push((rotateLatitude === 0 ? 1 : - 1) * angles[i] - rotateLatitude);//Для широты меняем знак угола что бы положительная широта была в северном полушарии
-		
-					}
-		
-					//добавляем оси
+	for (let index = 0; index < n; index++) {
+
+		let axis = r;
+		const i = this.axes.indices[index],
+			mulCount = //количество множителей для данной оси
+			i < (n - 1) ?
+				i + 1: //на один больше порядкового номера оси
+				i;//или равно порядковому номеру оси если это последняя ось
+		for (let j = 0; j < mulCount; j++) {
+
+			if(j === (mulCount - 1)){
+
+				//Это последний множитель для текущей оси
+				if (i != (n - 1)) {
 					
-					for (let index = 0; index < n; index++) {
-		
-						let axis = r;
-						const i = this.axes.indices[index],
-							mulCount = //количество множителей для данной оси
-							i < (n - 1) ?
-								i + 1: //на один больше порядкового номера оси
-								i;//или равно порядковому номеру оси если это последняя ось
-						for (let j = 0; j < mulCount; j++) {
-		
-							if(j === (mulCount - 1)){
-		
-								//Это последний множитель для текущей оси
-								if (i != (n - 1)) {
-									
-									//Это не последняя ось
-									axis *= cos(φ[j]);
-									continue;
-		
-								}
-								
-							}
-							axis *= sin(φ[j]);
-		
-						}
-						x.push(axis);
-		
-					}
-					return x;
-		
+					//Это не последняя ось
+					axis *= cos(φ[j]);
+					continue;
+
 				}
-			//angles.forEach((angle, i) => { console.log('angle[' + i + '] = ' + angle) })
-			const vertice = a2v(angles);
+				
+			}
+			axis *= sin(φ[j]);
+
+		}
+		x.push(axis);
+
+	}
+	return x;
+
+}
+const verticeOld = a2v(angles);
+*/			
+			const vertice = this.a2v(angles, r);
 			if (this.classSettings.debug && this.classSettings.debug.testVertice){
 	
 				const vertice2angles = this.vertice2angles(vertice),
-					angles2vertice = a2v(vertice2angles);
+					angles2vertice = this.a2v(vertice2angles, r);
 				const value = vertice;
 				if (angles2vertice.length != value.length) console.error(sHyperSphere + ': Set vertice failed. angles2vertice.length = ' + angles2vertice.length + ' is not equal value.length = ' + value.length);
 				const d = 7e-16;
@@ -1594,7 +1596,7 @@ this.object = () => {
 
 			this.Test();
 
-			this.normalizeAngles(classSettings.settings.object.geometry.angles);
+//			this.normalizeAngles(classSettings.settings.object.geometry.angles);
 
 			this.color();
 
@@ -3428,90 +3430,90 @@ this.object = () => {
 		return vertice;
 
 	}
-	/**
-	 * Converts a vertice position to vertice angles.
-	 * @param {array} vertice array of the vertice axes
-	 * @returns Vertice angles.
-	 */
-	vertice2angles(vertice) {
+/**
+ * Converts a vertice position to vertice angles.
+ * @param {array} vertice array of the vertice axes
+ * @returns Vertice angles.
+ */
+vertice2angles(vertice) {
+	
+	//https://en.wikipedia.org/wiki/N-sphere#Spherical_coordinates
+	//тангенс — отношение стороны противолежащего катета vertice[1] к стороне прилежащегоvertice[0], (tg или tan);
+	const x = [],//для разных размерностей гиперсферы координаты вершины расположены в разном порядке в соответствии с this.axes.indices
+		n = this.dimension - 1, φ = [], atan2 = Math.atan2, sqrt = Math.sqrt;
+
+	if (vertice.length <= n) {
+
+		console.error(sHyperSphere + ': vertice2angles. Invalid vertice.length = ' + vertice.length);
+		return;
 		
-		//https://en.wikipedia.org/wiki/N-sphere#Spherical_coordinates
-		//тангенс — отношение стороны противолежащего катета vertice[1] к стороне прилежащегоvertice[0], (tg или tan);
-		const x = [],//для разных размерностей гиперсферы координаты вершины расположены в разном порядке в соответствии с this.axes.indices
-			n = this.dimension - 1, φ = [], atan2 = Math.atan2, sqrt = Math.sqrt;
+	}
 
-		if (vertice.length <= n) {
+	for (let index = 0; index < vertice.length; index++) x.push(vertice[this.axes.indices[index]]);
 
-			console.error(sHyperSphere + ': vertice2angles. Invalid vertice.length = ' + vertice.length);
-			return;
+	for (let i = 0; i < n; i++) {
+
+		const axes = {};
+		if (i === (n - 1)) {
 			
-		}
-
-		for (let index = 0; index < vertice.length; index++) x.push(vertice[this.axes.indices[index]]);
-
-		for (let i = 0; i < n; i++) {
-
-			const axes = {};
-			if (i === (n - 1)) {
-				
-				axes.y = x[n]; axes.x = x[n - 1];
-				
-			} else {
-				
-				let sum = 0;
-				for(let j = (i + 1); j <= n; j++) sum += x[j] * x[j];
-				axes.y = sqrt(sum); axes.x = x[i];
-
-			}
-			const rotateLatitude = this.getRotateLatitude(i);
-			φ.push((rotateLatitude === 0 ? 1 : -1) * atan2(axes.y, axes.x) - rotateLatitude);//Для широты меняем знак угола что бы положительная широта была в северном полушарии
+			axes.y = x[n]; axes.x = x[n - 1];
 			
+		} else {
 			
-		}
-
-		//установить углы так, что бы они влезли допустимый диапазон органов управления углов, когда пользователь захочет посмотреть или изменить эти углы
-		const longitudeId = φ.length - 1, latitudeId = longitudeId - 1, altitudeId = latitudeId - 1,
-			ranges = this.classSettings.settings.object.geometry.angles.ranges;
-		let latitude = φ[latitudeId], longitude = φ[longitudeId], altitude = φ[altitudeId];
-		if (altitude != undefined) {//у одномерной и двумернй гиперсферы нет высоты
-
-			const altitudeRange = ranges[altitudeId];
-			if (altitude > altitudeRange.max) {//π / 2
-				
-			} else if (altitude < altitudeRange.min) {//0
-				
-				console.error('Under constraction')
-				altitude -= π;
-	
-			}
-			φ[altitudeId] = altitude;
-			
-		}
-		if (latitude != undefined) {//у одномерной гиперсферы нет широты
-			
-			const latitudeRange = ranges[latitudeId];//, longitudeRange = ranges[longitudeId];
-			if (latitude > latitudeRange.max) {//π / 2
-				
-				latitude = π - latitude;
-	
-				//долготу развернуть на 180 градусов
-				if (longitude > 0) longitude -= π;
-				else if (longitude < 0) longitude += π;
-				
-			} else if (latitude < latitudeRange.min) {//- π / 2
-				
-				console.error('Under constraction')
-				latitude -= π;
-	
-			}
-			φ[latitudeId] = latitude;
-			φ[longitudeId] = longitude;
+			let sum = 0;
+			for(let j = (i + 1); j <= n; j++) sum += x[j] * x[j];
+			axes.y = sqrt(sum); axes.x = x[i];
 
 		}
+		const rotateLatitude = this.getRotateLatitude(i);
+		φ.push((rotateLatitude === 0 ? 1 : -1) * atan2(axes.y, axes.x) - rotateLatitude);//Для широты меняем знак угола что бы положительная широта была в северном полушарии
 		
-		return φ;
+		
+	}
+
+	//установить углы так, что бы они влезли допустимый диапазон органов управления углов, когда пользователь захочет посмотреть или изменить эти углы
+	const longitudeId = φ.length - 1, latitudeId = longitudeId - 1, altitudeId = latitudeId - 1,
+		ranges = this.classSettings.settings.object.geometry.angles.ranges;
+	let latitude = φ[latitudeId], longitude = φ[longitudeId], altitude = φ[altitudeId];
+	if (altitude != undefined) {//у одномерной и двумернй гиперсферы нет высоты
+
+		const altitudeRange = ranges[altitudeId];
+		if (altitude > altitudeRange.max) {//π / 2
+			
+		} else if (altitude < altitudeRange.min) {//0
+			
+			console.error('Under constraction')
+			altitude -= π;
+
+		}
+		φ[altitudeId] = altitude;
+		
+	}
+	if (latitude != undefined) {//у одномерной гиперсферы нет широты
+		
+		const latitudeRange = ranges[latitudeId];//, longitudeRange = ranges[longitudeId];
+		if (latitude > latitudeRange.max) {//π / 2
+			
+			latitude = π - latitude;
+
+			//долготу развернуть на 180 градусов
+			if (longitude > 0) longitude -= π;
+			else if (longitude < 0) longitude += π;
+			
+		} else if (latitude < latitudeRange.min) {//- π / 2
+			
+			console.error('Under constraction')
+			latitude -= π;
+
+		}
+		φ[latitudeId] = latitude;
+		φ[longitudeId] = longitude;
 
 	}
+	
+	return φ;
+
+}
 	/**
 	 * Normalizes a vertices angles to available range, if out of the angles range is occures.
 	 * @param {array} verticeAngles vertice angles
