@@ -555,6 +555,7 @@ class HyperSphere extends MyObject {
 					}
 					switch (name) {
 	
+						case 'deleteAngles': return () => { angles.length = 0; };
 						case 'isAnglesProxy': return true;
 						case 'pushRandomAngle': return () => {
 	
@@ -1251,6 +1252,8 @@ const verticeOld = a2v(angles);
 //		this.getRotateLatitude = (i) => i === (this.dimension - 3) ? this.rotateLatitude : 0;
 		this.getRotateLatitude = (i) => i === (this.dimension - 3) ? anglesRange.rotateLatitude : 0;
 		this.setPositionAttributeFromPoints(settings.object.geometry.angles);//itemSize of the buiffer.attributes.position должен быть больше 2. Иначе при копировании из буфера в THREE.Vector3 координата z = undefined
+//		settings.object.geometry.angles.deleteAngles();
+//const angles0 = settings.object.geometry.angles[0];
 
 		settings.object.geometry.indices = settings.object.geometry.indices || [];
 		if (!(settings.object.geometry.indices instanceof Array)) {
