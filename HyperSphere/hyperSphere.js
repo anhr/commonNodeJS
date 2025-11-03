@@ -547,17 +547,24 @@ class HyperSphere extends MyObject {
 										console.error(sHyperSphere + ': set vertice angles failed! angleId = ' + angleId + ' is great of verticeAngles.length = ' + verticeAngles.length);
 										return false;
 									}
-									if (verticeAngles[angleId] != angle) {
+									let angleOld = verticeAngles[angleId];
+									const verticeAnglesFromPosition = isNaN(angleOld) ?
+										this.vertice2angles(settings.bufferGeometry.userData.position[verticeId]) ://угол удален из settings.object.geometry.angles. Поэтому угол надо вычислить из позиции вершины.
+										undefined;
+									if (verticeAnglesFromPosition) angleOld = verticeAnglesFromPosition[angleId];
+									if (angleOld != angle) {
 	
 										const range = angles.ranges[angleId];
 										if ((angle < range.min) || (angle > range.max)) console.error(sHyperSphere + ': Set angle[' + angleId + '] = ' + angle + ' of the vertice ' + verticeId + ' is out of range from ' + range.min + ' to ' + range.max);
 	
-										verticeAngles[angleId] = angle;
-	
+										if (!verticeAnglesFromPosition) verticeAngles[angleId] = angle;
+										else verticeAnglesFromPosition[angleId] = angle;
+										
 										//если тут обновлять вершину то каждая вершина будет обноляться несколько раз в зависимости от количества углов. Сейчас вершина обновляется после обновления всех углов вершины
 										if(_this.isSetPositionAttributeFromPoint != false) {
-											
-											_this.setPositionAttributeFromPoint(verticeId);//обновляем только одну ось в декартовой системе координат
+
+											const position = verticeAnglesFromPosition ? this.a2v(verticeAnglesFromPosition, classSettings.overriddenProperties.r(classSettings.settings.guiPoints ? classSettings.settings.guiPoints.timeId : 0)) : undefined
+											_this.setPositionAttributeFromPoint(verticeId, position);//обновляем только одну ось в декартовой системе координат
 											_this.bufferGeometry.attributes.position.needsUpdate = true;
 	
 										}

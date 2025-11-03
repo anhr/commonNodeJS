@@ -152,7 +152,6 @@ class Circle extends HyperSphere {
 		Вычислить координаты точки в полярной системе координат.
 		Написать код на javascript
 		*/
-//		 * @returns {object} Объект с полярными координатами: { r: радиус, theta: угол в радианах }
 		/**
 		 * Преобразует декартовы координаты (x, y) в полярные координаты (r, theta).
 		 * Центр окружности предполагается в начале координат (0, 0).
@@ -165,41 +164,15 @@ class Circle extends HyperSphere {
 		 */
 		function cartesianToPolar(vertice, circle) {
 
-			if (Array.isArray(vertice) && (vertice.x === undefined)) vertice = { x: vertice[circle.axes.indices[0]], y: vertice[circle.axes.indices[1]] }
-/*			
-			// 1. Вычисление радиуса (r)
-			// Math.hypot(x, y) - это более читабельный и часто более точный способ
-			// вычисления квадратного корня из (x^2 + y^2).
-			const r = Math.hypot(vertice.x, vertice.y);
-*/				
+			if (Array.isArray(vertice) && (vertice.x === undefined))
+				vertice = { x: vertice[0], y: vertice[1] }
+//				vertice = { x: vertice[circle.axes.indices[0]], y: vertice[circle.axes.indices[1]] }
 
-			// 2. Вычисление угла (theta) в радианах
+			// Вычисление угла (theta) в радианах
 			// Math.atan2(y, x) корректно обрабатывает все квадранты.
 			const theta = Math.atan2(vertice.y, vertice.x);
+//			const theta = Math.atan2(vertice.x, vertice.y);
 
-/*			
-			return {
-				r: r,
-				theta: theta
-			};
-*/			
-//			return [theta];
-/*			
-			const aAngles = [theta];
-			Object.defineProperty(aAngles, 'longitude', {
-				
-				get: () => { return aAngles[0]; },
-				set: (longitude) => {
-		
-					if (aAngles[0] === longitude) return true;
-					aAngles[0] = longitude;
-					return true;
-		
-				},
-			
-			});
-			return aAngles;
-*/
 			return Vertice([theta]);
 			
 		}
@@ -275,7 +248,8 @@ class Circle extends HyperSphere {
 			const y = r * Math.sin(longitude);
 
 //			return { x: x, y: y };
-			return [ y, x ];
+//			return [ y, x ];
+			return [ x, y ];
 			
 		}
 
