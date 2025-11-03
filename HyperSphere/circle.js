@@ -165,7 +165,7 @@ class Circle extends HyperSphere {
 		 */
 		function cartesianToPolar(vertice, circle) {
 
-			if (Array.isArray(vertice)) vertice = { x: vertice[circle.axes.indices[0]], y: vertice[circle.axes.indices[1]] }
+			if (Array.isArray(vertice) && (vertice.x === undefined)) vertice = { x: vertice[circle.axes.indices[0]], y: vertice[circle.axes.indices[1]] }
 /*			
 			// 1. Вычисление радиуса (r)
 			// Math.hypot(x, y) - это более читабельный и часто более точный способ

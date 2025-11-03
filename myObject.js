@@ -503,6 +503,7 @@ class MyObject {
 			if (itemSize > 2) array [++positionId] = vertice.z != undefined ? vertice.z : vertice[2] != undefined ? vertice[2] : 0;
 			const w = vertice.w != undefined ? vertice.w : vertice[3];
 			if (itemSize > 3) array [++positionId] = w;
+			if (this.onSetPositionAttributeFromPoint) this.onSetPositionAttributeFromPoint(i);
 
 			const drawRange = settings.bufferGeometry.drawRange;
 			if ((drawRange.count === Infinity) || (((drawRange.start + drawRange.count) * ((settings.bufferGeometry.index === null) ? itemSize : 1)) < positionId)){

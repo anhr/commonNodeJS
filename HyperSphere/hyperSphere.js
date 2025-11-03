@@ -447,13 +447,47 @@ class HyperSphere extends MyObject {
 						return new Proxy(angles[verticeId], {
 	
 							get: (verticeAngles, name) => {
-	
+
+								if (name === 'remove') {
+
+									//удалить углы вершины settings.object.geometry.angles[verticeId].
+									//После этого углы вершины вычисляются путем преобразования позиции вершины settings.bufferGeometry.attributes.position в соответствующие углы вершины
+									for (let angleId = 0; angleId < verticeAngles.length; angleId++) verticeAngles[angleId] = NaN;
+									return;
+									
+								}
+								const angle0 = verticeAngles[0],
+									verticeAnglesFromPosition = isNaN(angle0) ?
+										this.vertice2angles(settings.bufferGeometry.userData.position[verticeId]) ://угол удален из settings.object.geometry.angles. Поэтому угол надо вычислить из позиции вершины.
+										undefined;
+								verticeAngles = new Proxy(verticeAngles, {
+
+									get: (verticeAngles, name) => {
+
+										const angleId = parseInt(name);
+										if (!isNaN(angleId)) {
+			
+											if (angleId >= verticeAngles.length) return 0.0;
+											return verticeAnglesFromPosition ? verticeAnglesFromPosition[angleId] : verticeAngles[angleId];
+/*											
+											const angle = verticeAngles[angleId];
+											if (isNaN(angle))
+												//угол удален из settings.object.geometry.angles. Поэтому угол надо вычислить из позиции вершины.
+												return this.vertice2angles(settings.bufferGeometry.userData.position[verticeId])[angleId];
+											return angle;
+*/												
+											
+			
+										}
+										return verticeAngles[name];
+										
+									}
+								});
 								const angleId = parseInt(name);
 								if (!isNaN(angleId)) {
 	
 									if (angleId >= verticeAngles.length) return 0.0;
-									let angle = verticeAngles[angleId];
-									return angle;
+									return verticeAngles[angleId];
 	
 								}
 								switch (name) {
@@ -1251,7 +1285,15 @@ const verticeOld = a2v(angles);
 		}
 //		this.getRotateLatitude = (i) => i === (this.dimension - 3) ? this.rotateLatitude : 0;
 		this.getRotateLatitude = (i) => i === (this.dimension - 3) ? anglesRange.rotateLatitude : 0;
+		this.onSetPositionAttributeFromPoint = (verticeId) => {
+
+			const verticeAngles = settings.object.geometry.angles[verticeId];
+			//после вычисления позиции вершины settings.bufferGeometry.attributes.position Углы вершины вычисляются из ее позиции.
+			verticeAngles.remove;//Поэтому углы вершины больше не нужны и их удаляем
+			
+		}
 		this.setPositionAttributeFromPoints(settings.object.geometry.angles);//itemSize of the buiffer.attributes.position должен быть больше 2. Иначе при копировании из буфера в THREE.Vector3 координата z = undefined
+		delete this.onSetPositionAttributeFromPoint;
 //		settings.object.geometry.angles.deleteAngles();
 //const angles0 = settings.object.geometry.angles[0];
 
