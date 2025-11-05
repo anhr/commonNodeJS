@@ -519,7 +519,7 @@ class MyObject {
 				object3D = this.object3D;
 			if (guiSelectPoint && (guiSelectPoint.getSelectedPointIndexShort() === i) && guiSelectPoint.isSelectedMesh(object3D)) {
 				
-				guiSelectPoint.setPosition( { index: i, object: object3D });
+				guiSelectPoint.setPosition( { index: i, nearestEdgeVerticeId: i, object: object3D });
 				if (object3D && object3D.userData.gui) object3D.userData.gui.reset()//в hyperSphere обновить выделенные ребра, среднюю вершину и плоскости вращения углов
 
 			}
