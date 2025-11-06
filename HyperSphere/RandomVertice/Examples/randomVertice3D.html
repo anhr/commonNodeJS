@@ -501,7 +501,12 @@
 
 						name: 'Vertices',
 						//color: 'white',
-						geometry: { angles: [params.vertice, params.oppositeVertice], },
+						geometry: {
+
+//							angles: [params.vertice, params.oppositeVertice],
+							params: params,
+
+						},
 
 					},
 					overriddenProperties: { setDrawRange: (start, count) => { if (hsVertices) hsVertices.bufferGeometry.setDrawRange(start, count); } },
