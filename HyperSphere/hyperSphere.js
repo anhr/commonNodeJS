@@ -414,6 +414,13 @@ class HyperSphere extends MyObject {
 			if (unverseValue != sectorsValue) console.error(sHyperSphere + ': Unverse value = ' + unverseValue + '. Sectors value = ' + sectorsValue);
 
 		}
+		if (settings.object.geometry.params) {
+
+			if (settings.object.geometry.angles) console.error(sHyperSphere + ': "settings.object.geometry.angles" has not effect if "settings.object.geometry.params" is exists');
+			const params = settings.object.geometry.params;
+			settings.object.geometry.angles = [params.vertice, params.oppositeVertice];
+			
+		}
 		settings.object.geometry.angles = settings.object.geometry.angles || this.defaultAngles();
 		const anglesObject2Array = () => {
 			
@@ -426,7 +433,8 @@ class HyperSphere extends MyObject {
 		}
 		(classSettings.anglesObject2Array || anglesObject2Array)();
 
-		if (!classSettings.settings.object.geometry.angles.isAnglesProxy)
+		if (!classSettings.settings.object.geometry.angles.isAnglesProxy) {
+			
 			settings.object.geometry.angles = new Proxy(settings.object.geometry.angles || this.defaultAngles(), {
 	
 				get: (angles, name) => {
@@ -671,6 +679,15 @@ class HyperSphere extends MyObject {
 				}
 	
 			});
+			if (settings.object.geometry.params) {
+
+				const params = settings.object.geometry.params, angles = settings.object.geometry.angles;
+				params.vertice = angles[0];
+				params.oppositeVertice = angles[1];
+				
+			}
+
+		}
 		this.anglesPlayer = (timeId) => {
 
 			const playerProxy = new Proxy({}, {
