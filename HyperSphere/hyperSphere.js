@@ -188,6 +188,9 @@ class HyperSphere extends MyObject {
 	 *	4 for <b><a href="module-Sphere.html" target="_blank">Sphere</a></b> - pyramid.
 	 *	5 for <b><a href="module-HyperSphere3D.html" target="_blank">HyperSphere3D</a></b> - [pentahedroid]{@link https://en.wikipedia.org/wiki/5-cell}.
 	 * </pre>
+	 * @param {object} [classSettings.settings.object.geometry.params] You can use <b>params</b> instead <b>classSettings.settings.object.geometry.angles</b>. Following angles will be added:
+	 * @param {array} [classSettings.settings.object.geometry.params.vertice] Will be added to <b>classSettings.settings.object.geometry.angles[0]</b>
+	 * @param {array} [classSettings.settings.object.geometry.params.oppositeVertice] Will be added to <b>classSettings.settings.object.geometry.angles[1]</b>
 	 * @param {array} [classSettings.settings.object.geometry.times] array of vertices angles for different player <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">Player</a> times. See <b>angles</b> above.
 	 * <pre>
 	 * See <a href="../../player/jsdoc/module-Player.html#~onSelectScene" target="_blank">Player.onSelectScene</a> for details.
