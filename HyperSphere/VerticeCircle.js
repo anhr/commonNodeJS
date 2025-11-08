@@ -1,7 +1,6 @@
 /**
  * @module VerticeCircle
  * @description Adds a longitude property to the vertice angles array for the circle hypersphere.
- * All the vertices form a circle.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *

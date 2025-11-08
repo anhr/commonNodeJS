@@ -16,6 +16,7 @@
 import RandomVertice from './randomVertice.js';
 import anglesRange from '../anglesRange.js'
 import * as utils from './utilsSphere.js'
+import Vertice from '../VerticeSphere.js'
 
 const sRandomVerticesSphere = 'RandomVerticesSphere',
 	π = Math.PI, abs = Math.abs, round = Math.round, random = Math.random,
@@ -433,7 +434,8 @@ console.log(rotated)
 	
 	ZeroArray() { return [0, 0]; }
 	Center(params) {
-	
+
+/*		
 		const Vertice = (vertice) => {
 		
 			if (vertice.longitude != undefined) return;
@@ -464,6 +466,7 @@ console.log(rotated)
 			});
 		
 		}
+*/		
 		Vertice(params.vertice);
 		Vertice(params.oppositeVertice);
 		
