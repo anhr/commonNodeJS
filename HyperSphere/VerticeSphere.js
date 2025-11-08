@@ -20,7 +20,7 @@
  */
 const Vertice = (vertice) => {
 
-	if (vertice.longitude != undefined) return;
+	if (vertice.longitude != undefined) return vertice;
 	while (vertice.length < 2) vertice.push(0);
 	Object.defineProperty(vertice, 'latitude', {
 

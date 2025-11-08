@@ -280,7 +280,7 @@ class Circle extends HyperSphere {
 		console.log(coords3);
 		// Ожидаемый результат: x ≈ 4.7766, y ≈ -2.3971
 		*/
-		return polarToCartesian(r, angles);
+		return polarToCartesian(r, Vertice(angles));
 		
 	}
 /*	
