@@ -246,8 +246,10 @@ class Sphere extends Circle {
 		 * @returns {array} Массив с декартовыми координатами [x, y, z].
 		 */
 		function sphericalToCartesian(r, angles) {
+			
 			const lat = angles.latitude;
 			const lon = angles.longitude;
+			if (lon === undefined) console.error(sSphere + ': a2v. longitude = ' + lon);
 
 			// Сначала рассчитываем проекцию радиус-вектора на плоскость XY (r_xy)
 			// r_xy = r * cos(latitude)
