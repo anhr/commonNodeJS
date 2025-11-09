@@ -144,6 +144,7 @@ class Sphere extends Circle {
 
 	//Overridden methods from base class
 
+	Vertice(angles) { return Vertice(angles); }
 	/**
 	 * Converts a vertice position to vertice angles.
 	 * @param {array} vertice array of the vertice axes
@@ -285,7 +286,8 @@ class Sphere extends Circle {
 		const point3 = sphericalToCartesian(10, { latitude: Math.PI / 4, longitude: Math.PI / 2 });
 		console.log("Point 3 (45° N, 90° E):", point3);
 		*/
-		return sphericalToCartesian(r, Vertice(angles));
+//		return sphericalToCartesian(r, Vertice(angles));
+		return sphericalToCartesian(r, angles);
 
 	}
 	normalizeAngles(angles){

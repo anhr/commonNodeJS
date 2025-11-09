@@ -135,6 +135,7 @@ class Circle extends HyperSphere {
 
 	//Overridden methods from base class
 
+	Vertice(angles) { return Vertice(angles); }
 	/**
 	 * Converts a vertice position to vertice angles.
 	 * @param {array} vertice array of the vertice axes
@@ -241,6 +242,7 @@ class Circle extends HyperSphere {
 		function polarToCartesian(r, angles) {
 			
 			const longitude = angles.longitude;
+			if (longitude === undefined) console.error(sCircle + ': a2v. longitude = ' + longitude);
 
 			// Вычисление декартовых координат
 			// Math.cos() и Math.sin() корректно обрабатывают углы вне диапазона [-π, π]
@@ -280,7 +282,8 @@ class Circle extends HyperSphere {
 		console.log(coords3);
 		// Ожидаемый результат: x ≈ 4.7766, y ≈ -2.3971
 		*/
-		return polarToCartesian(r, Vertice(angles));
+//		return polarToCartesian(r, Vertice(angles));
+		return polarToCartesian(r, angles);
 		
 	}
 /*	
