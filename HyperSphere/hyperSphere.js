@@ -1196,56 +1196,6 @@ class HyperSphere extends MyObject {
 
 			const r = classSettings.overriddenProperties.r(timeId),
 				angles = typeof anglesId === "number" ? classSettings.overriddenProperties.angles(anglesId, timeId) : anglesId;
-/*			
-a2v = (angles) => {
-
-	//https://en.wikipedia.org/wiki/N-sphere#Spherical_coordinates
-	const n = this.dimension, φ = [],//angles,
-		x = [], cos = Math.cos, sin = Math.sin;
-	if (angles.length != (n - 1)) console.error(sHyperSphere + ': getPoint. angles.length != ' + (n - 1));
-	//нужно для того, чтобы начало координат широты находилось на экваторе
-	for (let i = 0; i < angles.length; i++) {
-
-		const rotateLatitude = this.getRotateLatitude(i);
-		φ.push((rotateLatitude === 0 ? 1 : - 1) * angles[i] - rotateLatitude);//Для широты меняем знак угола что бы положительная широта была в северном полушарии
-
-	}
-
-	//добавляем оси
-	
-	for (let index = 0; index < n; index++) {
-
-		let axis = r;
-		const i = this.axes.indices[index],
-			mulCount = //количество множителей для данной оси
-			i < (n - 1) ?
-				i + 1: //на один больше порядкового номера оси
-				i;//или равно порядковому номеру оси если это последняя ось
-		for (let j = 0; j < mulCount; j++) {
-
-			if(j === (mulCount - 1)){
-
-				//Это последний множитель для текущей оси
-				if (i != (n - 1)) {
-					
-					//Это не последняя ось
-					axis *= cos(φ[j]);
-					continue;
-
-				}
-				
-			}
-			axis *= sin(φ[j]);
-
-		}
-		x.push(axis);
-
-	}
-	return x;
-
-}
-const verticeOld = a2v(angles);
-*/			
 			const vertice = this.a2v(angles, r);
 			if (this.classSettings.debug && this.classSettings.debug.testVertice){
 	
@@ -2591,7 +2541,8 @@ this.object = () => {
 											planeAngle[verticeAngleId] = i;
 
 											//if (this.classSettings.debug) console.log(sHyperSphere + ': ' + settings.object.geometry.angles.ranges[verticeAngleId].angleName + '. VerticeId = ' + planeAngles.length);
-											planeAngles[planeVerticeId++] = this.normalizeVerticeAngles(planeAngle);
+//											planeAngles[planeVerticeId++] = this.normalizeVerticeAngles(planeAngle);
+											planeAngles[planeVerticeId++] = this.Vertice(planeAngle);
 
 										}
 //										if (plane) plane.object().geometry.attributes.position.needsUpdate = true;
@@ -3586,12 +3537,13 @@ vertice2angles(vertice) {
 	return φ;
 
 }
-	/**
+	/* *
 	 * Normalizes a vertices angles to available range, if out of the angles range is occures.
 	 * @param {array} verticeAngles vertice angles
 	 * @returns Normalized a vertices angles.
 	 */
-	normalizeVerticeAngles(verticeAngles) { return this.vertice2angles(this.angles2Vertice(verticeAngles)); }
+	//нет необходимости нормализовать углы потому что сейчас они вычисляются из позиции вершины и нормализуются автоматически
+//	normalizeVerticeAngles(verticeAngles) { return this.vertice2angles(this.angles2Vertice(verticeAngles)); }
 
 //	sOver = ': Please, override %s method in your ' + sHyperSphere + ' child class.';
 	
