@@ -1878,6 +1878,7 @@ class Raycaster {
 				//Поэтому оставляю как было раньше
 				else intersection.pointSpriteText = intersection.point;
 				intersection.pointSpriteText.sub( settings.scene.position );
+				intersection.pointSpriteText.applyEuler( new three.THREE.Euler( -settings.scene.rotation.x, -settings.scene.rotation.y, -settings.scene.rotation.z ) );
 				intersection.pointSpriteText.divide( settings.scene.scale );
 
 				var boDetected = false;

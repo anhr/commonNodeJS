@@ -471,6 +471,7 @@ class MyThree {
 			scene.background = new THREE.Color(0x000000);
 			scene.fog = new THREE.Fog(0x000000, 250, 1400);
 			scene.position.copy( options.scene.position );
+			if (options.scene.rotation) scene.rotation.copy( options.scene.rotation );
 			if (options.scene.scale) scene.scale.copy( options.scene.scale );
 			scene.userData.optionsSpriteText = {
 
