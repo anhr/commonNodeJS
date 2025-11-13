@@ -109,7 +109,7 @@ export function SpriteText( text, position,	options = {} ) {
 			rect = options.rect || optionsUpdate.rect || {},
 			color = 'rgba(255, 255, 255, 1)',
 			fontColor = options.fontColor || optionsUpdate.fontColor || color,
-			center = SpriteText.getCenter( options.center || optionsUpdate.center, position );
+			center = SpriteText.getCenter( options.center || optionsUpdate.center, new THREE.Vector3().copy(position).applyEuler( options.group.rotation ) );
 			
 		if ( fov !== undefined )
 			textHeight = fov * textHeight / 50;
