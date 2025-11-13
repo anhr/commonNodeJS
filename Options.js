@@ -1740,7 +1740,7 @@ class Raycaster {
 					scales: options.scales,
 					spriteOptions: {
 
-						textHeight: options.spriteText.textHeight,
+						textHeight: options.spriteText.textHeight || 0.03,
 						fontColor: options.spriteText.fontColor,
 						rect: rect,
 						group: scene,
