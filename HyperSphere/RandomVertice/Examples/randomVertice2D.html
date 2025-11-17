@@ -101,8 +101,11 @@
 			const createRandomVerticeHyperSphere = (randomVertice, name) => {
 
 				if (hsRandomVertice) {
-					
-					hsRandomVertice.setPositionAttributeFromPoints(randomVertice.randomAngles, true);
+
+//					params.pointsCount = 0;
+					randomVertice.randomAngles;
+//					hsRandomVertice.classSettings.settings.bufferGeometry.attributes.position.needsUpdate = true;
+//					hsRandomVertice.setPositionAttributeFromPoints(randomVertice.randomAngles, true);
 					const guiSelectPoint = hsRandomVertice.classSettings.settings.options.guiSelectPoint;
 					if (guiSelectPoint && guiSelectPoint.isSelectedMesh(hsRandomVertice.object3D)) guiSelectPoint.selectMesh(-1);
 					
@@ -213,6 +216,8 @@
 							if (!cloud)
 								cloud = new Cloud(params);
 							createRandomVerticeHyperSphere(cloud, 'Cloud');
+//console.error('debug');
+//cloud.getRandomVerticeAngles(cloud, params);
 							randomVertice = undefined;
 							break;
 						case modes.randomVertice:
@@ -282,7 +287,7 @@
 			const gui = options.dat.gui.addFolder('Hypersphere'),
 				onChangeVertice = (verticeId) => {
 
-					hsVertices.setPositionAttributeFromPoint(verticeId);
+//					hsVertices.setPositionAttributeFromPoint(verticeId);
 					hsVertices.update(verticeId, 0);
 					
 					updateRandomVerticeHyperSphere();

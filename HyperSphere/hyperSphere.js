@@ -587,12 +587,35 @@ class HyperSphere extends MyObject {
 									}
 	
 								} else {
-	
+
+									const editPosition = (shift) => {
+										
+										const verticeAnglesNew = [], angleIdNew = verticeAngles.length - shift, verticeAnglesOld = classSettings.settings.object.geometry.angles[verticeId];
+										for(let i = 0; i < verticeAngles.length; i++) verticeAnglesNew.push(angleIdNew === i ? value : verticeAnglesOld[i]);
+										const timeId = classSettings.settings.guiPoints ? classSettings.settings.guiPoints.timeId : 0, vertice = this.a2v(this.Vertice(verticeAnglesNew), classSettings.overriddenProperties.r(timeId));
+										this.setPositionAttributeFromPoint(verticeId, Position(vertice), timeId);
+										
+									}
 									switch (name) {
 	
-										case sLongitude: verticeAngles[verticeAngles.length - longitudeShift] = value; return true;
-										case sLatitude: verticeAngles[verticeAngles.length - latitudeShift] = value; return true;
-										case sAltitude: verticeAngles[verticeAngles.length - altitudeShift] = value; return true;
+										case sLongitude:
+//											verticeAngles[verticeAngles.length - longitudeShift] = value;
+											editPosition(longitudeShift);
+											return true;
+										case sLatitude:
+//											verticeAngles[verticeAngles.length - latitudeShift] = value;
+/*											
+											const verticeAnglesNew = [], angleIdNew = verticeAngles.length - latitudeShift, verticeAnglesOld = classSettings.settings.object.geometry.angles[verticeId];
+											for(let i = 0; i < verticeAngles.length; i++) verticeAnglesNew.push(angleIdNew === i ? value : verticeAnglesOld[i]);
+											const timeId = classSettings.settings.guiPoints ? classSettings.settings.guiPoints.timeId : 0, vertice = this.a2v(this.Vertice(verticeAnglesNew), classSettings.overriddenProperties.r(timeId));
+											this.setPositionAttributeFromPoint(verticeId, Position(vertice), timeId);
+*/											
+											editPosition(latitudeShift);
+											return true;
+										case sAltitude:
+//											verticeAngles[verticeAngles.length - altitudeShift] = value;
+											editPosition(altitudeShift);
+											return true;
 											
 									}
 									verticeAngles[name] = value;
@@ -629,6 +652,10 @@ class HyperSphere extends MyObject {
 						}
 						case 'guiLength': return angles.length;
 						case 'player': return this.anglesPlayer();
+						case 'needsUpdate':
+							classSettings.settings.bufferGeometry.attributes.position.needsUpdate = true;
+							classSettings.settings.bufferGeometry.attributes.color.needsUpdate = true;
+							return true;
 	
 					}
 					return angles[name];
@@ -664,15 +691,23 @@ class HyperSphere extends MyObject {
 					}
 					const i = parseInt(name);
 					if (!isNaN(i)) {
-	
-						aAngles[i] = value;
-	//					const object = _this.object();
-						const object = _this.object3D;
-						if (object) {
+
+						if (!isNaN(aAngles[i][0])) {
 							
-							object.userData.myObject.setPositionAttributeFromPoint(i, _this.angles2Vertice(value));
-							_this.bufferGeometry.attributes.position.needsUpdate = true;
-	
+							aAngles[i]= value;
+							const object = _this.object3D;
+							if (object) {
+								
+								object.userData.myObject.setPositionAttributeFromPoint(i, _this.angles2Vertice(value));
+								_this.bufferGeometry.attributes.position.needsUpdate = true;
+		
+							}
+
+						} else {
+							
+							const timeId = classSettings.settings.guiPoints ? classSettings.settings.guiPoints.timeId : 0, vertice = this.a2v(value, classSettings.overriddenProperties.r(timeId));
+							this.setPositionAttributeFromPoint(i, Position(vertice), timeId);
+							
 						}
 	
 					}
@@ -700,7 +735,7 @@ class HyperSphere extends MyObject {
 					switch (name) {
 
 						case 'id': return timeId != undefined ? timeId : classSettings.settings.options.player ? classSettings.settings.options.player.getTimeId() : 0;
-						case 't': return classSettings.settings.options.player.getTime(timeId);
+						case 't': return classSettings.settings.options.player ? classSettings.settings.options.player.getTime(timeId) : 0;
 						case 'r': return playerProxy.t * classSettings.r;
 							
 					}
@@ -1181,8 +1216,14 @@ class HyperSphere extends MyObject {
 		if (!overriddenProperties.vertices) overriddenProperties.vertices = () => { return []; }
 		if (!overriddenProperties.r) overriddenProperties.r = (timeId) => { return classSettings.r; }
 		if (!overriddenProperties.pushMiddleVertice) overriddenProperties.pushMiddleVertice = () => {}
-		if (!overriddenProperties.angles) overriddenProperties.angles = (anglesId) => { return this.Vertice(classSettings.settings.object.geometry.angles[anglesId]); }
-		if (!overriddenProperties.verticeAngles) overriddenProperties.verticeAngles = (anglesCur, verticeId) => { return anglesCur[verticeId]; }
+		if (!overriddenProperties.angles) overriddenProperties.angles = (anglesId) => {
+
+if (anglesId === 736)
+	console.error('anglesId = ' + anglesId)
+			return this.Vertice(classSettings.settings.object.geometry.angles[anglesId]);
+		
+		}
+		if (!overriddenProperties.verticeAngles) overriddenProperties.verticeAngles = (anglesCur, verticeId) => { return anglesCur[verticeId];}
 		if (!overriddenProperties.verticeText) overriddenProperties.verticeText = (intersection, text) => { return text(classSettings.settings.object.geometry.angles,  this.searchNearestEdgeVerticeId(intersection.index, intersection)); }
 		if (!overriddenProperties.text) overriddenProperties.text = () => { return ''; }
 		if (!overriddenProperties.onSelectSceneEndSetDrawRange) overriddenProperties.onSelectSceneEndSetDrawRange = (timeId) => {}
@@ -4470,6 +4511,60 @@ RandomVertices.params = (params) => {
 }
 RandomVertices.Center = () => { console.error(sRandomVertices + ': Please, override RandomVertices.Center method.'); }
 HyperSphere.RandomVertices = RandomVertices;
+
+const Position = (position) => {
+
+	Object.defineProperty(position, 'x', {
+
+		get: () => { return position[0]; },
+		set: (x) => {
+
+			if (position[0] === x) return true;
+			position[0] = x;
+			return true;
+
+		},
+
+	});
+	Object.defineProperty(position, 'y', {
+
+		get: () => { return position[1]; },
+		set: (y) => {
+
+			if (position[1] === y) return true;
+			position[1] = y;
+			return true;
+
+		},
+
+	});
+	Object.defineProperty(position, 'z', {
+
+		get: () => { return position[2]; },
+		set: (z) => {
+
+			if (position[2] === z) return true;
+			position[2] = z;
+			return true;
+
+		},
+
+	});
+	Object.defineProperty(position, 'w', {
+
+		get: () => { return position[3]; },
+		set: (w) => {
+
+			if (position[3] === w) return true;
+			position[3] = w;
+			return true;
+
+		},
+
+	});
+	return position;
+	
+}
 
 export default HyperSphere;
 

@@ -61,7 +61,7 @@ export class RandomVerticeSphere extends RandomVertice {
 					//λ — долгота (от −180° до 180°),
 					const arccos = Math.acos, sin = Math.sin, cos = Math.cos;
 					const θ = arccos(sin(ϕ1) * sin(ϕ2) + cos(ϕ1) * cos(ϕ2) * cos(λ1 - λ2));
-					if (isNaN(θ)) console.error(sSphere + ': getArcAngle. Invalid θ = ' + θ);
+					if (isNaN(θ)) console.error(sRandomVerticesSphere + ': getArcAngle. Invalid θ = ' + θ);
 					return θ;
 				
 				},
@@ -353,6 +353,7 @@ console.log(rotated)
 			
 			if (arrayCircles) arrayCircles.length = 0;
 			verticesAngles(false);
+			params.verticesAngles.needsUpdate;
 			const randomVerticeId = round(random() * (this.circlesPointsCount - 1))
 
 			if (arrayCircles) return this.getRandomAngle(randomVerticeId);
