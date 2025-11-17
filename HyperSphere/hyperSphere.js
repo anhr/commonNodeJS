@@ -1216,13 +1216,7 @@ class HyperSphere extends MyObject {
 		if (!overriddenProperties.vertices) overriddenProperties.vertices = () => { return []; }
 		if (!overriddenProperties.r) overriddenProperties.r = (timeId) => { return classSettings.r; }
 		if (!overriddenProperties.pushMiddleVertice) overriddenProperties.pushMiddleVertice = () => {}
-		if (!overriddenProperties.angles) overriddenProperties.angles = (anglesId) => {
-
-if (anglesId === 736)
-	console.error('anglesId = ' + anglesId)
-			return this.Vertice(classSettings.settings.object.geometry.angles[anglesId]);
-		
-		}
+		if (!overriddenProperties.angles) overriddenProperties.angles = (anglesId) => { return this.Vertice(classSettings.settings.object.geometry.angles[anglesId]); }
 		if (!overriddenProperties.verticeAngles) overriddenProperties.verticeAngles = (anglesCur, verticeId) => { return anglesCur[verticeId];}
 		if (!overriddenProperties.verticeText) overriddenProperties.verticeText = (intersection, text) => { return text(classSettings.settings.object.geometry.angles,  this.searchNearestEdgeVerticeId(intersection.index, intersection)); }
 		if (!overriddenProperties.text) overriddenProperties.text = () => { return ''; }

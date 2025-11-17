@@ -221,9 +221,12 @@ console.log(rotated)
 //					if (params.hyperSphere) return params.hyperSphere.rotate(randomVerticeAngles, params.oppositeVertice);
 					if (params.hyperSphere) return params.hyperSphere.vertice(arrayAngles);
 					else {
-						
+
+/*						
 						Object.defineProperty(arrayAngles, 'longitude', { get: () => { return arrayAngles[1]; }, });
 						Object.defineProperty(arrayAngles, 'latitude' , { get: () => { return arrayAngles[0]; }, });
+*/
+						Vertice(arrayAngles);
 
 					}
 					

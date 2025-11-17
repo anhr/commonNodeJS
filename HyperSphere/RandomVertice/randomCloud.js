@@ -62,6 +62,7 @@ class RandomCloud {
 				else params.verticesAngles.push(randomVerticeAngles);
 	
 			}
+			params.verticesAngles.needsUpdate;
 			delete params.random;
 			delete params.b;
 			return params.verticesAngles;
