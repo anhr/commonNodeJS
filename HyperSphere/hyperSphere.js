@@ -43,6 +43,7 @@ import ProgressBar from '../ProgressBar/ProgressBar.js'
 import PositionController from '../PositionController.js';
 import MyObject from '../myObject.js'
 import anglesRange from './anglesRange.js'
+import Position from './Position.js'
 
 const sHyperSphere = 'HyperSphere', sOverride = sHyperSphere + ': Please override the %s method in your child class.',
 	π = Math.PI, pi = Math.PI;
@@ -480,14 +481,6 @@ class HyperSphere extends MyObject {
 			
 											if (angleId >= verticeAngles.length) return 0.0;
 											return verticeAnglesFromPosition ? verticeAnglesFromPosition[angleId] : verticeAngles[angleId];
-/*											
-											const angle = verticeAngles[angleId];
-											if (isNaN(angle))
-												//угол удален из settings.object.geometry.angles. Поэтому угол надо вычислить из позиции вершины.
-												return this.vertice2angles(settings.bufferGeometry.userData.position[verticeId])[angleId];
-											return angle;
-*/												
-											
 			
 										}
 										return verticeAngles[name];
@@ -503,11 +496,6 @@ class HyperSphere extends MyObject {
 								}
 								switch (name) {
 	
-	/*									
-									case sLongitude: return verticeAngles[verticeAngles.length - longitudeShift];
-									case sLatitude: return verticeAngles[verticeAngles.length - latitudeShift];
-									case sAltitude: return verticeAngles[verticeAngles.length - altitudeShift];
-	*/								
 									case sLongitude: {
 										
 										const id = length - longitudeShift;
@@ -4505,7 +4493,7 @@ RandomVertices.params = (params) => {
 }
 RandomVertices.Center = () => { console.error(sRandomVertices + ': Please, override RandomVertices.Center method.'); }
 HyperSphere.RandomVertices = RandomVertices;
-
+/*
 const Position = (position) => {
 
 	Object.defineProperty(position, 'x', {
@@ -4559,7 +4547,7 @@ const Position = (position) => {
 	return position;
 	
 }
-
+*/
 export default HyperSphere;
 
 const _display = (element, boDisplay) => { element.style.display = boDisplay === false ? 'none' : 'block'; }

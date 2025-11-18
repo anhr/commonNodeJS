@@ -292,7 +292,7 @@ class Sphere extends Circle {
 		return sphericalToCartesian(r, angles);
 
 	}
-	normalizeAngles(angles){
+//	normalizeAngles(angles){
 
 		/*https://chat.deepseek.com/a/chat/s/26327d17-c346-476d-9199-a0814f3a7a0a
 		Есть точка на поверхности сферы в полярной системе координат. Начало полярной системы координат находится в центре сферы.
@@ -316,15 +316,9 @@ class Sphere extends Circle {
 
 		Это обеспечивает корректное отображение любой точки на поверхности сферы в допустимый диапазон координат.
 		*/
+/*
 		const normalize = (normalized) => {
 
-/*
-			// Создаем копию точки, чтобы не изменять оригинал
-			const normalized = {
-				latitude: point.latitude,
-				longitude: point.longitude
-			};
-*/
 			// Нормализация долготы в диапазон [-π, π]
 			normalized.longitude = normalized.longitude % (2 * Math.PI);
 			if (normalized.longitude > Math.PI) {
@@ -355,39 +349,6 @@ class Sphere extends Circle {
 					normalized.longitude += 2 * Math.PI;
 				}
 			}
-/*
-			// Нормализация долготы в диапазон [-π, π]
-			const normalizedLongitude = () => {
-				
-				normalized.longitude = normalized.longitude % (anglesRange.longitude.range);//(2 * Math.PI);
-				if (normalized.longitude > anglesRange.longitude.max)
-					normalized.longitude -= anglesRange.longitude.range;//2 * Math.PI;
-				else if (normalized.longitude < anglesRange.longitude.mi)
-					normalized.longitude += anglesRange.longitude.range;
-
-			}
-			normalizedLongitude();
-
-			// Нормализация широты в диапазон [-π/2, π/2]
-			normalized.latitude = normalized.latitude % (2 * anglesRange.latitude.range);//(2 * Math.PI);
-
-			// Если широта выходит за пределы [-π/2, π/2], отражаем ее
-			if (Math.abs(normalized.latitude) > anglesRange.latitude.max) {
-				
-				if (normalized.latitude > 0) 
-					normalized.latitude = Math.PI - normalized.latitude;
-				else
-					normalized.latitude = -Math.PI - normalized.latitude;
-
-				// После отражения, сдвигаем долготу на π
-				normalized.longitude += Math.PI;
-
-				// Снова нормализуем долготу после сдвига
-				normalizedLongitude();
-				
-			}
-*/
-//			return normalized;
 		}
 
 		// Тестовые случаи
@@ -412,6 +373,7 @@ class Sphere extends Circle {
 		// {latitude: ~0, longitude: ~0}
 
 		//https://gemini.google.com/app/64aa493066e3b07e
+*/
 		/**
 		 * Нормализует широту и долготу точки в допустимые диапазоны.
 		 * point.latitude: широта, от -π/2 до π/2
@@ -421,6 +383,7 @@ class Sphere extends Circle {
 		 * @param {number} point.longitude Текущая долгота.
 		 * @returns {object} Новый объект с нормализованными latitude и longitude.
 		 */
+/*
 		function normalizeGemini(point) {
 			const PI = Math.PI;
 
@@ -524,6 +487,7 @@ class Sphere extends Circle {
 		});
 		
 	}
+*/
 	get verticeEdgesLengthMax() { return 3/*6*/; }//нельзя добавлть новое ребро если у вершины уже 6 ребра
 	get dimension() { return 3; }//space dimension
 	get verticesCountMin() { return 4; }

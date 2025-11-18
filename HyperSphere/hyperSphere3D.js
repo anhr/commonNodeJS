@@ -19,6 +19,8 @@ import Sphere from './sphere.js';
 import three from '../three.js'
 import FibonacciSphereGeometry from '../FibonacciSphere/FibonacciSphereGeometry.js'
 import anglesRange from './anglesRange.js'
+import Vertice from './VerticeHypersphere.js'
+import Position from './Position.js'
 
 const sHyperSphere3D = 'HyperSphere3D',
 	π = Math.PI;
@@ -203,6 +205,210 @@ class HyperSphere3D extends Sphere {
 
 	//Overridden methods from base class
 
+	Vertice(angles) { return Vertice(angles); }
+	/**
+	 * Converts a vertice position to vertice angles.
+	 * @param {array} vertice array of the vertice axes
+	 * @returns Vertice angles.
+	 */
+	vertice2angles(vertice) {
+
+		/*https://chat.deepseek.com/a/chat/s/5c55507d-4660-4e04-8920-0e1c791a9c3c
+		Задана точка vertice на 3D гиперсфере в декартовой системе координат. Начало координат находится в центре сферы.
+		Положение точки обозначить как
+		x = vertice[0]
+		y = vertice[1]
+		z = vertice[2]
+		w = vertice[3]
+		Вычислить координаты точки в полярной системе координат.
+		Углы в полярной системе координат обозначить как:
+		longitude - долгота (азимутальный угол)  в диапазоне от -π до π,
+		latitude - широта (зенитный угол) в диапазоне -π/2 на южном полюсе до π/2 на северном полюсе.,
+		altitude - полярный угол от оси W  в диапазоне от 0 до π.
+		Радиус сферы обозначить как r.
+		Написать код на javascript.
+		*/
+		function cartesianToPolar4D(vertice) {
+
+//			const [x, y, z, w] = vertice;
+			const x = vertice.x, y = vertice.y, z = vertice.z, w = vertice.w;
+
+			// Вычисляем радиус сферы
+			const r = Math.sqrt(x * x + y * y + z * z + w * w);
+
+			// Если радиус равен 0, возвращаем нулевые координаты
+			if (r === 0) {
+
+/*
+				return {
+					longitude: 0,
+					latitude: 0,
+					altitude: 0,
+					radius: 0
+				};
+*/
+				return Vertice([0, 0, 0]);
+
+			}
+
+			// Вычисляем altitude (угол от оси W) в диапазоне [0, π]
+			const altitude = Math.acos(w / r);
+
+			// Проекция на 3D пространство (x,y,z)
+			const r_xyz = Math.sqrt(x * x + y * y + z * z);
+
+			// Вычисляем latitude (широта) в диапазоне [-π/2, π/2]
+			let latitude;
+			if (r_xyz === 0) {
+				// Если проекция на (x,y,z) равна 0, точка на полюсе W-оси
+				latitude = (w >= 0) ? Math.PI / 2 : -Math.PI / 2;
+			} else {
+				latitude = Math.asin(z / r_xyz);
+			}
+
+			// Проекция на плоскость (x,y)
+			const r_xy = Math.sqrt(x * x + y * y);
+
+			// Вычисляем longitude (долгота) в диапазоне [-π, π]
+			let longitude;
+			if (r_xy === 0) {
+				// Если проекция на (x,y) равна 0, долгота не определена, устанавливаем 0
+				longitude = 0;
+			} else {
+				longitude = Math.atan2(y, x);
+				// atan2 уже возвращает значение в диапазоне [-π, π]
+			}
+
+/*
+			return {
+				longitude: longitude,    // долгота [-π, π]
+				latitude: latitude,      // широта [-π/2, π/2]  
+				altitude: altitude,      // полярный угол от оси W [0, π]
+				radius: r               // радиус сферы
+			};
+*/
+			return Vertice([altitude, latitude, longitude]);
+
+		}
+/*
+		// Пример использования:
+		const vertice2 = [1, 0, 0, 0];  // Точка на гиперсфере
+		const polarCoords = cartesianToPolar4D(vertice2);
+
+		console.log("Декартовы координаты:", vertice2);
+		console.log("Полярные координаты:");
+		console.log("Долгота (longitude):", polarCoords.longitude);
+		console.log("Широта (latitude):", polarCoords.latitude);
+		console.log("Полярный угол (altitude):", polarCoords.altitude);
+		console.log("Радиус (radius):", polarCoords.radius);
+*/		
+		return cartesianToPolar4D(vertice);
+
+	}
+	a2v(angles, r) {
+
+		/*https://chat.deepseek.com/a/chat/s/831d9a90-2396-4b09-b548-288415124814
+		Задана точка на 3D гиперсфере в полярной системе координат. Начало координат находится в центре 3D гиперсферы.
+		Положение точки обозначить как
+		angles.longitude - долгота (азимутальный угол)  в диапазоне от -π до π,
+		angles.latitude - широта (зенитный угол) в диапазоне -π/2 на южном полюсе до π/2 на северном полюсе.,
+		angles.altitude - полярный угол от оси W  в диапазоне от 0 до π.
+		Радиус сферы обозначить как r.
+		Долгота, широта и полярный угол могут выходить за пределы заданного диапазона.
+		Вычислить координаты точки в декартовой системе координат.
+		Написать код на javascript
+		*/
+		/**
+		 * Вычисляет декартовы координаты (x, y, z) точки на сфере,
+		 * заданной в полярной системе координат (r, широта, долгота).
+		 *
+		 * Предполагается, что:
+		 * - Широта (latitude) находится в диапазоне от -π/2 (южный полюс) до π/2 (северный полюс).
+		 * - Долгота (longitude) находится в диапазоне от -π до π.
+		 * - Углы заданы в радианах.
+		 *
+		 * @param {number} r - Радиус сферы.
+		 * @param {object} angles - Объект с углами.
+		 * @param {number} angles.latitude - Широта (от -π/2 до π/2).
+		 * @param {number} angles.longitude - Долгота (от -π до π).
+		 * @returns {array} Массив с декартовыми координатами [x, y, z].
+		 */
+/*		
+		function polarToCartesian(angles, r) {
+			// Нормализуем углы к стандартным диапазонам
+			const normalizedLon = normalizeAngle(angles.longitude, anglesRange.longitude.min, anglesRange.longitude.max);
+			const normalizedLat = normalizeAngle(angles.latitude,  anglesRange.latitude.min, anglesRange.latitude.max);
+			const normalizedAlt = normalizeAngle(angles.altitude,  anglesRange.altitude.min,  anglesRange.altitude.max);
+
+			// Вычисляем декартовы координаты
+			const x = r * Math.sin(normalizedAlt) * Math.cos(normalizedLat) * Math.cos(normalizedLon);
+			const y = r * Math.sin(normalizedAlt) * Math.cos(normalizedLat) * Math.sin(normalizedLon);
+			const z = r * Math.sin(normalizedAlt) * Math.sin(normalizedLat);
+			const w = r * Math.cos(normalizedAlt);
+
+//			return { x, y, z, w };
+			return [ x, y, z, w ];
+		}
+
+		function normalizeAngle(angle, min, max) {
+			const range = max - min;
+
+			// Приводим угол к диапазону [min, max)
+			let normalized = angle;
+			while (normalized < min) {
+				normalized += range;
+			}
+			while (normalized >= max) {
+				normalized -= range;
+			}
+
+			return normalized;
+		}
+*/
+		// Альтернативная версия с более простой нормализацией
+		function polarToCartesian(angles, r) {
+
+/*			
+			// Используем остаток от деления для нормализации
+			const lon = ((angles.longitude + Math.PI) % (2 * Math.PI)) - Math.PI;
+			const lat = ((angles.latitude + Math.PI / 2) % Math.PI) - Math.PI / 2;
+			const alt = angles.altitude % Math.PI;
+*/			
+			const lon = angles.longitude;
+			const lat = angles.latitude;
+			const alt = angles.altitude;
+
+			// Вычисляем декартовы координаты
+			const x = r * Math.sin(alt) * Math.cos(lat) * Math.cos(lon);
+			const y = r * Math.sin(alt) * Math.cos(lat) * Math.sin(lon);
+			const z = r * Math.sin(alt) * Math.sin(lat);
+			const w = r * Math.cos(alt);
+
+//			return { x, y, z, w };
+			return [ x, y, z, w ];
+		}
+/*		
+		// Пример использования
+		const angles2 = {
+			longitude: Math.PI / 4,    // 45°
+			//latitude: Math.PI / 6,     // 30°
+			latitude: Math.PI / 2 + 0.1,//out of range
+			altitude: Math.PI / 3      // 60°
+		};
+		const radius = 1;
+
+		const coords2 = Position(polarToCartesian(angles2, radius));
+		console.log('Декартовы координаты:', coords2);
+		const angles3 = this.vertice2angles(coords2);
+		const coords3 = Position(polarToCartesian(angles2, radius));
+
+		// Проверка: расстояние от начала координат должно быть равно радиусу
+		const distance = Math.sqrt(coords.x ** 2 + coords.y ** 2 + coords.z ** 2 + coords.w ** 2);
+		console.log('Расстояние от центра:', distance); // Должно быть равно radius
+*/		
+		return polarToCartesian(angles, r);
+
+	}
 	get verticeEdgesLengthMax() { return 4/*6*/; }//нельзя добавлть новое ребро если у вершины уже 6 ребра
 	get dimension() { return 4; }//space dimension
 	get verticesCountMin() { return 4; }
