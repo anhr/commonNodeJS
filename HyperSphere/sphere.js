@@ -18,8 +18,8 @@
 import Circle from './circle.js';
 import three from '../three.js'
 import RandomCloud from './RandomVertice/randomCloudSphere.js';
-//import anglesRange from './anglesRange.js'
 import Vertice from './VerticeSphere.js'
+//import Position from './Position.js'
 
 const sSphere = 'Sphere',
 	π = Math.PI;
@@ -144,6 +144,201 @@ class Sphere extends Circle {
 
 	//Overridden methods from base class
 
+	rotation(params) {
+
+		if (!params) return;
+		params.rotation = () => {
+
+			/*https://chat.deepseek.com/a/chat/s/d4122bcc-0fa5-4cc3-b9c0-a1eb2cca6154
+			Есть две точки на поверхости сферы.
+			Название первой точки: vertice.
+			Название второй точки: oppositeVertice.
+			Как вычислить углы Эйлера, с помощию которых можно переместить точку 1 в точку 2? Написать пример на Javascript
+			*/
+			/**
+			 * Вычисляет углы Эйлера для поворота точки A в точку B на поверхности сферы
+			 * @param {Array} vertice - Координаты первой точки [x, y, z]
+			 * @param {Array} oppositeVertice - Координаты второй точки [x, y, z]
+			 * @returns {Object} Объект с углами Эйлера в радианах и градусах
+			 */
+			function calculateEulerAngles(vertice, oppositeVertice) {
+				// Нормализуем векторы (предполагаем, что они уже на поверхности единичной сферы)
+				const v1 = normalize(vertice);
+				const v2 = normalize(oppositeVertice);
+
+				// Вычисляем ось вращения (векторное произведение)
+				const axis = crossProduct(v1, v2);
+
+				// Если точки совпадают или противоположны, возвращаем нулевые углы
+				if (magnitude(axis) < 1e-10) {
+					// Проверяем, являются ли точки противоположными
+					if (dotProduct(v1, v2) < -0.999) {
+						// Для противоположных точек выбираем произвольную ось вращения
+						return {
+							alpha: Math.PI,
+							beta: 0,
+							gamma: 0,
+							alphaDeg: 180,
+							betaDeg: 0,
+							gammaDeg: 0
+						};
+					}
+					return {
+						alpha: 0,
+						beta: 0,
+						gamma: 0,
+						alphaDeg: 0,
+						betaDeg: 0,
+						gammaDeg: 0
+					};
+				}
+
+				// Нормализуем ось вращения
+				const axisNorm = normalize(axis);
+
+				// Вычисляем угол вращения (скалярное произведение)
+				const cosAngle = dotProduct(v1, v2);
+				const angle = Math.acos(Math.max(-1, Math.min(1, cosAngle)));
+
+				// Преобразуем ось вращения в углы Эйлера (ZYX конвенция)
+				// Сначала вычисляем матрицу вращения из оси и угла
+				const rotationMatrix = axisAngleToRotationMatrix(axisNorm, angle);
+
+				// Затем преобразуем матрицу вращения в углы Эйлера
+				const eulerAngles = rotationMatrixToEulerZYX(rotationMatrix);
+
+				return {
+					alpha: eulerAngles.alpha,
+					beta: eulerAngles.beta,
+					gamma: eulerAngles.gamma,
+					/*					
+										alphaDeg: eulerAngles.alpha * 180 / Math.PI,
+										betaDeg: eulerAngles.beta * 180 / Math.PI,
+										gammaDeg: eulerAngles.gamma * 180 / Math.PI
+					*/
+				};
+			}
+
+			// Вспомогательные функции
+
+			function normalize(v) {
+				const mag = magnitude(v);
+				return [v[0] / mag, v[1] / mag, v[2] / mag];
+			}
+
+			function magnitude(v) {
+				return Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+			}
+
+			function dotProduct(a, b) {
+				return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+			}
+
+			function crossProduct(a, b) {
+				return [
+					a[1] * b[2] - a[2] * b[1],
+					a[2] * b[0] - a[0] * b[2],
+					a[0] * b[1] - a[1] * b[0]
+				];
+			}
+
+			function axisAngleToRotationMatrix(axis, angle) {
+				const [x, y, z] = axis;
+				const c = Math.cos(angle);
+				const s = Math.sin(angle);
+				const t = 1 - c;
+
+				return [
+					[t * x * x + c, t * x * y - s * z, t * x * z + s * y],
+					[t * x * y + s * z, t * y * y + c, t * y * z - s * x],
+					[t * x * z - s * y, t * y * z + s * x, t * z * z + c]
+				];
+			}
+
+			function rotationMatrixToEulerZYX(matrix) {
+				const [m00, m01, m02] = matrix[0];
+				const [m10, m11, m12] = matrix[1];
+				const [m20, m21, m22] = matrix[2];
+
+				let alpha, beta, gamma;
+
+				if (Math.abs(m20) < 0.999999) {
+					beta = Math.atan2(-m20, Math.sqrt(m00 * m00 + m10 * m10));
+					alpha = Math.atan2(m10, m00);
+					gamma = Math.atan2(m21, m22);
+				} else {
+					// Сингулярность (gimbal lock)
+					alpha = Math.atan2(-m01, m11);
+					beta = -Math.PI / 2 * Math.sign(m20);
+					gamma = 0;
+				}
+
+				return { alpha, beta, gamma };
+			}
+			const THREE = three.THREE;
+			const position = this.classSettings.settings.object.geometry.position;
+			const vertice = position[0];
+			const oppositeVertice = position[1];
+			const euler = calculateEulerAngles(vertice, oppositeVertice);
+			const eulerTHREE = new THREE.Euler(euler.gamma, euler.beta, euler.alpha, 'ZYX');
+
+			/*
+			// Пример использования
+			//const vertice = this.a2v(Vertice([0.1, 0.2]));//[1, 0, 0];
+			//const oppositeVertice = this.a2v(Vertice([0.4, 0.5]));//[0, 1, 0];
+
+
+			console.log('Углы Эйлера (радианы):');
+			console.log(`alpha: ${euler.alpha.toFixed(4)}`);
+			console.log(`beta: ${euler.beta.toFixed(4)}`);
+			console.log(`gamma: ${euler.gamma.toFixed(4)}`);
+
+			// Проверка: применяем поворот к исходной точке
+			function applyEulerRotation(point, alpha, beta, gamma) {
+				
+//				const [x, y, z] = point;
+				const x = point.x, y = point.y, z = point.z;
+
+				// Поворот вокруг Z (alpha)
+				const x1 = x * Math.cos(alpha) - y * Math.sin(alpha);
+				const y1 = x * Math.sin(alpha) + y * Math.cos(alpha);
+				const z1 = z;
+
+				// Поворот вокруг Y (beta)
+				const x2 = x1 * Math.cos(beta) + z1 * Math.sin(beta);
+				const y2 = y1;
+				const z2 = -x1 * Math.sin(beta) + z1 * Math.cos(beta);
+
+				// Поворот вокруг X (gamma)
+				const x3 = x2;
+				const y3 = y2 * Math.cos(gamma) - z2 * Math.sin(gamma);
+				const z3 = y2 * Math.sin(gamma) + z2 * Math.cos(gamma);
+
+				return [x3, y3, z3];
+			}
+
+			const rotatedPoint = applyEulerRotation(
+				vertice,
+				euler.alpha,
+				euler.beta,
+				euler.gamma
+			);
+
+			const verticeTHREE = new THREE.Vector3(vertice[0], vertice[1], vertice[2]);
+			verticeTHREE.applyEuler(eulerTHREE);
+
+			console.log('\nПроверка:');
+			console.log('Исходная точка: x= ' + vertice.x + ' y = ' + vertice.y + ' z = ' + vertice.z);
+//			console.log('Целевая точка:', oppositeVertice);
+			console.log('Целевая точка: x= ' + oppositeVertice.x + ' y = ' + oppositeVertice.y + ' z = ' + oppositeVertice.z);
+			console.log('После поворота THREE:', verticeTHREE);
+			console.log('После поворота:', rotatedPoint);
+			*/
+			return eulerTHREE;
+
+		}
+
+	}
 	Vertice(angles) { return Vertice(angles); }
 	/**
 	 * Converts a vertice position to vertice angles.
@@ -218,7 +413,7 @@ class Sphere extends Circle {
 		return cartesianToGeographicPolar(vertice);
 		
 	}
-	a2v(angles, r) {
+	a2v(angles, r=1) {
 
 		/*https://gemini.google.com/app/fed6dc3ff178ba36
 		Задана точка на сфере в полярной системе координат. Начало координат находится в центре сферы.

@@ -20,7 +20,7 @@ import three from '../three.js'
 import FibonacciSphereGeometry from '../FibonacciSphere/FibonacciSphereGeometry.js'
 import anglesRange from './anglesRange.js'
 import Vertice from './VerticeHypersphere.js'
-import Position from './Position.js'
+//import Position from './Position.js'
 
 const sHyperSphere3D = 'HyperSphere3D',
 	π = Math.PI;
@@ -205,6 +205,7 @@ class HyperSphere3D extends Sphere {
 
 	//Overridden methods from base class
 
+	rotation() { onsile.error('Under constractoion'); }
 	Vertice(angles) { return Vertice(angles); }
 	/**
 	 * Converts a vertice position to vertice angles.

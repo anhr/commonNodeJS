@@ -2,17 +2,17 @@
 
 <html>
 <head>
-    <title>2D Random Vertice</title>
+	<title>2D Random Vertice</title>
 
-    <!--for mobile devices-->
-    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<!--for mobile devices-->
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 
-    <!--<script src="../../../../../three.js/dev/build/three.js"></script>-->
-    <!--<script src="../../../../../three.js/dev/build/three.min.js"></script>-->
-    <!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.js"></script>-->
-    <!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.min.js"></script>-->
-    <!--<script src="https://threejs.org/build/three.js"></script>-->
-    <!--<script src="https://threejs.org/build/three.min.js"></script>-->
+	<!--<script src="../../../../../three.js/dev/build/three.js"></script>-->
+	<!--<script src="../../../../../three.js/dev/build/three.min.js"></script>-->
+	<!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.js"></script>-->
+	<!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.min.js"></script>-->
+	<!--<script src="https://threejs.org/build/three.js"></script>-->
+	<!--<script src="https://threejs.org/build/three.min.js"></script>-->
 </head>
 <body>
 	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
@@ -64,8 +64,8 @@
 //			randomVerticeSettings.cloud ||= false;
 			const params = {
 
-				//вершины расположены друг против друга по диагонали. arc = π
 				/*
+				//вершины расположены друг против друга по диагонали. arc = π
 				vertice: [
 					pi / 4,//0,//Latitude
 					0,//Longitude
@@ -75,7 +75,6 @@
 					pi,//Longitude
 				],
 				*/
-				/*
 				vertice: [
 					0.785,//Latitude
 					pi,//Longitude
@@ -84,16 +83,62 @@
 					0.051,//0,//Latitude
 					pi,//Longitude
 				],
-				*/
+				/*
 				//вершины расположены друг против друга на экваторе
 				vertice: [],
 				oppositeVertice: [
 					0,//Latitude
 					pi,//Longitude
 				],
+				*/
 				debug: randomVerticeSettings.debug,
 
 			}
+
+			//Vertices hyperSphere 
+
+			const verticesSettings = {
+
+				//R: 0.5,
+				debug: true,
+
+			};
+			let hsVertices;
+			hsVertices = new HyperSphere(options, {
+
+				r: verticesSettings.R,
+				//edges: false,
+				//randomArc: true,
+				projectParams: { scene: scene, },
+				//				debug: debug,
+				debug: randomVerticeSettings.debug ? {
+
+					probabilityDensity: false,
+					middleVertice: false,
+					log: false,
+
+				} : false,
+				//debug: false,
+				settings: {
+
+					object: {
+
+						name: 'Vertices',
+						color: 'white',
+						geometry: {
+
+							//							angles: [params.vertice, params.oppositeVertice],
+							params: params,
+
+						},
+
+					},
+					overriddenProperties: { setDrawRange: (start, count) => { if (hsVertices) hsVertices.bufferGeometry.setDrawRange(start, count); } },
+
+				},
+
+			});
+			hsVertices.setDrawRange(hsVertices.bufferGeometry.drawRange.start, hsVertices.bufferGeometry.attributes.position.count, 0);
 			
 			//Random vertice hyperSphere 
 
@@ -234,51 +279,6 @@
 					
 				}
 			updateRandomVerticeHyperSphere();
-	
-			//Vertices hyperSphere 
-			
-			const verticesSettings = {
-
-				//R: 0.5,
-				debug: true,
-			
-			};
-			let hsVertices;
-			hsVertices = new HyperSphere(options, {
-
-				r: verticesSettings.R,
-				//edges: false,
-				//randomArc: true,
-				projectParams: { scene: scene, },
-//				debug: debug,
-				debug: randomVerticeSettings.debug ? {
-
-					probabilityDensity: false,
-					middleVertice: false,
-					log: false,
-
-				} : false,
-				//debug: false,
-				settings: {
-
-					object: {
-
-						name: 'Vertices',
-						color: 'white',
-						geometry: {
-
-//							angles: [params.vertice, params.oppositeVertice],
-							params: params,
-
-						},
-
-					},
-					overriddenProperties: { setDrawRange: (start, count) => { if (hsVertices) hsVertices.bufferGeometry.setDrawRange(start, count); } },
-
-				},
-
-			});
-			hsVertices.setDrawRange(hsVertices.bufferGeometry.drawRange.start, hsVertices.bufferGeometry.attributes.position.count, 0);
 			
 			//GUI
 

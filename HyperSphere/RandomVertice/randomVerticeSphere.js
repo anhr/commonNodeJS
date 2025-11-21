@@ -164,16 +164,6 @@ export class RandomVerticeSphere extends RandomVertice {
 				if (!arrayCircles && (this.circlesPointsCount >= params.verticesAngles.length)) console.error(sRandomVerticesSphere + '.verticesAngles: Allocate memory failed! this.circlesPointsCount = ' + this.circlesPointsCount + ' >= params.verticesAngles.length = ' + params.verticesAngles.length);
 
 				//rotate angles
-//				if (params.hyperSphere) return params.hyperSphere.rotate(randomVerticeAngles, params.oppositeVertice);
-/*				
-				if (params.hyperSphere) {
-
-					const rotated = params.hyperSphere.rotate(randomVerticeAngles, params.oppositeVertice);
-console.log(rotated)
-					return rotated;
-
-				}
-*/				
 
 				/*Есть точка на поверхности сферы в полярной системе координат. Начало полярной системы координат находится в центре сферы.
 				Написать на javascript исходный код поворота этой точки на произвольный угол с использованием углов Эйлера.
@@ -218,17 +208,8 @@ console.log(rotated)
 
 						arrayAngles = [newLatitude, newLongitude];
 
-//					if (params.hyperSphere) return params.hyperSphere.rotate(randomVerticeAngles, params.oppositeVertice);
 					if (params.hyperSphere) return params.hyperSphere.vertice(arrayAngles);
-					else {
-
-/*						
-						Object.defineProperty(arrayAngles, 'longitude', { get: () => { return arrayAngles[1]; }, });
-						Object.defineProperty(arrayAngles, 'latitude' , { get: () => { return arrayAngles[0]; }, });
-*/
-						Vertice(arrayAngles);
-
-					}
+					else Vertice(arrayAngles);
 					
 					return arrayAngles;
 				}
@@ -271,6 +252,7 @@ console.log(rotated)
 				this.circlesPointsCount = boAllocateMemory ? undefined : //Во время выделения памяти в массив this.verticesAngles добавляется новый item
 					0;//в противном случае в массиве this.verticesAngles редактируется item с индексом this.circlesPointsCount
 				let latitudePrev = 0;//широта предыдущей окружности
+				const rotation = !boAllocateMemory && params.rotation ? params.rotation() : undefined;
 				for(let circleId = 0; circleId < circlesCount; circleId++){
 
 					params.random = k * circleId;
