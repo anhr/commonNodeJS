@@ -19,7 +19,9 @@ import Circle from './circle.js';
 import three from '../three.js'
 import RandomCloud from './RandomVertice/randomCloudSphere.js';
 import Vertice from './VerticeSphere.js'
-//import Position from './Position.js'
+import Position from './Position.js'
+import anglesToCartesian from './anglesToCasterianSphere.js'
+import casterianToAngles from './casterianToAnglesSphere.js'
 
 const sSphere = 'Sphere',
 	π = Math.PI;
@@ -144,11 +146,12 @@ class Sphere extends Circle {
 
 	//Overridden methods from base class
 
-	rotation(params) {
+	Euler(params) {
 
 		if (!params) return;
-		params.rotation = () => {
+		params.Euler = () => {
 
+			const r = this.classSettings.r;
 			/*https://chat.deepseek.com/a/chat/s/d4122bcc-0fa5-4cc3-b9c0-a1eb2cca6154
 			Есть две точки на поверхости сферы.
 			Название первой точки: vertice.
@@ -157,11 +160,12 @@ class Sphere extends Circle {
 			*/
 			/**
 			 * Вычисляет углы Эйлера для поворота точки A в точку B на поверхности сферы
-			 * @param {Array} vertice - Координаты первой точки [x, y, z]
 			 * @param {Array} oppositeVertice - Координаты второй точки [x, y, z]
+			 * @param {Array} [vertice=[0, 0, r]] - Координаты первой точки [x, y, z]. По умолчанию северный полюс
 			 * @returns {Object} Объект с углами Эйлера в радианах и градусах
 			 */
-			function calculateEulerAngles(vertice, oppositeVertice) {
+			function calculateEulerAngles(oppositeVertice, vertice=[0, 0, r]) {
+				
 				// Нормализуем векторы (предполагаем, что они уже на поверхности единичной сферы)
 				const v1 = normalize(vertice);
 				const v2 = normalize(oppositeVertice);
@@ -277,9 +281,10 @@ class Sphere extends Circle {
 			}
 			const THREE = three.THREE;
 			const position = this.classSettings.settings.object.geometry.position;
-			const vertice = position[0];
-			const oppositeVertice = position[1];
-			const euler = calculateEulerAngles(vertice, oppositeVertice);
+//			const vertice = position[0];
+//			const vertice = [0, 0, this.classSettings.r];
+//			const oppositeVertice = position[1];
+			const euler = calculateEulerAngles(position[1]);//vertice);
 			const eulerTHREE = new THREE.Euler(euler.gamma, euler.beta, euler.alpha, 'ZYX');
 
 			/*
@@ -345,148 +350,8 @@ class Sphere extends Circle {
 	 * @param {array} vertice array of the vertice axes
 	 * @returns Vertice angles.
 	 */
-	vertice2angles(vertice) {
-
-		/*https://gemini.google.com/app/0d61322aa801d5a5
-		Задана точка vertice на сфере в декартовой системе координат. Начало координат находится в центре сферы.
-		Положение точки обозначить как
-		x = vertice[0]
-		y = vertice[1]
-		z = vertice[2]
-		Вычислить координаты точки в полярной системе координат.
-		Углы в полярной системе координат обозначить как:
-		longitude - долгота в диапазоне от -π до π.
-		latitude - широта в диапазоне от -π/2 на южном полюсе до π/2 на северном полюсе.
-		Написать код на javascript
-		*/
-		/**
-		 * Преобразует декартовы координаты (x, y, z) в географические полярные координаты
-		 * (r, latitude, longitude).
-		 *
-		 * @param {number[]} vertice - Массив [x, y, z] декартовых координат.
-		 * @returns {{r: number, latitude: number, longitude: number}} Объект с полярными координатами в радианах.
-		 */
-		function cartesianToGeographicPolar(vertice) {
-			const x = vertice[0];
-			const y = vertice[1];
-			const z = vertice[2];
-
-			// 1. Вычисление радиуса (r)
-			const r = Math.sqrt(x * x + y * y + z * z);
-
-			// Обработка случая, когда точка находится в центре сферы (r = 0)
-			if (r === 0) {
-				return { r: 0, latitude: 0, longitude: 0 };
-			}
-
-			// 2. Вычисление широты (latitude)
-			// Используем Math.asin(z/r). Результат в радианах [-PI/2, PI/2].
-			const latitude = Math.asin(z / r);
-
-			// 3. Вычисление долготы (longitude)
-			// Используем Math.atan2(y, x). Результат в радианах (-PI, PI].
-			const longitude = Math.atan2(y, x);
-
-//			return { r, latitude, longitude };
-			return Vertice([latitude, longitude]);
-			
-		}
-
-		/*
-		// --- Примеры использования ---
-
-		// Пример 1: Северный полюс (широта +90° или +PI/2)
-		const vertice1 = [0, 0, 10];
-		const polar1 = cartesianToGeographicPolar(vertice1);
-		console.log(`Декартовы: [${vertice1}] -> r=${polar1.r}, lat=${polar1.latitude.toFixed(4)} (90°), lon=${polar1.longitude.toFixed(4)} (0°)`);
-
-		// Пример 2: Точка на экваторе (широта 0), долгота 45°
-		const vertice2 = [1, 1, 0];
-		const polar2 = cartesianToGeographicPolar(vertice2);
-		console.log(`Декартовы: [${vertice2}] -> r=${polar2.r.toFixed(4)}, lat=${polar2.latitude.toFixed(4)} (0°), lon=${polar2.longitude.toFixed(4)} (45°)`);
-
-		// Пример 3: Южный полюс (широта -90° или -PI/2)
-		const vertice3 = [0, 0, -5];
-		const polar3 = cartesianToGeographicPolar(vertice3);
-		console.log(`Декартовы: [${vertice3}] -> r=${polar3.r}, lat=${polar3.latitude.toFixed(4)} (-90°), lon=${polar3.longitude.toFixed(4)} (0°)`);
-		*/
-		return cartesianToGeographicPolar(vertice);
-		
-	}
-	a2v(angles, r=1) {
-
-		/*https://gemini.google.com/app/fed6dc3ff178ba36
-		Задана точка на сфере в полярной системе координат. Начало координат находится в центре сферы.
-		Положение точки обозначить как
-		angles.longitude - долгота в диапазоне от -π до π.
-		angles.latitude - широта в диапазоне от -π/2 на южном полюсе до π/2 на северном полюсе.
-		Радиус сферы обозначить как r.
-		Долгота и широта может выходить за пределы заданного диапазона.
-		Вычислить координаты точки в декартовой системе координат.
-		Написать код на javascript
-		*/
-		/**
-		 * Вычисляет декартовы координаты (x, y, z) точки на сфере,
-		 * заданной в полярной системе координат (r, широта, долгота).
-		 *
-		 * Предполагается, что:
-		 * - Широта (latitude) находится в диапазоне от -π/2 (южный полюс) до π/2 (северный полюс).
-		 * - Долгота (longitude) находится в диапазоне от -π до π.
-		 * - Углы заданы в радианах.
-		 *
-		 * @param {number} r - Радиус сферы.
-		 * @param {object} angles - Объект с углами.
-		 * @param {number} angles.latitude - Широта (от -π/2 до π/2).
-		 * @param {number} angles.longitude - Долгота (от -π до π).
-		 * @returns {array} Массив с декартовыми координатами [x, y, z].
-		 */
-		function sphericalToCartesian(r, angles) {
-			
-			const lat = angles.latitude;
-			const lon = angles.longitude;
-			if (lon === undefined) console.error(sSphere + ': a2v. longitude = ' + lon);
-
-			// Сначала рассчитываем проекцию радиус-вектора на плоскость XY (r_xy)
-			// r_xy = r * cos(latitude)
-			const r_xy = r * Math.cos(lat);
-
-			// Вычисляем декартовы координаты:
-			// x = r_xy * cos(longitude) = r * cos(lat) * cos(lon)
-			const x = r_xy * Math.cos(lon);
-
-			// y = r_xy * sin(longitude) = r * cos(lat) * sin(lon)
-			const y = r_xy * Math.sin(lon);
-
-			// z = r * sin(latitude)
-			const z = r * Math.sin(lat);
-
-//			return { x, y, z };
-			return [ x, y, z ];
-			
-		}
-
-		/*
-		// --- Примеры использования ---
-
-		// 1. Точка на экваторе (широта 0), вдоль оси X (долгота 0)
-		// Ожидаемый результат: { x: 10, y: 0, z: 0 }
-		const point1 = sphericalToCartesian(10, { latitude: 0, longitude: 0 });
-		console.log("Point 1 (Equator, X-axis):", point1);
-
-		// 2. Северный полюс (широта π/2)
-		// Ожидаемый результат: { x: 0, y: 0, z: 5 } (приближенно)
-		const point2 = sphericalToCartesian(5, { latitude: Math.PI / 2, longitude: Math.PI / 4 });
-		console.log("Point 2 (North Pole):", point2);
-
-		// 3. Точка с широтой 45° (π/4) и долготой 90° (π/2)
-		// Ожидаемый результат: { x: 0, y: ~7.07, z: ~7.07 }
-		const point3 = sphericalToCartesian(10, { latitude: Math.PI / 4, longitude: Math.PI / 2 });
-		console.log("Point 3 (45° N, 90° E):", point3);
-		*/
-//		return sphericalToCartesian(r, Vertice(angles));
-		return sphericalToCartesian(r, angles);
-
-	}
+	vertice2angles(vertice) { return casterianToAngles(Position(vertice)); }
+	a2v(angles, r = 1) { return anglesToCartesian(angles, r); }
 //	normalizeAngles(angles){
 
 		/*https://chat.deepseek.com/a/chat/s/26327d17-c346-476d-9199-a0814f3a7a0a

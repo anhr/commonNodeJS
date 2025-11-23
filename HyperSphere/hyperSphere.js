@@ -1294,7 +1294,7 @@ class HyperSphere extends MyObject {
 		}
 		this.setPositionAttributeFromPoints(settings.object.geometry.angles);//itemSize of the buiffer.attributes.position должен быть больше 2. Иначе при копировании из буфера в THREE.Vector3 координата z = undefined
 		delete this.onSetPositionAttributeFromPoint;
-		this.rotation(settings.object.geometry.params);
+		this.Euler(settings.object.geometry.params);
 //		settings.object.geometry.angles.deleteAngles();
 //const angles0 = settings.object.geometry.angles[0];
 

@@ -205,7 +205,7 @@ class HyperSphere3D extends Sphere {
 
 	//Overridden methods from base class
 
-	rotation() { onsile.error('Under constractoion'); }
+	Euler() { onsile.error('Under constractoion'); }
 	Vertice(angles) { return Vertice(angles); }
 	/**
 	 * Converts a vertice position to vertice angles.

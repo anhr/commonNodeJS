@@ -17,6 +17,10 @@ import RandomVertice from './randomVertice.js';
 import anglesRange from '../anglesRange.js'
 import * as utils from './utilsSphere.js'
 import Vertice from '../VerticeSphere.js'
+import anglesToCartesian from '../anglesToCasterianSphere.js'
+import casterianToAngles from '../casterianToAnglesSphere.js'
+import three from '../../three.js'
+
 
 const sRandomVerticesSphere = 'RandomVerticesSphere',
 	π = Math.PI, abs = Math.abs, round = Math.round, random = Math.random,
@@ -127,7 +131,7 @@ export class RandomVerticeSphere extends RandomVertice {
 				return { angleStep1, latitudeMin, latitudeMax, latitudeStep, latitudeMid, boSouthernCircle, boNorthernCircle, circleAnglesCount };
 
 			},
-			getRandomVerticeAngles = (latitude, latitudeStep, latitudeMid, circleAnglesCount, angleStep1, angleId) => {
+			getRandomVerticeAngles = (latitude, latitudeStep, latitudeMid, circleAnglesCount, angleStep1, angleId, euler) => {
 				
 				const randomVerticeAngles = [
 
@@ -165,6 +169,12 @@ export class RandomVerticeSphere extends RandomVertice {
 
 				//rotate angles
 
+				const initialLatitude = randomVerticeAngles[0],
+					initialLongitude = randomVerticeAngles[1];
+				
+				const cartesian = anglesToCartesian({ latitude: initialLatitude, longitude: initialLongitude });
+				const rotated = casterianToAngles(new three.THREE.Vector3(cartesian[0], cartesian[1], cartesian[2]).applyEuler(euler));
+				
 				/*Есть точка на поверхности сферы в полярной системе координат. Начало полярной системы координат находится в центре сферы.
 				Написать на javascript исходный код поворота этой точки на произвольный угол с использованием углов Эйлера.
 				Полярный угол должен быть в диапазоне от π/2 на северном полюсе до -π/2 на южном полюсе. Азимутальный угол должен быть в диапазоне от -π до π.
@@ -180,7 +190,10 @@ export class RandomVerticeSphere extends RandomVertice {
 				 * @param {number} γ - Угол Эйлера вокруг оси Z (поворот по Z)
 				 * @returns {Object} Новые полярные координаты {latitude, longitude}
 				 */
+/*				
 				const rotatePointWithEulerAngles = (latitude, longitude, α, β, γ) => {
+
+//const cartesian = anglesToCartesian({latitude: latitude, longitude: longitude})
 					// 1. Преобразование полярных координат в декартовы
 					const x = cos(latitude) * cos(longitude),
 						y = cos(latitude) * sin(longitude),
@@ -213,7 +226,8 @@ export class RandomVerticeSphere extends RandomVertice {
 					
 					return arrayAngles;
 				}
-
+				console.error('debug');
+*/
 				/*
 				// Пример использования:
 				const initialLatitude = Math.PI/4; // 45 градусов от экватора
@@ -234,14 +248,14 @@ export class RandomVerticeSphere extends RandomVertice {
 				});
 				console.log("После поворота:", rotated);
 				*/
-				const initialLatitude = randomVerticeAngles[0],
-					initialLongitude = randomVerticeAngles[1],
-				
+/*				
 				// Поворот
-					α = 0,
+				const α = 0,
 					β = params.oppositeVertice.latitude - π / 2,
 					γ = params.oppositeVertice.longitude - π / 2;
-				return rotatePointWithEulerAngles(initialLatitude, initialLongitude, α, β, γ);
+				const rotatedOld = rotatePointWithEulerAngles(initialLatitude, initialLongitude, α, β, γ);
+*/				
+				return rotated;
 				
 			},
 			verticesAngles = (boAllocateMemory) => {
@@ -252,7 +266,7 @@ export class RandomVerticeSphere extends RandomVertice {
 				this.circlesPointsCount = boAllocateMemory ? undefined : //Во время выделения памяти в массив this.verticesAngles добавляется новый item
 					0;//в противном случае в массиве this.verticesAngles редактируется item с индексом this.circlesPointsCount
 				let latitudePrev = 0;//широта предыдущей окружности
-				const rotation = !boAllocateMemory && params.rotation ? params.rotation() : undefined;
+				const euler = !boAllocateMemory && params.Euler ? params.Euler() : undefined;
 				for(let circleId = 0; circleId < circlesCount; circleId++){
 
 					params.random = k * circleId;
@@ -281,7 +295,7 @@ export class RandomVerticeSphere extends RandomVertice {
 						if (boAllocateMemory) params.verticesAngles.push(this.ZeroArray());//allocate memory
 						else {//edit memory
 
-							const rotated = getRandomVerticeAngles(latitude, latitudeStep, latitudeMid, circleAnglesCount, angleStep1, angleId);
+							const rotated = getRandomVerticeAngles(latitude, latitudeStep, latitudeMid, circleAnglesCount, angleStep1, angleId, euler);
 							params.verticesAngles[params.pointsCount] = rotated;
 							params.pointsCount++;
 							this.circlesPointsCount++;
