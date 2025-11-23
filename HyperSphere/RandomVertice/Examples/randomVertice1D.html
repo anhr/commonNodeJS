@@ -2,17 +2,17 @@
 
 <html>
 <head>
-    <title>1D Random Vertice</title>
+	<title>1D Random Vertice</title>
 
-    <!--for mobile devices-->
-    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<!--for mobile devices-->
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 
-    <!--<script src="../../../../../three.js/dev/build/three.js"></script>-->
-    <!--<script src="../../../../../three.js/dev/build/three.min.js"></script>-->
-    <!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.js"></script>-->
-    <!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.min.js"></script>-->
-    <!--<script src="https://threejs.org/build/three.js"></script>-->
-    <!--<script src="https://threejs.org/build/three.min.js"></script>-->
+	<!--<script src="../../../../../three.js/dev/build/three.js"></script>-->
+	<!--<script src="../../../../../three.js/dev/build/three.min.js"></script>-->
+	<!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.js"></script>-->
+	<!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.min.js"></script>-->
+	<!--<script src="https://threejs.org/build/three.js"></script>-->
+	<!--<script src="https://threejs.org/build/three.min.js"></script>-->
 </head>
 <body>
 	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
@@ -64,6 +64,44 @@
 				debug: randomVerticeSettings.debug,
 
 			}
+
+			//Vertices hyperSphere 
+
+			const verticesSettings = {
+
+				//R: 0.5,
+				debug: true,
+
+			};
+			let hsVertices;
+			hsVertices = new HyperSphere(options, {
+
+				r: verticesSettings.R,
+				//edges: false,
+				//randomArc: true,
+				projectParams: { scene: scene, },
+				debug: randomVerticeSettings.debug ? {
+
+					probabilityDensity: false,
+					middleVertice: false,
+					log: false,
+
+				} : false,
+				//debug: false,
+				settings: {
+
+					object: {
+
+						name: 'Vertices',
+						color: 'white',
+						geometry: { params: params, },
+
+					},
+					overriddenProperties: { setDrawRange: (start, count) => { if (hsVertices) hsVertices.bufferGeometry.setDrawRange(start, count); } },
+
+				},
+
+			});
 			
 			//Random vertice hyperSphere 
 
@@ -73,7 +111,6 @@
 				if (hsRandomVertice) {
 
 					randomVertice.randomAngles;
-//					hsRandomVertice.setPositionAttributeFromPoints(randomVertice.randomAngles, true);
 					return;
 
 				}
@@ -87,43 +124,9 @@
 				if (randomVertice.getHyperSphere) hsRandomVertice = randomVertice.getHyperSphere(options, {projectParams: { scene: scene }, debug: debug });
 				else
 					hsRandomVertice = getHyperSphere(HyperSphere, options, scene, randomVertice, { debug: debug, r: randomVerticeSettings.R, name: name });
-/*					
-					hsRandomVertice = new HyperSphere(options, {
-	
-					boRemove: false,//Если не установить этот флаг, то при замене старого hsRandomVertice на новый будут удаляться все гиперсферы на scene. То есть удалится hsVertices
-					r: randomVerticeSettings.R,
-					edges: false,
-					//randomArc: true,
-					projectParams: { scene: scene, },
-	//				debug: debug,
-					debug: randomVerticeSettings.debug ? {
-	
-						probabilityDensity: false,
-						middleVertice: false,
-						log: false,
-	
-					} : false,
-					//debug: false,
-					settings: {
-	
-						object: {
-	
-							name: name,
-							//color: 'white',
-//							geometry: { angles: randomVertice.angles, },
-							geometry: randomVertice,
-	
-						},
-						overriddenProperties: { setDrawRange: (start, count) => { if (hsRandomVertice) hsRandomVertice.bufferGeometry.setDrawRange(start, count); } },
-	
-					},
-	
-				});
-*/				
 	
 			}
 			let randomCloud, randomVertice;//сразу не создаю эти объекты потому что они могут не понадобиться и потому, что так легче отлаживать, и потому что присоздании randomVertice обнуляется params.verticesAngles
-//			const randomCloud = new RandomCloud(params), randomVertice = new RandomVertice(params),
 			const createRandomCloud = () => {
 
 					if (!randomCloud) randomCloud = new RandomCloud(params);
@@ -143,54 +146,6 @@
 					
 				}
 			updateRandomVerticeHyperSphere();
-	
-			//Vertices hyperSphere 
-			
-			const verticesSettings = {
-
-				//R: 0.5,
-				debug: true,
-			
-			};
-			let hsVertices;
-			hsVertices = new HyperSphere(options, {
-
-				r: verticesSettings.R,
-				//edges: false,
-				//randomArc: true,
-				projectParams: { scene: scene, },
-//				debug: debug,
-				debug: randomVerticeSettings.debug ? {
-
-					probabilityDensity: false,
-					middleVertice: false,
-					log: false,
-
-				} : false,
-				//debug: false,
-				settings: {
-
-					object: {
-
-						name: 'Vertices',
-						color: 'white',
-						geometry: {
-							
-//							angles: [params.vertice, params.oppositeVertice],
-							params: params,
-						
-						},
-
-					},
-					overriddenProperties: { setDrawRange: (start, count) => { if (hsVertices) hsVertices.bufferGeometry.setDrawRange(start, count); } },
-
-				},
-
-			});
-/*			
-			params.vertice = hsVertices.classSettings.settings.object.geometry.angles[0];
-			params.oppositeVertice = hsVertices.classSettings.settings.object.geometry.angles[1];
-*/			
 			
 			//GUI
 
@@ -227,7 +182,6 @@
 						hsRandomVertice.removeHyperSphere();
 						hsRandomVertice = undefined;
 
-//						if (!cloud) randomVertice.randomAngles;
 						delete params.verticesAngles;
 						delete params.pointsCount;
 						delete params.editAnglesId;

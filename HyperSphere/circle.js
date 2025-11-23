@@ -135,7 +135,16 @@ class Circle extends HyperSphere {
 
 	//Overridden methods from base class
 
-	Euler() { onsile.error('Under constractoion'); }
+	Euler(params) {
+		
+		if (!params) return;
+		params.Euler = () => {
+
+			console.error('Under constraction')
+			
+		}
+		
+	}
 	Vertice(angles) { return Vertice(angles); }
 	/**
 	 * Converts a vertice position to vertice angles.
