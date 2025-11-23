@@ -375,6 +375,7 @@ export class RandomVerticeSphere extends RandomVertice {
 		this.getRandomAngle = (randomVerticeId) => {
 
 			let verticeId = 0;
+			const euler = params.Euler ? params.Euler() : undefined;
 			for (let circleId = 0; circleId < arrayCircles.length; circleId++) {
 	
 				const circle = arrayCircles[circleId];
@@ -383,7 +384,7 @@ export class RandomVerticeSphere extends RandomVertice {
 	
 					//случайная вершина находится на текущей окружности.
 					const randomVerticeAnglesParams = getRandomVerticeAnglesParams(circle.latitude, circle.angleStep),
-						rotated = getRandomVerticeAngles(circle.latitude, circle.latitudeStep, circle.latitudeMid, circle.circleAnglesCount, randomVerticeAnglesParams.angleStep1, randomVerticeId - (verticeId - circle.circleAnglesCount));//verticeId - randomVerticeId);
+						rotated = getRandomVerticeAngles(circle.latitude, circle.latitudeStep, circle.latitudeMid, circle.circleAnglesCount, randomVerticeAnglesParams.angleStep1, randomVerticeId - (verticeId - circle.circleAnglesCount), euler);
 
 					if (params.editAnglesId === undefined) {
 						
