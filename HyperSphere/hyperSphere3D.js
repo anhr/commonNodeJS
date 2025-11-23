@@ -20,7 +20,7 @@ import three from '../three.js'
 import FibonacciSphereGeometry from '../FibonacciSphere/FibonacciSphereGeometry.js'
 import anglesRange from './anglesRange.js'
 import Vertice from './VerticeHypersphere.js'
-//import Position from './Position.js'
+//import Position from './position.js'
 
 const sHyperSphere3D = 'HyperSphere3D',
 	π = Math.PI;

@@ -19,7 +19,7 @@ import Circle from './circle.js';
 import three from '../three.js'
 import RandomCloud from './RandomVertice/randomCloudSphere.js';
 import Vertice from './VerticeSphere.js'
-import Position from './Position.js'
+import Position from './position.js'
 import anglesToCartesian from './anglesToCasterianSphere.js'
 import casterianToAngles from './casterianToAnglesSphere.js'
 

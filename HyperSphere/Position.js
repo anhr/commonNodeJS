@@ -24,6 +24,7 @@
  */
 const Position = (position) => {
 
+	if (position.x != undefined) return position;
 	Object.defineProperty(position, 'x', {
 
 		get: () => { return position[0]; },

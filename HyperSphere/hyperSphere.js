@@ -43,7 +43,7 @@ import ProgressBar from '../ProgressBar/ProgressBar.js'
 import PositionController from '../PositionController.js';
 import MyObject from '../myObject.js'
 import anglesRange from './anglesRange.js'
-import Position from './Position.js'
+import Position from './position.js'
 
 const sHyperSphere = 'HyperSphere', sOverride = sHyperSphere + ': Please override the %s method in your child class.',
 	π = Math.PI, pi = Math.PI;
