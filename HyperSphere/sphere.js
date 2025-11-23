@@ -146,6 +146,7 @@ class Sphere extends Circle {
 
 	//Overridden methods from base class
 
+	ZeroArray() { return [0, 0]; }
 	Euler(params) {
 
 		if (!params) return;

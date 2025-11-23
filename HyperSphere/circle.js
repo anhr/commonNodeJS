@@ -135,6 +135,7 @@ class Circle extends HyperSphere {
 
 	//Overridden methods from base class
 
+	ZeroArray() { return [0]; }
 	Euler(params) {
 		
 		if (!params) return;

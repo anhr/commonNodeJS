@@ -205,6 +205,7 @@ class HyperSphere3D extends Sphere {
 
 	//Overridden methods from base class
 
+	ZeroArray() { return [0, 0, 0]; }
 	Euler() { onsile.error('Under constractoion'); }
 	Vertice(angles) { return Vertice(angles); }
 	/**
