@@ -3421,7 +3421,10 @@ this.object = () => {
 
 		if (!this.boTestVertice) return;
 		if (this.classSettings.edges === false) return;
-		if (vertice.edges.length < (this.verticeEdgesLength - 1))//Допускается количество ребер на одно меньше максимального значения потому что при опреденном количестве вершин для некоротых вершин не хватает противоположных вершин
+		if (
+			(vertice.edges.length < (this.verticeEdgesLength - 1)) &&//Допускается количество ребер на одно меньше максимального значения потому что при опреденном количестве вершин для некоротых вершин не хватает противоположных вершин
+			(this.classSettings.settings.object.geometry.angles.length > 2)//Количество вершин больше 2
+		)
 			console.error(sHyperSphere + ': Test(). Invalid ' + strVerticeId + '.edges.length = ' + vertice.edges.length);
 		
 	}
