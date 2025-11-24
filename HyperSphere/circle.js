@@ -137,13 +137,16 @@ class Circle extends HyperSphere {
 
 	ZeroArray() { return [0]; }
 	Euler(params) {
-		
+
+		return;//в одномерной гиперсфере углы Эйлена не используются потому что поворот вершины делается на угол params.oppositeVertice.longitude
+/*		
 		if (!params) return;
 		params.Euler = () => {
 
 			console.error('Under constraction')
 			
 		}
+*/		
 		
 	}
 	Vertice(angles) { return Vertice(angles); }
