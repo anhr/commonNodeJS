@@ -206,7 +206,7 @@ class HyperSphere3D extends Sphere {
 	//Overridden methods from base class
 
 	ZeroArray() { return [0, 0, 0]; }
-	Euler(params) {
+	EulerHypersphere(params) {
 
 		if (!params) return;
 		params.Euler = () => {
