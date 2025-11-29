@@ -173,7 +173,8 @@ export class RandomVerticeSphere extends RandomVertice {
 					initialLongitude = randomVerticeAngles[1];
 				
 				const cartesian = anglesToCartesian({ latitude: initialLatitude, longitude: initialLongitude });
-				const rotated = casterianToAngles(new three.THREE.Vector3(cartesian[0], cartesian[1], cartesian[2]).applyEuler(euler));
+//				const rotated = casterianToAngles(new three.THREE.Vector3(cartesian[0], cartesian[1], cartesian[2]).applyEuler(euler));
+				const rotated = casterianToAngles(new three.THREE.Vector3(cartesian[0], cartesian[1], cartesian[2]).clone().applyQuaternion(euler));
 				
 				/*Есть точка на поверхности сферы в полярной системе координат. Начало полярной системы координат находится в центре сферы.
 				Написать на javascript исходный код поворота этой точки на произвольный угол с использованием углов Эйлера.

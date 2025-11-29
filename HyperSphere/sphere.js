@@ -153,6 +153,105 @@ class Sphere extends Circle {
 		params.Euler = () => {
 
 			const r = this.classSettings.r;
+
+			/*
+Заданы две произвольные точки position0 и position1 на поверхности сферы в декартовой системе координат. Начало координат находится в центре сферы.
+Вычислить кватернионы, применяя которые можно точку position0 переместить в точку position1.
+Обрабатать случай, когда точка близка к полюсам.
+Написать пример, в котором вычисляется точка rotatedPosition как применение вычисленных кватернионов к точке position0.
+rotatedPosition должна получиться равной position1.
+Затем точку rotatedPosition повернуть обратно так, что бы она снова оказалась в положении точки position0.
+Написать код на Javascript.
+Применить библиотеку three.js.
+			*/
+			//https://giga.chat/agents/019a5d95-ab99-7c86-a31c-610dad03b054/sessions/019ac367-b6d9-748f-a904-2bca5017e564
+			// Импортируем необходимую библиотеку
+//			import * as THREE from 'https://cdn.skypack.dev/three';
+			const THREE = three.THREE;
+
+			// Начальные точки
+//			let position0 = new THREE.Vector3(1, 0, 0); // первая точка на сфере
+//			let position1 = new THREE.Vector3(0, 1, 0); // вторая точка на сфере
+			const position = this.classSettings.settings.object.geometry.position, p0 = position[0], p1 = position[1];
+//			let position0 = new THREE.Vector3(p0.x, p0.y, p0.z); // первая точка на сфере
+			const position0 = new THREE.Vector3(0, 0, r); // первая точка на сфере
+			const position1 = new THREE.Vector3(p1.x, p1.y, p1.z); // вторая точка на сфере
+
+			// Функция, возвращающая кватернион, переносящий position0 в position1
+			function getRotationQuaternion(v0, v1) {
+				// Убедимся, что точки являются единичными векторами (находятся на поверхности сферы)
+				v0.normalize();
+				v1.normalize();
+
+				// Векторное произведение даёт нам ось вращения
+				let axis = new THREE.Vector3().crossVectors(v0, v1);
+
+				// Особый случай: точки равны или диаметрально противоположны
+				if (axis.lengthSq() < Number.EPSILON) {
+					if (v0.dot(v1) >= 0) {
+						// Вектора одинаковы, значит никакого вращения не требуется
+						return new THREE.Quaternion().identity();
+					} else {
+						// Диаметральные противоположные точки, используем специальную ось вращения
+						// Можно выбрать любую фиксированную ось, отличную от направления обоих векторов
+						axis.set(0, 1, 0); // ось Y, можно выбрать любую удобную ось
+					}
+				} else {
+					// Иначе используем найденную ось вращения
+					axis.normalize();
+				}
+
+				// Получаем угол между векторами
+				let angle = v0.angleTo(v1);
+
+				// Строим кватернион
+				return new THREE.Quaternion().setFromAxisAngle(axis, angle);
+			}
+
+			// Расчёт кватерниона для перемещения точки position0 в position1
+			const forwardQuaternion = getRotationQuaternion(position0, position1);
+
+			/*Проверка
+
+			console.log("position0:", position0.toArray());
+			console.log("position1:", position1.toArray());
+			
+			// Перемещаем точку position0 с помощью кватерниона
+			const rotatedPosition = position0.clone().applyQuaternion(forwardQuaternion);
+
+			// Проверка результата (должна получиться точка position1)
+			console.log("Повернутая позиция:", rotatedPosition.toArray());
+
+			// Возвращаемся обратно, создавая инверсный кватернион
+			const backwardQuaternion = forwardQuaternion.clone().invert();
+
+			// Поворачиваем обратно
+			const backPosition = rotatedPosition.clone().applyQuaternion(backwardQuaternion);
+
+			// Проверка возвращения обратно (должна стать равна position0)
+			console.log("Возвращённая позиция:", backPosition.toArray());
+			*/
+			return forwardQuaternion;
+			/*
+Заданы две произвольные точки position1 и position2 на поверхности сферы в декартовой системе координат. Начало координат находится в центре сферы.
+Радиус сферы r.
+Положение точек обозначить как
+position1.x
+position1.y
+position1.z
+
+position2.x
+position2.y
+position2.z
+Вычислить углы Эйлера, применяя которые можно точку position1 переместить в точку position2.
+Обрабатать случай, когда точка близка к полюсам.
+Написать пример, в котором вычисляется точка rotatedPosition как применение вычисленных углов Эйлера к точке position1.
+rotatedPosition должна получиться равной position2.
+Затем точку rotatedPosition повернуть обратно так, что бы она снова оказалась в положении точки position1.
+Написать код на Javascript.
+Применить библиотеку three.js.
+			*/
+			//https://giga.chat/agents/019a5d95-ab99-7c86-a31c-610dad03b054/sessions/019ac2e3-afcf-72c3-ac94-808023192cf3
 			/*https://chat.deepseek.com/a/chat/s/d4122bcc-0fa5-4cc3-b9c0-a1eb2cca6154
 			Есть две точки на поверхости сферы.
 			Название первой точки: vertice.
@@ -165,6 +264,7 @@ class Sphere extends Circle {
 			 * @param {Array} [vertice=[0, 0, r]] - Координаты первой точки [x, y, z]. По умолчанию северный полюс
 			 * @returns {Object} Объект с углами Эйлера в радианах и градусах
 			 */
+/*
 			function calculateEulerAngles(oppositeVertice, vertice=[0, 0, r]) {
 				
 				// Нормализуем векторы (предполагаем, что они уже на поверхности единичной сферы)
@@ -216,11 +316,6 @@ class Sphere extends Circle {
 					alpha: eulerAngles.alpha,
 					beta: eulerAngles.beta,
 					gamma: eulerAngles.gamma,
-					/*					
-										alphaDeg: eulerAngles.alpha * 180 / Math.PI,
-										betaDeg: eulerAngles.beta * 180 / Math.PI,
-										gammaDeg: eulerAngles.gamma * 180 / Math.PI
-					*/
 				};
 			}
 
@@ -287,6 +382,7 @@ class Sphere extends Circle {
 //			const oppositeVertice = position[1];
 			const euler = calculateEulerAngles(position[1]);//vertice);
 			const eulerTHREE = new THREE.Euler(euler.gamma, euler.beta, euler.alpha, 'ZYX');
+*/
 
 			/*
 			// Пример использования
@@ -340,7 +436,7 @@ class Sphere extends Circle {
 			console.log('После поворота THREE:', verticeTHREE);
 			console.log('После поворота:', rotatedPoint);
 			*/
-			return eulerTHREE;
+//			return eulerTHREE;
 
 		}
 

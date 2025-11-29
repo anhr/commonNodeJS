@@ -214,6 +214,16 @@ class HyperSphere3D extends Sphere {
 			const position = this.classSettings.settings.object.geometry.position[0];
 			const oppositePosition = this.classSettings.settings.object.geometry.position[1];
 			/*
+Заданы две произвольные точки position0 и position1 на поверхности гиперсферы в декартовой системе координат. Начало координат находится в центре гиперсферы.
+Вычислить кватернионы, применяя которые можно точку position0 переместить в точку position1.
+Обрабатать случай, когда точка близка к полюсам.
+Написать пример, в котором вычисляется точка rotatedPosition как применение вычисленных кватернионов к точке position0.
+rotatedPosition должна получиться равной position1.
+Затем точку rotatedPosition повернуть обратно так, что бы она снова оказалась в положении точки position0.
+Написать код на Javascript.
+Применить библиотеку three.js.
+			*/
+			/*
 Заданы две произвольные точки position1 и position2 на гиперсфере в декартовой системе координат. Начало координат находится в центре сферы.
 Радиус сферы r.
 Положение точек обозначить как
