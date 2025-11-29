@@ -1423,45 +1423,48 @@ latitudeId < 1;
 const VerticeObjectToArray = (verticeObject) => { return Vertice([verticeObject.altitude, verticeObject.latitude, verticeObject.longitude]); }
 const Vertice = (vertice, altitude) => {
 
-	if (vertice.longitude != undefined) return;
+//	if (vertice.longitude != undefined) return;
 	while (vertice.length < 3)
 		vertice.unshift((vertice.length === 2) && (altitude != undefined) ? altitude : 0);
-	Object.defineProperty(vertice, 'longitude', {
-		
-		get: () => { return vertice[2]; },
-		set: (longitude) => {
-
-			if (vertice[2] === longitude) return true;
-			vertice[2] = longitude;
-			return true;
-
-		},
+	if (vertice.longitude === undefined)
+		Object.defineProperty(vertice, 'longitude', {
+			
+			get: () => { return vertice[2]; },
+			set: (longitude) => {
 	
-	});
-	Object.defineProperty(vertice, 'latitude', {
-		
-		get: () => { return vertice[1]; },
-		set: (latitude) => {
-
-			if (vertice[1] === latitude) return true;
-			vertice[1] = latitude;
-			return true;
-
-		},
+				if (vertice[2] === longitude) return true;
+				vertice[2] = longitude;
+				return true;
 	
-	});
-	Object.defineProperty(vertice, 'altitude', {
+			},
 		
-		get: () => { return vertice[0]; },
-		set: (altitude) => {
-
-			if (vertice[0] === altitude) return true;
-			vertice[0] = altitude;
-			return true;
-
-		},
+		});
+	if (vertice.latitude === undefined)
+		Object.defineProperty(vertice, 'latitude', {
+			
+			get: () => { return vertice[1]; },
+			set: (latitude) => {
 	
-	});
+				if (vertice[1] === latitude) return true;
+				vertice[1] = latitude;
+				return true;
+	
+			},
+		
+		});
+	if (vertice.altitude === undefined)
+		Object.defineProperty(vertice, 'altitude', {
+			
+			get: () => { return vertice[0]; },
+			set: (altitude) => {
+	
+				if (vertice[0] === altitude) return true;
+				vertice[0] = altitude;
+				return true;
+	
+			},
+		
+		});
 	return vertice;
 
 }
