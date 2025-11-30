@@ -271,7 +271,7 @@ class RandomVerticeHSphere extends RandomVertice {
 
 					},
 					
-					vertice: (point) => { return Vertice(point, params.altitude); },
+					vertice: (point) => { return Vertice([...point], params.altitude); },
 /*
  					rotateDeepseek: (point, rotationAngles) => {
 
