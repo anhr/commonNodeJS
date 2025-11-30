@@ -18,6 +18,7 @@ import { anglesIdMax } from './randomVerticeSphere.js';
 import anglesRange from '../anglesRange.js'
 //import * as utils from './utilsHyperSphere.js'
 import RandomCloudSphere from './randomCloudSphere.js';
+import Vertice from '../VerticeHypersphere.js'
 
 const sRandomVerticesHyperSphere = 'RandomVerticesHyperSphere',
 	π = Math.PI, abs = Math.abs, round = Math.round, random = Math.random,
@@ -1421,6 +1422,7 @@ latitudeId < 1;
 
 }
 const VerticeObjectToArray = (verticeObject) => { return Vertice([verticeObject.altitude, verticeObject.latitude, verticeObject.longitude]); }
+/*
 const Vertice = (vertice, altitude) => {
 
 //	if (vertice.longitude != undefined) return;
@@ -1468,5 +1470,6 @@ const Vertice = (vertice, altitude) => {
 	return vertice;
 
 }
+*/
 RandomVerticeHSphere.Vertice = Vertice;
 export default RandomVerticeHSphere;

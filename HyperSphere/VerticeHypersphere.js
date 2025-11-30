@@ -18,10 +18,11 @@
  * @param {array} vertice array of the vertice angles. Array length is 3. array[0] is altitude. array[1] is latitude. array[2] is longitude.
  * @returns {array} Array with longitude and latitude property.
  */
-const Vertice = (vertice) => {
+const Vertice = (vertice, altitude) => {
 
 	if (vertice.longitude != undefined) return vertice;
-	while (vertice.length < 3) vertice.push(0);
+//	while (vertice.length < 3) vertice.push(0);
+	while (vertice.length < 3) vertice.unshift((vertice.length === 2) && (altitude != undefined) ? altitude : 0);
 	Object.defineProperty(vertice, 'altitude', {
 
 		get: () => { return vertice[0]; },
