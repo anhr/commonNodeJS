@@ -256,7 +256,12 @@ class Circle extends HyperSphere {
 		function polarToCartesian(r, angles) {
 			
 			const longitude = angles.longitude;
-			if (longitude === undefined) console.error(sCircle + ': a2v. longitude = ' + longitude);
+			if ((longitude === undefined) || isNaN(longitude)) {
+
+const q = angles.longitude;
+				console.error(sCircle + ': a2v. longitude = ' + longitude);
+
+			}
 
 			// Вычисление декартовых координат
 			// Math.cos() и Math.sin() корректно обрабатывают углы вне диапазона [-π, π]
