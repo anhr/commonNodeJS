@@ -979,7 +979,8 @@ class HyperSphere extends MyObject {
 											const oppositeVertices = [];
 											oppositeVerticesId.forEach(oppositeAngleId => {
 
-												const oppositeVertice = classSettings.overriddenProperties.oppositeVertice(oppositeAngleId, timeId);
+//const oppositeVerticeOld = classSettings.overriddenProperties.oppositeVertice(oppositeAngleId, timeId);
+												const oppositeVertice = settings.bufferGeometry.userData.position[oppositeAngleId];
 												oppositeVertice.forEach((axis, i) => {
 
 													if (aSum[i] === undefined) aSum[i] = 0;
