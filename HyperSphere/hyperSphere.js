@@ -990,16 +990,11 @@ class HyperSphere extends MyObject {
 												oppositeVertices.push(oppositeVertice);
 
 											});
-/*
-											let sum = 0;
-											for (let i = 0; i < _this.dimension; i ++) sum += aSum[i];
-*/
 											let isZero = true;
 											for (let i = 0; i < _this.dimension; i ++) {
 												
 												if(aSum[i] != 0) {
 
-//console.error('temporary code')
 													isZero = false;
 													break;
 													
@@ -1020,18 +1015,6 @@ class HyperSphere extends MyObject {
 											let middleVertice = isZero ? _this.getRandomMiddleAngles(oppositeVertices) : _this.vertice2angles(aSum);
 											const geometry = settings.object.geometry;
 											if (boPushMiddleVertice) classSettings.overriddenProperties.pushMiddleVertice(timeId, middleVertice);
-/*
-											if (classSettings.randomArc) {
-
-												const randomVertice = new this.RandomCloud({ vertice: vertice, oppositeVertice: middleVertice, debug: classSettings.debug ? {
-
-														notRandomVertices: true,
-														
-													} : false });
-												angles.hsRandomVertice = randomVertice.getHyperSphere(options, classSettings, middleVerticeColor);
-												
-											} else if (classSettings.randomMiddleVertice) { middleVertice = new this.RandomVertice({ vertice: vertice, oppositeVertice: middleVertice, }).angles; }
-*/												
 											if (classSettings.randomMiddleVertice) { middleVertice = new this.RandomVertice({ vertice: vertice, oppositeVertice: middleVertice, }).angles; }
 											
 											if (classSettings.debug && classSettings.debug.middleVertice) {
