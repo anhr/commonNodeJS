@@ -648,6 +648,11 @@ rotatedPosition должна получиться равной position2.
 	get verticeEdgesLengthMax() { return 3/*6*/; }//нельзя добавлть новое ребро если у вершины уже 6 ребра
 	get dimension() { return 3; }//space dimension
 	get verticesCountMin() { return 4; }
+	getRandomMiddleAngles(oppositeVertices) {
+		
+		console.error(sSphere + ': getRandomMiddleAngles. Under constraction');//надо случайно выбирать среднюю вершину
+		
+	}
 	/**
 	 * @param {THREE.Scene} scene [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}
 	 * @param {Options} options See <a href="../../jsdoc/Options/Options.html" target="_blank">Options</a>.

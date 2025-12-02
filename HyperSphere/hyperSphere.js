@@ -998,6 +998,7 @@ class HyperSphere extends MyObject {
 												
 												if(aSum[i] != 0) {
 
+//console.error('temporary code')
 													isZero = false;
 													break;
 													
