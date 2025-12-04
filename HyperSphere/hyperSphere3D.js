@@ -205,6 +205,7 @@ class HyperSphere3D extends Sphere {
 
 	//Overridden methods from base class
 
+	middlePosition() {console.error('Under constraction')}
 	ZeroArray() { return [0, 0, 0]; }
 	Vertice(angles) { return Vertice(angles); }
 	/**

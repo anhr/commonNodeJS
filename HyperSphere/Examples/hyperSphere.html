@@ -63,12 +63,13 @@
 				//onSelectScene: (hyperSphere, timeId, t) => { if (hyperSphere.middleVertices) return hyperSphere.middleVertices(timeId, t); },
 				edges: {
 
-					//project: false,//Doesn't project edges onto canvas
+					project: false,//Doesn't project edges onto canvas
 					//creationMethod: HyperSphere3D.edgesCreationMethod.Random,
 					
 				},
-				edges: false,
-				randomArc: true,
+				//edges: false,
+				//randomArc: true,
+				randomMiddleVertice: false,
 				projectParams:{
 					
 					scene: scene,
@@ -186,26 +187,6 @@
 								[Math.PI / 2, - Math.PI / 6, Math.PI * 2 * 1 / 3],//3
 								[Math.PI / 2, - Math.PI / 6, - Math.PI * 2 * 1 / 3],//4
 							],
-							//для проверки облака случайных точек
-							//Для проверки выбрать точку 2
-							//Перейти "Meshes\Points\Point Local Position\Advansed\Edges" = (2) 2,3
-							angles: [
-								[],//0
-								[Math.PI / 2, Math.PI / 2],//1
-								[
-									Math.PI / 4,//Altitude
-									- Math.PI / 6,//Latitude
-									Math.PI * 0,//Longitude
-								],//2
-								
-//								[Math.PI / 4, - Math.PI / 6, Math.PI * 2 * 1 / 3],//3
-								[Math.PI / 8, - Math.PI / 6, Math.PI * 2 * 1 / 3],//3 маленькая высота
-//								[Math.PI / 4 + Math.PI / 2, Math.PI / 6, Math.PI * 0 - Math.PI],//3 Эта точка противоположна точке 2. Все случайные точки должны равномерно распределены по гиперсфере
-//								[Math.PI / 4 + Math.PI / 2, -Math.PI / 6, Math.PI * 0],//3 Эта точка совпадает с точкой 2 за исключением высоты. Высота установлена так, ЧТО на холсте точки 2 и 3 совпадают.
-//								[Math.PI / 4, - Math.PI / 6, Math.PI * 0],//3 Эта точка совпадает с точкой 2. Все случайные точки должны совпадать с точками 2 и 3
-								
-								[Math.PI / 2, - Math.PI / 6, - Math.PI * 2 * 1 / 3],//4
-							],
 							//Antipodal angles
 							angles: [
 								[
@@ -232,6 +213,26 @@
 									-0.7853981633974483,//Latitude
 									-2.0943951023931957,//Longitude
 								],//1
+							],
+							//для проверки облака случайных точек
+							//Для проверки выбрать точку 2
+							//Перейти "Meshes\Points\Point Local Position\Advansed\Edges" = (2) 2,3
+							angles: [
+								[],//0
+								[Math.PI / 2, Math.PI / 2],//1
+								[
+									Math.PI / 4,//Altitude
+									- Math.PI / 6,//Latitude
+									Math.PI * 0,//Longitude
+								],//2
+								
+//								[Math.PI / 4, - Math.PI / 6, Math.PI * 2 * 1 / 3],//3
+								[Math.PI / 8, - Math.PI / 6, Math.PI * 2 * 1 / 3],//3 маленькая высота
+//								[Math.PI / 4 + Math.PI / 2, Math.PI / 6, Math.PI * 0 - Math.PI],//3 Эта точка противоположна точке 2. Все случайные точки должны равномерно распределены по гиперсфере
+//								[Math.PI / 4 + Math.PI / 2, -Math.PI / 6, Math.PI * 0],//3 Эта точка совпадает с точкой 2 за исключением высоты. Высота установлена так, ЧТО на холсте точки 2 и 3 совпадают.
+//								[Math.PI / 4, - Math.PI / 6, Math.PI * 0],//3 Эта точка совпадает с точкой 2. Все случайные точки должны совпадать с точками 2 и 3
+								
+								[Math.PI / 2, - Math.PI / 6, - Math.PI * 2 * 1 / 3],//4
 							],
 
 							//angles: { count: 1000, },

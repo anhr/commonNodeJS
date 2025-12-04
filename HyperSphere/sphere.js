@@ -146,6 +146,87 @@ class Sphere extends Circle {
 
 	//Overridden methods from base class
 
+	middlePosition(points) {
+
+		const _this = this;
+		
+		//https://chat.deepseek.com/a/chat/s/24dea3aa-eccd-4e97-a3e3-3f3ff0631de6
+		/*
+		Заданы несколько точек на поверхности сферы в декартовой системе координат. Начало координат в центре сферы.
+		Найти точку на поверхности сферы, равноудаленную от заданных точек.
+		Написать код на javascript.
+		*/
+		/**
+		 * Находит точку на поверхности сферы (с центром в начале координат),
+		 * которая приблизительно равноудалена от заданных точек.
+		 * @param {Array<Array<number>>} points - Массив точек [x, y, z]
+		 * @returns {Array<number>} Точка на сфере [x, y, z] или null, если точки не заданы
+		 */
+		function findEquidistantPoint(points) {
+			if (!points || points.length === 0) {
+				return null;
+			}
+
+			// Суммируем все векторы точек
+			let sumVector = [0, 0, 0];
+			for (const point of points) {
+				sumVector[0] += point[0];
+				sumVector[1] += point[1];
+				sumVector[2] += point[2];
+			}
+
+			// Нормализуем сумму, чтобы получить точку на сфере
+			const [x, y, z] = sumVector;
+			const length = Math.sqrt(x * x + y * y + z * z);
+
+			if (length === 0) {
+				// Все точки в начале координат или их сумма нулевая, то есть все три противоположные вершины образуют равнобедренный треугольник на плоскости, проходящей через центр сферы
+				const settings = _this.classSettings.settings;
+				const radius = _this.classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : settings.options.player.getTimeId());//_this.classSettings.r;
+				return _this.a2v(_this.getRandomMiddleAngles(points), radius);
+			}
+
+			return [x / length, y / length, z / length];
+		}
+
+		/**
+		 * Вычисляет угловое расстояние (в радианах) между двумя точками на сфере.
+		 * @param {Array<number>} p1 - Точка [x, y, z]
+		 * @param {Array<number>} p2 - Точка [x, y, z]
+		 * @returns {number} Угловое расстояние в радианах
+		 */
+		function angularDistance(p1, p2) {
+			const dot = p1[0] * p2[0] + p1[1] * p2[1] + p1[2] * p2[2];
+			// Избегаем ошибок округления
+			const clamped = Math.max(-1, Math.min(1, dot));
+			return Math.acos(clamped);
+		}
+
+		// Пример использования
+		/*
+		const points = [
+			[1, 0, 0],
+			[0, 1, 0],
+			[0, 0, 1]
+		];
+		*/
+
+		const result = findEquidistantPoint(points);
+		/*
+		console.log("Приближенная равноудаленная точка:", result);
+
+		// Проверяем расстояния
+		if (result) {
+			console.log("Угловые расстояния до каждой точки:");
+			for (const point of points) {
+				const dist = angularDistance(result, point);
+				console.log(`Точка ${point}: ${dist.toFixed(6)} рад (${(dist * 180 / Math.PI).toFixed(2)}°)`);
+			}
+		}
+		*/
+		return result;
+
+	}
 	ZeroArray() { return [0, 0]; }
 	Euler(params) {
 
@@ -649,8 +730,83 @@ rotatedPosition должна получиться равной position2.
 	get dimension() { return 3; }//space dimension
 	get verticesCountMin() { return 4; }
 	getRandomMiddleAngles(oppositeVertices) {
+
+		const THREE = three.THREE;
 		
-		console.error(sSphere + ': getRandomMiddleAngles. Under constraction');//надо случайно выбирать среднюю вершину
+		//http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/NormalSphere.html
+		
+		// Радиус сферы
+		const settings = this.classSettings.settings;
+		const sphereRadius = this.classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : settings.options.player.getTimeId());//this.classSettings.r;
+
+		// Заданные три точки на сфере (в декартовых координатах)
+		if (oppositeVertices.length != 3) console.error(sSphere + ': getRandomMiddleAngles. Invalid oppositeVertices.length = ' + oppositeVertices.length);
+		const oppositeVerticeA = oppositeVertices[0];
+		const pointA = new THREE.Vector3(oppositeVerticeA.x, oppositeVerticeA.y, oppositeVerticeA.z);//(3, 4, 0);
+		const oppositeVerticeB = oppositeVertices[1];
+		const pointB = new THREE.Vector3(oppositeVerticeB.x, oppositeVerticeB.y, oppositeVerticeB.z);//(0, 3, -4);
+		const oppositeVerticeC = oppositeVertices[2];
+		const pointC = new THREE.Vector3(oppositeVerticeC.x, oppositeVerticeC.y, oppositeVerticeC.z);//(-3, -4, 0);
+
+		/*
+		// Нормализуем точки, чтобы они точно лежали на сфере
+		pointA.normalize().multiplyScalar(sphereRadius);
+		pointB.normalize().multiplyScalar(sphereRadius);
+		pointC.normalize().multiplyScalar(sphereRadius);
+		*/
+
+		// Функция для построения плоскости по трем точкам
+		function createPlaneFromPoints(p1, p2, p3) {
+			// Вычисляем нормаль плоскости через векторное произведение
+			const v1 = new THREE.Vector3().subVectors(p2, p1);
+			const v2 = new THREE.Vector3().subVectors(p3, p1);
+			const normal = new THREE.Vector3().crossVectors(v1, v2).normalize();
+			return normal;
+/*
+			// Создаем геометрию плоскости
+			const planeGeometry = new THREE.PlaneGeometry(15, 15);
+
+			// Создаем материал для плоскости
+			const planeMaterial = new THREE.MeshPhongMaterial({
+				color: 0xff8800,
+				transparent: true,
+				opacity: 0.5,
+				side: THREE.DoubleSide
+			});
+
+			// Создаем mesh плоскости
+			const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+
+			// Позиционируем плоскость
+			plane.position.copy(p1);
+
+			// Ориентируем плоскость по нормали
+			plane.lookAt(new THREE.Vector3().addVectors(p1, normal));
+
+			// Возвращаем плоскость и ее нормаль
+			return { plane, normal };
+*/			
+		}
+
+		// Функция для вычисления точек пересечения нормали со сферой
+		function findSphereNormalIntersections(normal, radius) {
+			// Нормаль уже проходит через центр сферы (начало координат)
+			// Уравнение пересечения: |t * normal| = radius
+			// t = ±radius (так как normal - единичный вектор)
+
+			return normal.clone().multiplyScalar(Math.random() > 0.5 ? radius: -radius);
+/*				
+			const point1 = normal.clone().multiplyScalar(radius);
+			const point2 = normal.clone().multiplyScalar(-radius);
+
+			return { point1, point2 };
+*/			
+		}
+		const normal = createPlaneFromPoints(pointA, pointB, pointC);
+
+		// Вычисление точек пересечения нормали со сферой
+		const point = findSphereNormalIntersections(normal, sphereRadius);
+		return this.vertice2angles(Position([point.x, point.y, point.z]));
 		
 	}
 	/**

@@ -135,6 +135,219 @@ class Circle extends HyperSphere {
 
 	//Overridden methods from base class
 
+	middlePosition(points) {
+	
+		const _this = this;
+		//https://chat.deepseek.com/a/chat/s/348ed591-765f-4ab2-8924-a3546b62ef24
+		/*
+		Заданы несколько точек на поверхности окружности в декартовой системе координат. Начало координат в центре окружности.
+		Найти точку на поверхности окружности, равноудаленную от заданных точек. Написать код на javascript.
+		*/
+		/**
+		 * Находит точку на окружности, равноудаленную от заданных точек
+		 * @param {Array} points - Массив точек вида [{x, y}, {x, y}, ...]
+		 * @returns {Object} Точка на окружности {x, y} или null, если решение не найдено
+		 */
+		function findEquidistantPointOnCircle(points) {
+
+			if (!points || points.length === 0) {
+				console.error(sCircle + ': findEquidistantPointOnCircle. No points');
+				return null;
+			}
+
+			const settings = _this.classSettings.settings;
+			const radius = _this.classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : settings.options.player.getTimeId());//_this.classSettings.r;
+			/*
+			// 1. Проверяем, что все точки лежат на окружности
+			const radius = Math.sqrt(points[0].x * points[0].x + points[0].y * points[0].y);
+	
+			for (let i = 1; i < points.length; i++) {
+				const r = Math.sqrt(points[i].x * points[i].x + points[i].y * points[i].y);
+				if (Math.abs(r - radius) > 1e-10) {
+					console.warn('Не все точки лежат на окружности одного радиуса!');
+					return null;
+				}
+			}
+			*/
+	
+			// 2. Если только одна точка, возвращаем диаметрально противоположную
+			if (points.length === 1) {
+				console.error(sCircle + ': findEquidistantPointOnCircle. Если только одна точка, возвращаем диаметрально противоположную');
+				return {
+					x: -points[0].x,
+					y: -points[0].y
+				};
+			}
+	
+			// 3. Вычисляем среднее направление (центр масс точек)
+			let sumX = 0;
+			let sumY = 0;
+	
+			for (const point of points) {
+				sumX += point.x;
+				sumY += point.y;
+			}
+	
+			const avgX = sumX / points.length;
+			const avgY = sumY / points.length;
+	
+			// 4. Нормализуем вектор среднего направления к длине радиуса
+			const length = Math.sqrt(avgX * avgX + avgY * avgY);
+	
+			if (length < 1e-10) {
+
+				//Противоположные вершины расположены на противоположных краях окружности. В этом случае с равной вероятностью средняя вершина может распологаться с одной или с другой половины окружности.
+				return _this.a2v(_this.getRandomMiddleAngles(points), radius);
+/*				
+				console.error(sCircle + ': findEquidistantPointOnCircle. Все точки симметрично расположены - выбираем любую точку на окружности');
+				return { x: radius, y: 0 };
+*/				
+			}
+	
+			const scale = radius / length;
+			const result = {
+				x: avgX * scale,
+				y: avgY * scale
+			};
+	
+			// 5. Также проверяем противоположную точку (она тоже может быть решением)
+			const opposite = {
+				x: -result.x,
+				y: -result.y
+			};
+	
+			// 6. Выбираем точку с минимальной дисперсией расстояний
+			return selectBetterPoint(result, opposite, points);
+		}
+
+		/**
+		 * Выбирает точку с меньшей дисперсией расстояний до заданных точек
+		 */
+		function selectBetterPoint(point1, point2, points) {
+			const variance1 = calculateDistanceVariance(point1, points);
+			const variance2 = calculateDistanceVariance(point2, points);
+	
+			return variance1 <= variance2 ? point1 : point2;
+		}
+
+		/**
+		 * Вычисляет дисперсию расстояний от точки до всех заданных точек
+		 */
+		function calculateDistanceVariance(point, points) {
+			const distances = points.map(p => {
+				const dx = p.x - point.x;
+				const dy = p.y - point.y;
+				return Math.sqrt(dx * dx + dy * dy);
+			});
+	
+			const mean = distances.reduce((sum, d) => sum + d, 0) / distances.length;
+			const variance = distances.reduce((sum, d) => sum + Math.pow(d - mean, 2), 0) / distances.length;
+	
+			return variance;
+		}
+		
+		/**
+		 * Альтернативный метод: решает задачу минимизации методом градиентного спуска
+		 */
+		/*
+		function findEquidistantPointGradient(points, learningRate = 0.01, iterations = 1000) {
+			if (!points || points.length === 0) {
+				return null;
+			}
+	
+			const radius = Math.sqrt(points[0].x * points[0].x + points[0].y * points[0].y);
+	
+			// Начинаем со случайной точки на окружности
+			let angle = Math.random() * 2 * Math.PI;
+			let point = {
+				x: radius * Math.cos(angle),
+				y: radius * Math.sin(angle)
+			};
+	
+			// Градиентный спуск
+			for (let i = 0; i < iterations; i++) {
+				// Вычисляем градиент функции стоимости
+				let gradX = 0;
+				let gradY = 0;
+		
+				// Вычисляем среднее расстояние
+				const distances = points.map(p => {
+					const dx = p.x - point.x;
+					const dy = p.y - point.y;
+					return Math.sqrt(dx * dx + dy * dy);
+				});
+		
+				const meanDistance = distances.reduce((sum, d) => sum + d, 0) / distances.length;
+		
+				// Вычисляем градиент
+				for (let j = 0; j < points.length; j++) {
+					const dx = point.x - points[j].x;
+					const dy = point.y - points[j].y;
+					const distance = distances[j];
+			
+					if (distance > 1e-10) {
+						const diff = distance - meanDistance;
+						gradX += diff * (dx / distance);
+						gradY += diff * (dy / distance);
+					}
+				}
+		
+				// Обновляем точку (двигаемся против градиента)
+				point.x -= learningRate * gradX;
+				point.y -= learningRate * gradY;
+		
+				// Проецируем обратно на окружность
+				const length = Math.sqrt(point.x * point.x + point.y * point.y);
+				point.x = point.x * radius / length;
+				point.y = point.y * radius / length;
+		
+				// Уменьшаем learning rate
+				learningRate *= 0.995;
+			}
+	
+			return point;
+		}
+		*/
+		/*
+		// Пример использования
+		function example() {
+			// Создаем тестовые точки на окружности радиуса 5
+			const radius = 5;
+			const points = [
+				{ x: 5, y: 0 },
+				{ x: 3, y: 4 },
+				{ x: -4, y: 3 },
+				{ x: -3, y: -4 }
+			];
+	
+			console.log('Исходные точки:', points);
+	
+			// Метод 1: через среднее направление
+			const result1 = findEquidistantPointOnCircle(points);
+			console.log('Метод среднего направления:', result1);
+	
+			// Метод 2: градиентный спуск
+			const result2 = findEquidistantPointGradient(points);
+			console.log('Градиентный спуск:', result2);
+	
+			// Проверяем расстояния
+			if (result1) {
+				console.log('\nПроверка для метода 1:');
+				points.forEach((p, i) => {
+					const dx = p.x - result1.x;
+					const dy = p.y - result1.y;
+					const distance = Math.sqrt(dx * dx + dy * dy);
+					console.log(`Расстояние до точки ${i}: ${distance.toFixed(4)}`);
+				});
+			}
+		}
+
+		// Запуск примера
+		example();
+		*/
+		return findEquidistantPointOnCircle(points);
+
+	}
 	ZeroArray() { return [0]; }
 	Euler(params) {
 
@@ -234,6 +447,7 @@ class Circle extends HyperSphere {
 		
 	a2v(angles, r){
 
+		if(r === undefined) console.error(sCircle + ': a2v. r = ' + r);
 		/*https://gemini.google.com/app/1d5ef1a7e3d3d45f
 		Задана точка на окружности в полярной системе координат. Начало координат находится в центре окружности.
 		Положение точки обозначить как
@@ -256,12 +470,7 @@ class Circle extends HyperSphere {
 		function polarToCartesian(r, angles) {
 			
 			const longitude = angles.longitude;
-			if ((longitude === undefined) || isNaN(longitude)) {
-
-const q = angles.longitude;
-				console.error(sCircle + ': a2v. longitude = ' + longitude);
-
-			}
+			if ((longitude === undefined) || isNaN(longitude)) console.error(sCircle + ': a2v. longitude = ' + longitude);
 
 			// Вычисление декартовых координат
 			// Math.cos() и Math.sin() корректно обрабатывают углы вне диапазона [-π, π]
@@ -325,10 +534,12 @@ const q = angles.longitude;
 	get verticesCountMin() { return 3; }
 
 	getRandomMiddleAngles(oppositeVertices) {
-		
-		//console.error(sCircle + ': getRandomMiddleAngles. Under constraction');//надо случайно выбирать среднюю вершину
+
+		return Vertice([((this.vertice2angles(oppositeVertices[0])[0] + this.vertice2angles(oppositeVertices[1])[0]) / 2) + (Math.random() > 0.5 ? 0 : π)]);
+/*		
 		if (this.dimension === 2) return Vertice([(this.vertice2angles(oppositeVertices[0])[0] + this.vertice2angles(oppositeVertices[1])[0]) / 2]);
 		console.error(sCircle + ': getRandomMiddleAngles. Under constraction. Define getRandomMiddleAngles for current hypersphere dimension = ' + this.dimension);//переопределить getRandomMiddleAngles для текущей размерности гиперсферы
+*/		
 		
 	}
 	/**
