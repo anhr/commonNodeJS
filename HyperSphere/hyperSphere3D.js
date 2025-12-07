@@ -839,6 +839,8 @@ class HyperSphere3D extends Sphere {
 			let isDegenerate = false;
 
 			if (normSq < 1e-12) {
+
+				//Вырожденный случай: точки лежат в подпространстве меньшей размерности
 				isDegenerate = true;
 				//console.log("Вырожденный случай: точки лежат в подпространстве меньшей размерности");
 				//console.log("Будет выбрана случайная нормаль");
