@@ -195,12 +195,14 @@ class Sphere extends Circle {
 		 * @param {Array<number>} p2 - Точка [x, y, z]
 		 * @returns {number} Угловое расстояние в радианах
 		 */
+		/*
 		function angularDistance(p1, p2) {
 			const dot = p1[0] * p2[0] + p1[1] * p2[1] + p1[2] * p2[2];
 			// Избегаем ошибок округления
 			const clamped = Math.max(-1, Math.min(1, dot));
 			return Math.acos(clamped);
 		}
+		*/
 
 		// Пример использования
 		/*

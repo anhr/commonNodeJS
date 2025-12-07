@@ -1012,8 +1012,8 @@ class HyperSphere extends MyObject {
 												//Думаю тут надо применить вероятностный метод определения средней вершины
 											//}
 
-											//let middleVertice = _this.vertice2angles(this.middlePosition(oppositeVertices));
-let middleVertice = isZero ? _this.getRandomMiddleAngles(oppositeVertices) : _this.vertice2angles(aSum);
+											let middleVertice = _this.vertice2angles(this.middlePosition(oppositeVertices));
+//let middleVerticeOld = isZero ? _this.getRandomMiddleAngles(oppositeVertices) : _this.vertice2angles(aSum);
 											const geometry = settings.object.geometry;
 											if (boPushMiddleVertice) classSettings.overriddenProperties.pushMiddleVertice(timeId, middleVertice);
 											if (classSettings.randomMiddleVertice) { middleVertice = new this.RandomVertice({ vertice: vertice, oppositeVertice: middleVertice, }).angles[0]; }
