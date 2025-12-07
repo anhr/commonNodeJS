@@ -965,7 +965,7 @@ class HyperSphere extends MyObject {
 										case 'middleVertice': return (oppositeVerticesId = vertice.oppositeVerticesId, timeId, boPushMiddleVertice = true) => {
 
 											//find middle vertice between opposite vertices
-
+/*
 											//Среднее значение углов
 											//ссылка не работает https://wiki5.ru/wiki/Mean_of_circular_quantities#Mean_of_angles
 											//https://en.wikipedia.org/wiki/Circular_mean
@@ -975,21 +975,24 @@ class HyperSphere extends MyObject {
 											//для 2D гиперсферы это: aSum[0] = x, aSum[1] = y, aSum[2] = z.
 											//для 3D гиперсферы это: aSum[0] = x, aSum[1] = y, aSum[2] = z, aSum[3] = w.
 											const aSum = [];
+*/											
 
 											const oppositeVertices = [];
 											oppositeVerticesId.forEach(oppositeAngleId => {
 
-//const oppositeVerticeOld = classSettings.overriddenProperties.oppositeVertice(oppositeAngleId, timeId);
 												const oppositeVertice = settings.bufferGeometry.userData.position[oppositeAngleId];
+/*												
 												oppositeVertice.forEach((axis, i) => {
 
 													if (aSum[i] === undefined) aSum[i] = 0;
 													aSum[i] += axis
 												
 												});
+*/												
 												oppositeVertices.push(oppositeVertice);
 
 											});
+/*											
 											let isZero = true;
 											for (let i = 0; i < _this.dimension; i ++) {
 												
@@ -1011,9 +1014,10 @@ class HyperSphere extends MyObject {
 												//для 3D гиперсферы это .
 												//Думаю тут надо применить вероятностный метод определения средней вершины
 											//}
+											let middleVertice = isZero ? _this.getRandomMiddleAngles(oppositeVertices) : _this.vertice2angles(aSum);
+*/											
 
 											let middleVertice = _this.vertice2angles(this.middlePosition(oppositeVertices));
-//let middleVerticeOld = isZero ? _this.getRandomMiddleAngles(oppositeVertices) : _this.vertice2angles(aSum);
 											const geometry = settings.object.geometry;
 											if (boPushMiddleVertice) classSettings.overriddenProperties.pushMiddleVertice(timeId, middleVertice);
 											if (classSettings.randomMiddleVertice) { middleVertice = new this.RandomVertice({ vertice: vertice, oppositeVertice: middleVertice, }).angles[0]; }

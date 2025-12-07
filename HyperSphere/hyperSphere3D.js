@@ -222,17 +222,24 @@ class HyperSphere3D extends Sphere {
 			 * @returns {Array<number>} Точка на гиперсфере, равноудаленная от заданных
 			 */
 			static findEquidistantPoint(points) {
-				if (!points || points.length === 0) {
-					throw new Error('Должна быть задана хотя бы одна точка');
-				}
 
 				const n = points[0].length; // Размерность пространства
-
-				// Проверка, что все точки имеют одинаковую размерность
-				for (let point of points) {
-					if (point.length !== n) {
-						throw new Error('Все точки должны иметь одинаковую размерность');
+				
+				if (_this.classSettings.debug) {
+					
+					if (!points || points.length === 0) {
+						console.error(sHyperSphere3D + ': findEquidistantPoint. Должна быть задана хотя бы одна точка');
+						return;
 					}
+	
+					// Проверка, что все точки имеют одинаковую размерность
+					for (let point of points) {
+						if (point.length !== n) {
+							console.error(sHyperSphere3D + ': findEquidistantPoint. Все точки должны иметь одинаковую размерность');
+							return;
+						}
+					}
+
 				}
 
 				// 1. Находим среднее арифметическое всех точек (центроид)

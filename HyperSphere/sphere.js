@@ -163,8 +163,10 @@ class Sphere extends Circle {
 		 * @returns {Array<number>} Точка на сфере [x, y, z] или null, если точки не заданы
 		 */
 		function findEquidistantPoint(points) {
+			
 			if (!points || points.length === 0) {
-				return null;
+				console.error(sSphere + ': findEquidistantPoint. Должна быть задана хотя бы одна точка');
+				return;
 			}
 
 			// Суммируем все векторы точек
