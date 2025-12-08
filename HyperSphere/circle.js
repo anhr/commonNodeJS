@@ -197,11 +197,9 @@ class Circle extends HyperSphere {
 			if (length < 1e-10) {
 
 				//Противоположные вершины расположены на противоположных краях окружности. В этом случае с равной вероятностью средняя вершина может распологаться с одной или с другой половины окружности.
-				return _this.a2v(_this.getRandomMiddleAngles(points), radius);
-/*				
-				console.error(sCircle + ': findEquidistantPointOnCircle. Все точки симметрично расположены - выбираем любую точку на окружности');
-				return { x: radius, y: 0 };
-*/				
+				return _this.a2v(Vertice([((_this.vertice2angles(points[0])[0] + _this.vertice2angles(points[1])[0]) / 2) + (Math.random() > 0.5 ? 0 : π)]), radius);
+//				return _this.a2v(_this.getRandomMiddleAngles(points), radius);
+				
 			}
 	
 			const scale = radius / length;
@@ -532,16 +530,13 @@ class Circle extends HyperSphere {
 	get verticeEdgesLengthMax() { return 2; }//нельзя добавлть новое ребро если у вершины уже 2 ребра
 	get dimension() { return 2; }//space dimension
 	get verticesCountMin() { return 3; }
-
+/*
 	getRandomMiddleAngles(oppositeVertices) {
 
 		return Vertice([((this.vertice2angles(oppositeVertices[0])[0] + this.vertice2angles(oppositeVertices[1])[0]) / 2) + (Math.random() > 0.5 ? 0 : π)]);
-/*		
-		if (this.dimension === 2) return Vertice([(this.vertice2angles(oppositeVertices[0])[0] + this.vertice2angles(oppositeVertices[1])[0]) / 2]);
-		console.error(sCircle + ': getRandomMiddleAngles. Under constraction. Define getRandomMiddleAngles for current hypersphere dimension = ' + this.dimension);//переопределить getRandomMiddleAngles для текущей размерности гиперсферы
-*/		
 		
 	}
+*/	
 	/**
 	 * @param {THREE.Scene} scene [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}
 	 * @param {Options} options See <a href="../../jsdoc/Options/Options.html" target="_blank">Options</a>.
