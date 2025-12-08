@@ -195,7 +195,7 @@ class Sphere extends Circle {
 				//http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/NormalSphere.html
 
 				// Заданные три точки на сфере (в декартовых координатах)
-				if (oppositeVertices.length != 3) console.error(sSphere + ': getRandomMiddleAngles. Invalid oppositeVertices.length = ' + oppositeVertices.length);
+				if (oppositeVertices.length != 3) console.error(sSphere + ': findEquidistantPoint. Invalid oppositeVertices.length = ' + oppositeVertices.length);
 				const oppositeVerticeA = oppositeVertices[0];
 				const pointA = new THREE.Vector3(oppositeVerticeA.x, oppositeVerticeA.y, oppositeVerticeA.z);//(3, 4, 0);
 				const oppositeVerticeB = oppositeVertices[1];
