@@ -236,7 +236,7 @@ class Sphere extends Circle {
 				const point = findSphereNormalIntersections(normal, sphereRadius);
 //				return this.vertice2angles(Position([point.x, point.y, point.z]));
 
-
+				return point;
 				return _this.a2v(_this.vertice2angles(Position([point.x, point.y, point.z])), sphereRadius);
 //				return _this.a2v(_this.getRandomMiddleAngles(points), sphereRadius);
 

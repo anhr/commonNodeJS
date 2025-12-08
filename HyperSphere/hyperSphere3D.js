@@ -629,7 +629,8 @@ class HyperSphere3D extends Sphere {
 					);
 //					return _this.vertice2angles(Position([point[0], point[1], point[2], point[3]]));
 
-					return _this.a2v(_this.vertice2angles(Position([point[0], point[1], point[2], point[3]])), radius);
+					return Position(point);
+//					return _this.a2v(_this.vertice2angles(Position([point[0], point[1], point[2], point[3]])), radius);
 //					return _this.a2v(_this.getRandomMiddleAngles(points), radius);
 
 				}
