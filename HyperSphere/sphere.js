@@ -181,11 +181,65 @@ class Sphere extends Circle {
 			const [x, y, z] = sumVector;
 			const length = Math.sqrt(x * x + y * y + z * z);
 
-			if (length === 0) {
+			if (length < 7e-17) {
+
 				// Все точки в начале координат или их сумма нулевая, то есть все три противоположные вершины образуют равнобедренный треугольник на плоскости, проходящей через центр сферы
+
+				// Радиус сферы
 				const settings = _this.classSettings.settings;
-				const radius = _this.classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : settings.options.player.getTimeId());//_this.classSettings.r;
-				return _this.a2v(_this.getRandomMiddleAngles(points), radius);
+				const sphereRadius = _this.classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : settings.options.player.getTimeId());
+
+				const THREE = three.THREE;
+				const oppositeVertices = points;
+
+				//http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/NormalSphere.html
+
+				// Заданные три точки на сфере (в декартовых координатах)
+				if (oppositeVertices.length != 3) console.error(sSphere + ': getRandomMiddleAngles. Invalid oppositeVertices.length = ' + oppositeVertices.length);
+				const oppositeVerticeA = oppositeVertices[0];
+				const pointA = new THREE.Vector3(oppositeVerticeA.x, oppositeVerticeA.y, oppositeVerticeA.z);//(3, 4, 0);
+				const oppositeVerticeB = oppositeVertices[1];
+				const pointB = new THREE.Vector3(oppositeVerticeB.x, oppositeVerticeB.y, oppositeVerticeB.z);//(0, 3, -4);
+				const oppositeVerticeC = oppositeVertices[2];
+				const pointC = new THREE.Vector3(oppositeVerticeC.x, oppositeVerticeC.y, oppositeVerticeC.z);//(-3, -4, 0);
+
+				/*
+				// Нормализуем точки, чтобы они точно лежали на сфере
+				pointA.normalize().multiplyScalar(sphereRadius);
+				pointB.normalize().multiplyScalar(sphereRadius);
+				pointC.normalize().multiplyScalar(sphereRadius);
+				*/
+
+				// Функция для построения плоскости по трем точкам
+				function createPlaneFromPoints(p1, p2, p3) {
+
+					// Вычисляем нормаль плоскости через векторное произведение
+					const v1 = new THREE.Vector3().subVectors(p2, p1);
+					const v2 = new THREE.Vector3().subVectors(p3, p1);
+					const normal = new THREE.Vector3().crossVectors(v1, v2).normalize();
+					return normal;
+
+				}
+
+				// Функция для вычисления точек пересечения нормали со сферой
+				function findSphereNormalIntersections(normal, radius) {
+					// Нормаль уже проходит через центр сферы (начало координат)
+					// Уравнение пересечения: |t * normal| = radius
+					// t = ±radius (так как normal - единичный вектор)
+
+					return normal.clone().multiplyScalar(Math.random() > 0.5 ? radius : -radius);
+
+				}
+				const normal = createPlaneFromPoints(pointA, pointB, pointC);
+
+				// Вычисление точек пересечения нормали со сферой
+				const point = findSphereNormalIntersections(normal, sphereRadius);
+//				return this.vertice2angles(Position([point.x, point.y, point.z]));
+
+
+				return _this.a2v(_this.vertice2angles(Position([point.x, point.y, point.z])), sphereRadius);
+//				return _this.a2v(_this.getRandomMiddleAngles(points), sphereRadius);
+
 			}
 
 			return [x / length, y / length, z / length];
@@ -733,6 +787,7 @@ rotatedPosition должна получиться равной position2.
 	get verticeEdgesLengthMax() { return 3/*6*/; }//нельзя добавлть новое ребро если у вершины уже 6 ребра
 	get dimension() { return 3; }//space dimension
 	get verticesCountMin() { return 4; }
+/*
 	getRandomMiddleAngles(oppositeVertices) {
 
 		const THREE = three.THREE;
@@ -752,12 +807,10 @@ rotatedPosition должна получиться равной position2.
 		const oppositeVerticeC = oppositeVertices[2];
 		const pointC = new THREE.Vector3(oppositeVerticeC.x, oppositeVerticeC.y, oppositeVerticeC.z);//(-3, -4, 0);
 
-		/*
-		// Нормализуем точки, чтобы они точно лежали на сфере
-		pointA.normalize().multiplyScalar(sphereRadius);
-		pointB.normalize().multiplyScalar(sphereRadius);
-		pointC.normalize().multiplyScalar(sphereRadius);
-		*/
+		//// Нормализуем точки, чтобы они точно лежали на сфере
+		//pointA.normalize().multiplyScalar(sphereRadius);
+		//pointB.normalize().multiplyScalar(sphereRadius);
+		//pointC.normalize().multiplyScalar(sphereRadius);
 
 		// Функция для построения плоскости по трем точкам
 		function createPlaneFromPoints(p1, p2, p3) {
@@ -766,30 +819,6 @@ rotatedPosition должна получиться равной position2.
 			const v2 = new THREE.Vector3().subVectors(p3, p1);
 			const normal = new THREE.Vector3().crossVectors(v1, v2).normalize();
 			return normal;
-/*
-			// Создаем геометрию плоскости
-			const planeGeometry = new THREE.PlaneGeometry(15, 15);
-
-			// Создаем материал для плоскости
-			const planeMaterial = new THREE.MeshPhongMaterial({
-				color: 0xff8800,
-				transparent: true,
-				opacity: 0.5,
-				side: THREE.DoubleSide
-			});
-
-			// Создаем mesh плоскости
-			const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-
-			// Позиционируем плоскость
-			plane.position.copy(p1);
-
-			// Ориентируем плоскость по нормали
-			plane.lookAt(new THREE.Vector3().addVectors(p1, normal));
-
-			// Возвращаем плоскость и ее нормаль
-			return { plane, normal };
-*/			
 		}
 
 		// Функция для вычисления точек пересечения нормали со сферой
@@ -799,12 +828,6 @@ rotatedPosition должна получиться равной position2.
 			// t = ±radius (так как normal - единичный вектор)
 
 			return normal.clone().multiplyScalar(Math.random() > 0.5 ? radius: -radius);
-/*				
-			const point1 = normal.clone().multiplyScalar(radius);
-			const point2 = normal.clone().multiplyScalar(-radius);
-
-			return { point1, point2 };
-*/			
 		}
 		const normal = createPlaneFromPoints(pointA, pointB, pointC);
 
@@ -813,6 +836,7 @@ rotatedPosition должна получиться равной position2.
 		return this.vertice2angles(Position([point.x, point.y, point.z]));
 		
 	}
+*/
 	/**
 	 * @param {THREE.Scene} scene [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}
 	 * @param {Options} options See <a href="../../jsdoc/Options/Options.html" target="_blank">Options</a>.
