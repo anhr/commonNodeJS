@@ -259,9 +259,11 @@ class HyperSphere3D extends Sphere {
 					
 					// центроид в начале координат
 
+/*					
 					const settings = _this.classSettings.settings;
 					const radius = _this.classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : settings.options.player.getTimeId());
-
+*/					
+					const radius = _this.r;
 					const oppositeVertices = points;
 
 					//https://chat.deepseek.com/a/chat/s/85a1d029-0033-437b-a750-c58f9590bd4c

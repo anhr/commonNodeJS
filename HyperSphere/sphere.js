@@ -186,8 +186,11 @@ class Sphere extends Circle {
 				// Все точки в начале координат или их сумма нулевая, то есть все три противоположные вершины образуют равнобедренный треугольник на плоскости, проходящей через центр сферы
 
 				// Радиус сферы
+				const sphereRadius = _this.r;
+/*				
 				const settings = _this.classSettings.settings;
 				const sphereRadius = _this.classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : settings.options.player.getTimeId());
+*/				
 
 				const THREE = three.THREE;
 				const oppositeVertices = points;

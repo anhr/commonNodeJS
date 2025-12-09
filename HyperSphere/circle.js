@@ -155,8 +155,12 @@ class Circle extends HyperSphere {
 				return null;
 			}
 
+/*			
 			const settings = _this.classSettings.settings;
-			const radius = _this.classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : settings.options.player.getTimeId());//_this.classSettings.r;
+			const radius = _this.classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : settings.options.player.getTimeId());
+*/				
+			const radius = _this.r;
+			
 			/*
 			// 1. Проверяем, что все точки лежат на окружности
 			const radius = Math.sqrt(points[0].x * points[0].x + points[0].y * points[0].y);

@@ -3246,6 +3246,12 @@ this.object = () => {
 
 	}
 
+	get r() {
+
+		const settings = this.classSettings.settings;
+		return this.classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : settings.options.player.getTimeId());
+		
+	}
 	/**
 	 * get default color is 'lime'
 	 */
