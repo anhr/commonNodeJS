@@ -1483,7 +1483,7 @@ class RandomVertices extends Sphere.RandomVertices {
 
 	}
 	//	antipodeCenter(params, antipodeLatitude) { return [antipodeLatitude(params.oppositeVertice.latitude), params.oppositeVertice.longitude - π]; }
-	zeroArray() { return [0, 0, 0]; }
+	zeroArray() { return Vertice([0, 0, 0]); }
 	onePointArea(d, np) {
 
 		//объем шара в котором в среднем будет находиться одна случайная точка.

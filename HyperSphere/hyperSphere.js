@@ -2128,6 +2128,7 @@ this.object = () => {
 												
 											}
 */											
+											
 											let verticeId = 0;
 											//если не копировать каждый угол в отделности, то в новой вершине останутся старые ребра
 											const copyVertice = (vertice) => {
@@ -2155,22 +2156,12 @@ this.object = () => {
 													for (let i = 0; i < a.length; i++) ab += a[i] * b[i];
 //													return R * acos(ab / (R * R));
 													const arcValue = R * acos(ab / (R * R));
+													return arcValue;
+/*													
 													if (!classSettings.randomArc) return arcValue;
 													let randomArcValue = randomAngle(arcValue);
-													/*
-													if (classSettings.debug) {
-
-														console.log(sHyperSphere + ': arcTo. arcValue = ' + arcValue);
-														for (let i = 0; i < 10; i++) {
-															
-															randomArcValue = randomAngle(arcValue);
-															console.log('  randomArcValue = ' + randomArcValue);
-
-														}
-
-													}
-													*/
 													return randomArcValue;
+*/													
 				
 												},
 												distance = arcTo(oppositeVertice, vertice),

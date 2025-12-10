@@ -616,7 +616,7 @@ class RandomVertices extends HyperSphere.RandomVertices {
 	}
 	oppositeVertice0() {}
 //	antipodeCenter(params, antipodeLatitude) { return [params.oppositeVertice.longitude - π]; }
-	zeroArray() { return [0]; }
+	zeroArray() { return Vertice([0]); }
 	onePointArea(d, np) {
 		//Длинна отрезка одномерной гиперсферы на которой в среднем будет находиться одна случайная точка.
 		return d / np;//Длинна отрезка одномерной гиперсферы вычисляем из длинны окружности одномерной гиперсферы, поделенной на количество точек на окружности np
@@ -653,26 +653,6 @@ class RandomVertices extends HyperSphere.RandomVertices {
 */	
 	getCirclePoint(circleDistance, params) {
 
-/*		
-		let newLat = 0, newLng;
-		const center = params.center, angle = 2 * π * (params.random ? Math.random() : options.i / options.numPoints), // Текущий угол в радианах
-			lng = center.lng, lat = 0;
-
-		if (circleDistance === 0) {
-
-			//длинна дуги равна нулю. Координаты точки окружности противоположны координатам центра окружности
-			newLng = lng + π;
-
-		} else {
-
-			// Формулы сферической тригонометрии
-			newLng = lng + Math.atan2(
-				Math.sin(angle) * Math.sin(circleDistance) * Math.cos(lat),
-				Math.cos(circleDistance) - Math.sin(lat) * Math.sin(newLat)
-			);
-
-		}
-*/	
 		let newLng = params.center.lng - circleDistance * g_sign - (circleDistance === 0 ?
 																	π ://расстояние между вершинами гиперсферы params.arc = 0. Нужно переместить точку на противовоположную позицию
 																	0);
@@ -685,7 +665,7 @@ class RandomVertices extends HyperSphere.RandomVertices {
 		if (newLng > π) newLng -= 2 * π;
 		else if (newLng < -π) newLng += 2 * π;
 		
-		return [newLng];
+		return Vertice([newLng]);
 	
 	}
 	circlesCount(np) { return 36; }
