@@ -350,6 +350,7 @@ class HyperSphere extends MyObject {
 		this.classSettings = classSettings;
 
 		const middleVerticeColor = 'blue';
+		this.middleVerticeColor = middleVerticeColor;
 
 		let edgesOld;
 		if (classSettings.edges != false) {//Если в настройках запрещены ребра, то не брать настройки ребер из cookie
@@ -2104,6 +2105,7 @@ this.object = () => {
 
 											const arcAngles = [],//массив вершин в полярной системе координат, которые образуют дугу
 												vertice = position[aAngleControls.verticeId];
+/*не помню зачем делаю дугу между вершинами ребра как набор случайных точек											
 											if (classSettings.randomArc) {
 
 												const params = {
@@ -2125,6 +2127,7 @@ this.object = () => {
 												return;
 												
 											}
+*/											
 											let verticeId = 0;
 											//если не копировать каждый угол в отделности, то в новой вершине останутся старые ребра
 											const copyVertice = (vertice) => {
@@ -2467,7 +2470,8 @@ this.object = () => {
 											randomMiddleVerticeOld = undefined;
 
 										}
-												
+
+/*										
 										if (classSettings.randomArc) {
 
 											const randomVertice = new this.RandomCloud({ vertice: angles, oppositeVertice: middleVerticeAngles, debug: classSettings.debug ? {
@@ -2478,6 +2482,7 @@ this.object = () => {
 											angles.hsRandomVertice = randomVertice.getHyperSphere(options, classSettings, middleVerticeColor);
 											
 										}
+*/											
 											
 										const userData = settings.bufferGeometry.userData;
 										
@@ -2502,6 +2507,13 @@ this.object = () => {
 										if (middleVerticeEdges) classSettings.projectParams.scene.remove(middleVerticeEdges);
 										middleVerticeEdges = undefined;
 
+										if (_this.hsRandomVertice) {
+
+											_this.hsRandomVertice.removeHyperSphere();
+											_this.hsRandomVertice = undefined;
+
+										}
+/*
 										if (angles) {
 
 											const hsRandomVertice = angles.hsRandomVertice;
@@ -2509,6 +2521,7 @@ this.object = () => {
 											angles.hsRandomVertice = undefined;
 
 										}
+*/										
 										
 									}
 

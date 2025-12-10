@@ -197,29 +197,52 @@ class Circle extends HyperSphere {
 	
 			// 4. Нормализуем вектор среднего направления к длине радиуса
 			const length = Math.sqrt(avgX * avgX + avgY * avgY);
-	
+
+			let middleVertice, middleVerticeAngles;
+			
 			if (length < 1e-10) {
 
 				//Противоположные вершины расположены на противоположных краях окружности. В этом случае с равной вероятностью средняя вершина может распологаться с одной или с другой половины окружности.
-				return _this.a2v(Vertice([((_this.vertice2angles(points[0])[0] + _this.vertice2angles(points[1])[0]) / 2) + (Math.random() > 0.5 ? 0 : π)]), radius);
+				middleVerticeAngles = Vertice([((_this.vertice2angles(points[0])[0] + _this.vertice2angles(points[1])[0]) / 2) + (Math.random() > 0.5 ? 0 : π)])
+				middleVertice = _this.a2v(middleVerticeAngles, radius);
 //				return _this.a2v(_this.getRandomMiddleAngles(points), radius);
 				
+			} else {
+			
+				const scale = radius / length;
+				const result = {
+					x: avgX * scale,
+					y: avgY * scale
+				};
+		
+				// 5. Также проверяем противоположную точку (она тоже может быть решением)
+				const opposite = {
+					x: -result.x,
+					y: -result.y
+				};
+		
+				// 6. Выбираем точку с минимальной дисперсией расстояний
+				middleVertice = selectBetterPoint(result, opposite, points);
+				middleVerticeAngles = _this.vertice2angles(middleVertice);
+
 			}
-	
-			const scale = radius / length;
-			const result = {
-				x: avgX * scale,
-				y: avgY * scale
-			};
-	
-			// 5. Также проверяем противоположную точку (она тоже может быть решением)
-			const opposite = {
-				x: -result.x,
-				y: -result.y
-			};
-	
-			// 6. Выбираем точку с минимальной дисперсией расстояний
-			return selectBetterPoint(result, opposite, points);
+
+			const classSettings = _this.classSettings;
+			if (classSettings.randomArc) {
+
+				const randomVertice = new _this.RandomCloud({
+					
+					//vertice: angles,
+					oppositeVertice: middleVerticeAngles,
+					arc: 2 * π * (radius - length),
+					debug: classSettings.debug ? { notRandomVertices: true,} : false,
+					
+				});
+				_this.hsRandomVertice = randomVertice.getHyperSphere(classSettings.settings.options, classSettings, _this.middleVerticeColor);
+				
+			}
+			return middleVertice;
+			
 		}
 
 		/**
