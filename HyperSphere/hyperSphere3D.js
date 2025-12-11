@@ -1536,39 +1536,7 @@ class RandomVertices extends Sphere.RandomVertices {
 	getCirclePoint(circleDistance, params, options) {
 
 		const point2D = this.getCirclePoint2D(circleDistance, params, options);
-		return [options.altitude, point2D[0], point2D[1]];
-/*		
-		let newLat, newLng;
-		const center = params.center, angle = 2 * π * (params.random ? Math.random() : options.i / options.numPoints), // Текущий угол в радианах
-			lat = center.lat, lng = center.lng;
-
-		if (circleDistance === 0) {
-
-			//длинна дуги равна нулю. Координаты точки окружности противоположны координатам центра окружности
-			newLat = - lat;
-			newLng = lng + π;
-
-		} else {
-
-			// Формулы сферической тригонометрии
-			newLat = Math.asin(
-				Math.sin(lat) * Math.cos(circleDistance) +
-				Math.cos(lat) * Math.sin(circleDistance) * Math.cos(angle)
-			);
-
-			newLng = lng + Math.atan2(
-				Math.sin(angle) * Math.sin(circleDistance) * Math.cos(lat),
-				Math.cos(circleDistance) - Math.sin(lat) * Math.sin(newLat)
-			);
-
-		}
-
-		//Normalise angles
-		if (newLng > π) newLng -= 2 * π;
-		else if (newLng < -π) newLng += 2 * π;
-
-		return [options.altitude, newLat, newLng];
-*/		
+		return Vertice([options.altitude, point2D[0], point2D[1]]);
 
 	}
 	circlesCount(np) { return this.boCreateCirclesPoints ?

@@ -990,7 +990,7 @@ class RandomVertices extends Circle.RandomVertices {
 		return [newLat, newLng];
 	
 	}
-	getCirclePoint(circleDistance, params, options) { return this.getCirclePoint2D(circleDistance, params, options); }
+	getCirclePoint(circleDistance, params, options) { return Vertice(this.getCirclePoint2D(circleDistance, params, options)); }
 	circlesCount(np) { return np; }//если количество окружностей равно количеству точек на окружности, то точки будут равномерно располагаться на гиперсфере
 	getNumPoints(circleDistance, R, dCircleDistance) {
 		
