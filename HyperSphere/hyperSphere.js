@@ -1019,7 +1019,7 @@ class HyperSphere extends MyObject {
 */											
 
 											let middleVertice = _this.vertice2angles(this.middlePosition(oppositeVertices));
-											const geometry = settings.object.geometry;
+//											const geometry = settings.object.geometry;
 											if (boPushMiddleVertice) classSettings.overriddenProperties.pushMiddleVertice(timeId, middleVertice);
 											if (classSettings.randomMiddleVertice) { middleVertice = new this.RandomVertice({ vertice: vertice, oppositeVertice: middleVertice, }).angles[0]; }
 											
