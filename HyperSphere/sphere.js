@@ -17,6 +17,7 @@
 
 import Circle from './circle.js';
 import three from '../three.js'
+import { RandomVerticeSphere as RandomVertice } from './RandomVertice/randomVerticeSphere.js';
 import RandomCloud from './RandomVertice/randomCloudSphere.js';
 import Vertice from './VerticeSphere.js'
 import Position from './position.js'
@@ -176,17 +177,19 @@ class Sphere extends Circle {
 				sumVector[1] += point[1];
 				sumVector[2] += point[2];
 			}
+			
+			// Радиус сферы
+			const sphereRadius = _this.r;
 
 			// Нормализуем сумму, чтобы получить точку на сфере
 			const [x, y, z] = sumVector;
 			const length = Math.sqrt(x * x + y * y + z * z);
+			_this.setArc(sphereRadius, length);
 
 			if (length < 7e-17) {
 
 				// Все точки в начале координат или их сумма нулевая, то есть все три противоположные вершины образуют равнобедренный треугольник на плоскости, проходящей через центр сферы
 
-				// Радиус сферы
-				const sphereRadius = _this.r;
 /*				
 				const settings = _this.classSettings.settings;
 				const sphereRadius = _this.classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : settings.options.player.getTimeId());
@@ -294,7 +297,7 @@ class Sphere extends Circle {
 		if (!params) return;
 		params.Euler = () => {
 
-			const r = this.classSettings.r;
+			const r = this.r;//this.classSettings.r;
 
 			/*
 Заданы две произвольные точки position0 и position1 на поверхности сферы в декартовой системе координат. Начало координат находится в центре сферы.
@@ -847,6 +850,7 @@ rotatedPosition должна получиться равной position2.
 	 * @returns new RandomVertices child class.
 	 */
 	newRandomVertices(scene, options, randomVerticesSettings) { return new RandomVertices(scene, options, randomVerticesSettings); }
+	get RandomVertice() { return RandomVertice; }
 	get RandomCloud() { return RandomCloud; }
 
 	///////////////////////////////Overridden methods from base class

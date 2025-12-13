@@ -3261,10 +3261,11 @@ this.object = () => {
 
 	}
 
+	setArc(radius, length) { this.arc = π * (radius - length); }
 	get r() {
 
 		const settings = this.classSettings.settings;
-		return this.classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : settings.options.player.getTimeId());
+		return this.classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : settings.options.player === false ? 0 : settings.options.player.getTimeId());
 		
 	}
 	/**
