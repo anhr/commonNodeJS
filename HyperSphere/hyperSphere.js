@@ -1990,7 +1990,9 @@ this.object = () => {
 												if (verticeAngles[angleId] === angle) return;
 												verticeAngles[angleId] = angle;
 												_this.setPositionAttributeFromPoint(aAngleControls.verticeId, undefined, guiPoints.timeId);
+												_this.boChangeAngle = true;//Не надо удалять облако случайных вершин когда меняется угол противоположной вершины. Вместо этого надо пересчитать облако случайных вершин.
 												_this.update(aAngleControls.verticeId, angleId, guiPoints.timeId);
+												_this.boChangeAngle = undefined;
 	
 											});
 										dat.controllerNameAndTitle(cAngle, this.axisName(angleId));
@@ -2498,7 +2500,10 @@ this.object = () => {
 										if (middleVerticeEdges) classSettings.projectParams.scene.remove(middleVerticeEdges);
 										middleVerticeEdges = undefined;
 
-										if (_this.hsRandomVertice) {
+										if (
+											_this.hsRandomVertice &&
+											!_this.boChangeAngle//сейчас меняется угол противоположной вершины. Нужно изменить облако случайных вершин, вместо того, что бы удалять его, а потом снова создавать
+										) {
 
 											_this.hsRandomVertice.removeHyperSphere();
 											_this.hsRandomVertice = undefined;

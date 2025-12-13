@@ -230,15 +230,21 @@ class Circle extends HyperSphere {
 			const classSettings = _this.classSettings;
 			if (classSettings.randomArc) {
 
-				const randomVertice = new _this.RandomCloud({
+				const params = {
+						
+						//vertice: angles,
+						oppositeVertice: middleVerticeAngles,
+						arc: 2 * π * (radius - length),
+						debug: classSettings.debug ? { notRandomVertices: true,} : false,
+						
+					}
+				if (_this.randomVertice) _this.randomVertice.params = params;
+				else {
 					
-					//vertice: angles,
-					oppositeVertice: middleVerticeAngles,
-					arc: 2 * π * (radius - length),
-					debug: classSettings.debug ? { notRandomVertices: true,} : false,
-					
-				});
-				_this.hsRandomVertice = randomVertice.getHyperSphere(classSettings.settings.options, classSettings, _this.middleVerticeColor);
+					_this.randomVertice = new _this.RandomCloud(params);
+					_this.hsRandomVertice = _this.randomVertice.getHyperSphere(classSettings.settings.options, classSettings, _this.middleVerticeColor);
+
+				}
 				
 			}
 			return middleVertice;
