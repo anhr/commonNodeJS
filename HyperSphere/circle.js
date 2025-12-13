@@ -197,6 +197,7 @@ class Circle extends HyperSphere {
 	
 			// 4. Нормализуем вектор среднего направления к длине радиуса
 			const length = Math.sqrt(avgX * avgX + avgY * avgY);
+			_this.arc = π * (radius - length);
 
 			let middleVertice, middleVerticeAngles;
 			
@@ -234,7 +235,7 @@ class Circle extends HyperSphere {
 						
 						//vertice: angles,
 						oppositeVertice: middleVerticeAngles,
-						arc: 2 * π * (radius - length),
+						arc: _this.arc,
 						debug: classSettings.debug ? { notRandomVertices: true,} : false,
 						
 					}
