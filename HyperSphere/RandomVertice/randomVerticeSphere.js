@@ -20,7 +20,7 @@ import Vertice from '../VerticeSphere.js'
 import Position from '../position.js'
 //import anglesToCartesian from '../anglesToCasterianSphere.js'
 //import casterianToAngles from '../casterianToAnglesSphere.js'
-import { anglesToCartesian, casterianToAngles } from '../utilsSphere.js'
+//import { anglesToCartesian, casterianToAngles } from '../utilsSphere.js'
 import three from '../../three.js'
 
 
@@ -176,9 +176,9 @@ export class RandomVerticeSphere extends RandomVertice {
 				const initialLatitude = randomVerticeAngles[0],
 					initialLongitude = randomVerticeAngles[1];
 				
-				const cartesian = anglesToCartesian({ latitude: initialLatitude, longitude: initialLongitude });
+				const cartesian = utils.anglesToCartesian({ latitude: initialLatitude, longitude: initialLongitude });
 //				const rotated = casterianToAngles(new three.THREE.Vector3(cartesian[0], cartesian[1], cartesian[2]).applyEuler(euler));
-				let rotated = casterianToAngles(new three.THREE.Vector3(cartesian[0], cartesian[1], cartesian[2]).clone().applyQuaternion(euler));
+				let rotated = utils.casterianToAngles(new three.THREE.Vector3(cartesian[0], cartesian[1], cartesian[2]).clone().applyQuaternion(euler));
 				if (params.hyperSphere) rotated = params.hyperSphere.vertice(rotated);
 				
 				/*Есть точка на поверхности сферы в полярной системе координат. Начало полярной системы координат находится в центре сферы.
@@ -466,7 +466,7 @@ rotatedPosition должна получиться равной position1.
 			//			let position0 = new THREE.Vector3(1, 0, 0); // первая точка на сфере
 			//			let position1 = new THREE.Vector3(0, 1, 0); // вторая точка на сфере
 //			const position = this.classSettings.settings.object.geometry.position, p0 = position[0], p1 = position[1];
-			const p1 = Position(anglesToCartesian(params.oppositeVertice, r));
+			const p1 = Position(utils.anglesToCartesian(params.oppositeVertice, r));
 			//			let position0 = new THREE.Vector3(p0.x, p0.y, p0.z); // первая точка на сфере
 			const position0 = new THREE.Vector3(0, 0, r); // первая точка на сфере
 			const position1 = new THREE.Vector3(p1.x, p1.y, p1.z); // вторая точка на сфере
