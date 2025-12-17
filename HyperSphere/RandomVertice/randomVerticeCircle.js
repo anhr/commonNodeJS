@@ -14,8 +14,8 @@
 */
 
 import RandomVertice from './randomVertice.js';
-import * as utils from './utilsCircle.js'
-import Vertice from '../VerticeCircle.js'
+import * as utils from '../utilsCircle.js'
+//import Vertice from '../VerticeCircle.js'
 
 //const sRandomVerticeCircle = 'RandomVerticeCircle';
 const π = Math.PI, tan = Math.tan;
@@ -83,7 +83,7 @@ class RandomVerticeCircle extends RandomVertice {
 		this.getRandomAngles = () => {
 			
 			randomAngles = [[this.anglesCircle(utils)]];
-			return Vertice(randomAngles[0]);
+			return utils.angles(randomAngles[0]);
 			
 		}
 		
@@ -118,8 +118,8 @@ class RandomVerticeCircle extends RandomVertice {
 		
 		}
 */		
-		Vertice(params.vertice);
-		Vertice(params.oppositeVertice);
+		utils.angles(params.vertice);
+		utils.angles(params.oppositeVertice);
 		
 	}
 	

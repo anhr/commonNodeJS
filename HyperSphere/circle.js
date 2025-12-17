@@ -19,8 +19,8 @@ import HyperSphere from './hyperSphere.js';
 import three from '../three.js'
 import RandomVertice from './RandomVertice/randomVerticeCircle.js';
 import RandomCloud from './RandomVertice/randomCloudCircle.js';
-//import anglesRange from './anglesRange.js'
-import Vertice from './VerticeCircle.js'
+//import Vertice from './VerticeCircle.js'
+import * as utils from './utilsCircle.js'
 
 const sCircle = 'Circle',
 	π = Math.PI;
@@ -133,6 +133,29 @@ class Circle extends HyperSphere {
 		
 	}
 
+	randomVertices(middleVerticeAngles) {
+		
+		const classSettings = this.classSettings;
+		if (!classSettings.randomArc) return;
+
+		const params = {
+				
+				//vertice: angles,
+				oppositeVertice: middleVerticeAngles,
+				arc: this.arc,
+				debug: classSettings.debug ? { notRandomVertices: true,} : false,
+				
+			}
+		if (this.randomVertice) this.randomVertice.params = params;
+		else {
+			
+			this.randomVertice = new this.RandomCloud(params);
+			this.hsRandomVertice = this.randomVertice.getHyperSphere(classSettings.settings.options, classSettings, this.middleVerticeColor);
+
+		}
+		
+	}
+
 	//Overridden methods from base class
 
 	middlePosition(points) {
@@ -205,7 +228,7 @@ class Circle extends HyperSphere {
 			if (length < 1e-10) {
 
 				//Противоположные вершины расположены на противоположных краях окружности. В этом случае с равной вероятностью средняя вершина может распологаться с одной или с другой половины окружности.
-				middleVerticeAngles = Vertice([((_this.vertice2angles(points[0])[0] + _this.vertice2angles(points[1])[0]) / 2) + (Math.random() > 0.5 ? 0 : π)])
+				middleVerticeAngles = utils.angles([((_this.vertice2angles(points[0])[0] + _this.vertice2angles(points[1])[0]) / 2) + (Math.random() > 0.5 ? 0 : π)])
 				middleVertice = _this.a2v(middleVerticeAngles, radius);
 //				return _this.a2v(_this.getRandomMiddleAngles(points), radius);
 				
@@ -229,6 +252,8 @@ class Circle extends HyperSphere {
 
 			}
 
+			_this.randomVertices(middleVerticeAngles);
+/*			
 			const classSettings = _this.classSettings;
 			if (classSettings.randomArc) {
 
@@ -249,6 +274,7 @@ class Circle extends HyperSphere {
 				}
 				
 			}
+*/			
 			return middleVertice;
 			
 		}
@@ -389,7 +415,7 @@ class Circle extends HyperSphere {
 		
 	}
 */	
-	Vertice(angles) { return Vertice(angles); }
+	Vertice(angles) { return utils.angles(angles); }
 	/**
 	 * Converts a vertice position to vertice angles.
 	 * @param {array} vertice array of the vertice axes
@@ -428,7 +454,7 @@ class Circle extends HyperSphere {
 			const theta = Math.atan2(vertice.y, vertice.x);
 //			const theta = Math.atan2(vertice.x, vertice.y);
 
-			return Vertice([theta]);
+			return utils.angles([theta]);
 			
 		}
 
@@ -537,7 +563,7 @@ class Circle extends HyperSphere {
 		console.log(coords3);
 		// Ожидаемый результат: x ≈ 4.7766, y ≈ -2.3971
 		*/
-//		return polarToCartesian(r, Vertice(angles));
+//		return polarToCartesian(r, utils.angles(angles));
 		return polarToCartesian(r, angles);
 		
 	}
@@ -562,7 +588,7 @@ class Circle extends HyperSphere {
 /*
 	getRandomMiddleAngles(oppositeVertices) {
 
-		return Vertice([((this.vertice2angles(oppositeVertices[0])[0] + this.vertice2angles(oppositeVertices[1])[0]) / 2) + (Math.random() > 0.5 ? 0 : π)]);
+		return utils.angles([((this.vertice2angles(oppositeVertices[0])[0] + this.vertice2angles(oppositeVertices[1])[0]) / 2) + (Math.random() > 0.5 ? 0 : π)]);
 		
 	}
 */	
@@ -618,7 +644,7 @@ class RandomVertices extends HyperSphere.RandomVertices {
 	}
 	oppositeVertice0() {}
 //	antipodeCenter(params, antipodeLatitude) { return [params.oppositeVertice.longitude - π]; }
-	zeroArray() { return Vertice([0]); }
+	zeroArray() { return utils.angles([0]); }
 	onePointArea(d, np) {
 		//Длинна отрезка одномерной гиперсферы на которой в среднем будет находиться одна случайная точка.
 		return d / np;//Длинна отрезка одномерной гиперсферы вычисляем из длинны окружности одномерной гиперсферы, поделенной на количество точек на окружности np
@@ -667,7 +693,7 @@ class RandomVertices extends HyperSphere.RandomVertices {
 		if (newLng > π) newLng -= 2 * π;
 		else if (newLng < -π) newLng += 2 * π;
 		
-		return Vertice([newLng]);
+		return utils.angles([newLng]);
 	
 	}
 	circlesCount(np) { return 36; }
@@ -740,8 +766,8 @@ RandomVertices.Center = (params) => {
 		});
 	
 	}
-	Vertice(params.vertice);
-	Vertice(params.oppositeVertice);
+	utils.angles(params.vertice);
+	utils.angles(params.oppositeVertice);
 	
 }
 Circle.RandomVertices = RandomVertices;

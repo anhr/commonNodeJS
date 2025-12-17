@@ -15,7 +15,7 @@
 
 import RandomCloud from './randomCloud.js';
 import RandomVertice from './randomVerticeCircle.js';
-import * as utils from './utilsCircle.js'
+import * as utils from '../utilsCircle.js'
 import HyperSphere from '../circle.js';
 
 const sRandomCloudCircle = 'RandomCloudCircle';
@@ -35,7 +35,7 @@ class RandomCloudCircle extends RandomCloud {
 		super(params);
 
 		const anglesIdMax = 100, randomVertice = new RandomVertice(params);
-		
+/*		
 		Object.defineProperty(this, 'params', {
 			
 //			get: () => { return this.anglesCircle(anglesIdMax, randomVertice, utils); },
@@ -48,6 +48,7 @@ class RandomCloudCircle extends RandomCloud {
 			},
 			
 		});
+*/		
 		
 		//overridden methods
 		

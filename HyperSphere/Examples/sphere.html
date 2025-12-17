@@ -81,7 +81,7 @@
 					
 				},
 				//edges: false,
-				//randomArc: true,
+				randomArc: true,
 				randomMiddleVertice: false,
 				projectParams:{
 					
@@ -210,6 +210,16 @@
 									0//Longitude
 								],//1
 								[Math.PI / 4],//2
+							],
+							//pyramid точки 1, 2, 3, противоположные точке 0, равны между собой. arc = 0
+							angles: [
+								[
+									Math.PI / 2,//Latitude
+									0//Longitude
+								],//0
+								[0, Math.PI * 2 * 1 / 3],//1
+								[0, Math.PI * 2 * 1 / 3],//2
+								[0, Math.PI * 2 * 1 / 3],//3
 							],
 							//pyramid неопределенное положение средней вершины для вершины[0]
 							angles: [

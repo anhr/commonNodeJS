@@ -40,6 +40,18 @@ class RandomCloud {
 		if (params.pointsCount === undefined) params.pointsCount = 0;
 		
 		if (params.verticesAngles && !params.verticesAngles.boNoNew) params.verticesAngles.length = 0;
+		Object.defineProperty(this, 'params', {
+			
+//			get: () => { return this.anglesCircle(anglesIdMax, randomVertice, utils); },
+			set: (paramsNew) => {
+
+				params.arc = paramsNew.arc;
+				params.oppositeVertice = paramsNew.oppositeVertice;
+				this.randomAngles;
+			
+			},
+			
+		});
 		Object.defineProperty(this, 'angles', {
 			
 			get: () => { return params.verticesAngles; },

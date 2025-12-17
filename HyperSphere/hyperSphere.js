@@ -2513,6 +2513,7 @@ this.object = () => {
 
 											_this.hsRandomVertice.removeHyperSphere();
 											_this.hsRandomVertice = undefined;
+											delete _this.randomVertice;
 
 										}
 /*

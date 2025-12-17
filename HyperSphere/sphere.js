@@ -19,11 +19,12 @@ import Circle from './circle.js';
 import three from '../three.js'
 import { RandomVerticeSphere as RandomVertice } from './RandomVertice/randomVerticeSphere.js';
 import RandomCloud from './RandomVertice/randomCloudSphere.js';
-import Vertice from './VerticeSphere.js'
+import * as utils from './utilsSphere.js'
+//import Vertice from './VerticeSphere.js'
 import Position from './position.js'
 //import anglesToCartesian from './anglesToCasterianSphere.js'
 //import casterianToAngles from './casterianToAnglesSphere.js'
-import { anglesToCartesian, casterianToAngles } from './utilsSphere.js'
+//import { anglesToCartesian, casterianToAngles } from './utilsSphere.js'
 
 const sSphere = 'Sphere',
 	π = Math.PI;
@@ -184,17 +185,15 @@ class Sphere extends Circle {
 
 			// Нормализуем сумму, чтобы получить точку на сфере
 			const [x, y, z] = sumVector;
+//			const x = sumVector[0] / points.length, y = sumVector[1] / points.length, z = sumVector[2] / points.length;
 			const length = Math.sqrt(x * x + y * y + z * z);
-			_this.setArc(sphereRadius, length);
+			_this.setArc(sphereRadius, length / points.length);
+			
+			let middleVertice;//, middleVerticeAngles;
 
 			if (length < 7e-17) {
 
 				// Все точки в начале координат или их сумма нулевая, то есть все три противоположные вершины образуют равнобедренный треугольник на плоскости, проходящей через центр сферы
-
-/*				
-				const settings = _this.classSettings.settings;
-				const sphereRadius = _this.classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : settings.options.player.getTimeId());
-*/				
 
 				const THREE = three.THREE;
 				const oppositeVertices = points;
@@ -240,16 +239,42 @@ class Sphere extends Circle {
 				const normal = createPlaneFromPoints(pointA, pointB, pointC);
 
 				// Вычисление точек пересечения нормали со сферой
+				middleVertice = findSphereNormalIntersections(normal, sphereRadius);
+//				middleVerticeAngles = _this.vertice2angles(middleVertice);
+/*				
 				const point = findSphereNormalIntersections(normal, sphereRadius);
-//				return this.vertice2angles(Position([point.x, point.y, point.z]));
 
 				return point;
-				return _this.a2v(_this.vertice2angles(Position([point.x, point.y, point.z])), sphereRadius);
-//				return _this.a2v(_this.getRandomMiddleAngles(points), sphereRadius);
+//				return _this.a2v(_this.vertice2angles(Position([point.x, point.y, point.z])), sphereRadius);
+*/				
 
+			} else middleVertice = [x / length, y / length, z / length];
+
+			_this.randomVertices(_this.vertice2angles(middleVertice));
+/*			
+			const classSettings = _this.classSettings;
+			if (classSettings.randomArc) {
+
+				const params = {
+						
+						//vertice: angles,
+						oppositeVertice: _this.vertice2angles(middleVertice),
+						arc: _this.arc,
+						debug: classSettings.debug ? { notRandomVertices: true,} : false,
+						
+					}
+				if (_this.randomVertice) _this.randomVertice.params = params;
+				else {
+					
+					_this.randomVertice = new _this.RandomCloud(params);
+					_this.hsRandomVertice = _this.randomVertice.getHyperSphere(classSettings.settings.options, classSettings, _this.middleVerticeColor);
+
+				}
+				
 			}
-
-			return [x / length, y / length, z / length];
+*/			
+			return middleVertice;
+			
 		}
 
 		/**
@@ -293,14 +318,14 @@ class Sphere extends Circle {
 
 	}
 	ZeroArray() { return [0, 0]; }
-	Vertice(angles) { return Vertice(angles); }
+	Vertice(angles) { return utils.angles(angles); }
 	/**
 	 * Converts a vertice position to vertice angles.
 	 * @param {array} vertice array of the vertice axes
 	 * @returns Vertice angles.
 	 */
-	vertice2angles(vertice) { return casterianToAngles(Position(vertice)); }
-	a2v(angles, r = 1) { return anglesToCartesian(angles, r); }
+	vertice2angles(vertice) { return utils.casterianToAngles(Position(vertice)); }
+	a2v(angles, r = 1) { return utils.anglesToCartesian(angles, r); }
 //	normalizeAngles(angles){
 
 		/*https://chat.deepseek.com/a/chat/s/26327d17-c346-476d-9199-a0814f3a7a0a
@@ -618,7 +643,7 @@ class RandomVertices extends Circle.RandomVertices {
 		
 	}
 //	antipodeCenter(params, antipodeLatitude) { return [antipodeLatitude(params.oppositeVertice.latitude), params.oppositeVertice.longitude - π]; }
-	zeroArray() { return Vertice([0, 0]); }
+	zeroArray() { return utils.angles([0, 0]); }
 	onePointArea(d, np) {
 		
 		//Площадь сферы на которой в среднем будет находиться одна случайная точка.
@@ -701,7 +726,7 @@ class RandomVertices extends Circle.RandomVertices {
 		return [newLat, newLng];
 	
 	}
-	getCirclePoint(circleDistance, params, options) { return Vertice(this.getCirclePoint2D(circleDistance, params, options)); }
+	getCirclePoint(circleDistance, params, options) { return utils.angles(this.getCirclePoint2D(circleDistance, params, options)); }
 	circlesCount(np) { return np; }//если количество окружностей равно количеству точек на окружности, то точки будут равномерно располагаться на гиперсфере
 	getNumPoints(circleDistance, R, dCircleDistance) {
 		
@@ -825,8 +850,8 @@ RandomVertices.Center = (params, inaccurateLatitude) => {
 		});
 	
 	}
-	Vertice(params.vertice);
-	Vertice(params.oppositeVertice);
+	utils.angles(params.vertice);
+	utils.angles(params.oppositeVertice);
 	
 }
 Sphere.RandomVertices = RandomVertices;

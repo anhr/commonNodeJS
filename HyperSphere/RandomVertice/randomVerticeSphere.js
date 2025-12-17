@@ -16,7 +16,7 @@
 import RandomVertice from './randomVertice.js';
 import anglesRange from '../anglesRange.js'
 import * as utils from '../utilsSphere.js'
-import Vertice from '../VerticeSphere.js'
+//import Vertice from '../VerticeSphere.js'
 import Position from '../position.js'
 //import anglesToCartesian from '../anglesToCasterianSphere.js'
 //import casterianToAngles from '../casterianToAnglesSphere.js'
@@ -228,7 +228,7 @@ export class RandomVerticeSphere extends RandomVertice {
 						arrayAngles = [newLatitude, newLongitude];
 
 					if (params.hyperSphere) return params.hyperSphere.vertice(arrayAngles);
-					else Vertice(arrayAngles);
+					else utils.angles(arrayAngles);
 					
 					return arrayAngles;
 				}
@@ -680,8 +680,8 @@ rotatedPosition должна получиться равной position2.
 
 			/*
 			// Пример использования
-			//const vertice = this.a2v(Vertice([0.1, 0.2]));//[1, 0, 0];
-			//const oppositeVertice = this.a2v(Vertice([0.4, 0.5]));//[0, 1, 0];
+			//const vertice = this.a2v(utils.angles([0.1, 0.2]));//[1, 0, 0];
+			//const oppositeVertice = this.a2v(utils.angles([0.4, 0.5]));//[0, 1, 0];
 
 
 			console.log('Углы Эйлера (радианы):');
@@ -769,8 +769,8 @@ rotatedPosition должна получиться равной position2.
 		
 		}
 */		
-		Vertice(params.vertice);
-		Vertice(params.oppositeVertice);
+		utils.angles(params.vertice);
+		utils.angles(params.oppositeVertice);
 		
 	}
 	

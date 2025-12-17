@@ -14,7 +14,7 @@
 */
 
 import anglesRange from './anglesRange.js'
-import Vertice from './VerticeSphere.js'
+//import Vertice from './VerticeSphere.js'
 
 const range = anglesRange.longitude.range, latitudeMax = anglesRange.latitude.max, latitudeMin = anglesRange.latitude.min, π = Math.PI;
 
@@ -178,7 +178,7 @@ export function casterianToAngles(vertice) {
 	const longitude = Math.atan2(y, x);
 
 	//			return { r, latitude, longitude };
-	return Vertice([latitude, longitude]);
+	return angles([latitude, longitude]);
 
 }
 
@@ -200,3 +200,40 @@ const vertice3 = [0, 0, -5];
 const polar3 = casterianToAngles(vertice3);
 console.log(`Декартовы: [${vertice3}] -> r=${polar3.r}, lat=${polar3.latitude.toFixed(4)} (-90°), lon=${polar3.longitude.toFixed(4)} (0°)`);
 */
+
+/**
+ * Adds a longitude and latitude property to the vertice angles array for the sphere hypersphere.
+ * @param {array} vertice array of the vertice angles. Array length is 2. array[0] is latitude. array[1] is longitude.
+ * @returns {array} Array with longitude and latitude property.
+ */
+export const angles = (vertice) => {
+
+	if (vertice.longitude != undefined) return vertice;
+	while (vertice.length < 2) vertice.push(0);
+	Object.defineProperty(vertice, 'latitude', {
+
+		get: () => { return vertice[0]; },
+		set: (latitude) => {
+
+			if (vertice[0] === latitude) return true;
+			vertice[0] = latitude;
+			return true;
+
+		},
+
+	});
+	Object.defineProperty(vertice, 'longitude', {
+
+		get: () => { return vertice[1]; },
+		set: (longitude) => {
+
+			if (vertice[1] === longitude) return true;
+			vertice[1] = longitude;
+			return true;
+
+		},
+
+	});
+	return vertice;
+
+}

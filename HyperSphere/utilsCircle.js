@@ -1,6 +1,6 @@
 /**
  * @module utilsCircle
- * @description utilities which is used to calculate randomAngles for circle.
+ * @description utilities which is used to calculate randomAngles for sphere.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
@@ -13,9 +13,9 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 
-import anglesRange from '../anglesRange.js'
+import anglesRange from './anglesRange.js'
 
-const π = Math.PI, range = anglesRange.longitude.range, longitudeMax = anglesRange.longitude.max, longitudeMin = anglesRange.longitude.min
+const π = Math.PI, range = anglesRange.longitude.range, longitudeMax = anglesRange.longitude.max, longitudeMin = anglesRange.longitude.min;
 
 /**
  * normalize a circle angle to range between anglesRange.longitude.min and anglesRange.longitude.max.
@@ -50,13 +50,38 @@ const a = (1 / π) - 1, c = π;
  * @returns multiplier.
  */
 export const b = (params) => {
-	
+
 	const arc = params.arc != undefined ? params.arc : Math.abs(normalizeAngle(params.vertice.longitude - params.oppositeVertice.longitude)),
-	
+
 		//arc = π, b = 1 все точки почти равномерно распределяются по кругу
 		//arc = 0, b = π все точки стягиваются в одну точку
 		b = arc * a + c;
-	
+
 	return b;
-		
+
 }
+/**
+ * Adds a longitude property to the vertice angles array for the circle hypersphere.
+ * @param {array} vertice array of the vertice angles. Array length is 1. array[0] is longitude.
+ * @returns {array} Array with longitude property.
+ */
+export const angles = (vertice) => {
+
+	if (vertice.longitude != undefined) return vertice;
+	if (vertice.length === 0) vertice.push(0);
+	Object.defineProperty(vertice, 'longitude', {
+
+		get: () => { return vertice[0]; },
+		set: (longitude) => {
+
+			if (vertice[0] === longitude) return true;
+			vertice[0] = longitude;
+			return true;
+
+		},
+
+	});
+	return vertice;
+
+}
+

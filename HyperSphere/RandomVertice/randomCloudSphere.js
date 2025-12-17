@@ -38,65 +38,9 @@ class RandomCloudSphere extends RandomCloudBase
 
 		super(params, boCloud);
 
-//		this.circlesPointsCount = 750;//количество точек в сфере
-//		let boAllocateMemory = false;
-//		const randomVertice = new RandomVertice(params, boCloud, false);
-/*		
-		const verticesAngles = () => {
-
-				for (let anglesId = 0; anglesId < this.circlesPointsCount; anglesId++) {
-
-					if (!boAllocateMemory) params.editAnglesId = anglesId;
-					randomVertice.randomAngles;
-
-				}
-				delete params.editAnglesId;
-				
-			};
-*/			
-
 		//overridden methods
-/*
-		Object.defineProperty(this, 'randomAngles', {
-			
-			get: () => {
-
-				verticesAngles();
-				return params.verticesAngles;
-				
-			},
-			
-			set: (anglesNew) => { verticesAngles = anglesNew; },
-			
-		});
-*/		
 		
 		/////////////////////////////overridden methods
-
-//		this.getRandomAngle = (randomVerticeId) => { return randomVertice.getRandomAngle(randomVerticeId); }
-/*		
-		if (params.hyperSphere) {
-
-			//Этот экземпляр RandomCloudSphere вызывается из RandomVerticeHyperSphere когда создается гиперсфера. Гиперсфера состоит из набора сфер.
-			//Для каждой сферы создается только массив RandomVerticeSphere.arrayCircles в котором хранятся парамерты отдельной окружности.
-			//Сами окружности, которые хранятся в verticesAngles создавать не надо.
-			
-			Object.defineProperty(this, 'sphereAnglesCount', { get: () => {
-
-				let sphereAnglesCount = 0;
-				randomVertice.сirclesParams.forEach((circle) => { sphereAnglesCount += circle.circleAnglesCount; });
-				return sphereAnglesCount;
-			
-			}, });
-			
-		} else {
-			
-			boAllocateMemory = true;
-			this.randomAngles;
-			boAllocateMemory = false;
-
-		}
-*/		
 		
 	}
 	
