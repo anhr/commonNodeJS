@@ -16,9 +16,9 @@
 import RandomVertice from './randomVertice.js';
 import { anglesIdMax } from './randomVerticeSphere.js';
 import anglesRange from '../anglesRange.js'
-//import * as utils from './utilsHyperSphere.js'
+import * as utils from '../utilsHSphere.js'
 import RandomCloudSphere from './randomCloudSphere.js';
-import Vertice from '../VerticeHypersphere.js'
+//import Vertice from '../VerticeHypersphere.js'
 
 const sRandomVerticesHyperSphere = 'RandomVerticesHyperSphere',
 	π = Math.PI, abs = Math.abs, round = Math.round, random = Math.random,
@@ -272,11 +272,11 @@ class RandomVerticeHSphere extends RandomVertice {
 
 					},
 					
-					vertice: (point) => { return Vertice([...point], params.altitude); },
+					vertice: (point) => { return utils.angles([...point], params.altitude); },
 /*
  					rotateDeepseek: (point, rotationAngles) => {
 
-						point = Vertice(point);
+						point = utils.angles(point);
 						point.altitude = params.altitude
 */
 						/*https://chat.deepseek.com/a/chat/s/acc2252d-64ac-4963-94e9-89b37d7482dd
@@ -424,7 +424,7 @@ class RandomVerticeHSphere extends RandomVertice {
 						// Применение поворота
 						const rotatedPoint = HyperSphereRotation.rotatePoint(initialPoint, alpha, beta, gamma);
 
-						return Vertice([rotatedPoint.altitude, rotatedPoint.latitude, rotatedPoint.longitude]);
+						return utils.angles([rotatedPoint.altitude, rotatedPoint.latitude, rotatedPoint.longitude]);
 */
 						/*
 						// Пример использования
@@ -581,7 +581,7 @@ class RandomVerticeHSphere extends RandomVertice {
 							α = 0,
 							β = params.oppositeVertice.latitude - π / 2,
 							γ = params.oppositeVertice.longitude - π / 2;
-						return Vertice(rotatePointWithEulerAngles(initialLatitude, initialLongitude, α, β, γ), params.altitude);
+						return utils.angles(rotatePointWithEulerAngles(initialLatitude, initialLongitude, α, β, γ), params.altitude);
 						
 					},
 */
@@ -637,7 +637,7 @@ class RandomVerticeHSphere extends RandomVertice {
 					
 							if (altitude === 0) {
 								// Случай, когда точка находится на оси W.
-								return Vertice([0, 0, 0]);
+								return utils.angles([0, 0, 0]);
 
 							}
 					
@@ -645,7 +645,7 @@ class RandomVerticeHSphere extends RandomVertice {
 							const latitude = Math.asin(z / sinAlt);
 							const longitude = Math.atan2(y, x);
 					
-							return Vertice([altitude, latitude, longitude]);
+							return utils.angles([altitude, latitude, longitude]);
 						
 						}
 */
@@ -719,7 +719,7 @@ class RandomVerticeHSphere extends RandomVertice {
 							yz: rotationAngles.altitude// Поворот в плоскости YZ
 
 						};
-						return rotatePoint(Vertice(point, params.altitude), eulerAngles);
+						return rotatePoint(utils.angles(point, params.altitude), eulerAngles);
 					
 					},
 */
@@ -982,7 +982,7 @@ arrayCloudSpheres[0].randomAngles;
 latitudeId < 1;
 					 latitudeId++){
 
-					const rotated = Vertice([0,0], params.oppositeVertice.altitude + params.hyperSphere.middleSphere.aLatitude[latitudeId] - π / 2);
+					const rotated = utils.angles([0,0], params.oppositeVertice.altitude + params.hyperSphere.middleSphere.aLatitude[latitudeId] - π / 2);
 					/*https://gemini.google.com/app/fe0cdbd00962aa9a
 					Есть точка на поверхности 3-мерной гиперсферы встроенной в 4-мерное евклидово пространство в полярной системе координат. Начало полярной системы координат находится в центре сферы.
 
@@ -1413,15 +1413,15 @@ latitudeId < 1;
 	ZeroArray() { return [0, 0, 0]; }
 	Center(params) {
 	
-		Vertice(params.vertice);
-		Vertice(params.oppositeVertice);
+		utils.angles(params.vertice);
+		utils.angles(params.oppositeVertice);
 		
 	}
 	
 	/////////////////////////////overridden methods
 
 }
-const VerticeObjectToArray = (verticeObject) => { return Vertice([verticeObject.altitude, verticeObject.latitude, verticeObject.longitude]); }
+const VerticeObjectToArray = (verticeObject) => { return utils.angles([verticeObject.altitude, verticeObject.latitude, verticeObject.longitude]); }
 /*
 const Vertice = (vertice, altitude) => {
 
@@ -1471,5 +1471,5 @@ const Vertice = (vertice, altitude) => {
 
 }
 */
-RandomVerticeHSphere.Vertice = Vertice;
+//RandomVerticeHSphere.Vertice = Vertice;
 export default RandomVerticeHSphere;

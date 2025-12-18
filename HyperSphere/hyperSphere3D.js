@@ -19,7 +19,9 @@ import Sphere from './sphere.js';
 import three from '../three.js'
 import FibonacciSphereGeometry from '../FibonacciSphere/FibonacciSphereGeometry.js'
 import anglesRange from './anglesRange.js'
-import Vertice from './VerticeHypersphere.js'
+import RandomCloud from './RandomVertice/randomCloudHSphere.js';
+import * as utils from './utilsHSphere.js'
+//import Vertice from './VerticeHypersphere.js'
 import Position from './position.js'
 
 const sHyperSphere3D = 'HyperSphere3D',
@@ -224,6 +226,7 @@ class HyperSphere3D extends Sphere {
 			static findEquidistantPoint(points) {
 
 				const n = points[0].length; // Размерность пространства
+				const radius = _this.r;
 				
 				if (_this.classSettings.debug) {
 					
@@ -254,7 +257,11 @@ class HyperSphere3D extends Sphere {
 
 				// 2. Нормализуем, чтобы получить точку на гиперсфере
 				const norm = Math.sqrt(centroid.reduce((sum, val) => sum + val * val, 0));
+				
+				_this.setArc(radius, norm);
 
+				let middleVertice;
+				
 				if (norm < 7e-17) {
 					
 					// центроид в начале координат
@@ -263,7 +270,6 @@ class HyperSphere3D extends Sphere {
 					const settings = _this.classSettings.settings;
 					const radius = _this.classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : settings.options.player.getTimeId());
 */					
-					const radius = _this.r;
 					const oppositeVertices = points;
 
 					//https://chat.deepseek.com/a/chat/s/85a1d029-0033-437b-a750-c58f9590bd4c
@@ -439,7 +445,7 @@ class HyperSphere3D extends Sphere {
 						const normSq = a * a + b * b + c * c + d * d;
 						let normal;
 						let isDegenerate = false;
-
+						
 						if (normSq < 1e-12) {
 
 							//Вырожденный случай: точки лежат в подпространстве меньшей размерности
@@ -629,27 +635,32 @@ class HyperSphere3D extends Sphere {
 							oppositeVertices[3][3],
 						],
 					);
-//					return _this.vertice2angles(Position([point[0], point[1], point[2], point[3]]));
 
-					return Position(point);
-//					return _this.a2v(_this.vertice2angles(Position([point[0], point[1], point[2], point[3]])), radius);
-//					return _this.a2v(_this.getRandomMiddleAngles(points), radius);
+					middleVertice = Position(point);
+
+//					return Position(point);
+
+				} else {
+
+					// Нормализуем векторы
+					middleVertice = centroid.map(coord => coord / norm);
+//					const result = centroid.map(coord => coord / norm);
+	
+					/*
+					// 3. Проверяем расстояния до всех точек
+					const distances = points.map(point =>
+						this.calculateDistance(result, point)
+					);
+	
+					console.log('Расстояния до заданных точек:', distances);
+					*/
+	
+//					return result;
 
 				}
-
-				// Нормализуем векторы
-				const result = centroid.map(coord => coord / norm);
-
-				/*
-				// 3. Проверяем расстояния до всех точек
-				const distances = points.map(point =>
-					this.calculateDistance(result, point)
-				);
-
-				console.log('Расстояния до заданных точек:', distances);
-				*/
-
-				return result;
+				_this.randomVertices(_this.vertice2angles(middleVertice));
+				return middleVertice;
+				
 			}
 
 			/**
@@ -827,7 +838,7 @@ class HyperSphere3D extends Sphere {
 
 	}
 	ZeroArray() { return [0, 0, 0]; }
-	Vertice(angles) { return Vertice(angles); }
+	Vertice(angles) { return utils.angles(angles); }
 	/**
 	 * Converts a vertice position to vertice angles.
 	 * @param {array} vertice array of the vertice axes
@@ -869,7 +880,7 @@ class HyperSphere3D extends Sphere {
 					radius: 0
 				};
 */
-				return Vertice([0, 0, 0]);
+				return utils.angles([0, 0, 0]);
 
 			}
 
@@ -909,7 +920,7 @@ class HyperSphere3D extends Sphere {
 				radius: r               // радиус сферы
 			};
 */
-			return Vertice([altitude, latitude, longitude]);
+			return utils.angles([altitude, latitude, longitude]);
 
 		}
 /*
@@ -1407,6 +1418,7 @@ class HyperSphere3D extends Sphere {
 	 * @returns new RandomVertices child class.
 	 */
 	newRandomVertices(scene, options, randomVerticesSettings) { return new RandomVertices(scene, options, randomVerticesSettings); }
+	get RandomCloud() { return RandomCloud; }
 
 }
 
@@ -1483,7 +1495,7 @@ class RandomVertices extends Sphere.RandomVertices {
 
 	}
 	//	antipodeCenter(params, antipodeLatitude) { return [antipodeLatitude(params.oppositeVertice.latitude), params.oppositeVertice.longitude - π]; }
-	zeroArray() { return Vertice([0, 0, 0]); }
+	zeroArray() { return utils.angles([0, 0, 0]); }
 	onePointArea(d, np) {
 
 		//объем шара в котором в среднем будет находиться одна случайная точка.
@@ -1536,7 +1548,7 @@ class RandomVertices extends Sphere.RandomVertices {
 	getCirclePoint(circleDistance, params, options) {
 
 		const point2D = this.getCirclePoint2D(circleDistance, params, options);
-		return Vertice([options.altitude, point2D[0], point2D[1]]);
+		return utils.angles([options.altitude, point2D[0], point2D[1]]);
 
 	}
 	circlesCount(np) { return this.boCreateCirclesPoints ?
@@ -1932,8 +1944,8 @@ RandomVertices.Center = (params, inaccurateLatitude) => {
 		});
 	
 	}
-	Vertice(params.vertice);
-	Vertice(params.oppositeVertice);
+	utils.angles(params.vertice);
+	utils.angles(params.oppositeVertice);
 	
 	const center = params.center;
 	if (center.length < 1) center.push(0);

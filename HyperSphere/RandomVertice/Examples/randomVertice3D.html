@@ -36,6 +36,7 @@
 		
 		import anglesRange from '../../anglesRange.js'
 		import getHyperSphere from '../getHyperSphere.js'
+		import * as utils from '../../utilsHSphere.js'
 		
 		new MyThree((scene, options) => {
 
@@ -346,7 +347,8 @@
 				pi / 4,//Latitude
 				pi / 3,//Longitude
 			]
-			RandomVertice.Vertice(vertice);
+//			RandomVertice.Vertice(vertice);
+			utils.angles(vertice);
 			
 			const params = {
 
@@ -392,7 +394,7 @@
 				debug: randomVerticeSettings.debug,
 
 			}
-			RandomVertice.Vertice(params.oppositeVertice);
+			utils.angles(params.oppositeVertice);
 
 			//Vertices hyperSphere 
 
