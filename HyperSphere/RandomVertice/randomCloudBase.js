@@ -51,7 +51,7 @@ class RandomCloudBase extends RandomCloud {
 		this.getRandomAngle = (randomVerticeId) => { return randomVertice.getRandomAngle(randomVerticeId); }
 		if (params.hyperSphere) {
 
-			//Этот экземпляр RandomCloudSphereBase вызывается из RandomVerticeHyperSphere когда создается гиперсфера. Гиперсфера состоит из набора сфер.
+			//Этот экземпляр RandomCloudSphereBase вызывается из RandomVerticeHSphere когда создается гиперсфера. Гиперсфера состоит из набора сфер.
 			//Для каждой сферы создается только массив RandomVerticeSphere.arrayCircles в котором хранятся парамерты отдельной окружности.
 			//Сами окружности, которые хранятся в verticesAngles создавать не надо.
 			

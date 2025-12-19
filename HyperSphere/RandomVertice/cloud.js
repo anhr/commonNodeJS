@@ -21,8 +21,6 @@ const sCloud = 'Cloud',
  */
 class Cloud {
 	
-	// * @param {class} RandomVertice RandomVerticeHyperSphere class for CloudHyperSphere child class or RandomVerticeSphere class for CloudSphere child class
-
 	/**
 	 * Generates a cloud of the vertices around opposite vertice.
 	 * @param {object} params See the <b>params</b> of the <a href="./module-RandomVertice-RandomVertice.html" target="_blank"><b>RandomVertice</b></a> constructor for details.
@@ -103,7 +101,7 @@ class Cloud {
 		
 		if (params.hyperSphere) {
 
-			//Этот экземпляр CloudSphere вызывается из RandomVerticeHyperSphere когда создается гиперсфера. Гиперсфера состоит из набора сфер.
+			//Этот экземпляр CloudSphere вызывается из RandomVerticeHSphere когда создается гиперсфера. Гиперсфера состоит из набора сфер.
 			
 			Object.defineProperty(this, 'sphereAnglesCount', { get: () => { return randomVertice.circlesPointsCount }, });
 			
