@@ -45,8 +45,6 @@ class RandomCloud {
 //			get: () => { return this.anglesCircle(anglesIdMax, randomVertice, utils); },
 			set: (paramsNew) => {
 
-const q = params.arc;
-console.error('under consraction')
 				params.arc = paramsNew.arc;
 				params.oppositeVertice = paramsNew.oppositeVertice;
 				this.randomAngles;
