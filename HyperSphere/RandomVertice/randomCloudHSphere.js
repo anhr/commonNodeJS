@@ -35,52 +35,7 @@ class RandomCloudHSphere extends RandomCloudBase
 	 * @param {object} [params={}] See the <b>params</b> of the <a href="./module-RandomVertice-RandomVertice.html" target="_blank"><b>RandomVertice</b></a> constructor for details.
 	 * @param {object} [boCloud=false] true - generates a random vertice cloud.
 	 */
-	constructor(params, boCloud = true) {
-
-		super(params, boCloud);
-
-/*		
-		this.circlesPointsCount = 750;//количество точек в облаке
-		const randomVertice = new RandomVertice(params, boCloud, false),
-			verticesAngles = () => {
-
-				params.CloudSphere = RandomCloudSphere;
-				for (let anglesId = 0; anglesId < this.circlesPointsCount; anglesId++) {
-					
-					if (!boAllocateMemory) params.editAnglesId = anglesId;
-					randomVertice.randomAngles;
-
-				}
-				delete params.CloudSphere;
-				delete params.editAnglesId;
-				
-			};
-*/			
-
-		//overridden methods
-/*
-		Object.defineProperty(this, 'randomAngles', {
-			
-			get: () => {
-
-				verticesAngles();
-				return params.verticesAngles;
-				
-			},
-			
-			set: (anglesNew) => { verticesAngles = anglesNew; },
-			
-		});
-*/		
-		
-		/////////////////////////////overridden methods
-/*
-		let boAllocateMemory = true;
-		this.randomAngles;
-		boAllocateMemory = false;
-*/		
-		
-	}
+	constructor(params, boCloud = true) { super(params, boCloud); }
 	
 	//overridden methods
 	
