@@ -90,9 +90,12 @@ class RandomCloudHSphere extends RandomCloudBase
 		
 		params.CloudSphere = RandomCloudSphere;
 		for (let anglesId = 0; anglesId < this.circlesPointsCount; anglesId++) {
-			
+
+			console.log('anglesId = ' + anglesId);
 			if (!boAllocateMemory) params.editAnglesId = anglesId;
+			params.noCreateCloudSphere = true;//поэтому не нужно создавать новые облака сфер CloudSphere а брать их из arrayCloudSpheres.
 			randomVertice.randomAngles;
+			delete params.noCreateCloudSphere;
 
 		}
 		delete params.CloudSphere;
