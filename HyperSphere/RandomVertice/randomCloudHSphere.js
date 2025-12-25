@@ -42,7 +42,11 @@ class RandomCloudHSphere extends RandomCloudBase
 	newRandomVertice(params, boCloud) { return new RandomVertice(params, boCloud, false); }
 	getHyperSphere(options, classSettings, color) { return this.getHyperSphereBase(HyperSphere, options, classSettings, color); }
 	verticesAngles(params, randomVertice, boAllocateMemory) {
-		
+
+		params.noCreateCloudSphere = true;//поэтому не нужно создавать новые облака сфер CloudSphere а брать их из arrayCloudSpheres.
+		randomVertice.randomAngles;
+		delete params.noCreateCloudSphere;
+/*		
 		params.CloudSphere = RandomCloudSphere;
 		for (let anglesId = 0; anglesId < this.circlesPointsCount; anglesId++) {
 
@@ -55,6 +59,7 @@ class RandomCloudHSphere extends RandomCloudBase
 		}
 		delete params.CloudSphere;
 		delete params.editAnglesId;
+*/		
 		
 	}
 	
