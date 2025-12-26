@@ -278,7 +278,11 @@ export class RandomVerticeSphere extends RandomVertice {
 					params.random = k * circleId;
 
 					const latitude = this.latitude(utils);
-					if (!boAllocateMemory && params.hyperSphere)
+					if (
+						!boAllocateMemory &&//Не выделяется память
+						params.hyperSphere &&//Создается облако гиперсферы случайных точек. Состоит из массива сфер на разной высоте. Сейчас создается сфера на высоте противоположной вершины params.oppositeVertice.altitude.
+						!params.hyperSphere.middleSphere.boNoAddALatitude//Это первая сфера. Для остальных сфер не нужно добавлять широту в aLatitude потому что они будут дублироваться
+					)
 						params.hyperSphere.middleSphere.aLatitude.push(latitude);//Создается сфера для облака случайных точек гиперсферы, которая находится на высоте противоположной вершины params.oppositeVertice.altitude = params.altitude
 					const angleStep = abs(latitude - latitudePrev),//угол между соседними точками на окружности
 						randomVerticeAnglesParams = getRandomVerticeAnglesParams(latitude, angleStep);

@@ -81,6 +81,7 @@ class CloudSphere extends Cloud
 	getRandomVerticeAngles(randomVertice, params) {
 
 		if (params.altitude === undefined) params.pointsCount = 0;//обнулять только если обновляется облако сферы, которое находится в составе облака гиперсферы. Тоесть если создается облако сферы а не облако гиперсферы
+		if (params.hyperSphere) params.hyperSphere.middleSphere.aLatitude.length = 0;//сейчас обновляется облако гиперсферы. Нужно удалить старый массив широт окружностей, из которых состоит средняя сфера.
 		randomVertice.randomAngles;
 		
 	}

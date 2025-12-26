@@ -50,13 +50,20 @@ class RandomCloudSphere extends RandomCloudBase
 	getHyperSphere(options, classSettings, color) { return this.getHyperSphereBase(HyperSphere, options, classSettings, color); }
 	verticesAngles(params, randomVertice, boAllocateMemory) {
 
+		if (params.hyperSphere) params.hyperSphere.middleSphere.aLatitude.length = 0;
 		for (let anglesId = 0; anglesId < this.circlesPointsCount; anglesId++) {
 
 			if (!boAllocateMemory) params.editAnglesId = anglesId;
+			if (
+				params.hyperSphere &&//Создается облако гиперсферы случайных точек. Состоит из массива сфер на разной высоте. Сейчас создается сфера на высоте противоположной вершины params.oppositeVertice.altitude.
+				(anglesId != 0)//это не первая сфера
+			)
+				params.hyperSphere.middleSphere.boNoAddALatitude = true;//Не добавлять новую широту в params.hyperSphere.middleSphere.aLatitude потому что они будут дублироваться с первой сферой
 			randomVertice.randomAngles;
 
 		}
 		delete params.editAnglesId;
+		delete params.hyperSphere.middleSphere.boNoAddALatitude;
 		
 	};
 	
