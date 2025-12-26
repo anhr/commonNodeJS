@@ -328,7 +328,7 @@ class RandomVerticeHSphere extends RandomVertice {
 
 					//обновляется гиперсфера после изменения положения вершин
 					
-					params.pointsCount = 0;
+//					params.pointsCount = 0;
 					params.speresPointsCount.length = 0;
 
 				}
@@ -465,7 +465,7 @@ latitudeId < 1;
 					*/
 					const normalized = normalize(rotated);
 					params.verticesAngles[params.pointsCount] = normalized;
-					params.pointsCount++;
+//					params.pointsCount++;
 					params.speresPointsCount.push(params.pointsCount);
 					
 				}
