@@ -63,7 +63,7 @@ class RandomCloudSphere extends RandomCloudBase
 
 		}
 		delete params.editAnglesId;
-		delete params.hyperSphere.middleSphere.boNoAddALatitude;
+		if (params.hyperSphere) delete params.hyperSphere.middleSphere.boNoAddALatitude;
 		
 	};
 	
