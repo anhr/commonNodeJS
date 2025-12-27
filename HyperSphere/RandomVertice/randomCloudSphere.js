@@ -60,6 +60,7 @@ class RandomCloudSphere extends RandomCloudBase
 			)
 				params.hyperSphere.middleSphere.boNoAddALatitude = true;//Не добавлять новую широту в params.hyperSphere.middleSphere.aLatitude потому что они будут дублироваться с первой сферой
 			randomVertice.randomAngles;
+			if (params.noCreateCloudSphere) params.pointsCount++;//Сейчас редактируется облако случайной гиперсферы
 
 		}
 		delete params.editAnglesId;
