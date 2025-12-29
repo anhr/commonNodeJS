@@ -3262,7 +3262,7 @@ this.object = () => {
 
 	}
 
-	setArc(radius, length) { this.arc = π * (radius - length); }
+	setArc(radius, length) { this.arc = π * (/*radius - */length); }
 	get r() {
 
 		const settings = this.classSettings.settings;

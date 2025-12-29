@@ -51,30 +51,47 @@ export class RandomVerticeSphere extends RandomVertice {
 		
 		const arrayCircles = boCloud ? undefined : [];
 			
-		if (params.arc === undefined) Object.defineProperty(params, 'arc', {
+//		if (params.arc === undefined)
+		{//hide arc
+			let arc = params.arc;
+			Object.defineProperty(params, 'arc', {
 	
 				get: () => {
 
 					if (params.boAllocateMemory) return π;//Выделяется память для облака точек. arc нужно сделать максимально возможным то есть вершины расположены друг против друга. В этом случае выделяется максимальный объем памяти.
-					const vertice = params.vertice, oppositeVertice = params.oppositeVertice;
-					
-					//DeepSeek. вычислить угол между двумя точками на поверхности шара
-					//векторы
-					//A=(R,ϕ1,λ1 ) - vertice
-					const ϕ1 = vertice[0], λ1 = vertice[1];
-					//B=(R,ϕ2,λ2 ) - oppositeVertice
-					const ϕ2 = oppositeVertice[0], λ2 = oppositeVertice[1];
-					//где
-					//ϕ — широта (от −90° до 90°),
-					//λ — долгота (от −180° до 180°),
-					const arccos = Math.acos, sin = Math.sin, cos = Math.cos;
-					const θ = arccos(sin(ϕ1) * sin(ϕ2) + cos(ϕ1) * cos(ϕ2) * cos(λ1 - λ2));
-					if (isNaN(θ)) console.error(sRandomVerticesSphere + ': getArcAngle. Invalid θ = ' + θ);
-					return θ;
+					let θ;
+					if (arc === undefined) {
+						
+						const vertice = params.vertice, oppositeVertice = params.oppositeVertice;
+						
+						//DeepSeek. вычислить угол между двумя точками на поверхности шара
+						//векторы
+						//A=(R,ϕ1,λ1 ) - vertice
+						const ϕ1 = vertice[0], λ1 = vertice[1];
+						//B=(R,ϕ2,λ2 ) - oppositeVertice
+						const ϕ2 = oppositeVertice[0], λ2 = oppositeVertice[1];
+						//где
+						//ϕ — широта (от −90° до 90°),
+						//λ — долгота (от −180° до 180°),
+						const arccos = Math.acos, sin = Math.sin, cos = Math.cos;
+						θ = arccos(sin(ϕ1) * sin(ϕ2) + cos(ϕ1) * cos(ϕ2) * cos(λ1 - λ2));
+						if (isNaN(θ)) console.error(sRandomVerticesSphere + ': getArcAngle. Invalid θ = ' + θ);
+
+					} else θ = arc;
+					return this.arc(θ);
 				
+				},
+				set: (arcNew) => {
+		
+					if (arc === undefined) console.error(sRandomVerticesSphere + ': set params.arc. Invalid arc = ' + arc);
+					else arc = arcNew;
+					return true;
+		
 				},
 		
 			});
+
+		}
 		
 		this.latitude = (utils) => {
 

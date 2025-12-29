@@ -14,7 +14,8 @@
 */
 
 const sRandomVertice = 'RandomVertice',
-	sOver = ': Please, override %s method in your ' + sRandomVertice + ' child class.';
+	sOver = ': Please, override %s method in your ' + sRandomVertice + ' child class.',
+	π = Math.PI;
 /**
  * Generates random angles between a vertice and its opposite vertice.
  * @class
@@ -53,6 +54,7 @@ class RandomVertice {
 		
 	}
 	circlesPointsCount;
+	arc(arc) { return π - arc; }
 	
 	//overridden methods
 	
