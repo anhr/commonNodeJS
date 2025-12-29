@@ -42,8 +42,8 @@ class RandomVerticeHSphere extends RandomVertice {
 
 		super(params);
 
-		const arraySpheres = boCloud ? undefined : [],
-			arrayCloudSpheres = arraySpheres ? undefined : [];
+		const arraySpheres = boCloud ? undefined : [],//Массив с параметрами сфер, из которых состоит гиперсфера. Создается когда нужно облако случайных или неслучайных средних точек.
+			arrayCloudSpheres = arraySpheres ? undefined : [];//Массив сфер RandomCloudSphere, из которых состоит гиперсфера.
 			
 		if (params.arc === undefined) Object.defineProperty(params, 'arc', {
 	
@@ -280,9 +280,14 @@ class RandomVerticeHSphere extends RandomVertice {
 				params.altitude = altitude;
 				const cloudSphere = params.CloudSphere ? new params.CloudSphere(params) : new RandomCloudSphere(params, params.boCloud);
 				if (arrayCloudSpheres) {
+
+					//Создается облако случайных или неслучайных средних точек
 					
 					arrayCloudSpheres.push(cloudSphere);
-					params.speresPointsCount ||= [];
+
+					params.speresPointsCount ||= [];//массив индексов первых точек сфер, из которых состоит гиперсфера. Нужен для выделения одной из сфер и скрытия остальных сфер, когда пользователь вручную выбрал сферу
+													//Не создается, когда нужна одна случайная средняя точка.
+
 					params.speresPointsCount.push(params.pointsCount);
 
 				}
@@ -467,7 +472,7 @@ latitudeId < 1;
 					params.verticesAngles[params.pointsCount] = normalized;
 
 //					params.pointsCount++;
-					params.speresPointsCount.push(params.pointsCount);
+					if (params.speresPointsCount) params.speresPointsCount.push(params.pointsCount);//сейчас создается облако случайных или неслучайных средних точек
 					
 				}
 				
