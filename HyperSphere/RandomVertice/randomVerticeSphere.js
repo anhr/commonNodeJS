@@ -268,7 +268,7 @@ export class RandomVerticeSphere extends RandomVertice {
 
 				//Сфера случайных точек состоит из набора окружностей.
 				
-				const arc = params.arc;
+//				const arc = params.arc;
 				this.circlesPointsCount = boAllocateMemory ? undefined : //Во время выделения памяти в массив this.verticesAngles добавляется новый item
 					0;//в противном случае в массиве this.verticesAngles редактируется item с индексом this.circlesPointsCount
 				let latitudePrev = 0;//широта предыдущей окружности
