@@ -241,7 +241,7 @@ class RandomVerticeHSphere extends RandomVertice {
 				},
 				set: (arcNew) => {
 		
-					if (arc === undefined) console.error(sRandomVerticesSphere + ': set params.arc. Invalid arc = ' + arc);
+					if (arc === undefined) console.error(sRandomVerticesHyperSphere + ': set params.arc. Invalid arc = ' + arc);
 					else arc = arcNew;
 					return true;
 		
