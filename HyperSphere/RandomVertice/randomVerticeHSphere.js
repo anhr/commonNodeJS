@@ -45,193 +45,204 @@ class RandomVerticeHSphere extends RandomVertice {
 		const arraySpheres = boCloud ? undefined : [],//Массив с параметрами сфер, из которых состоит гиперсфера. Создается когда нужно облако случайных или неслучайных средних точек.
 			arrayCloudSpheres = arraySpheres ? undefined : [];//Массив сфер RandomCloudSphere, из которых состоит гиперсфера.
 			
-		if (params.arc === undefined) Object.defineProperty(params, 'arc', {
+		if (params.arc === undefined) {
+
+			params.boArcIsdefined = true;
+			let arc = params.arc;
+			Object.defineProperty(params, 'arc', {
 	
 				get: () => {
 
 					if (params.boAllocateMemory) return π;//Выделяется память для облака точек. arc нужно сделать максимально возможным то есть вершины расположены друг против друга. В этом случае выделяется максимальный объем памяти.
-					const vertice = params.vertice, oppositeVertice = params.oppositeVertice;
-
-					/*
-					gemini.google.com
-					Вычислить центральный угол между двумя точками на поверхности 3-мерной гиперсферы. Координаты точек заданы в полярной системе координат в радианах.
-					Начало координат широты находится на экваторе. Писать все формулы в одну строку.
-
-					Обозначим координаты двух точек на поверхности 3-мерной гиперсферы радиуса R в полярной системе координат:
-					Точка 1: (ψ1,θ1,ϕ1), где ψ1 - гиперширота, θ1 - гипердолгота, ϕ1 - обычная долгота.
-					Точка 2: (ψ2,θ2,ϕ2).
-					Начало координат широты находится на экваторе.
-					Для 3-мерной гиперсферы (вложенной в 4-мерное евклидово пространство) координаты (x,y,z,w) в декартовой системе координат можно выразить через полярные координаты:
-					x=Rcosψcosθcosϕ
-					y=Rcosψcosθsinϕ
-					z=Rcosψsinθ
-					w=Rsinψ
-					Центральный угол Δω между двумя точками на поверхности гиперсферы может быть найден с помощью скалярного произведения векторов, направленных из центра гиперсферы к этим точкам.
-					Эти векторы имеют длину R.
-					v1 =(x1,y1,z1,w1)
-					v2 =(x2,y2,z2,w2)
-					v1 ⋅ v2 =∣v1∣∣v2∣cos(Δω)=R*R cos(Δω)
-					cos(Δω)= (v1 ⋅ 2)/(R * R) =(x1 x2+y1y2+z1 z2+w1 w2)/(R * R)
-					Подставляя выражения для декартовых координат через полярные:
-					cos(Δω)=cosψ1 cosψ2 cosθ1 cosθ2 cosϕ1 cosϕ2 +cosψ1 cosψ2 cosθ1 cosθ2 sinϕ1 sinϕ2 +cosψ1 cosψ2 sinθ1 sinθ2 +sinψ1 sinψ2
-					Сгруппируем слагаемые:
-					cos(Δω)=cosψ1 cosψ2 cosθ1 cosθ2 (cosϕ1 cosϕ2 +sinϕ1 sinϕ2)+cosψ1 cosψ2 sinθ1 sinθ2 +sinψ1 sinψ2
-					Используя тригонометрические тождества cos(A−B)=cosAcosB+sinAsinB:
-					cos(Δω)=cosψ1 cosψ2 cosθ1 cosθ2 cos(ϕ1−ϕ2)+cosψ1 cosψ2 sinθ1 sinθ2+sinψ1 sinψ2
-					Сгруппируем первые два слагаемых:
-					cos(Δω)=cosψ1 cosψ2 (cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2)+sinψ1 sinψ2
-					Это выражение не очень удобное. Перегруппируем по-другому:
-					cos(Δω)=cosψ1 cosψ2 (cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2)+sinψ1 sinψ2 cos(Δω)=(cosψ1 cosθ1 cosϕ1)(cosψ2 cosθ2 cosϕ2)+(cosψ1 cosθ1 sinϕ1)(cosψ2 cosθ2 sinϕ2)+(cosψ1 sinθ1)(cosψ2 sinθ2)+(sinψ1)(sinψ2)
-					Используем cos(A−B)=cosAcosB+sinAsinB:
-					cos(Δω)=cosψ1 cosψ2 cosθ1 cosθ2 cos(ϕ1 −ϕ2)+cosψ1 cosψ2 sinθ1 sinθ2+sinψ1 sinψ2
-					cos(Δω)=cosψ1 cosψ2(cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2)+sinψ1 sinψ2
-					cos(Δω)=cosψ1 cosψ2 cos(Δθ)+sinψ1 sinψ2 ,
-					где
-					cos(Δθ)=cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2.
-					cos(Δθ)=cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2 =cosθ1 cosθ2 cos(Δϕ)+sinθ1 sinθ2.
-					cos(Δω)=cosψ1 cosψ2 cosθ1 cosθ2 cos(ϕ1 −ϕ2)+cosψ1 cosψ2 sinθ1 sinθ2 +sinψ1 sinψ2.
-					cos(Δω)=cosψ1 cosψ2 (cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2)+sinψ1 sinψ2.
-					cos(Δω)=cosψ1 cosψ2 cos(θ1−2)+sinψ1 sinψ2,
-					где
-					cos(θ1−2)=cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2.
-					Используем формулу cos(A−B)=cosAcosB+sinAsinB:
-					cos(Δω)=cosψ1 cosψ2 cosθ1 cosθ2 cos(ϕ1 −ϕ2)+cosψ1 cosψ2 sinθ1 sinθ2 +sinψ1 sinψ2.
-					Используем формулу cos(α1)cos(α2)+sin(α1)sin(α2)=cos(α1−α2).
-					cos(Δω)=cosψ1 cosψ2 (cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2)+sinψ1 sinψ2.
-					cos(Δω)=cosψ1 cosψ2 cos(θ1 −θ2)+sinψ1 sinψ2.
-					Это неверно, т.к. ϕ тоже участвует.
-					Правильная формула:
-					cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2 sinθ1 sinθ2 +cosψ1 cosψ2 cosθ1 cosθ2 cos(ϕ1 −ϕ2).
-					cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2 (sinθ1 sinθ2+cosθ1 cosθ2 cos(ϕ1 −ϕ2)).
-					cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2 cos(θ1 −θ2),
-					где
-					cos(θ1 −θ2) это не то, что нужно.
-					Центральный угол Δω между двумя точками на поверхности 3-мерной гиперсферы с координатами (ψ1,θ1,ϕ) и (ψ2,θ2,ϕ2) равен arccos(sinψ1 sinψ2+cosψ1 cosψ2 cos(θ1 −θ2))
-					если ϕ не участвует, но она есть.
-					cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2 cos(θ1 −θ2) - это формула для 2-сферы (вложенной в 3-мерное пространство).
-					На 3-мерной гиперсфере (в 4-мерном пространстве) центральный угол можно вычислить по формуле:
-					cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2 sinθ1 sinθ2 +cosψ1 cosψ2 cosθ1 cosθ2 cos(ϕ1 −ϕ2).
-					Эту формулу можно упростить, сгруппировав слагаемые.
-					cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2(sinθ1 sinθ2 +cosθ1 cosθ2 cos(ϕ1 −ϕ2)).
-					cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2(cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2).
-					cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2 cos(γ),
-					где
-					cos(γ)=cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2.
-					cos(γ)=cosθ1 cosθ2 cosΔϕ+sinθ1 sinθ2.
-					Тогда:
-					Δω=arccos(sinψ1 sinψ2 +cosψ1 cosψ2 (cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2)).					
-					
-					*/
-					/**
-					 * Вычисляет центральный угол между двумя точками на поверхности 3-мерной гиперсферы.
-					 * Координаты заданы в радианах.
-					 * @param {object} point1 - Первая точка с координатами.
-					 * @param {number} point1.latitude - Широта (зенитный угол).
-					 * @param {number} point1.longitude - Долгота (азимутальный угол).
-					 * @param {number} point1.altitude - Полярный угол от оси W.
-					 * @param {object} point2 - Вторая точка с координатами.
-					 * @param {number} point2.latitude - Широта (зенитный угол).
-					 * @param {number} point2.longitude - Долгота (азимутальный угол).
-					 * @param {number} point2.altitude - Полярный угол от оси W.
-					 * @returns {number} Центральный угол в радианах.
-					 */
-					/*
-					function toRadians(degrees) {
-					  return degrees * Math.PI / 180;
-					}
-					*/
-					/*https://gemini.google.com/
-					Вычислить центральный угол между двумя точками на поверхности 3-мерной гиперсферы встроенной в 4-мерное евклидово пространство.
-					Координаты точек заданы в полярной системе координат в радианах. Положение точек обозначим как
-					point.latitude - широта (зенитный угол) в диапазоне от -π/2 до π/2,
-					point.longitude - долгота (азимутальный угол)  в диапазоне от -π до π,
-					point.altitude - полярный угол от оси W  в диапазоне от 0 до π.
-					Писать все формулы в одну строку.
-					*/
-					const calculateCentralAngle = (point1, point2) => {
-
-						let {
-
-							latitude: lat1,
-							longitude: lon1,
-							altitude: alt1
-
-						} = point1;
-						lat1 += π / 2;
-						let {
-
-							latitude: lat2,
-							longitude: lon2,
-							altitude: alt2
-
-						} = point2;
-						lat2 += π / 2;
-					
-						// Convert degrees to radians if necessary
-						// Assuming input is already in radians based on the prompt
-						// const lat1Rad = toRadians(lat1);
-						// const lon1Rad = toRadians(lon1);
-						// const alt1Rad = toRadians(alt1);
-						// const lat2Rad = toRadians(lat2);
-						// const lon2Rad = toRadians(lon2);
-						// const alt2Rad = toRadians(alt2);
-					
-						const cosDeltaLambda = Math.cos(lat1) * Math.cos(lat2) + Math.sin(lat1) * Math.sin(lat2) * Math.cos(lon1 - lon2);
-					
-						const cosTheta = Math.cos(alt1) * Math.cos(alt2) + Math.sin(alt1) * Math.sin(alt2) * cosDeltaLambda;
-					
-						// Ensure the value is within the valid range for acos to avoid NaN errors
-						const clampedCosTheta = Math.max(-1, Math.min(1, cosTheta));
-					
-						// The central angle in radians
-						const centralAngle = Math.acos(clampedCosTheta);
-					
-						return centralAngle;
-
-					}
-					/*
-					// Example usage with points in radians
-					const point1 = {
-					  latitude: 0,
-					  longitude: 0,
-					  altitude: 0
-					};
-					const point2 = {
-					  latitude: Math.PI / 2,
-					  longitude: Math.PI / 2,
-					  altitude: Math.PI / 2
-					};
-					
-					const angle = calculateCentralAngle(point1, point2);
-					console.log(`Центральный угол между точками в радианах: ${angle}`);
-					console.log(`Центральный угол между точками в градусах: ${angle * 180 / Math.PI}`);
-					*/
-					
-					const centralAngle = calculateCentralAngle(vertice, oppositeVertice);
-
-					/*
-					if (params.debug) {
-
-						//DeepSeek
-						function hyperSphereCentralAngle(alt1, lat1, lon1, alt2, lat2, lon2) {
-						    return Math.acos(Math.cos(alt1)*Math.cos(alt2)*Math.cos(lat1)*Math.cos(lat2)*Math.cos(lon1 - lon2) + 
-						                    Math.cos(alt1)*Math.cos(alt2)*Math.sin(lat1)*Math.sin(lat2) + 
-						                    Math.sin(alt1)*Math.sin(alt2));
-						}
+					let centralAngle;
+					if (arc === undefined) {
 						
-						// Тестовый пример
-						const lat1 = vertice.latitude, long1 = vertice.longitude, alt1 = vertice.altitude;
-						const lat2 = oppositeVertice.latitude, long2 = oppositeVertice.longitude, alt2 = oppositeVertice.altitude;
-						const angle = hyperSphereCentralAngle(lat1, long1, alt1, lat2, long2, alt2);
-						if (angle != centralAngle) console.error(sRandomVerticesHyperSphere + ': get params.arc. centralAngle = ' + centralAngle + ' != angle = ' + angle);
-
-					}
-					*/
-					return centralAngle;
+						const vertice = params.vertice, oppositeVertice = params.oppositeVertice;
+	
+						/*
+						gemini.google.com
+						Вычислить центральный угол между двумя точками на поверхности 3-мерной гиперсферы. Координаты точек заданы в полярной системе координат в радианах.
+						Начало координат широты находится на экваторе. Писать все формулы в одну строку.
+	
+						Обозначим координаты двух точек на поверхности 3-мерной гиперсферы радиуса R в полярной системе координат:
+						Точка 1: (ψ1,θ1,ϕ1), где ψ1 - гиперширота, θ1 - гипердолгота, ϕ1 - обычная долгота.
+						Точка 2: (ψ2,θ2,ϕ2).
+						Начало координат широты находится на экваторе.
+						Для 3-мерной гиперсферы (вложенной в 4-мерное евклидово пространство) координаты (x,y,z,w) в декартовой системе координат можно выразить через полярные координаты:
+						x=Rcosψcosθcosϕ
+						y=Rcosψcosθsinϕ
+						z=Rcosψsinθ
+						w=Rsinψ
+						Центральный угол Δω между двумя точками на поверхности гиперсферы может быть найден с помощью скалярного произведения векторов, направленных из центра гиперсферы к этим точкам.
+						Эти векторы имеют длину R.
+						v1 =(x1,y1,z1,w1)
+						v2 =(x2,y2,z2,w2)
+						v1 ⋅ v2 =∣v1∣∣v2∣cos(Δω)=R*R cos(Δω)
+						cos(Δω)= (v1 ⋅ 2)/(R * R) =(x1 x2+y1y2+z1 z2+w1 w2)/(R * R)
+						Подставляя выражения для декартовых координат через полярные:
+						cos(Δω)=cosψ1 cosψ2 cosθ1 cosθ2 cosϕ1 cosϕ2 +cosψ1 cosψ2 cosθ1 cosθ2 sinϕ1 sinϕ2 +cosψ1 cosψ2 sinθ1 sinθ2 +sinψ1 sinψ2
+						Сгруппируем слагаемые:
+						cos(Δω)=cosψ1 cosψ2 cosθ1 cosθ2 (cosϕ1 cosϕ2 +sinϕ1 sinϕ2)+cosψ1 cosψ2 sinθ1 sinθ2 +sinψ1 sinψ2
+						Используя тригонометрические тождества cos(A−B)=cosAcosB+sinAsinB:
+						cos(Δω)=cosψ1 cosψ2 cosθ1 cosθ2 cos(ϕ1−ϕ2)+cosψ1 cosψ2 sinθ1 sinθ2+sinψ1 sinψ2
+						Сгруппируем первые два слагаемых:
+						cos(Δω)=cosψ1 cosψ2 (cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2)+sinψ1 sinψ2
+						Это выражение не очень удобное. Перегруппируем по-другому:
+						cos(Δω)=cosψ1 cosψ2 (cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2)+sinψ1 sinψ2 cos(Δω)=(cosψ1 cosθ1 cosϕ1)(cosψ2 cosθ2 cosϕ2)+(cosψ1 cosθ1 sinϕ1)(cosψ2 cosθ2 sinϕ2)+(cosψ1 sinθ1)(cosψ2 sinθ2)+(sinψ1)(sinψ2)
+						Используем cos(A−B)=cosAcosB+sinAsinB:
+						cos(Δω)=cosψ1 cosψ2 cosθ1 cosθ2 cos(ϕ1 −ϕ2)+cosψ1 cosψ2 sinθ1 sinθ2+sinψ1 sinψ2
+						cos(Δω)=cosψ1 cosψ2(cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2)+sinψ1 sinψ2
+						cos(Δω)=cosψ1 cosψ2 cos(Δθ)+sinψ1 sinψ2 ,
+						где
+						cos(Δθ)=cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2.
+						cos(Δθ)=cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2 =cosθ1 cosθ2 cos(Δϕ)+sinθ1 sinθ2.
+						cos(Δω)=cosψ1 cosψ2 cosθ1 cosθ2 cos(ϕ1 −ϕ2)+cosψ1 cosψ2 sinθ1 sinθ2 +sinψ1 sinψ2.
+						cos(Δω)=cosψ1 cosψ2 (cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2)+sinψ1 sinψ2.
+						cos(Δω)=cosψ1 cosψ2 cos(θ1−2)+sinψ1 sinψ2,
+						где
+						cos(θ1−2)=cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2.
+						Используем формулу cos(A−B)=cosAcosB+sinAsinB:
+						cos(Δω)=cosψ1 cosψ2 cosθ1 cosθ2 cos(ϕ1 −ϕ2)+cosψ1 cosψ2 sinθ1 sinθ2 +sinψ1 sinψ2.
+						Используем формулу cos(α1)cos(α2)+sin(α1)sin(α2)=cos(α1−α2).
+						cos(Δω)=cosψ1 cosψ2 (cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2)+sinψ1 sinψ2.
+						cos(Δω)=cosψ1 cosψ2 cos(θ1 −θ2)+sinψ1 sinψ2.
+						Это неверно, т.к. ϕ тоже участвует.
+						Правильная формула:
+						cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2 sinθ1 sinθ2 +cosψ1 cosψ2 cosθ1 cosθ2 cos(ϕ1 −ϕ2).
+						cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2 (sinθ1 sinθ2+cosθ1 cosθ2 cos(ϕ1 −ϕ2)).
+						cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2 cos(θ1 −θ2),
+						где
+						cos(θ1 −θ2) это не то, что нужно.
+						Центральный угол Δω между двумя точками на поверхности 3-мерной гиперсферы с координатами (ψ1,θ1,ϕ) и (ψ2,θ2,ϕ2) равен arccos(sinψ1 sinψ2+cosψ1 cosψ2 cos(θ1 −θ2))
+						если ϕ не участвует, но она есть.
+						cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2 cos(θ1 −θ2) - это формула для 2-сферы (вложенной в 3-мерное пространство).
+						На 3-мерной гиперсфере (в 4-мерном пространстве) центральный угол можно вычислить по формуле:
+						cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2 sinθ1 sinθ2 +cosψ1 cosψ2 cosθ1 cosθ2 cos(ϕ1 −ϕ2).
+						Эту формулу можно упростить, сгруппировав слагаемые.
+						cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2(sinθ1 sinθ2 +cosθ1 cosθ2 cos(ϕ1 −ϕ2)).
+						cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2(cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2).
+						cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2 cos(γ),
+						где
+						cos(γ)=cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2.
+						cos(γ)=cosθ1 cosθ2 cosΔϕ+sinθ1 sinθ2.
+						Тогда:
+						Δω=arccos(sinψ1 sinψ2 +cosψ1 cosψ2 (cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2)).					
+						
+						*/
+						/**
+						 * Вычисляет центральный угол между двумя точками на поверхности 3-мерной гиперсферы.
+						 * Координаты заданы в радианах.
+						 * @param {object} point1 - Первая точка с координатами.
+						 * @param {number} point1.latitude - Широта (зенитный угол).
+						 * @param {number} point1.longitude - Долгота (азимутальный угол).
+						 * @param {number} point1.altitude - Полярный угол от оси W.
+						 * @param {object} point2 - Вторая точка с координатами.
+						 * @param {number} point2.latitude - Широта (зенитный угол).
+						 * @param {number} point2.longitude - Долгота (азимутальный угол).
+						 * @param {number} point2.altitude - Полярный угол от оси W.
+						 * @returns {number} Центральный угол в радианах.
+						 */
+						/*
+						function toRadians(degrees) {
+						  return degrees * Math.PI / 180;
+						}
+						*/
+						/*https://gemini.google.com/
+						Вычислить центральный угол между двумя точками на поверхности 3-мерной гиперсферы встроенной в 4-мерное евклидово пространство.
+						Координаты точек заданы в полярной системе координат в радианах. Положение точек обозначим как
+						point.latitude - широта (зенитный угол) в диапазоне от -π/2 до π/2,
+						point.longitude - долгота (азимутальный угол)  в диапазоне от -π до π,
+						point.altitude - полярный угол от оси W  в диапазоне от 0 до π.
+						Писать все формулы в одну строку.
+						*/
+						const calculateCentralAngle = (point1, point2) => {
+	
+							let {
+	
+								latitude: lat1,
+								longitude: lon1,
+								altitude: alt1
+	
+							} = point1;
+							lat1 += π / 2;
+							let {
+	
+								latitude: lat2,
+								longitude: lon2,
+								altitude: alt2
+	
+							} = point2;
+							lat2 += π / 2;
+						
+							// Convert degrees to radians if necessary
+							// Assuming input is already in radians based on the prompt
+							// const lat1Rad = toRadians(lat1);
+							// const lon1Rad = toRadians(lon1);
+							// const alt1Rad = toRadians(alt1);
+							// const lat2Rad = toRadians(lat2);
+							// const lon2Rad = toRadians(lon2);
+							// const alt2Rad = toRadians(alt2);
+						
+							const cosDeltaLambda = Math.cos(lat1) * Math.cos(lat2) + Math.sin(lat1) * Math.sin(lat2) * Math.cos(lon1 - lon2);
+						
+							const cosTheta = Math.cos(alt1) * Math.cos(alt2) + Math.sin(alt1) * Math.sin(alt2) * cosDeltaLambda;
+						
+							// Ensure the value is within the valid range for acos to avoid NaN errors
+							const clampedCosTheta = Math.max(-1, Math.min(1, cosTheta));
+						
+							// The central angle in radians
+							const centralAngle = Math.acos(clampedCosTheta);
+						
+							return centralAngle;
+	
+						}
+						/*
+						// Example usage with points in radians
+						const point1 = {
+						  latitude: 0,
+						  longitude: 0,
+						  altitude: 0
+						};
+						const point2 = {
+						  latitude: Math.PI / 2,
+						  longitude: Math.PI / 2,
+						  altitude: Math.PI / 2
+						};
+						
+						const angle = calculateCentralAngle(point1, point2);
+						console.log(`Центральный угол между точками в радианах: ${angle}`);
+						console.log(`Центральный угол между точками в градусах: ${angle * 180 / Math.PI}`);
+						*/
+						
+						centralAngle = calculateCentralAngle(vertice, oppositeVertice);
+	
+						/*
+						if (params.debug) {
+	
+							//DeepSeek
+							function hyperSphereCentralAngle(alt1, lat1, lon1, alt2, lat2, lon2) {
+							    return Math.acos(Math.cos(alt1)*Math.cos(alt2)*Math.cos(lat1)*Math.cos(lat2)*Math.cos(lon1 - lon2) + 
+							                    Math.cos(alt1)*Math.cos(alt2)*Math.sin(lat1)*Math.sin(lat2) + 
+							                    Math.sin(alt1)*Math.sin(alt2));
+							}
+							
+							// Тестовый пример
+							const lat1 = vertice.latitude, long1 = vertice.longitude, alt1 = vertice.altitude;
+							const lat2 = oppositeVertice.latitude, long2 = oppositeVertice.longitude, alt2 = oppositeVertice.altitude;
+							const angle = hyperSphereCentralAngle(lat1, long1, alt1, lat2, long2, alt2);
+							if (angle != centralAngle) console.error(sRandomVerticesHyperSphere + ': get params.arc. centralAngle = ' + centralAngle + ' != angle = ' + angle);
+	
+						}
+						*/
+	
+					} else centralAngle = arc;
+					return this.arc(centralAngle);
 				
 				},
 		
 			});
+
+		}
 		
 		this.altitude = (utils) => {
 

@@ -52,7 +52,8 @@ export class RandomVerticeSphere extends RandomVertice {
 		const arrayCircles = boCloud ? undefined : [];
 			
 //		if (params.arc === undefined)
-		{//hide arc
+		if (!params.boArcIsdefined) {
+			
 			let arc = params.arc;
 			Object.defineProperty(params, 'arc', {
 	
