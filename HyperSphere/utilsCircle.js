@@ -51,7 +51,7 @@ const a = (1 / π) - 1, c = π;
  */
 export const b = (params) => {
 
-	const arc = params.arc != undefined ? params.arc : Math.abs(normalizeAngle(params.vertice.longitude - params.oppositeVertice.longitude)),
+	const arc = params.arc != undefined ? params.arc : π - Math.abs(normalizeAngle(params.vertice.longitude - params.oppositeVertice.longitude)),
 
 		//arc = π, b = 1 все точки почти равномерно распределяются по кругу
 		//arc = 0, b = π все точки стягиваются в одну точку
