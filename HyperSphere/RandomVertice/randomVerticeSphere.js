@@ -53,7 +53,8 @@ export class RandomVerticeSphere extends RandomVertice {
 			
 //		if (params.arc === undefined)
 		if (!params.boArcIsdefined) {
-			
+
+			params.boArcIsdefined = true;
 			let arc = params.arc;
 			Object.defineProperty(params, 'arc', {
 	

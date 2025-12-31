@@ -45,7 +45,7 @@ class RandomVerticeHSphere extends RandomVertice {
 		const arraySpheres = boCloud ? undefined : [],//Массив с параметрами сфер, из которых состоит гиперсфера. Создается когда нужно облако случайных или неслучайных средних точек.
 			arrayCloudSpheres = arraySpheres ? undefined : [];//Массив сфер RandomCloudSphere, из которых состоит гиперсфера.
 			
-		{//hide arc
+		if (!params.boArcIsdefined) {
 
 			params.boArcIsdefined = true;
 			let arc = params.arc;
