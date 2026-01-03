@@ -585,26 +585,18 @@ class HyperSphere extends MyObject {
 										for(let i = 0; i < verticeAngles.length; i++) verticeAnglesNew.push(angleIdNew === i ? value : verticeAnglesOld[i]);
 										const timeId = classSettings.settings.guiPoints ? classSettings.settings.guiPoints.timeId : 0, vertice = this.a2v(this.Vertice(verticeAnglesNew), classSettings.overriddenProperties.r(timeId));
 										this.setPositionAttributeFromPoint(verticeId, Position(vertice), timeId);
+										classSettings.settings.object.geometry.angles.needsUpdate;
 										
 									}
 									switch (name) {
 	
 										case sLongitude:
-//											verticeAngles[verticeAngles.length - longitudeShift] = value;
 											editPosition(longitudeShift);
 											return true;
 										case sLatitude:
-//											verticeAngles[verticeAngles.length - latitudeShift] = value;
-/*											
-											const verticeAnglesNew = [], angleIdNew = verticeAngles.length - latitudeShift, verticeAnglesOld = classSettings.settings.object.geometry.angles[verticeId];
-											for(let i = 0; i < verticeAngles.length; i++) verticeAnglesNew.push(angleIdNew === i ? value : verticeAnglesOld[i]);
-											const timeId = classSettings.settings.guiPoints ? classSettings.settings.guiPoints.timeId : 0, vertice = this.a2v(this.Vertice(verticeAnglesNew), classSettings.overriddenProperties.r(timeId));
-											this.setPositionAttributeFromPoint(verticeId, Position(vertice), timeId);
-*/											
 											editPosition(latitudeShift);
 											return true;
 										case sAltitude:
-//											verticeAngles[verticeAngles.length - altitudeShift] = value;
 											editPosition(altitudeShift);
 											return true;
 											
