@@ -82,13 +82,14 @@ class RandomVerticeCircle extends RandomVertice {
 */		
 		this.getRandomAngles = () => {
 
+			const longitude = this.anglesCircle(utils);
 			if (randomAngles) {
 				
-				randomAngles[0][0] = this.anglesCircle(utils);
+				randomAngles[0].longitude = longitude;
 				return randomAngles[0];
 				
 			}
-			randomAngles = [[this.anglesCircle(utils)]];
+			randomAngles = [[longitude]];
 			return utils.angles(randomAngles[0]);
 			
 		}
