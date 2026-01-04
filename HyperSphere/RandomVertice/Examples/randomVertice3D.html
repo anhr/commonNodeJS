@@ -352,9 +352,19 @@
 			
 			const params = {
 
-				//вершины расположены друг против друга по диагонали (antipodal points). arc = π
+				/*
+				//вершины расположены друг против друга по диагонали (antipodal points). arc = π. Облако случайных вершин стянулось в точку
 				vertice: vertice,
 				oppositeVertice: findAntipodalPoint(vertice),//calculateAntipodalPointViaCartesian(vertice),//calculateAntipodalPoint(vertice),
+				*/
+				//вершины расположены почти друг против друга по диагонали (antipodal points). Облако случайных вершин стянулось недалеко от противоположной вершины
+				//Вершины взял из передыдущих вершин и немного изменил Longitude в oppositeVertice
+				vertice: vertice,
+				oppositeVertice: [
+					2.617,//altitude
+					-0.785,//0,//Latitude
+					-2.094 + 0.107,//-1.987 Longitude
+				],
 				/*
 				vertice: [
 					pi / 6,//altitude
@@ -380,6 +390,7 @@
 				],
 				*/
 				/*
+				//Вершина и противоположная вершина почти одинаковые. Облако случайных вершин почти равномерно распределено по гиперсфере
 				vertice: [
 					pi / 6,//altitude
 					pi / 4 + pi / 50,//Latitude
