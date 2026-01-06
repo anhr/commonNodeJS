@@ -274,8 +274,30 @@ class RandomVerticeHSphere extends RandomVertice {
 		}
 
 		const spheresCount = round(//найти ближайшее целое число
-				(anglesIdMax / 2) + 1),//количество окружностей
+			(anglesIdMax / 2) + 1),//количество окружностей
 			k = spheresCount === 1 ? 1 : 1 / (spheresCount - 1),//for params.random = k * circleId;
+			createCloudSphere = (altitude) => {
+
+				params.verticesAngles.boNoNew = true;
+				params.altitude = altitude;
+				const cloudSphere = params.CloudSphere ? new params.CloudSphere(params) : new RandomCloudSphere(params, params.boCloud);
+				if (arrayCloudSpheres) {
+
+					//Создается облако случайных или неслучайных средних точек
+
+					arrayCloudSpheres.push(cloudSphere);
+
+					params.speresPointsCount ||= [];//массив индексов первых точек сфер, из которых состоит гиперсфера. Нужен для выделения одной из сфер и скрытия остальных сфер, когда пользователь вручную выбрал сферу
+					//Не создается, когда нужна одна случайная средняя точка.
+
+					params.speresPointsCount.push(params.pointsCount);
+
+				}
+				delete params.altitude;
+				delete params.verticesAngles.boNoNew;
+				return cloudSphere;
+
+			},
 			getRandomVerticeAnglesParams = (altitude, angleStep) => {
 
 				params.hyperSphere = {
@@ -294,6 +316,8 @@ class RandomVerticeHSphere extends RandomVertice {
 					verticesAngles: this.verticesAngles,
 
 				}
+				const cloudSphere = createCloudSphere(altitude);
+/*
 				params.verticesAngles.boNoNew = true;
 				params.altitude = altitude;
 				const cloudSphere = params.CloudSphere ? new params.CloudSphere(params) : new RandomCloudSphere(params, params.boCloud);
@@ -311,6 +335,7 @@ class RandomVerticeHSphere extends RandomVertice {
 				}
 				delete params.altitude;
 				delete params.verticesAngles.boNoNew;
+*/
 				//Количество точек на текущей сфере равно сумме количества точек на каждой окружности, находящейся на сфере
 				let sphereAnglesCount = cloudSphere.sphereAnglesCount;
 				const angleStep1 = 1 / sphereAnglesCount,
@@ -382,12 +407,13 @@ arrayCloudSpheres[0].randomAngles;
 					params.speresPointsCount.push(params.pointsCount);
 					
 				}
-				for (let latitudeId = 0;
-//					 latitudeId < params.hyperSphere.middleSphere.aLatitude.length;
-latitudeId < 1;
-					 latitudeId++){
+				for (let latitudeId = params.hyperSphere.middleSphere.aLatitude.length - 2;
+//					 latitudeId < ;
+latitudeId >= params.hyperSphere.middleSphere.aLatitude.length - 2;
+					 latitudeId--){
 
-					const rotated = utils.angles([0,0], params.oppositeVertice.altitude + params.hyperSphere.middleSphere.aLatitude[latitudeId] - π / 2);
+					createCloudSphere(params.oppositeVertice.altitude + params.hyperSphere.middleSphere.aLatitude[latitudeId] - π / 2);
+//					const rotated = utils.angles([0,0], params.oppositeVertice.altitude + params.hyperSphere.middleSphere.aLatitude[latitudeId] - π / 2);
 
 					/*https://chat.deepseek.com/a/chat/s/e2cd31ce-28ec-4477-981e-859106e1a952
 					Есть точка на поверхности 3-мерной гиперсферы встроенной в 4-мерное евклидово пространство в полярной системе координат. Начало полярной системы координат находится в центре сферы.
@@ -486,11 +512,12 @@ latitudeId < 1;
 					console.log(`Долгота в [-π, π]: ${normalizedPoint.longitude >= -Math.PI && normalizedPoint.longitude <= Math.PI}`);
 					console.log(`Высота в [0, π]: ${normalizedPoint.altitude >= 0 && normalizedPoint.altitude <= Math.PI}`);
 					*/
+/*					
 					const normalized = normalize(rotated);
 					params.verticesAngles[params.pointsCount] = normalized;
 
-//					params.pointsCount++;
 					if (params.speresPointsCount) params.speresPointsCount.push(params.pointsCount);//сейчас создается облако случайных или неслучайных средних точек
+*/					
 					
 				}
 				
