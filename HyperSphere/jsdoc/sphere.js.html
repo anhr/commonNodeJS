@@ -45,8 +45,14 @@
 
 import Circle from './circle.js';
 import three from '../three.js'
+import { RandomVerticeSphere as RandomVertice } from './RandomVertice/randomVerticeSphere.js';
 import RandomCloud from './RandomVertice/randomCloudSphere.js';
-import anglesRange from './anglesRange.js'
+import * as utils from './utilsSphere.js'
+//import Vertice from './VerticeSphere.js'
+import Position from './position.js'
+//import anglesToCartesian from './anglesToCasterianSphere.js'
+//import casterianToAngles from './casterianToAnglesSphere.js'
+//import { anglesToCartesian, casterianToAngles } from './utilsSphere.js'
 
 const sSphere = 'Sphere',
 	π = Math.PI;
@@ -171,7 +177,184 @@ class Sphere extends Circle {
 
 	//Overridden methods from base class
 
-	normalizeAngles(angles){
+	middlePosition(points) {
+
+		const _this = this;
+		
+		//https://chat.deepseek.com/a/chat/s/24dea3aa-eccd-4e97-a3e3-3f3ff0631de6
+		/*
+		Заданы несколько точек на поверхности сферы в декартовой системе координат. Начало координат в центре сферы.
+		Найти точку на поверхности сферы, равноудаленную от заданных точек.
+		Написать код на javascript.
+		*/
+		/**
+		 * Находит точку на поверхности сферы (с центром в начале координат),
+		 * которая приблизительно равноудалена от заданных точек.
+		 * @param {Array&lt;Array&lt;number>>} points - Массив точек [x, y, z]
+		 * @returns {Array&lt;number>} Точка на сфере [x, y, z] или null, если точки не заданы
+		 */
+		function findEquidistantPoint(points) {
+			
+			if (!points || points.length === 0) {
+				console.error(sSphere + ': findEquidistantPoint. Должна быть задана хотя бы одна точка');
+				return;
+			}
+
+			// Суммируем все векторы точек
+			let sumVector = [0, 0, 0];
+			for (const point of points) {
+				sumVector[0] += point[0];
+				sumVector[1] += point[1];
+				sumVector[2] += point[2];
+			}
+			
+			// Радиус сферы
+			const sphereRadius = _this.r;
+
+			// Нормализуем сумму, чтобы получить точку на сфере
+			const [x, y, z] = sumVector;
+//			const x = sumVector[0] / points.length, y = sumVector[1] / points.length, z = sumVector[2] / points.length;
+			const length = Math.sqrt(x * x + y * y + z * z);
+			_this.setArc(sphereRadius, length / points.length);
+			
+			let middleVertice;//, middleVerticeAngles;
+
+			if (length &lt; 7e-17) {
+
+				// Все точки в начале координат или их сумма нулевая, то есть все три противоположные вершины образуют равнобедренный треугольник на плоскости, проходящей через центр сферы
+
+				const THREE = three.THREE;
+				const oppositeVertices = points;
+
+				//http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/NormalSphere.html
+
+				// Заданные три точки на сфере (в декартовых координатах)
+				if (oppositeVertices.length != 3) console.error(sSphere + ': findEquidistantPoint. Invalid oppositeVertices.length = ' + oppositeVertices.length);
+				const oppositeVerticeA = oppositeVertices[0];
+				const pointA = new THREE.Vector3(oppositeVerticeA.x, oppositeVerticeA.y, oppositeVerticeA.z);//(3, 4, 0);
+				const oppositeVerticeB = oppositeVertices[1];
+				const pointB = new THREE.Vector3(oppositeVerticeB.x, oppositeVerticeB.y, oppositeVerticeB.z);//(0, 3, -4);
+				const oppositeVerticeC = oppositeVertices[2];
+				const pointC = new THREE.Vector3(oppositeVerticeC.x, oppositeVerticeC.y, oppositeVerticeC.z);//(-3, -4, 0);
+
+				/*
+				// Нормализуем точки, чтобы они точно лежали на сфере
+				pointA.normalize().multiplyScalar(sphereRadius);
+				pointB.normalize().multiplyScalar(sphereRadius);
+				pointC.normalize().multiplyScalar(sphereRadius);
+				*/
+
+				// Функция для построения плоскости по трем точкам
+				function createPlaneFromPoints(p1, p2, p3) {
+
+					// Вычисляем нормаль плоскости через векторное произведение
+					const v1 = new THREE.Vector3().subVectors(p2, p1);
+					const v2 = new THREE.Vector3().subVectors(p3, p1);
+					const normal = new THREE.Vector3().crossVectors(v1, v2).normalize();
+					return normal;
+
+				}
+
+				// Функция для вычисления точек пересечения нормали со сферой
+				function findSphereNormalIntersections(normal, radius) {
+					// Нормаль уже проходит через центр сферы (начало координат)
+					// Уравнение пересечения: |t * normal| = radius
+					// t = ±radius (так как normal - единичный вектор)
+
+					return normal.clone().multiplyScalar(Math.random() > 0.5 ? radius : -radius);
+
+				}
+				const normal = createPlaneFromPoints(pointA, pointB, pointC);
+
+				// Вычисление точек пересечения нормали со сферой
+				middleVertice = findSphereNormalIntersections(normal, sphereRadius);
+//				middleVerticeAngles = _this.vertice2angles(middleVertice);
+/*				
+				const point = findSphereNormalIntersections(normal, sphereRadius);
+
+				return point;
+//				return _this.a2v(_this.vertice2angles(Position([point.x, point.y, point.z])), sphereRadius);
+*/				
+
+			} else middleVertice = [x / length, y / length, z / length];
+
+			_this.randomVertices(_this.vertice2angles(middleVertice));
+/*			
+			const classSettings = _this.classSettings;
+			if (classSettings.randomArc) {
+
+				const params = {
+						
+						//vertice: angles,
+						oppositeVertice: _this.vertice2angles(middleVertice),
+						arc: _this.arc,
+						debug: classSettings.debug ? { notRandomVertices: true,} : false,
+						
+					}
+				if (_this.randomVertice) _this.randomVertice.params = params;
+				else {
+					
+					_this.randomVertice = new _this.RandomCloud(params);
+					_this.hsRandomVertice = _this.randomVertice.getHyperSphere(classSettings.settings.options, classSettings, _this.middleVerticeColor);
+
+				}
+				
+			}
+*/			
+			return middleVertice;
+			
+		}
+
+		/**
+		 * Вычисляет угловое расстояние (в радианах) между двумя точками на сфере.
+		 * @param {Array&lt;number>} p1 - Точка [x, y, z]
+		 * @param {Array&lt;number>} p2 - Точка [x, y, z]
+		 * @returns {number} Угловое расстояние в радианах
+		 */
+		/*
+		function angularDistance(p1, p2) {
+			const dot = p1[0] * p2[0] + p1[1] * p2[1] + p1[2] * p2[2];
+			// Избегаем ошибок округления
+			const clamped = Math.max(-1, Math.min(1, dot));
+			return Math.acos(clamped);
+		}
+		*/
+
+		// Пример использования
+		/*
+		const points = [
+			[1, 0, 0],
+			[0, 1, 0],
+			[0, 0, 1]
+		];
+		*/
+
+		const result = findEquidistantPoint(points);
+		/*
+		console.log("Приближенная равноудаленная точка:", result);
+
+		// Проверяем расстояния
+		if (result) {
+			console.log("Угловые расстояния до каждой точки:");
+			for (const point of points) {
+				const dist = angularDistance(result, point);
+				console.log(`Точка ${point}: ${dist.toFixed(6)} рад (${(dist * 180 / Math.PI).toFixed(2)}°)`);
+			}
+		}
+		*/
+		return result;
+
+	}
+	ZeroArray() { return [0, 0]; }
+	Vertice(angles) { return utils.angles(angles); }
+	/**
+	 * Converts a vertice position to vertice angles.
+	 * @param {array} vertice array of the vertice axes
+	 * @returns Vertice angles.
+	 */
+	vertice2angles(vertice) { return utils.casterianToAngles(Position(vertice)); }
+	a2v(angles, r = 1) { return utils.anglesToCartesian(angles, r); }
+//	normalizeAngles(angles){
 
 		/*https://chat.deepseek.com/a/chat/s/26327d17-c346-476d-9199-a0814f3a7a0a
 		Есть точка на поверхности сферы в полярной системе координат. Начало полярной системы координат находится в центре сферы.
@@ -195,15 +378,9 @@ class Sphere extends Circle {
 
 		Это обеспечивает корректное отображение любой точки на поверхности сферы в допустимый диапазон координат.
 		*/
+/*
 		const normalize = (normalized) => {
 
-/*
-			// Создаем копию точки, чтобы не изменять оригинал
-			const normalized = {
-				latitude: point.latitude,
-				longitude: point.longitude
-			};
-*/
 			// Нормализация долготы в диапазон [-π, π]
 			normalized.longitude = normalized.longitude % (2 * Math.PI);
 			if (normalized.longitude > Math.PI) {
@@ -234,39 +411,6 @@ class Sphere extends Circle {
 					normalized.longitude += 2 * Math.PI;
 				}
 			}
-/*
-			// Нормализация долготы в диапазон [-π, π]
-			const normalizedLongitude = () => {
-				
-				normalized.longitude = normalized.longitude % (anglesRange.longitude.range);//(2 * Math.PI);
-				if (normalized.longitude > anglesRange.longitude.max)
-					normalized.longitude -= anglesRange.longitude.range;//2 * Math.PI;
-				else if (normalized.longitude &lt; anglesRange.longitude.mi)
-					normalized.longitude += anglesRange.longitude.range;
-
-			}
-			normalizedLongitude();
-
-			// Нормализация широты в диапазон [-π/2, π/2]
-			normalized.latitude = normalized.latitude % (2 * anglesRange.latitude.range);//(2 * Math.PI);
-
-			// Если широта выходит за пределы [-π/2, π/2], отражаем ее
-			if (Math.abs(normalized.latitude) > anglesRange.latitude.max) {
-				
-				if (normalized.latitude > 0) 
-					normalized.latitude = Math.PI - normalized.latitude;
-				else
-					normalized.latitude = -Math.PI - normalized.latitude;
-
-				// После отражения, сдвигаем долготу на π
-				normalized.longitude += Math.PI;
-
-				// Снова нормализуем долготу после сдвига
-				normalizedLongitude();
-				
-			}
-*/
-//			return normalized;
 		}
 
 		// Тестовые случаи
@@ -291,6 +435,7 @@ class Sphere extends Circle {
 		// {latitude: ~0, longitude: ~0}
 
 		//https://gemini.google.com/app/64aa493066e3b07e
+*/
 		/**
 		 * Нормализует широту и долготу точки в допустимые диапазоны.
 		 * point.latitude: широта, от -π/2 до π/2
@@ -300,6 +445,7 @@ class Sphere extends Circle {
 		 * @param {number} point.longitude Текущая долгота.
 		 * @returns {object} Новый объект с нормализованными latitude и longitude.
 		 */
+/*
 		function normalizeGemini(point) {
 			const PI = Math.PI;
 
@@ -403,9 +549,60 @@ class Sphere extends Circle {
 		});
 		
 	}
+*/
 	get verticeEdgesLengthMax() { return 3/*6*/; }//нельзя добавлть новое ребро если у вершины уже 6 ребра
 	get dimension() { return 3; }//space dimension
 	get verticesCountMin() { return 4; }
+/*
+	getRandomMiddleAngles(oppositeVertices) {
+
+		const THREE = three.THREE;
+		
+		//http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/NormalSphere.html
+		
+		// Радиус сферы
+		const settings = this.classSettings.settings;
+		const sphereRadius = this.classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : settings.options.player.getTimeId());//this.classSettings.r;
+
+		// Заданные три точки на сфере (в декартовых координатах)
+		if (oppositeVertices.length != 3) console.error(sSphere + ': getRandomMiddleAngles. Invalid oppositeVertices.length = ' + oppositeVertices.length);
+		const oppositeVerticeA = oppositeVertices[0];
+		const pointA = new THREE.Vector3(oppositeVerticeA.x, oppositeVerticeA.y, oppositeVerticeA.z);//(3, 4, 0);
+		const oppositeVerticeB = oppositeVertices[1];
+		const pointB = new THREE.Vector3(oppositeVerticeB.x, oppositeVerticeB.y, oppositeVerticeB.z);//(0, 3, -4);
+		const oppositeVerticeC = oppositeVertices[2];
+		const pointC = new THREE.Vector3(oppositeVerticeC.x, oppositeVerticeC.y, oppositeVerticeC.z);//(-3, -4, 0);
+
+		//// Нормализуем точки, чтобы они точно лежали на сфере
+		//pointA.normalize().multiplyScalar(sphereRadius);
+		//pointB.normalize().multiplyScalar(sphereRadius);
+		//pointC.normalize().multiplyScalar(sphereRadius);
+
+		// Функция для построения плоскости по трем точкам
+		function createPlaneFromPoints(p1, p2, p3) {
+			// Вычисляем нормаль плоскости через векторное произведение
+			const v1 = new THREE.Vector3().subVectors(p2, p1);
+			const v2 = new THREE.Vector3().subVectors(p3, p1);
+			const normal = new THREE.Vector3().crossVectors(v1, v2).normalize();
+			return normal;
+		}
+
+		// Функция для вычисления точек пересечения нормали со сферой
+		function findSphereNormalIntersections(normal, radius) {
+			// Нормаль уже проходит через центр сферы (начало координат)
+			// Уравнение пересечения: |t * normal| = radius
+			// t = ±radius (так как normal - единичный вектор)
+
+			return normal.clone().multiplyScalar(Math.random() > 0.5 ? radius: -radius);
+		}
+		const normal = createPlaneFromPoints(pointA, pointB, pointC);
+
+		// Вычисление точек пересечения нормали со сферой
+		const point = findSphereNormalIntersections(normal, sphereRadius);
+		return this.vertice2angles(Position([point.x, point.y, point.z]));
+		
+	}
+*/
 	/**
 	 * @param {THREE.Scene} scene [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}
 	 * @param {Options} options See &lt;a href="../../jsdoc/Options/Options.html" target="_blank">Options&lt;/a>.
@@ -413,6 +610,7 @@ class Sphere extends Circle {
 	 * @returns new RandomVertices child class.
 	 */
 	newRandomVertices(scene, options, randomVerticesSettings) { return new RandomVertices(scene, options, randomVerticesSettings); }
+	get RandomVertice() { return RandomVertice; }
 	get RandomCloud() { return RandomCloud; }
 
 	///////////////////////////////Overridden methods from base class
@@ -430,7 +628,7 @@ class RandomVertices extends Circle.RandomVertices {
 	}
 
 	//overridden methods
-	
+
 	getHyperSphere(options, classSettings) {
 
 		let circlesSphere;
@@ -473,7 +671,7 @@ class RandomVertices extends Circle.RandomVertices {
 		
 	}
 //	antipodeCenter(params, antipodeLatitude) { return [antipodeLatitude(params.oppositeVertice.latitude), params.oppositeVertice.longitude - π]; }
-	zeroArray() { return [0, 0]; }
+	zeroArray() { return utils.angles([0, 0]); }
 	onePointArea(d, np) {
 		
 		//Площадь сферы на которой в среднем будет находиться одна случайная точка.
@@ -556,7 +754,7 @@ class RandomVertices extends Circle.RandomVertices {
 		return [newLat, newLng];
 	
 	}
-	getCirclePoint(circleDistance, params, options) { return this.getCirclePoint2D(circleDistance, params, options); }
+	getCirclePoint(circleDistance, params, options) { return utils.angles(this.getCirclePoint2D(circleDistance, params, options)); }
 	circlesCount(np) { return np; }//если количество окружностей равно количеству точек на окружности, то точки будут равномерно располагаться на гиперсфере
 	getNumPoints(circleDistance, R, dCircleDistance) {
 		
@@ -680,8 +878,8 @@ RandomVertices.Center = (params, inaccurateLatitude) => {
 		});
 	
 	}
-	Vertice(params.vertice);
-	Vertice(params.oppositeVertice);
+	utils.angles(params.vertice);
+	utils.angles(params.oppositeVertice);
 	
 }
 Sphere.RandomVertices = RandomVertices;
@@ -697,13 +895,13 @@ export default Sphere;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Circle.html">Circle</a></li><li><a href="module-HyperSphere.html">HyperSphere</a></li><li><a href="module-HyperSphere3D.html">HyperSphere3D</a></li><li><a href="module-Sphere.html">Sphere</a></li></ul><h3>Classes</h3><ul><li><a href="module-Circle-Circle.html">Circle</a></li><li><a href="module-HyperSphere3D-HyperSphere3D.html">HyperSphere3D</a></li><li><a href="module-HyperSphere-HyperSphere.html">HyperSphere</a></li><li><a href="module-HyperSphere-RandomVertices.html">RandomVertices</a></li><li><a href="module-Sphere-Sphere.html">Sphere</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Circle.html">Circle</a></li><li><a href="module-HyperSphere.html">HyperSphere</a></li><li><a href="module-HyperSphere3D.html">HyperSphere3D</a></li><li><a href="module-Sphere.html">Sphere</a></li><li><a href="module-utilsCircle.html">utilsCircle</a></li><li><a href="module-utilsHSphere.html">utilsHSphere</a></li><li><a href="module-utilsSphere.html">utilsSphere</a></li></ul><h3>Classes</h3><ul><li><a href="module-Circle-Circle.html">Circle</a></li><li><a href="module-HyperSphere3D-HyperSphere3D.html">HyperSphere3D</a></li><li><a href="module-HyperSphere-HyperSphere.html">HyperSphere</a></li><li><a href="module-HyperSphere-RandomVertices.html">RandomVertices</a></li><li><a href="module-Sphere-Sphere.html">Sphere</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Thu Nov 06 2025 08:56:58 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Tue Jan 06 2026 13:10:41 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
