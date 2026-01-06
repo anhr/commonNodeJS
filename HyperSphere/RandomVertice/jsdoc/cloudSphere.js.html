@@ -74,8 +74,8 @@ class CloudSphere extends Cloud
 		
 		});
 		Object.defineProperty(this, 'circlesPointsCount', { get: () => { return randomVertice.circlesPointsCount; }, });
-*/		
-		
+*/
+
 		//overridden methods
 /*
 		Object.defineProperty(this, 'randomAngles', {
@@ -89,13 +89,13 @@ class CloudSphere extends Cloud
 			},
 			
 		});
-*/		
-		
+*/
+
 		/////////////////////////////overridden methods
 /*
 		if (params.hyperSphere) {
 
-			//Этот экземпляр CloudSphere вызывается из RandomVerticeHyperSphere когда создается гиперсфера. Гиперсфера состоит из набора сфер.
+			//Этот экземпляр CloudSphere вызывается из RandomVerticeHSphere когда создается гиперсфера. Гиперсфера состоит из набора сфер.
 			
 			Object.defineProperty(this, 'sphereAnglesCount', { get: () => { return randomVertice.circlesPointsCount }, });
 			
@@ -109,6 +109,7 @@ class CloudSphere extends Cloud
 	getRandomVerticeAngles(randomVertice, params) {
 
 		if (params.altitude === undefined) params.pointsCount = 0;//обнулять только если обновляется облако сферы, которое находится в составе облака гиперсферы. Тоесть если создается облако сферы а не облако гиперсферы
+		if (params.hyperSphere) params.hyperSphere.middleSphere.aLatitude.length = 0;//сейчас обновляется облако гиперсферы. Нужно удалить старый массив широт окружностей, из которых состоит средняя сфера.
 		randomVertice.randomAngles;
 		
 	}
@@ -127,13 +128,13 @@ export default CloudSphere;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Cloud.html">Cloud</a></li><li><a href="module-CloudHyperSphere.html">CloudHyperSphere</a></li><li><a href="module-CloudSphere.html">CloudSphere</a></li><li><a href="module-RandomCloud.html">RandomCloud</a></li><li><a href="module-RandomCloudBase.html">RandomCloudBase</a></li><li><a href="module-RandomCloudCircle.html">RandomCloudCircle</a></li><li><a href="module-RandomCloudHSphere.html">RandomCloudHSphere</a></li><li><a href="module-RandomCloudSphere.html">RandomCloudSphere</a></li><li><a href="module-RandomVertice.html">RandomVertice</a></li><li><a href="module-RandomVerticeCircle.html">RandomVerticeCircle</a></li><li><a href="module-RandomVerticeHSphere.html">RandomVerticeHSphere</a></li><li><a href="module-RandomVerticeSphere.html">RandomVerticeSphere</a></li><li><a href="module-getHyperSphere.html">getHyperSphere</a></li><li><a href="module-utilsCircle.html">utilsCircle</a></li><li><a href="module-utilsHyperSphere.html">utilsHyperSphere</a></li><li><a href="module-utilsSphere.html">utilsSphere</a></li></ul><h3>Classes</h3><ul><li><a href="module-CloudHyperSphere-CloudHyperSphere.html">CloudHyperSphere</a></li><li><a href="module-CloudSphere-CloudSphere.html">CloudSphere</a></li><li><a href="module-Cloud-Cloud.html">Cloud</a></li><li><a href="module-RandomCloudBase-RandomCloudBase.html">RandomCloudBase</a></li><li><a href="module-RandomCloudCircle-RandomCloudCircle.html">RandomCloudCircle</a></li><li><a href="module-RandomCloudHSphere-RandomCloudHSphere.html">RandomCloudHSphere</a></li><li><a href="module-RandomCloudSphere-RandomCloudSphere.html">RandomCloudSphere</a></li><li><a href="module-RandomCloud-RandomCloud.html">RandomCloud</a></li><li><a href="module-RandomVerticeCircle-RandomVerticeCircle.html">RandomVerticeCircle</a></li><li><a href="module-RandomVerticeHSphere-RandomVerticeHSphere.html">RandomVerticeHSphere</a></li><li><a href="module-RandomVerticeSphere.RandomVerticeSphere.html">RandomVerticeSphere</a></li><li><a href="module-RandomVertice-RandomVertice.html">RandomVertice</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Cloud.html">Cloud</a></li><li><a href="module-CloudHyperSphere.html">CloudHyperSphere</a></li><li><a href="module-CloudSphere.html">CloudSphere</a></li><li><a href="module-RandomCloud.html">RandomCloud</a></li><li><a href="module-RandomCloudBase.html">RandomCloudBase</a></li><li><a href="module-RandomCloudCircle.html">RandomCloudCircle</a></li><li><a href="module-RandomCloudHSphere.html">RandomCloudHSphere</a></li><li><a href="module-RandomCloudSphere.html">RandomCloudSphere</a></li><li><a href="module-RandomVertice.html">RandomVertice</a></li><li><a href="module-RandomVerticeCircle.html">RandomVerticeCircle</a></li><li><a href="module-RandomVerticeHSphere.html">RandomVerticeHSphere</a></li><li><a href="module-RandomVerticeSphere.html">RandomVerticeSphere</a></li><li><a href="module-getHyperSphere.html">getHyperSphere</a></li></ul><h3>Classes</h3><ul><li><a href="module-CloudHyperSphere-CloudHyperSphere.html">CloudHyperSphere</a></li><li><a href="module-CloudSphere-CloudSphere.html">CloudSphere</a></li><li><a href="module-Cloud-Cloud.html">Cloud</a></li><li><a href="module-RandomCloudBase-RandomCloudBase.html">RandomCloudBase</a></li><li><a href="module-RandomCloudCircle-RandomCloudCircle.html">RandomCloudCircle</a></li><li><a href="module-RandomCloudHSphere-RandomCloudHSphere.html">RandomCloudHSphere</a></li><li><a href="module-RandomCloudSphere-RandomCloudSphere.html">RandomCloudSphere</a></li><li><a href="module-RandomCloud-RandomCloud.html">RandomCloud</a></li><li><a href="module-RandomVerticeCircle-RandomVerticeCircle.html">RandomVerticeCircle</a></li><li><a href="module-RandomVerticeHSphere-RandomVerticeHSphere.html">RandomVerticeHSphere</a></li><li><a href="module-RandomVerticeSphere.RandomVerticeSphere.html">RandomVerticeSphere</a></li><li><a href="module-RandomVertice-RandomVertice.html">RandomVertice</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sat Oct 11 2025 08:37:26 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Tue Jan 06 2026 13:08:10 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

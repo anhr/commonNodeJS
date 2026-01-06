@@ -44,13 +44,14 @@
 import RandomVertice from './randomVertice.js';
 import { anglesIdMax } from './randomVerticeSphere.js';
 import anglesRange from '../anglesRange.js'
-import * as utils from './utilsHyperSphere.js'
+import * as utils from '../utilsHSphere.js'
 import RandomCloudSphere from './randomCloudSphere.js';
+//import Vertice from '../VerticeHypersphere.js'
 
 const sRandomVerticesHyperSphere = 'RandomVerticesHyperSphere',
 	π = Math.PI, abs = Math.abs, round = Math.round, random = Math.random,
-	sin = Math.sin, asin = Math.asin, cos = Math.cos, atan = Math.atan, atan2 = Math.atan2;// tan = Math.tan;
-//	range = anglesRange.longitude.range;
+//	sin = Math.sin, cos = Math.cos, asin = Math.asin, atan2 = Math.atan2,
+	atan = Math.atan;
 
 /**
  * Generates a random vertice near the opposite vertice in 3D hypersphere.
@@ -69,223 +70,214 @@ class RandomVerticeHSphere extends RandomVertice {
 
 		super(params);
 
-		const arraySpheres = boCloud ? undefined : [],
-			arrayCloudSpheres = arraySpheres ? undefined : [];
+		const arraySpheres = boCloud ? undefined : [],//Массив с параметрами сфер, из которых состоит гиперсфера. Создается когда нужно облако случайных или неслучайных средних точек.
+			arrayCloudSpheres = arraySpheres ? undefined : [];//Массив сфер RandomCloudSphere, из которых состоит гиперсфера.
 			
-		if (params.arc === undefined) Object.defineProperty(params, 'arc', {
+		if (!params.boArcIsdefined) {
+
+			params.boArcIsdefined = true;
+			let arc = params.arc;
+			Object.defineProperty(params, 'arc', {
 	
 				get: () => {
 
 					if (params.boAllocateMemory) return π;//Выделяется память для облака точек. arc нужно сделать максимально возможным то есть вершины расположены друг против друга. В этом случае выделяется максимальный объем памяти.
-					const vertice = params.vertice, oppositeVertice = params.oppositeVertice;
-
-					/*
-					gemini.google.com
-					Вычислить центральный угол между двумя точками на поверхности 3-мерной гиперсферы. Координаты точек заданы в полярной системе координат в радианах.
-					Начало координат широты находится на экваторе. Писать все формулы в одну строку.
-
-					Обозначим координаты двух точек на поверхности 3-мерной гиперсферы радиуса R в полярной системе координат:
-					Точка 1: (ψ1,θ1,ϕ1), где ψ1 - гиперширота, θ1 - гипердолгота, ϕ1 - обычная долгота.
-					Точка 2: (ψ2,θ2,ϕ2).
-					Начало координат широты находится на экваторе.
-					Для 3-мерной гиперсферы (вложенной в 4-мерное евклидово пространство) координаты (x,y,z,w) в декартовой системе координат можно выразить через полярные координаты:
-					x=Rcosψcosθcosϕ
-					y=Rcosψcosθsinϕ
-					z=Rcosψsinθ
-					w=Rsinψ
-					Центральный угол Δω между двумя точками на поверхности гиперсферы может быть найден с помощью скалярного произведения векторов, направленных из центра гиперсферы к этим точкам.
-					Эти векторы имеют длину R.
-					v1 =(x1,y1,z1,w1)
-					v2 =(x2,y2,z2,w2)
-					v1 ⋅ v2 =∣v1∣∣v2∣cos(Δω)=R*R cos(Δω)
-					cos(Δω)= (v1 ⋅ 2)/(R * R) =(x1 x2+y1y2+z1 z2+w1 w2)/(R * R)
-					Подставляя выражения для декартовых координат через полярные:
-					cos(Δω)=cosψ1 cosψ2 cosθ1 cosθ2 cosϕ1 cosϕ2 +cosψ1 cosψ2 cosθ1 cosθ2 sinϕ1 sinϕ2 +cosψ1 cosψ2 sinθ1 sinθ2 +sinψ1 sinψ2
-					Сгруппируем слагаемые:
-					cos(Δω)=cosψ1 cosψ2 cosθ1 cosθ2 (cosϕ1 cosϕ2 +sinϕ1 sinϕ2)+cosψ1 cosψ2 sinθ1 sinθ2 +sinψ1 sinψ2
-					Используя тригонометрические тождества cos(A−B)=cosAcosB+sinAsinB:
-					cos(Δω)=cosψ1 cosψ2 cosθ1 cosθ2 cos(ϕ1−ϕ2)+cosψ1 cosψ2 sinθ1 sinθ2+sinψ1 sinψ2
-					Сгруппируем первые два слагаемых:
-					cos(Δω)=cosψ1 cosψ2 (cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2)+sinψ1 sinψ2
-					Это выражение не очень удобное. Перегруппируем по-другому:
-					cos(Δω)=cosψ1 cosψ2 (cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2)+sinψ1 sinψ2 cos(Δω)=(cosψ1 cosθ1 cosϕ1)(cosψ2 cosθ2 cosϕ2)+(cosψ1 cosθ1 sinϕ1)(cosψ2 cosθ2 sinϕ2)+(cosψ1 sinθ1)(cosψ2 sinθ2)+(sinψ1)(sinψ2)
-					Используем cos(A−B)=cosAcosB+sinAsinB:
-					cos(Δω)=cosψ1 cosψ2 cosθ1 cosθ2 cos(ϕ1 −ϕ2)+cosψ1 cosψ2 sinθ1 sinθ2+sinψ1 sinψ2
-					cos(Δω)=cosψ1 cosψ2(cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2)+sinψ1 sinψ2
-					cos(Δω)=cosψ1 cosψ2 cos(Δθ)+sinψ1 sinψ2 ,
-					где
-					cos(Δθ)=cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2.
-					cos(Δθ)=cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2 =cosθ1 cosθ2 cos(Δϕ)+sinθ1 sinθ2.
-					cos(Δω)=cosψ1 cosψ2 cosθ1 cosθ2 cos(ϕ1 −ϕ2)+cosψ1 cosψ2 sinθ1 sinθ2 +sinψ1 sinψ2.
-					cos(Δω)=cosψ1 cosψ2 (cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2)+sinψ1 sinψ2.
-					cos(Δω)=cosψ1 cosψ2 cos(θ1−2)+sinψ1 sinψ2,
-					где
-					cos(θ1−2)=cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2.
-					Используем формулу cos(A−B)=cosAcosB+sinAsinB:
-					cos(Δω)=cosψ1 cosψ2 cosθ1 cosθ2 cos(ϕ1 −ϕ2)+cosψ1 cosψ2 sinθ1 sinθ2 +sinψ1 sinψ2.
-					Используем формулу cos(α1)cos(α2)+sin(α1)sin(α2)=cos(α1−α2).
-					cos(Δω)=cosψ1 cosψ2 (cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2)+sinψ1 sinψ2.
-					cos(Δω)=cosψ1 cosψ2 cos(θ1 −θ2)+sinψ1 sinψ2.
-					Это неверно, т.к. ϕ тоже участвует.
-					Правильная формула:
-					cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2 sinθ1 sinθ2 +cosψ1 cosψ2 cosθ1 cosθ2 cos(ϕ1 −ϕ2).
-					cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2 (sinθ1 sinθ2+cosθ1 cosθ2 cos(ϕ1 −ϕ2)).
-					cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2 cos(θ1 −θ2),
-					где
-					cos(θ1 −θ2) это не то, что нужно.
-					Центральный угол Δω между двумя точками на поверхности 3-мерной гиперсферы с координатами (ψ1,θ1,ϕ) и (ψ2,θ2,ϕ2) равен arccos(sinψ1 sinψ2+cosψ1 cosψ2 cos(θ1 −θ2))
-					если ϕ не участвует, но она есть.
-					cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2 cos(θ1 −θ2) - это формула для 2-сферы (вложенной в 3-мерное пространство).
-					На 3-мерной гиперсфере (в 4-мерном пространстве) центральный угол можно вычислить по формуле:
-					cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2 sinθ1 sinθ2 +cosψ1 cosψ2 cosθ1 cosθ2 cos(ϕ1 −ϕ2).
-					Эту формулу можно упростить, сгруппировав слагаемые.
-					cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2(sinθ1 sinθ2 +cosθ1 cosθ2 cos(ϕ1 −ϕ2)).
-					cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2(cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2).
-					cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2 cos(γ),
-					где
-					cos(γ)=cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2.
-					cos(γ)=cosθ1 cosθ2 cosΔϕ+sinθ1 sinθ2.
-					Тогда:
-					Δω=arccos(sinψ1 sinψ2 +cosψ1 cosψ2 (cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2)).					
-					
-					*/
-					/**
-					 * Вычисляет центральный угол между двумя точками на поверхности 3-мерной гиперсферы.
-					 * Координаты заданы в радианах.
-					 * @param {object} point1 - Первая точка с координатами.
-					 * @param {number} point1.latitude - Широта (зенитный угол).
-					 * @param {number} point1.longitude - Долгота (азимутальный угол).
-					 * @param {number} point1.altitude - Полярный угол от оси W.
-					 * @param {object} point2 - Вторая точка с координатами.
-					 * @param {number} point2.latitude - Широта (зенитный угол).
-					 * @param {number} point2.longitude - Долгота (азимутальный угол).
-					 * @param {number} point2.altitude - Полярный угол от оси W.
-					 * @returns {number} Центральный угол в радианах.
-					 */
-					/*
-					function toRadians(degrees) {
-					  return degrees * Math.PI / 180;
-					}
-					*/
-					/*https://gemini.google.com/
-					Вычислить центральный угол между двумя точками на поверхности 3-мерной гиперсферы встроенной в 4-мерное евклидово пространство.
-					Координаты точек заданы в полярной системе координат в радианах. Положение точек обозначим как
-					point.latitude - широта (зенитный угол) в диапазоне от -π/2 до π/2,
-					point.longitude - долгота (азимутальный угол)  в диапазоне от -π до π,
-					point.altitude - полярный угол от оси W  в диапазоне от 0 до π.
-					Писать все формулы в одну строку.
-					*/
-					const calculateCentralAngle = (point1, point2) => {
-					  const {
-					    latitude: lat1,
-					    longitude: lon1,
-					    altitude: alt1
-					  } = point1;
-					  const {
-					    latitude: lat2,
-					    longitude: lon2,
-					    altitude: alt2
-					  } = point2;
-					
-					  // Convert degrees to radians if necessary
-					  // Assuming input is already in radians based on the prompt
-					  // const lat1Rad = toRadians(lat1);
-					  // const lon1Rad = toRadians(lon1);
-					  // const alt1Rad = toRadians(alt1);
-					  // const lat2Rad = toRadians(lat2);
-					  // const lon2Rad = toRadians(lon2);
-					  // const alt2Rad = toRadians(alt2);
-					
-					  const cosDeltaLambda = Math.cos(lat1) * Math.cos(lat2) + Math.sin(lat1) * Math.sin(lat2) * Math.cos(lon1 - lon2);
-					
-					  const cosTheta = Math.cos(alt1) * Math.cos(alt2) + Math.sin(alt1) * Math.sin(alt2) * cosDeltaLambda;
-					
-					  // Ensure the value is within the valid range for acos to avoid NaN errors
-					  const clampedCosTheta = Math.max(-1, Math.min(1, cosTheta));
-					
-					  // The central angle in radians
-					  const centralAngle = Math.acos(clampedCosTheta);
-					
-					  return centralAngle;
-					}
-					/*
-					// Example usage with points in radians
-					const point1 = {
-					  latitude: 0,
-					  longitude: 0,
-					  altitude: 0
-					};
-					const point2 = {
-					  latitude: Math.PI / 2,
-					  longitude: Math.PI / 2,
-					  altitude: Math.PI / 2
-					};
-					
-					const angle = calculateCentralAngle(point1, point2);
-					console.log(`Центральный угол между точками в радианах: ${angle}`);
-					console.log(`Центральный угол между точками в градусах: ${angle * 180 / Math.PI}`);
-					*/
-					
-					const centralAngle = calculateCentralAngle(vertice, oppositeVertice);
-
-					/*
-					if (params.debug) {
-
-						//DeepSeek
-						function hyperSphereCentralAngle(alt1, lat1, lon1, alt2, lat2, lon2) {
-						    return Math.acos(Math.cos(alt1)*Math.cos(alt2)*Math.cos(lat1)*Math.cos(lat2)*Math.cos(lon1 - lon2) + 
-						                    Math.cos(alt1)*Math.cos(alt2)*Math.sin(lat1)*Math.sin(lat2) + 
-						                    Math.sin(alt1)*Math.sin(alt2));
-						}
+					let centralAngle;
+					if (arc === undefined) {
 						
-						// Тестовый пример
-						const lat1 = vertice.latitude, long1 = vertice.longitude, alt1 = vertice.altitude;
-						const lat2 = oppositeVertice.latitude, long2 = oppositeVertice.longitude, alt2 = oppositeVertice.altitude;
-						const angle = hyperSphereCentralAngle(lat1, long1, alt1, lat2, long2, alt2);
-						if (angle != centralAngle) console.error(sRandomVerticesHyperSphere + ': get params.arc. centralAngle = ' + centralAngle + ' != angle = ' + angle);
-
-					}
-					*/
-					return centralAngle;
-					/*
-					// Тестовый пример
-					const point1 = {
-					  latitude: 0.5, // 28.6 градуса
-					  longitude: 1.0, // 57.3 градуса
-					  altitude: 1.5, // 85.9 градуса
-					};
-					
-					const point2 = {
-					  latitude: 0.8, // 45.8 градуса
-					  longitude: 1.2, // 68.8 градуса
-					  altitude: 1.7, // 97.4 градуса
-					};
-					
-					const angleInRadians = calculateCentralAngle(point1, point2);
-					const angleInDegrees = angleInRadians * 180 / Math.PI;
-					
-					console.log(`Центральный угол в радианах: ${angleInRadians}`);
-					console.log(`Центральный угол в градусах: ${angleInDegrees}`);
-					*/
-					/*					
-					//DeepSeek. вычислить угол между двумя точками на поверхности шара
-					//векторы
-					//A=(R,ϕ1,λ1 ) - vertice
-					const ϕ1 = vertice[0], λ1 = vertice[1];
-					//B=(R,ϕ2,λ2 ) - oppositeVertice
-					const ϕ2 = oppositeVertice[0], λ2 = oppositeVertice[1];
-					//где
-					//ϕ — широта (от −90° до 90°),
-					//λ — долгота (от −180° до 180°),
-					const arccos = Math.acos, sin = Math.sin, cos = Math.cos;
-					const θ = arccos(sin(ϕ1) * sin(ϕ2) + cos(ϕ1) * cos(ϕ2) * cos(λ1 - λ2));
-					if (isNaN(θ)) console.error(sSphere + ': getArcAngle. Invalid θ = ' + θ);
-					return θ;
-					*/					
+						const vertice = params.vertice, oppositeVertice = params.oppositeVertice;
+	
+						/*
+						gemini.google.com
+						Вычислить центральный угол между двумя точками на поверхности 3-мерной гиперсферы. Координаты точек заданы в полярной системе координат в радианах.
+						Начало координат широты находится на экваторе. Писать все формулы в одну строку.
+	
+						Обозначим координаты двух точек на поверхности 3-мерной гиперсферы радиуса R в полярной системе координат:
+						Точка 1: (ψ1,θ1,ϕ1), где ψ1 - гиперширота, θ1 - гипердолгота, ϕ1 - обычная долгота.
+						Точка 2: (ψ2,θ2,ϕ2).
+						Начало координат широты находится на экваторе.
+						Для 3-мерной гиперсферы (вложенной в 4-мерное евклидово пространство) координаты (x,y,z,w) в декартовой системе координат можно выразить через полярные координаты:
+						x=Rcosψcosθcosϕ
+						y=Rcosψcosθsinϕ
+						z=Rcosψsinθ
+						w=Rsinψ
+						Центральный угол Δω между двумя точками на поверхности гиперсферы может быть найден с помощью скалярного произведения векторов, направленных из центра гиперсферы к этим точкам.
+						Эти векторы имеют длину R.
+						v1 =(x1,y1,z1,w1)
+						v2 =(x2,y2,z2,w2)
+						v1 ⋅ v2 =∣v1∣∣v2∣cos(Δω)=R*R cos(Δω)
+						cos(Δω)= (v1 ⋅ 2)/(R * R) =(x1 x2+y1y2+z1 z2+w1 w2)/(R * R)
+						Подставляя выражения для декартовых координат через полярные:
+						cos(Δω)=cosψ1 cosψ2 cosθ1 cosθ2 cosϕ1 cosϕ2 +cosψ1 cosψ2 cosθ1 cosθ2 sinϕ1 sinϕ2 +cosψ1 cosψ2 sinθ1 sinθ2 +sinψ1 sinψ2
+						Сгруппируем слагаемые:
+						cos(Δω)=cosψ1 cosψ2 cosθ1 cosθ2 (cosϕ1 cosϕ2 +sinϕ1 sinϕ2)+cosψ1 cosψ2 sinθ1 sinθ2 +sinψ1 sinψ2
+						Используя тригонометрические тождества cos(A−B)=cosAcosB+sinAsinB:
+						cos(Δω)=cosψ1 cosψ2 cosθ1 cosθ2 cos(ϕ1−ϕ2)+cosψ1 cosψ2 sinθ1 sinθ2+sinψ1 sinψ2
+						Сгруппируем первые два слагаемых:
+						cos(Δω)=cosψ1 cosψ2 (cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2)+sinψ1 sinψ2
+						Это выражение не очень удобное. Перегруппируем по-другому:
+						cos(Δω)=cosψ1 cosψ2 (cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2)+sinψ1 sinψ2 cos(Δω)=(cosψ1 cosθ1 cosϕ1)(cosψ2 cosθ2 cosϕ2)+(cosψ1 cosθ1 sinϕ1)(cosψ2 cosθ2 sinϕ2)+(cosψ1 sinθ1)(cosψ2 sinθ2)+(sinψ1)(sinψ2)
+						Используем cos(A−B)=cosAcosB+sinAsinB:
+						cos(Δω)=cosψ1 cosψ2 cosθ1 cosθ2 cos(ϕ1 −ϕ2)+cosψ1 cosψ2 sinθ1 sinθ2+sinψ1 sinψ2
+						cos(Δω)=cosψ1 cosψ2(cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2)+sinψ1 sinψ2
+						cos(Δω)=cosψ1 cosψ2 cos(Δθ)+sinψ1 sinψ2 ,
+						где
+						cos(Δθ)=cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2.
+						cos(Δθ)=cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2 =cosθ1 cosθ2 cos(Δϕ)+sinθ1 sinθ2.
+						cos(Δω)=cosψ1 cosψ2 cosθ1 cosθ2 cos(ϕ1 −ϕ2)+cosψ1 cosψ2 sinθ1 sinθ2 +sinψ1 sinψ2.
+						cos(Δω)=cosψ1 cosψ2 (cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2)+sinψ1 sinψ2.
+						cos(Δω)=cosψ1 cosψ2 cos(θ1−2)+sinψ1 sinψ2,
+						где
+						cos(θ1−2)=cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2.
+						Используем формулу cos(A−B)=cosAcosB+sinAsinB:
+						cos(Δω)=cosψ1 cosψ2 cosθ1 cosθ2 cos(ϕ1 −ϕ2)+cosψ1 cosψ2 sinθ1 sinθ2 +sinψ1 sinψ2.
+						Используем формулу cos(α1)cos(α2)+sin(α1)sin(α2)=cos(α1−α2).
+						cos(Δω)=cosψ1 cosψ2 (cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2)+sinψ1 sinψ2.
+						cos(Δω)=cosψ1 cosψ2 cos(θ1 −θ2)+sinψ1 sinψ2.
+						Это неверно, т.к. ϕ тоже участвует.
+						Правильная формула:
+						cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2 sinθ1 sinθ2 +cosψ1 cosψ2 cosθ1 cosθ2 cos(ϕ1 −ϕ2).
+						cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2 (sinθ1 sinθ2+cosθ1 cosθ2 cos(ϕ1 −ϕ2)).
+						cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2 cos(θ1 −θ2),
+						где
+						cos(θ1 −θ2) это не то, что нужно.
+						Центральный угол Δω между двумя точками на поверхности 3-мерной гиперсферы с координатами (ψ1,θ1,ϕ) и (ψ2,θ2,ϕ2) равен arccos(sinψ1 sinψ2+cosψ1 cosψ2 cos(θ1 −θ2))
+						если ϕ не участвует, но она есть.
+						cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2 cos(θ1 −θ2) - это формула для 2-сферы (вложенной в 3-мерное пространство).
+						На 3-мерной гиперсфере (в 4-мерном пространстве) центральный угол можно вычислить по формуле:
+						cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2 sinθ1 sinθ2 +cosψ1 cosψ2 cosθ1 cosθ2 cos(ϕ1 −ϕ2).
+						Эту формулу можно упростить, сгруппировав слагаемые.
+						cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2(sinθ1 sinθ2 +cosθ1 cosθ2 cos(ϕ1 −ϕ2)).
+						cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2(cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2).
+						cos(Δω)=sinψ1 sinψ2 +cosψ1 cosψ2 cos(γ),
+						где
+						cos(γ)=cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2.
+						cos(γ)=cosθ1 cosθ2 cosΔϕ+sinθ1 sinθ2.
+						Тогда:
+						Δω=arccos(sinψ1 sinψ2 +cosψ1 cosψ2 (cosθ1 cosθ2 cos(ϕ1 −ϕ2)+sinθ1 sinθ2)).					
+						
+						*/
+						/**
+						 * Вычисляет центральный угол между двумя точками на поверхности 3-мерной гиперсферы.
+						 * Координаты заданы в радианах.
+						 * @param {object} point1 - Первая точка с координатами.
+						 * @param {number} point1.latitude - Широта (зенитный угол).
+						 * @param {number} point1.longitude - Долгота (азимутальный угол).
+						 * @param {number} point1.altitude - Полярный угол от оси W.
+						 * @param {object} point2 - Вторая точка с координатами.
+						 * @param {number} point2.latitude - Широта (зенитный угол).
+						 * @param {number} point2.longitude - Долгота (азимутальный угол).
+						 * @param {number} point2.altitude - Полярный угол от оси W.
+						 * @returns {number} Центральный угол в радианах.
+						 */
+						/*
+						function toRadians(degrees) {
+						  return degrees * Math.PI / 180;
+						}
+						*/
+						/*https://gemini.google.com/
+						Вычислить центральный угол между двумя точками на поверхности 3-мерной гиперсферы встроенной в 4-мерное евклидово пространство.
+						Координаты точек заданы в полярной системе координат в радианах. Положение точек обозначим как
+						point.latitude - широта (зенитный угол) в диапазоне от -π/2 до π/2,
+						point.longitude - долгота (азимутальный угол)  в диапазоне от -π до π,
+						point.altitude - полярный угол от оси W  в диапазоне от 0 до π.
+						Писать все формулы в одну строку.
+						*/
+						const calculateCentralAngle = (point1, point2) => {
+	
+							let {
+	
+								latitude: lat1,
+								longitude: lon1,
+								altitude: alt1
+	
+							} = point1;
+							lat1 += π / 2;
+							let {
+	
+								latitude: lat2,
+								longitude: lon2,
+								altitude: alt2
+	
+							} = point2;
+							lat2 += π / 2;
+						
+							// Convert degrees to radians if necessary
+							// Assuming input is already in radians based on the prompt
+							// const lat1Rad = toRadians(lat1);
+							// const lon1Rad = toRadians(lon1);
+							// const alt1Rad = toRadians(alt1);
+							// const lat2Rad = toRadians(lat2);
+							// const lon2Rad = toRadians(lon2);
+							// const alt2Rad = toRadians(alt2);
+						
+							const cosDeltaLambda = Math.cos(lat1) * Math.cos(lat2) + Math.sin(lat1) * Math.sin(lat2) * Math.cos(lon1 - lon2);
+						
+							const cosTheta = Math.cos(alt1) * Math.cos(alt2) + Math.sin(alt1) * Math.sin(alt2) * cosDeltaLambda;
+						
+							// Ensure the value is within the valid range for acos to avoid NaN errors
+							const clampedCosTheta = Math.max(-1, Math.min(1, cosTheta));
+						
+							// The central angle in radians
+							const centralAngle = Math.acos(clampedCosTheta);
+						
+							return centralAngle;
+	
+						}
+						/*
+						// Example usage with points in radians
+						const point1 = {
+						  latitude: 0,
+						  longitude: 0,
+						  altitude: 0
+						};
+						const point2 = {
+						  latitude: Math.PI / 2,
+						  longitude: Math.PI / 2,
+						  altitude: Math.PI / 2
+						};
+						
+						const angle = calculateCentralAngle(point1, point2);
+						console.log(`Центральный угол между точками в радианах: ${angle}`);
+						console.log(`Центральный угол между точками в градусах: ${angle * 180 / Math.PI}`);
+						*/
+						
+						centralAngle = calculateCentralAngle(vertice, oppositeVertice);
+	
+						/*
+						if (params.debug) {
+	
+							//DeepSeek
+							function hyperSphereCentralAngle(alt1, lat1, lon1, alt2, lat2, lon2) {
+							    return Math.acos(Math.cos(alt1)*Math.cos(alt2)*Math.cos(lat1)*Math.cos(lat2)*Math.cos(lon1 - lon2) + 
+							                    Math.cos(alt1)*Math.cos(alt2)*Math.sin(lat1)*Math.sin(lat2) + 
+							                    Math.sin(alt1)*Math.sin(alt2));
+							}
+							
+							// Тестовый пример
+							const lat1 = vertice.latitude, long1 = vertice.longitude, alt1 = vertice.altitude;
+							const lat2 = oppositeVertice.latitude, long2 = oppositeVertice.longitude, alt2 = oppositeVertice.altitude;
+							const angle = hyperSphereCentralAngle(lat1, long1, alt1, lat2, long2, alt2);
+							if (angle != centralAngle) console.error(sRandomVerticesHyperSphere + ': get params.arc. centralAngle = ' + centralAngle + ' != angle = ' + angle);
+	
+						}
+						*/
+	
+					} else centralAngle = arc;
+					return this.arc(centralAngle);
 				
+				},
+				set: (arcNew) => {
+		
+					if (arc === undefined) console.error(sRandomVerticesHyperSphere + ': set params.arc. Invalid arc = ' + arc);
+					else arc = arcNew;
+					return true;
+		
 				},
 		
 			});
+
+		}
 		
 		this.altitude = (utils) => {
 
@@ -310,143 +302,68 @@ class RandomVerticeHSphere extends RandomVertice {
 		}
 
 		const spheresCount = round(//найти ближайшее целое число
-				(anglesIdMax / 2) + 1),//количество окружностей
+			(anglesIdMax / 2) + 1),//количество окружностей
 			k = spheresCount === 1 ? 1 : 1 / (spheresCount - 1),//for params.random = k * circleId;
+			createCloudSphere = (altitude) => {
+
+				params.verticesAngles.boNoNew = true;
+				params.altitude = altitude;
+				const cloudSphere = params.CloudSphere ? new params.CloudSphere(params) : new RandomCloudSphere(params, params.boCloud);
+				if (arrayCloudSpheres) {
+
+					//Создается облако случайных или неслучайных средних точек
+
+					arrayCloudSpheres.push(cloudSphere);
+
+					params.speresPointsCount ||= [];//массив индексов первых точек сфер, из которых состоит гиперсфера. Нужен для выделения одной из сфер и скрытия остальных сфер, когда пользователь вручную выбрал сферу
+					//Не создается, когда нужна одна случайная средняя точка.
+
+					params.speresPointsCount.push(params.pointsCount);
+
+				}
+				delete params.altitude;
+				delete params.verticesAngles.boNoNew;
+				return cloudSphere;
+
+			},
 			getRandomVerticeAnglesParams = (altitude, angleStep) => {
 
 				params.hyperSphere = {
 
-					rotate: (point, rotationAngles) => {
+					//Облако гиперсферы случайных точек состоит из массива сфер на разной высоте.
+					//Сначала содается сфера на высоте противоположной вершины params.oppositeVertice.altitude.
+					//Затем сверху и снизу от этой сферы создаются остальные сферы.
+					//Высота каждой сферы равна params.oppositeVertice.altitude плюс/минус aLatitude[i]. Где i - индекс сферы
+					middleSphere: {//Параметры сферы на высоте противоположной вершины params.oppositeVertice.altitude.
 
-					/*https://https://gemini.google.com/app/45b136829aad53e4
-					Есть точка на поверхности 3-мерной гиперсферы встроенной в 4-мерное евклидово пространство в полярной системе координат. Начало полярной системы координат находится в центре сферы.
+						aLatitude: [],//массив широт окружностей, из которых состоит средняя сфера middleSphere в диапазне от -π/2 до π/2
 
-					Положение точки обозначить как
-					point.latitude - широта (зенитный угол) в диапазоне от -π/2 до π/2,
-					point.longitude - долгота (азимутальный угол)  в диапазоне от -π до π,
-					point.altitude - полярный угол от оси W  в диапазоне от 0 до π.
-
-					Написать на javascript исходный код поворота этой точки на произвольный угол с использованием углов Эйлера. Включить в исходный код пример использования.
-					Результат поворота должен быть в полярной системе коодинат. Положение точки и результат поворота измеряется в радианах.
-					*/
-					/**
-					 * Преобразует полярные координаты в 4D декартовы.
-					 * @param {number} latitude - Широта (зенитный угол), от -PI/2 до PI/2.
-					 * @param {number} longitude - Долгота (азимутальный угол), от -PI до PI.
-					 * @param {number} altitude - Полярный угол от оси W, от 0 до PI.
-					 * @returns {{x: number, y: number, z: number, w: number}} - 4D декартовы координаты.
-					 */
-					function toCartesian4D(latitude, longitude, altitude) {
-					    const cosAlt = Math.cos(altitude);
-					    const sinAlt = Math.sin(altitude);
-					    const cosLat = Math.cos(latitude);
-					    const sinLat = Math.sin(latitude);
-					    const cosLong = Math.cos(longitude);
-					    const sinLong = Math.sin(longitude);
-					
-					    return {
-					        x: cosLong * cosLat * sinAlt,
-					        y: sinLong * cosLat * sinAlt,
-					        z: sinLat * sinAlt,
-					        w: cosAlt
-					    };
-					}
-					
-					/**
-					 * Преобразует 4D декартовы координаты в полярные.
-					 * @param {{x: number, y: number, z: number, w: number}} point - 4D декартовы координаты.
-					 * @returns {{latitude: number, longitude: number, altitude: number}} - Полярные координаты.
-					 */
-					function toPolar4D(point) {
-						const { x, y, z, w } = point;
-						const altitude = Math.acos(w);
-					
-						if (altitude === 0) {
-							// Случай, когда точка находится на оси W.
-							return Vertice([0, 0, 0]);
-
-						}
-					
-						const sinAlt = Math.sin(altitude);
-						const latitude = Math.asin(z / sinAlt);
-						const longitude = Math.atan2(y, x);
-					
-						return Vertice([altitude, latitude, longitude]);
-						
-					}
-					
-					/**
-					 * Поворачивает точку на 3-мерной гиперсфере с использованием углов Эйлера.
-					 * @param {{latitude: number, longitude: number, altitude: number}} point - Полярные координаты точки.
-					 * @param {{xy: number, xz: number, yz: number}} eulerAngles - Углы поворота в радианах для плоскостей XY, XZ и YZ.
-					 * @returns {{latitude: number, longitude: number, altitude: number}} - Повернутая точка в полярных координатах.
-					 */
-					function rotatePoint(point, eulerAngles) {
-					    let { x, y, z, w } = toCartesian4D(point.latitude, point.longitude, point.altitude);
-					
-					    // Матрица поворота для плоскости XY (поворот вокруг оси ZW)
-					    const cosXY = Math.cos(eulerAngles.xy);
-					    const sinXY = Math.sin(eulerAngles.xy);
-					    const newX = x * cosXY - y * sinXY;
-					    const newY = x * sinXY + y * cosXY;
-					    x = newX;
-					    y = newY;
-					
-					    // Матрица поворота для плоскости XZ (поворот вокруг оси YW)
-					    const cosXZ = Math.cos(eulerAngles.xz);
-					    const sinXZ = Math.sin(eulerAngles.xz);
-					    const newX2 = x * cosXZ - z * sinXZ;
-					    const newZ = x * sinXZ + z * cosXZ;
-					    x = newX2;
-					    z = newZ;
-					
-					    // Матрица поворота для плоскости YZ (поворот вокруг оси XW)
-					    const cosYZ = Math.cos(eulerAngles.yz);
-					    const sinYZ = Math.sin(eulerAngles.yz);
-					    const newY2 = y * cosYZ - z * sinYZ;
-					    const newZ2 = y * sinYZ + z * cosYZ;
-					    y = newY2;
-					    z = newZ2;
-					
-					    return toPolar4D({ x, y, z, w });
-					}
-
-					/*
-					// Пример использования
-					const myPoint = {
-					    latitude: Math.PI / 4,    // 45 градусов
-					    longitude: Math.PI / 2,   // 90 градусов
-					    altitude: Math.PI / 3     // 60 градусов
-					};
-					
-					const rotationAngles = {
-					    xy: Math.PI / 6,    // Поворот на 30 градусов в плоскости XY
-					    xz: Math.PI / 4,    // Поворот на 45 градусов в плоскости XZ
-					    yz: -Math.PI / 3    // Поворот на -60 градусов в плоскости YZ
-					};
-					
-					const rotatedPoint = rotatePoint(myPoint, rotationAngles);
-					
-					console.log('Начальная точка:', myPoint);
-					console.log('Повернутая точка:', rotatedPoint);
-					*/
-					const eulerAngles = {
-					    xy: rotationAngles.latitude,    // Поворот в плоскости XY
-					    xz: rotationAngles.longitude,    // Поворот в плоскости XZ
-					    yz: rotationAngles.altitude    // Поворот в плоскости YZ
-					};
-					return rotatePoint(Vertice(point, params.altitude), eulerAngles);
-					
 					},
+					
+					vertice: (point) => { return utils.angles([...point], params.altitude); },
 					verticesAngles: this.verticesAngles,
 
 				}
+				const cloudSphere = createCloudSphere(altitude);
+/*
 				params.verticesAngles.boNoNew = true;
 				params.altitude = altitude;
 				const cloudSphere = params.CloudSphere ? new params.CloudSphere(params) : new RandomCloudSphere(params, params.boCloud);
-				if (arrayCloudSpheres) arrayCloudSpheres.push(cloudSphere);
+				if (arrayCloudSpheres) {
+
+					//Создается облако случайных или неслучайных средних точек
+					
+					arrayCloudSpheres.push(cloudSphere);
+
+					params.speresPointsCount ||= [];//массив индексов первых точек сфер, из которых состоит гиперсфера. Нужен для выделения одной из сфер и скрытия остальных сфер, когда пользователь вручную выбрал сферу
+													//Не создается, когда нужна одна случайная средняя точка.
+
+					params.speresPointsCount.push(params.pointsCount);
+
+				}
 				delete params.altitude;
 				delete params.verticesAngles.boNoNew;
+*/
 				//Количество точек на текущей сфере равно сумме количества точек на каждой окружности, находящейся на сфере
 				let sphereAnglesCount = cloudSphere.sphereAnglesCount;
 				const angleStep1 = 1 / sphereAnglesCount,
@@ -475,139 +392,6 @@ class RandomVerticeHSphere extends RandomVertice {
 				return { angleStep1, altitudeMin, altitudeMax, altitudeStep, altitudeMid, boSouthernSphere, boNorthernSphere, sphereAnglesCount, cloudSphere };
 
 			},
-			getRandomVerticeAngles = (altitude, altitudeStep, altitudeMid, circleAnglesCount, angleStep1, angleId) => {
-				
-				const randomVerticeAngles = [
-
-					//altitude
-					params.debug &amp;&amp; params.debug.notRandomVertices ?
-					
-						altitude : //сфера расположна на одной высоте
-
-						//сфера расположна на случайной высоте в диапазоне от altitude до latitude - altitudeStep. Нужно, что бы сфера случайных точек немного гуляла по высоте от latitude до altitude - altitudeStep. Тогда поверхность гиперсферы будет случайно заполнена точками.
-						//Если это не делать то случайные точки будут располагаться слоями по высоте.
-						altitudeStep * (random() - 0.5) + altitudeMid,
-
-					//latitude
-					utils.normalizeLatitude(
-						(
-							(
-								params.debug &amp;&amp; params.debug.notRandomVertices ?
-
-									//Положение текущей точки зависит от порядкового номера точки angleId
-									(
-										circleAnglesCount === 1 ?
-										 0 ://Эта точка расположена на полюсе
-										 angleStep1 * angleId
-									) :
-								
-									random()//случайное положение текущей точки
-							) - 0.5//отнимаем 0.5 что бы диапазон возможных точек был между -0.5 и 0.5. Сразу такой диапазон нельзя вычислять потому что Math.random() имеет диапазон от 0 до 1
-						) * π//диапазон возможных углов от -0.5 до 0.5 мняем на диапазон от -π / 2 до π / 2
-					),
-
-					//longitude
-					utils.normalizeAngle(
-						(
-							(
-								params.debug &amp;&amp; params.debug.notRandomVertices ?
-
-									//Положение текущей точки зависит от порядкового номера точки angleId
-									(
-										circleAnglesCount === 1 ?
-										 0 ://Эта точка расположена на полюсе
-										 angleStep1 * angleId
-									) :
-								
-									random()//случайное положение текущей точки
-							) - 0.5//отнимаем 0.5 что бы диапазон возможных точек был между -0.5 и 0.5. Сразу такой диапазон нельзя вычислять потому что Math.random() имеет диапазон от 0 до 1
-						) * π * 2//диапазон возможных углов от -0.5 до 0.5 мняем на диапазон от -π до π
-					)
-				];
-				//console.log('randomVerticeAngles = ' + randomVerticeAngles.toString());
-
-				//Когда вычисляется одна точка arrayCircles != undefined или randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1 то this.verticesAngles пустой
-				if (!arrayCircles &amp;&amp; (this.circlesPointsCount >= this.verticesAngles.length)) console.error(sRandomVerticesHyperSphere + '.verticesAngles: Allocate memory failed! this.circlesPointsCount = ' + this.circlesPointsCount + ' >= this.verticesAngles.length = ' + this.verticesAngles.length);
-
-				/*Есть точка на поверхности сферы в полярной системе координат. Начало полярной системы координат находится в центре сферы.
-				Написать на javascript исходный код поворота этой точки на произвольный угол с использованием углов Эйлера.
-				Полярный угол должен быть в диапазоне от π/2 на северном полюсе до -π/2 на южном полюсе. Азимутальный угол должен быть в диапазоне от -π до π.
-				Результат поворота должен быть в полярной системе коодинат.
-				*/
-
-				/**
-				 * Поворот точки на поверхности сферы с использованием углов Эйлера
-				 * @param {number} latitude - Полярный угол (θ) в диапазоне [-π/2, π/2]
-				 * @param {number} longitude - Азимутальный угол (φ) в диапазоне [-π, π]
-				 * @param {number} α - Угол Эйлера вокруг оси Z (поворот по Z). Поворот вокруг собственной оси
-				 * @param {number} β - Угол Эйлера вокруг оси X (поворот по X)
-				 * @param {number} γ - Угол Эйлера вокруг оси Z (поворот по Z)
-				 * @returns {Object} Новые полярные координаты {latitude, longitude}
-				 */
-				const rotatePointWithEulerAngles = (latitude, longitude, α, β, γ) => {
-					// 1. Преобразование полярных координат в декартовы
-					const x = cos(latitude) * cos(longitude),
-						y = cos(latitude) * sin(longitude),
-						z = sin(latitude),
-					
-					// 2. Применение поворотов с использованием углов Эйлера (Z-X-Z)
-					// Поворот α вокруг оси Z
-						x1 = α === 0 ? x : x * cos(α) - y * sin(α),
-						y1 = α === 0 ? y : x * sin(α) + y * cos(α),
-						z1 = z,
-					
-					// Поворот β вокруг новой оси X
-						x2 = x1,
-						y2 = y1 * cos(β) - z1 * sin(β),
-						z2 = y1 * sin(β) + z1 * cos(β),
-					
-					// Поворот γ вокруг новой оси Z
-						x3 = x2 * cos(γ) - y2 * sin(γ),
-						y3 = x2 * sin(γ) + y2 * cos(γ),
-						z3 = z2,
-					
-					// 3. Преобразование обратно в полярные координаты
-						newLatitude = asin(z3), // В диапазоне [-π/2, π/2]
-						newLongitude = atan2(y3, x3), // В диапазоне [-π, π]
-
-						arrayAngles = [newLatitude, newLongitude];
-					
-					Object.defineProperty(arrayAngles, 'longitude', { get: () => { return arrayAngles[1]; }, });
-					Object.defineProperty(arrayAngles, 'latitude' , { get: () => { return arrayAngles[0]; }, });
-					
-					return arrayAngles;
-				}
-
-				/*
-				// Пример использования:
-				const initialLatitude = Math.PI/4; // 45 градусов от экватора
-				const initialLongitude = Math.PI/2; // 90 градусов восточной долготы
-				
-				// Поворот на 30 градусов по всем осям Эйлера
-				const α = Math.PI/6; // 30 градусов
-				const β = Math.PI/6;  // 30 градусов
-				const γ = Math.PI/6; // 30 градусов
-				
-				const rotated = rotatePointWithEulerAngles(
-					initialLatitude, initialLongitude, α, β, γ
-				);
-				
-				console.log("Исходные координаты:", {
-					polar: initialLatitude,
-					azimuthal: initialLongitude
-				});
-				console.log("После поворота:", rotated);
-				*/
-				const initialLatitude = randomVerticeAngles[0],
-					initialLongitude = randomVerticeAngles[1],
-				
-				// Поворот
-					α = 0,
-					β = params.oppositeVertice.latitude - π / 2,
-					γ = params.oppositeVertice.longitude - π / 2;
-				return rotatePointWithEulerAngles(initialLatitude, initialLongitude, α, β, γ);
-				
-			},
 			verticesAngles = (boAllocateMemory) => {
 
 				//Гиперсфера случайных точек состоит из набора сфер.
@@ -616,34 +400,159 @@ class RandomVerticeHSphere extends RandomVertice {
 				this.circlesPointsCount = boAllocateMemory ? undefined : //Во время выделения памяти в массив params.verticesAngles добавляется новый item
 					0;//в противном случае в массиве params.verticesAngles редактируется item с индексом this.circlesPointsCount
 				let altitudePrev = 0;//высота предыдущей сферы
-				if (params.noCreateCloudSphere) params.pointsCount = 0;//обновляется гиперсфера после изменения положения вершин
-				for( let sphereId = 0; sphereId &lt; spheresCount; sphereId++ ) {
+				if (params.noCreateCloudSphere) {
 
-					params.random = k * sphereId;
+					//обновляется гиперсфера после изменения положения вершин
+					
+					params.pointsCount = 0;
+					params.speresPointsCount.length = 0;
 
-					const altitude = this.altitude(utils),
-						angleStep = abs(altitude - altitudePrev),//угол между соседними точками на сфере
-						randomVerticeAnglesParams = params.noCreateCloudSphere ? undefined : getRandomVerticeAnglesParams(altitude, angleStep);
-					if (arraySpheres &amp;&amp; !boAllocateMemory) {
+				}
+				const sphereId = Math.round(spheresCount / 2);
+				params.random = k * sphereId;
 
-						const sphereAnglesCount = randomVerticeAnglesParams.sphereAnglesCount;
-						arraySpheres.push({ altitude, angleStep, altitudeStep: randomVerticeAnglesParams.altitudeStep, altitudeMid: randomVerticeAnglesParams.altitudeMid, sphereAnglesCount, cloudSphere: randomVerticeAnglesParams.cloudSphere, });
-						this.circlesPointsCount += sphereAnglesCount;
-						altitudePrev = altitude; 
-						continue;
+//				const altitude = this.altitude(utils),
+				const altitude = params.oppositeVertice.altitude,
+					angleStep = abs(altitude - altitudePrev),//угол между соседними точками на сфере
+					randomVerticeAnglesParams = params.noCreateCloudSphere ? undefined : getRandomVerticeAnglesParams(altitude, angleStep);
+				if (arraySpheres &amp;&amp; !boAllocateMemory) {
 
-					}
-					if (!randomVerticeAnglesParams) {
+					const sphereAnglesCount = randomVerticeAnglesParams.sphereAnglesCount;
+					arraySpheres.push({ altitude, angleStep, altitudeStep: randomVerticeAnglesParams.altitudeStep, altitudeMid: randomVerticeAnglesParams.altitudeMid, sphereAnglesCount, cloudSphere: randomVerticeAnglesParams.cloudSphere, });
+					this.circlesPointsCount += sphereAnglesCount;
+					altitudePrev = altitude; 
 
-						//обновляется гиперсфера после изменения положения вершин
-						
-						params.altitude = altitude;
-						arrayCloudSpheres[sphereId].randomAngles;
-						delete params.altitude;
-						
-					}
+				}
+				else if (!randomVerticeAnglesParams) {
+
+					//обновляется гиперсфера после изменения положения вершин
+					
+					params.altitude = altitude;
+//					arrayCloudSpheres[sphereId].randomAngles;
+arrayCloudSpheres[0].randomAngles;
+					delete params.altitude;
+					
+					params.speresPointsCount.push(params.pointsCount);
 					
 				}
+				for (let latitudeId = params.hyperSphere.middleSphere.aLatitude.length - 2;
+//					 latitudeId &lt; ;
+latitudeId >= params.hyperSphere.middleSphere.aLatitude.length - 2;
+					 latitudeId--){
+
+					//Количество окружностей в текущей сфере равно количесту окружностей на средей сфере params.hyperSphere.middleSphere.aLatitude.length минус индекс текущей сферы
+					//Таким образом последняя сфера будет иметь одну окружность
+					params.circlesCount = latitudeId + 1;
+					
+					createCloudSphere(params.oppositeVertice.altitude + params.hyperSphere.middleSphere.aLatitude[latitudeId] - π / 2);
+//					const rotated = utils.angles([0,0], params.oppositeVertice.altitude + params.hyperSphere.middleSphere.aLatitude[latitudeId] - π / 2);
+
+					/*https://chat.deepseek.com/a/chat/s/e2cd31ce-28ec-4477-981e-859106e1a952
+					Есть точка на поверхности 3-мерной гиперсферы встроенной в 4-мерное евклидово пространство в полярной системе координат. Начало полярной системы координат находится в центре сферы.
+
+					Положение точки обозначить как
+					point.latitude - широта (зенитный угол) в диапазоне от -π/2 до π/2,
+					point.longitude - долгота (азимутальный угол)  в диапазоне от -π до π,
+					point.altitude - полярный угол от оси W  в диапазоне от 0 до π.
+
+					Пусть положение точки point задано за пределами допустимого диапазона углов.
+					Написать функцию на javascript с названием normalize, которая нормализует положение точки point в допустимый диапазон.
+					*/
+
+					/**
+					 * Нормализует положение точки point в допустимый диапазон
+					 * @param {Object} point Объект с полями {latitude, longitude, altitude}.
+					 * @param {Number} point.latitude Широта (latitude): нормализует в диапазон [-π/2, π/2], учитывая что при переходе через полюса нужно сдвигать долготу на π
+					 * @param {Number} point.longitude Долгота (longitude): нормализует в диапазон [-π, π] с помощью модульной арифметики
+					 * @param {Number} point.altitude Высота (altitude): нормализует в диапазон [0, π], учитывая что при отражении через π нужно инвертировать другие углы
+					 * @returns {Array} Новый массив с нормализованными полями {latitude, longitude, altitude}.
+					 */
+					function normalize(point) {
+						
+						// Создаем копию точки, чтобы не изменять исходный объект
+//						const normalized = { ...point };
+						const normalized = {
+
+							longitude: point.longitude,
+							latitude: point.latitude,
+							altitude: point.altitude,
+							
+						};
+
+						// Нормализация долготы (longitude) в диапазон [anglesRange.longitude.min, anglesRange.longitude.max][-π, π]
+						normalized.longitude = normalized.longitude % (anglesRange.longitude.range);//(2 * Math.PI);
+						if (normalized.longitude > anglesRange.longitude.max) {
+							normalized.longitude -= anglesRange.longitude.range;//2 * Math.PI;
+						} else if (normalized.longitude &lt; anglesRange.longitude.min) {
+							normalized.longitude += anglesRange.longitude.range;//2 * Math.PI;
+						}
+
+						// Нормализация широты (latitude) в диапазон [anglesRange.latitude.min, anglesRange.latitude.max][-π/2, π/2]
+						// Широта периодична с периодом π, но с изменением знака при сдвиге на π
+						normalized.latitude = normalized.latitude % anglesRange.latitude.range;//Math.PI;
+						if (normalized.latitude > anglesRange.latitude.max) {
+							normalized.latitude = anglesRange.latitude.range//Math.PI
+								- normalized.latitude;
+							// При переходе через полюс долгота сдвигается на π
+							normalized.longitude += anglesRange.latitude.range;//Math.PI;
+						} else if (normalized.latitude &lt; anglesRange.latitude.min) {
+							normalized.latitude = -anglesRange.latitude.range//Math.PI
+								- normalized.latitude;
+							// При переходе через полюс долгота сдвигается на π
+							normalized.longitude += anglesRange.latitude.range;//Math.PI;
+						}
+
+						// Нормализация высоты (altitude) в диапазон [anglesRange.altitude.min, anglesRange.altitude.max][0, π]
+						// altitude - полярный угол от оси W, поэтому он должен быть в [0, π]
+						normalized.altitude = normalized.altitude % (2 * Math.PI);
+						if (normalized.altitude &lt; anglesRange.altitude.min) {
+							normalized.altitude += 2 * Math.PI;
+						}
+						if (normalized.altitude > anglesRange.altitude.max) {
+							normalized.altitude = 2 * Math.PI - normalized.altitude;
+							// При отражении altitude нужно инвертировать другие углы
+							normalized.latitude = -normalized.latitude;
+							normalized.longitude += Math.PI;
+						}
+
+						// Повторная нормализация долготы после возможных изменений
+						normalized.longitude = normalized.longitude % (anglesRange.longitude.range);//(2 * Math.PI);
+						if (normalized.longitude > anglesRange.longitude.max) {
+							normalized.longitude -= anglesRange.longitude.range;//2 * Math.PI;
+						} else if (normalized.longitude &lt; anglesRange.longitude.min) {
+							normalized.longitude += anglesRange.longitude.range;//2 * Math.PI;
+						}
+
+//						return normalized;
+						return VerticeObjectToArray(normalized);
+						
+					}
+					/*
+					// Пример использования:
+					const testPoint = {
+						latitude: 3 * Math.PI / 4,  // Вне диапазона [-π/2, π/2]
+						longitude: 5 * Math.PI / 2, // Вне диапазона [-π, π]
+						altitude: -Math.PI / 4      // Вне диапазона [0, π]
+					};
+					const normalizedPoint = normalize(testPoint);
+					console.log("Исходная точка:", testPoint);
+					console.log("Нормализованная точка:", normalizedPoint);
+					const normalizedPointGemini = normalizeGemini(testPoint);
+					console.log("Нормализованная точка Gemini:", normalizedPointGemini);
+					console.log("Проверка диапазонов:");
+					console.log(`Широта в [-π/2, π/2]: ${normalizedPoint.latitude >= -Math.PI / 2 &amp;&amp; normalizedPoint.latitude &lt;= Math.PI / 2}`);
+					console.log(`Долгота в [-π, π]: ${normalizedPoint.longitude >= -Math.PI &amp;&amp; normalizedPoint.longitude &lt;= Math.PI}`);
+					console.log(`Высота в [0, π]: ${normalizedPoint.altitude >= 0 &amp;&amp; normalizedPoint.altitude &lt;= Math.PI}`);
+					*/
+/*					
+					const normalized = normalize(rotated);
+					params.verticesAngles[params.pointsCount] = normalized;
+
+					if (params.speresPointsCount) params.speresPointsCount.push(params.pointsCount);//сейчас создается облако случайных или неслучайных средних точек
+*/					
+					
+				}
+				
 				delete params.random;
 				delete params.b;
 				
@@ -652,9 +561,12 @@ class RandomVerticeHSphere extends RandomVertice {
 		if (!arraySpheres) {//не выделять this.verticesAngles если нужно вычислить одну случайную точку randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1
 			
 			//Allocate this.verticesAngles memory
+/*			
 			params.boAllocateMemory = true;
 			verticesAngles(params.boAllocateMemory);
 			delete params.boAllocateMemory;
+*/			
+			verticesAngles(true);
 
 		}
 		
@@ -662,13 +574,17 @@ class RandomVerticeHSphere extends RandomVertice {
 
 		//overridden methods
 
+/*		
 		Object.defineProperty(this, 'angles', {
 			
 			get: () => { return params.verticesAngles; },
 			set: (anglesNew) => { params.verticesAngles = anglesNew; },
 			
 		});
-		
+*/		
+		this.getAngles = () => { return params.verticesAngles; }
+		this.setAngles = (anglesNew) => { params.verticesAngles = anglesNew; }
+/*		
 		Object.defineProperty(this, 'randomAngles', {
 			
 			get: () => {
@@ -710,6 +626,43 @@ class RandomVerticeHSphere extends RandomVertice {
 			set: (anglesNew) => {},
 			
 		});
+*/		
+		this.getRandomAngles = () => {
+			
+			if (arraySpheres) arraySpheres.length = 0;
+			verticesAngles(false);
+			const randomVerticeId = round(random() * (this.circlesPointsCount - 1))
+
+			if (arraySpheres) {
+				
+				let verticeId = 0, verticeIdPrev;
+				for (let sphereId = 0; sphereId &lt; arraySpheres.length; sphereId++) {
+
+					const sphere = arraySpheres[sphereId];
+					verticeIdPrev = verticeId;
+					verticeId += sphere.sphereAnglesCount;
+					if (verticeId >= randomVerticeId) {
+
+						//случайная вершина находится на текущей сфере.
+
+						params.altitude = sphere.altitude;
+						sphere.cloudSphere.getRandomAngle(randomVerticeId - verticeIdPrev);
+						delete params.altitude;
+						return params.verticesAngles;
+						
+					}
+
+				}
+				console.error(sRandomVerticesHyperSphere + ': get randomAngles. rotated was not found.');
+
+			} else {
+				
+				this.angles = params.verticesAngles;
+				return this.angles;
+
+			}
+			
+		}
 		
 		Object.defineProperty(this, 'cloud', {
 			
@@ -746,59 +699,65 @@ class RandomVerticeHSphere extends RandomVertice {
 	ZeroArray() { return [0, 0, 0]; }
 	Center(params) {
 	
-		Vertice(params.vertice);
-		Vertice(params.oppositeVertice);
+		utils.angles(params.vertice);
+		utils.angles(params.oppositeVertice);
 		
 	}
 	
 	/////////////////////////////overridden methods
 
 }
+const VerticeObjectToArray = (verticeObject) => { return utils.angles([verticeObject.altitude, verticeObject.latitude, verticeObject.longitude]); }
+/*
 const Vertice = (vertice, altitude) => {
 
-	if (vertice.longitude != undefined) return;
+//	if (vertice.longitude != undefined) return;
 	while (vertice.length &lt; 3)
 		vertice.unshift((vertice.length === 2) &amp;&amp; (altitude != undefined) ? altitude : 0);
-	Object.defineProperty(vertice, 'longitude', {
-		
-		get: () => { return vertice[2]; },
-		set: (longitude) => {
-
-			if (vertice[2] === longitude) return true;
-			vertice[2] = longitude;
-			return true;
-
-		},
+	if (vertice.longitude === undefined)
+		Object.defineProperty(vertice, 'longitude', {
+			
+			get: () => { return vertice[2]; },
+			set: (longitude) => {
 	
-	});
-	Object.defineProperty(vertice, 'latitude', {
-		
-		get: () => { return vertice[1]; },
-		set: (latitude) => {
-
-			if (vertice[1] === latitude) return true;
-			vertice[1] = latitude;
-			return true;
-
-		},
+				if (vertice[2] === longitude) return true;
+				vertice[2] = longitude;
+				return true;
 	
-	});
-	Object.defineProperty(vertice, 'altitude', {
+			},
 		
-		get: () => { return vertice[0]; },
-		set: (altitude) => {
-
-			if (vertice[0] === altitude) return true;
-			vertice[0] = altitude;
-			return true;
-
-		},
+		});
+	if (vertice.latitude === undefined)
+		Object.defineProperty(vertice, 'latitude', {
+			
+			get: () => { return vertice[1]; },
+			set: (latitude) => {
 	
-	});
+				if (vertice[1] === latitude) return true;
+				vertice[1] = latitude;
+				return true;
+	
+			},
+		
+		});
+	if (vertice.altitude === undefined)
+		Object.defineProperty(vertice, 'altitude', {
+			
+			get: () => { return vertice[0]; },
+			set: (altitude) => {
+	
+				if (vertice[0] === altitude) return true;
+				vertice[0] = altitude;
+				return true;
+	
+			},
+		
+		});
 	return vertice;
 
 }
-RandomVerticeHSphere.Vertice = Vertice;
+*/
+//RandomVerticeHSphere.Vertice = Vertice;
 export default RandomVerticeHSphere;
 </code></pre>
         </article>
@@ -810,13 +769,13 @@ export default RandomVerticeHSphere;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Cloud.html">Cloud</a></li><li><a href="module-CloudHyperSphere.html">CloudHyperSphere</a></li><li><a href="module-CloudSphere.html">CloudSphere</a></li><li><a href="module-RandomCloud.html">RandomCloud</a></li><li><a href="module-RandomCloudBase.html">RandomCloudBase</a></li><li><a href="module-RandomCloudCircle.html">RandomCloudCircle</a></li><li><a href="module-RandomCloudHSphere.html">RandomCloudHSphere</a></li><li><a href="module-RandomCloudSphere.html">RandomCloudSphere</a></li><li><a href="module-RandomVertice.html">RandomVertice</a></li><li><a href="module-RandomVerticeCircle.html">RandomVerticeCircle</a></li><li><a href="module-RandomVerticeHSphere.html">RandomVerticeHSphere</a></li><li><a href="module-RandomVerticeSphere.html">RandomVerticeSphere</a></li><li><a href="module-getHyperSphere.html">getHyperSphere</a></li><li><a href="module-utilsCircle.html">utilsCircle</a></li><li><a href="module-utilsHyperSphere.html">utilsHyperSphere</a></li><li><a href="module-utilsSphere.html">utilsSphere</a></li></ul><h3>Classes</h3><ul><li><a href="module-CloudHyperSphere-CloudHyperSphere.html">CloudHyperSphere</a></li><li><a href="module-CloudSphere-CloudSphere.html">CloudSphere</a></li><li><a href="module-Cloud-Cloud.html">Cloud</a></li><li><a href="module-RandomCloudBase-RandomCloudBase.html">RandomCloudBase</a></li><li><a href="module-RandomCloudCircle-RandomCloudCircle.html">RandomCloudCircle</a></li><li><a href="module-RandomCloudHSphere-RandomCloudHSphere.html">RandomCloudHSphere</a></li><li><a href="module-RandomCloudSphere-RandomCloudSphere.html">RandomCloudSphere</a></li><li><a href="module-RandomCloud-RandomCloud.html">RandomCloud</a></li><li><a href="module-RandomVerticeCircle-RandomVerticeCircle.html">RandomVerticeCircle</a></li><li><a href="module-RandomVerticeHSphere-RandomVerticeHSphere.html">RandomVerticeHSphere</a></li><li><a href="module-RandomVerticeSphere.RandomVerticeSphere.html">RandomVerticeSphere</a></li><li><a href="module-RandomVertice-RandomVertice.html">RandomVertice</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Cloud.html">Cloud</a></li><li><a href="module-CloudHyperSphere.html">CloudHyperSphere</a></li><li><a href="module-CloudSphere.html">CloudSphere</a></li><li><a href="module-RandomCloud.html">RandomCloud</a></li><li><a href="module-RandomCloudBase.html">RandomCloudBase</a></li><li><a href="module-RandomCloudCircle.html">RandomCloudCircle</a></li><li><a href="module-RandomCloudHSphere.html">RandomCloudHSphere</a></li><li><a href="module-RandomCloudSphere.html">RandomCloudSphere</a></li><li><a href="module-RandomVertice.html">RandomVertice</a></li><li><a href="module-RandomVerticeCircle.html">RandomVerticeCircle</a></li><li><a href="module-RandomVerticeHSphere.html">RandomVerticeHSphere</a></li><li><a href="module-RandomVerticeSphere.html">RandomVerticeSphere</a></li><li><a href="module-getHyperSphere.html">getHyperSphere</a></li></ul><h3>Classes</h3><ul><li><a href="module-CloudHyperSphere-CloudHyperSphere.html">CloudHyperSphere</a></li><li><a href="module-CloudSphere-CloudSphere.html">CloudSphere</a></li><li><a href="module-Cloud-Cloud.html">Cloud</a></li><li><a href="module-RandomCloudBase-RandomCloudBase.html">RandomCloudBase</a></li><li><a href="module-RandomCloudCircle-RandomCloudCircle.html">RandomCloudCircle</a></li><li><a href="module-RandomCloudHSphere-RandomCloudHSphere.html">RandomCloudHSphere</a></li><li><a href="module-RandomCloudSphere-RandomCloudSphere.html">RandomCloudSphere</a></li><li><a href="module-RandomCloud-RandomCloud.html">RandomCloud</a></li><li><a href="module-RandomVerticeCircle-RandomVerticeCircle.html">RandomVerticeCircle</a></li><li><a href="module-RandomVerticeHSphere-RandomVerticeHSphere.html">RandomVerticeHSphere</a></li><li><a href="module-RandomVerticeSphere.RandomVerticeSphere.html">RandomVerticeSphere</a></li><li><a href="module-RandomVertice-RandomVertice.html">RandomVertice</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sat Oct 11 2025 08:37:26 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Tue Jan 06 2026 13:08:10 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
