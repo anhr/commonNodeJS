@@ -412,6 +412,10 @@ arrayCloudSpheres[0].randomAngles;
 latitudeId >= params.hyperSphere.middleSphere.aLatitude.length - 2;
 					 latitudeId--){
 
+					//Количество окружностей в текущей сфере равно количесту окружностей на средей сфере params.hyperSphere.middleSphere.aLatitude.length минус индекс текущей сферы
+					//Таким образом последняя сфера будет иметь одну окружность
+					params.circlesCount = latitudeId + 1;
+					
 					createCloudSphere(params.oppositeVertice.altitude + params.hyperSphere.middleSphere.aLatitude[latitudeId] - π / 2);
 //					const rotated = utils.angles([0,0], params.oppositeVertice.altitude + params.hyperSphere.middleSphere.aLatitude[latitudeId] - π / 2);
 

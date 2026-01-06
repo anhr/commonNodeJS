@@ -117,7 +117,7 @@ export class RandomVerticeSphere extends RandomVertice {
 			
 		}
 		
-		const circlesCount = round(//найти ближайшее целое число
+		const circlesCount = params.circlesCount != undefined ? params.circlesCount : round(//найти ближайшее целое число
 				(anglesIdMax / 2) + 1),//количество окружностей
 			k = 1 / (circlesCount - 1),//for params.random = k * circleId;
 			getRandomVerticeAnglesParams = (latitude, angleStep) => {
