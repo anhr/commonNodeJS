@@ -368,7 +368,7 @@ class RandomVerticeHSphere extends RandomVertice {
 
 				//Гиперсфера случайных точек состоит из набора сфер.
 				
-				const arc = params.arc;
+//				const arc = params.arc;
 				this.circlesPointsCount = boAllocateMemory ? undefined : //Во время выделения памяти в массив params.verticesAngles добавляется новый item
 					0;//в противном случае в массиве params.verticesAngles редактируется item с индексом this.circlesPointsCount
 				let altitudePrev = 0;//высота предыдущей сферы
@@ -417,114 +417,9 @@ arrayCloudSpheres[0].randomAngles;
 					params.circlesCount = latitudeId + 1;
 					
 					createCloudSphere(params.oppositeVertice.altitude + params.hyperSphere.middleSphere.aLatitude[latitudeId] - π / 2);
-//					const rotated = utils.angles([0,0], params.oppositeVertice.altitude + params.hyperSphere.middleSphere.aLatitude[latitudeId] - π / 2);
-
-					/*https://chat.deepseek.com/a/chat/s/e2cd31ce-28ec-4477-981e-859106e1a952
-					Есть точка на поверхности 3-мерной гиперсферы встроенной в 4-мерное евклидово пространство в полярной системе координат. Начало полярной системы координат находится в центре сферы.
-
-					Положение точки обозначить как
-					point.latitude - широта (зенитный угол) в диапазоне от -π/2 до π/2,
-					point.longitude - долгота (азимутальный угол)  в диапазоне от -π до π,
-					point.altitude - полярный угол от оси W  в диапазоне от 0 до π.
-
-					Пусть положение точки point задано за пределами допустимого диапазона углов.
-					Написать функцию на javascript с названием normalize, которая нормализует положение точки point в допустимый диапазон.
-					*/
-
-					/**
-					 * Нормализует положение точки point в допустимый диапазон
-					 * @param {Object} point Объект с полями {latitude, longitude, altitude}.
-					 * @param {Number} point.latitude Широта (latitude): нормализует в диапазон [-π/2, π/2], учитывая что при переходе через полюса нужно сдвигать долготу на π
-					 * @param {Number} point.longitude Долгота (longitude): нормализует в диапазон [-π, π] с помощью модульной арифметики
-					 * @param {Number} point.altitude Высота (altitude): нормализует в диапазон [0, π], учитывая что при отражении через π нужно инвертировать другие углы
-					 * @returns {Array} Новый массив с нормализованными полями {latitude, longitude, altitude}.
-					 */
-					function normalize(point) {
-						
-						// Создаем копию точки, чтобы не изменять исходный объект
-//						const normalized = { ...point };
-						const normalized = {
-
-							longitude: point.longitude,
-							latitude: point.latitude,
-							altitude: point.altitude,
-							
-						};
-
-						// Нормализация долготы (longitude) в диапазон [anglesRange.longitude.min, anglesRange.longitude.max][-π, π]
-						normalized.longitude = normalized.longitude % (anglesRange.longitude.range);//(2 * Math.PI);
-						if (normalized.longitude > anglesRange.longitude.max) {
-							normalized.longitude -= anglesRange.longitude.range;//2 * Math.PI;
-						} else if (normalized.longitude < anglesRange.longitude.min) {
-							normalized.longitude += anglesRange.longitude.range;//2 * Math.PI;
-						}
-
-						// Нормализация широты (latitude) в диапазон [anglesRange.latitude.min, anglesRange.latitude.max][-π/2, π/2]
-						// Широта периодична с периодом π, но с изменением знака при сдвиге на π
-						normalized.latitude = normalized.latitude % anglesRange.latitude.range;//Math.PI;
-						if (normalized.latitude > anglesRange.latitude.max) {
-							normalized.latitude = anglesRange.latitude.range//Math.PI
-								- normalized.latitude;
-							// При переходе через полюс долгота сдвигается на π
-							normalized.longitude += anglesRange.latitude.range;//Math.PI;
-						} else if (normalized.latitude < anglesRange.latitude.min) {
-							normalized.latitude = -anglesRange.latitude.range//Math.PI
-								- normalized.latitude;
-							// При переходе через полюс долгота сдвигается на π
-							normalized.longitude += anglesRange.latitude.range;//Math.PI;
-						}
-
-						// Нормализация высоты (altitude) в диапазон [anglesRange.altitude.min, anglesRange.altitude.max][0, π]
-						// altitude - полярный угол от оси W, поэтому он должен быть в [0, π]
-						normalized.altitude = normalized.altitude % (2 * Math.PI);
-						if (normalized.altitude < anglesRange.altitude.min) {
-							normalized.altitude += 2 * Math.PI;
-						}
-						if (normalized.altitude > anglesRange.altitude.max) {
-							normalized.altitude = 2 * Math.PI - normalized.altitude;
-							// При отражении altitude нужно инвертировать другие углы
-							normalized.latitude = -normalized.latitude;
-							normalized.longitude += Math.PI;
-						}
-
-						// Повторная нормализация долготы после возможных изменений
-						normalized.longitude = normalized.longitude % (anglesRange.longitude.range);//(2 * Math.PI);
-						if (normalized.longitude > anglesRange.longitude.max) {
-							normalized.longitude -= anglesRange.longitude.range;//2 * Math.PI;
-						} else if (normalized.longitude < anglesRange.longitude.min) {
-							normalized.longitude += anglesRange.longitude.range;//2 * Math.PI;
-						}
-
-//						return normalized;
-						return VerticeObjectToArray(normalized);
-						
-					}
-					/*
-					// Пример использования:
-					const testPoint = {
-						latitude: 3 * Math.PI / 4,  // Вне диапазона [-π/2, π/2]
-						longitude: 5 * Math.PI / 2, // Вне диапазона [-π, π]
-						altitude: -Math.PI / 4      // Вне диапазона [0, π]
-					};
-					const normalizedPoint = normalize(testPoint);
-					console.log("Исходная точка:", testPoint);
-					console.log("Нормализованная точка:", normalizedPoint);
-					const normalizedPointGemini = normalizeGemini(testPoint);
-					console.log("Нормализованная точка Gemini:", normalizedPointGemini);
-					console.log("Проверка диапазонов:");
-					console.log(`Широта в [-π/2, π/2]: ${normalizedPoint.latitude >= -Math.PI / 2 && normalizedPoint.latitude <= Math.PI / 2}`);
-					console.log(`Долгота в [-π, π]: ${normalizedPoint.longitude >= -Math.PI && normalizedPoint.longitude <= Math.PI}`);
-					console.log(`Высота в [0, π]: ${normalizedPoint.altitude >= 0 && normalizedPoint.altitude <= Math.PI}`);
-					*/
-/*					
-					const normalized = normalize(rotated);
-					params.verticesAngles[params.pointsCount] = normalized;
-
-					if (params.speresPointsCount) params.speresPointsCount.push(params.pointsCount);//сейчас создается облако случайных или неслучайных средних точек
-*/					
 					
 				}
-				
+				delete params.circlesCount;
 				delete params.random;
 				delete params.b;
 				
