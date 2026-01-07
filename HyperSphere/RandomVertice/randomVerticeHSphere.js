@@ -408,7 +408,7 @@ arrayCloudSpheres[0].randomAngles;
 					
 				}
 				for (let latitudeId = params.hyperSphere.middleSphere.aLatitude.length - 2;
-					 latitudeId >= 0;
+					 latitudeId > 0;//если latitudeId === 0 то в сфере будет всего одна окружность. В этом случае невозможно вычислить latitude, на которой расположена эта окружность.
 //latitudeId >= params.hyperSphere.middleSphere.aLatitude.length - 2;
 					 latitudeId--){
 
