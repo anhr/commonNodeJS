@@ -408,8 +408,8 @@ arrayCloudSpheres[0].randomAngles;
 					
 				}
 				for (let latitudeId = params.hyperSphere.middleSphere.aLatitude.length - 2;
-//					 latitudeId < ;
-latitudeId >= params.hyperSphere.middleSphere.aLatitude.length - 2;
+					 latitudeId >= 0;
+//latitudeId >= params.hyperSphere.middleSphere.aLatitude.length - 2;
 					 latitudeId--){
 
 					//Количество окружностей в текущей сфере равно количесту окружностей на средей сфере params.hyperSphere.middleSphere.aLatitude.length минус индекс текущей сферы
