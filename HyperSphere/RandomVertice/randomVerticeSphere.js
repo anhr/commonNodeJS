@@ -292,12 +292,15 @@ export class RandomVerticeSphere extends RandomVertice {
 				this.circlesPointsCount = boAllocateMemory ? undefined : //Во время выделения памяти в массив this.verticesAngles добавляется новый item
 					0;//в противном случае в массиве this.verticesAngles редактируется item с индексом this.circlesPointsCount
 				let latitudePrev = 0;//широта предыдущей окружности
-				const euler = !boAllocateMemory && params.Euler ? params.Euler() : undefined;
+				const euler = !boAllocateMemory && params.Euler ? params.Euler() : undefined,
+					latitudeMultiplier = (params.circleLatitudeMultiplier ?
+						params.circleLatitudeMultiplier(circlesCount)://Присоздании облака случайных точек гиперсферы широту каждой окружности текущей сферы надо умножить на некоторый коэфициент что бы облако случайных точек приоблело сферическую форму
+						1);
 				for(let circleId = 0; circleId < circlesCount; circleId++){
 
 					params.random = k * circleId;
 
-					const latitude = this.latitude(utils);
+					const latitude = this.latitude(utils) * latitudeMultiplier;
 					if (
 						!boAllocateMemory &&//Не выделяется память
 						params.hyperSphere &&//Создается облако гиперсферы случайных точек. Состоит из массива сфер на разной высоте. Сейчас создается сфера на высоте противоположной вершины params.oppositeVertice.altitude.

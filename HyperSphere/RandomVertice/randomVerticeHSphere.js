@@ -407,7 +407,30 @@ arrayCloudSpheres[0].randomAngles;
 					params.speresPointsCount.push(params.pointsCount);
 					
 				}
-				for (let latitudeId = params.hyperSphere.middleSphere.aLatitude.length - 2;
+
+				const middleCirclesCount = params.hyperSphere.middleSphere.aLatitude.length;//Количество окружностей в сфере, которая находится на высоте противоположной точки.
+				
+				//Присоздании облака случайных точек гиперсферы широту каждой окружности текущей сферы надо умножить на некоторый коэфициент что бы облако случайных точек приоблело сферическую форму
+				params.circleLatitudeMultiplier = (circlesCount) => {
+
+					//График множителя к широте текущей окружности сферы имеет форму окружности.
+					//где по иси x отложено количество окружностей в текущей сфере circlesCount
+					//а по оси y - множитель к широте текущей окружности сферы
+					//Центр этой окружности лежит посередине между минимальным и максимальны количеством окружностей в текущей сфере.
+					//Когда количество окружностей в текущей сфере circlesCount минимально или максимально, то множитель к широте текущей окружности должен быть равен 1. Тоесть широта не должна изменяться
+					//Во всех остальных случая множитель к широте текущей окружности должен быть больше 1. Тоесть широта должна увеличиваться.
+					const ccMin = 2,//минимальное количество окружностей на сфере. Если сделать меньше то выдаст ошибку
+						ccMax = middleCirclesCount - 1,//Максимальное количество окружностей на сфере.
+						r = (ccMax - ccMin) / 2,//Радиус окружности по которой вычисляется множитель к широте текущей окружности сферы
+						y = Math.sqrt( r * r - (circlesCount - r - ccMin) ** 2) / (r * 10);//поделить на радиус окружности, что бы множитель не был слишком большим
+					console.log('circlesCount = ' + circlesCount + ' , y = ' + y)
+					return 1 - y;
+					
+				};
+				
+				params.hyperSphere.middleSphere.boNoAddALatitude = true;//Не добавлять новую широту в params.hyperSphere.middleSphere.aLatitude потому что они будут дублироваться с первой сферой
+				
+				for (let latitudeId = middleCirclesCount - 2;
 					 latitudeId > 0;//если latitudeId === 0 то в сфере будет всего одна окружность. В этом случае невозможно вычислить latitude, на которой расположена эта окружность.
 //latitudeId >= params.hyperSphere.middleSphere.aLatitude.length - 2;
 					 latitudeId--){
@@ -420,6 +443,7 @@ arrayCloudSpheres[0].randomAngles;
 					
 				}
 				delete params.circlesCount;
+				delete params.circleLatitudeMultiplier;
 				delete params.random;
 				delete params.b;
 				
