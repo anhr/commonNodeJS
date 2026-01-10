@@ -58,7 +58,10 @@ export const normalizeAngle = (angle) => {
 export const b = (params) => {
 
 	//for atan((random + 0.5) * b)
-	return π / params.arc;
+	const latitudeMultiplier = (params.circleLatitudeMultiplier ?
+		params.circleLatitudeMultiplier(params.circlesCount)://Присоздании облака случайных точек гиперсферы широту каждой окружности текущей сферы надо умножить на некоторый коэфициент что бы облако случайных точек приоблело сферическую форму
+		1);
+	return π / (params.arc * latitudeMultiplier);
 		
 }
 
