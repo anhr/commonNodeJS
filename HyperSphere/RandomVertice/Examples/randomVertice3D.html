@@ -707,8 +707,20 @@
 
 		}, {
 
-			//orbitControls: { enableRotate: false, },
-			//camera: { position: new THREE.Vector3( 0, 0, 2 ) },
+			orbitControls: {
+				
+				//enableRotate: false,
+				
+				//Эта позиция удобна при ручном выборе коэфициента в params.circleLatitudeMultiplier 
+				target: new THREE.Vector3(-0.41085804008835874, -0.2234325634279063, 0.015116584329208154),
+			
+			},
+			camera: {
+
+				//Эта позиция удобна при ручном выборе коэфициента в params.circleLatitudeMultiplier 
+				position: new THREE.Vector3( -0.052437394122231695, -0.5412090881135114, -0.09917209654883102 ),
+			
+			},
 			//stereoEffect: false,
 			scene: { rotation: new THREE.Euler(-Math.PI / 2), },
 			scales: {

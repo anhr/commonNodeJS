@@ -132,8 +132,9 @@ class Options {
 			const settings = options.orbitControls || {};
 			_this.orbitControls = new three.OrbitControls( camera, renderer.domElement );
 			if ( settings.enableRotate !== undefined ) _this.orbitControls.enableRotate = settings.enableRotate;
-//			_this.orbitControls.target.set( scene.position.x * 2, scene.position.y * 2, scene.position.z * 2 );
-			_this.orbitControls.target.copy( scene.position).multiply( new three.THREE.Vector3().copy( scene.scale ).addScalar( 1 ) );
+			if ( settings.target )
+				_this.orbitControls.target.copy(settings.target);
+			else _this.orbitControls.target.copy( scene.position).multiply( new three.THREE.Vector3().copy( scene.scale ).addScalar( 1 ) );
 			_this.orbitControls.saveState();//For reset of the orbitControls settings in the CameraGui and OrbitControlsGui
 			_this.orbitControls.update();
 

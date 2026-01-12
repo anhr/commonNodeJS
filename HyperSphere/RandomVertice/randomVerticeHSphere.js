@@ -437,14 +437,12 @@ arrayCloudSpheres[0].randomAngles;
 						r = (ccMax - ccMin) / 2,//Радиус окружности по которой вычисляется множитель к широте текущей окружности сферы
 						y = Math.sqrt( r * r - (circlesCount - r - ccMin) ** 2) / r;//поделить на радиус окружности, что бы множитель не был слишком большим
 */
-/*
 const array = [
-	0,//0
 	0,//1
 	0,//2
 	0,//3
-	0,//4
-	0,//5
+	0.19,//4
+	0.25,//5
 	0,//6
 	0,//7
 	0,//8
@@ -466,7 +464,6 @@ const array = [
 	0,//24
 	0,//25
 ];
-*/
 /*					
 for (let i = 0; i < array.length; i++){
 
@@ -480,6 +477,7 @@ for (let i = 0; i < array.length; i++){
 		
 }
 */
+/*					
 const array = [];
 //for (let i = 0; i < params.hyperSphere.middleSphere.aLatitude.length; i++) array.push(0);
 const line = (options = {}) => {
@@ -498,6 +496,7 @@ point2 = { i: 20, y: 5 };
 line({ start: point1, stop: point2 });
 line({ start: point2 });
 array.push(0);
+*/					
 const circleId = middleCirclesCount - circlesCount - 1;
 const y = array[circleId];
 console.log('circleId = ' + circleId + ' , y = ' + y)
