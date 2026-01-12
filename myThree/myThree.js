@@ -167,6 +167,7 @@ class MyThree {
 	 * or
 	 * </pre>
 	 * @param {boolean} [options.orbitControls.enableRotate=true] Enable or disable horizontal and vertical rotation of the camera.
+	 * @param {boolean} [options.orbitControls.target ] See [OrbitControls.target]{@link https://threejs.org/docs/?q=OrbitControls#OrbitControls.target}.
 	 * @param {boolean} [options.axesHelper] false - do not add the <a href="../../AxesHelper/jsdoc/index.html" target="_blank">AxesHelper</a>.
 	 * @param {boolean} [options.canvasMenu] false - do not create a <a href="../../canvasMenu/jsdoc/index.html" target="_blank">canvasMenu</a> instance.
 	 * @param {boolean} [options.stereoEffect] false - do not use <a href="../../StereoEffect/jsdoc/index.html" target="_blank">StereoEffect</a>.
