@@ -408,7 +408,8 @@ arrayCloudSpheres[0].randomAngles;
 					
 				}
 
-				const middleCirclesCount = params.hyperSphere.middleSphere.aLatitude.length;//Количество окружностей в сфере, которая находится на высоте противоположной точки.
+				const aLatitude = params.hyperSphere.middleSphere.aLatitude,
+					middleCirclesCount = aLatitude.length;//Количество окружностей в сфере, которая находится на высоте противоположной точки.
 				
 				//Присоздании облака случайных точек гиперсферы широту каждой окружности текущей сферы надо умножить на некоторый коэфициент что бы облако случайных точек приоблело сферическую форму
 				params.circleLatitudeMultiplier = (circlesCount) => {
@@ -419,17 +420,31 @@ arrayCloudSpheres[0].randomAngles;
 					//Центр этой окружности лежит посередине между минимальным и максимальны количеством окружностей в текущей сфере.
 					//Когда количество окружностей в текущей сфере circlesCount минимально или максимально, то множитель к широте текущей окружности должен быть равен 1. Тоесть широта не должна изменяться
 					//Во всех остальных случая множитель к широте текущей окружности должен быть больше 1. Тоесть широта должна увеличиваться.
+/*					
+					const iMin = 2, ccMin = aLatitude[iMin],//минимальное количество окружностей на сфере. Если сделать меньше то выдаст ошибку
+						ccMax = aLatitude[middleCirclesCount - 1],//Максимальное количество окружностей на сфере.
+						r = (ccMax - ccMin) / 2,//Радиус окружности по которой вычисляется множитель к широте текущей окружности сферы
+//						x = aLatitude[middleCirclesCount - circlesCount + iMin - 1] - r - ccMin;
+						x = aLatitude[circlesCount] - r - ccMin;
+					let y = Math.sqrt( r * r - x * x);
+					if (isNaN(y)) y = 0;//Приходится делать эту проверку из за погрешности вычислений
+					y *= 10;
+*/					
+//						y = Math.sqrt( r * r - (aLatitude[circlesCount] - r - ccMin) ** 2) / r;//поделить на радиус окружности, что бы множитель не был слишком большим
+/*						
 					const ccMin = 2,//минимальное количество окружностей на сфере. Если сделать меньше то выдаст ошибку
 						ccMax = middleCirclesCount - 1,//Максимальное количество окружностей на сфере.
 						r = (ccMax - ccMin) / 2,//Радиус окружности по которой вычисляется множитель к широте текущей окружности сферы
 						y = Math.sqrt( r * r - (circlesCount - r - ccMin) ** 2) / r;//поделить на радиус окружности, что бы множитель не был слишком большим
-/*					
+*/
+/*
 const array = [
+	0,//0
 	0,//1
 	0,//2
 	0,//3
 	0,//4
-	0.2,//5
+	0,//5
 	0,//6
 	0,//7
 	0,//8
@@ -449,8 +464,10 @@ const array = [
 	0,//22
 	0,//23
 	0,//24
-	0,//
+	0,//25
 ];
+*/
+/*					
 for (let i = 0; i < array.length; i++){
 
 	if ((i > 0) && (i < 6)) array[i] = (0.2 / 5) * i;
@@ -462,9 +479,28 @@ for (let i = 0; i < array.length; i++){
 	}
 		
 }
-const y = array[25 - circlesCount];
 */
-console.log('circlesCount = ' + circlesCount + ' , y = ' + y)
+const array = [];
+//for (let i = 0; i < params.hyperSphere.middleSphere.aLatitude.length; i++) array.push(0);
+const line = (options = {}) => {
+
+	const start = options.start || { i: 0, y: 0}, stop = options.stop || { i: params.hyperSphere.middleSphere.aLatitude.length - 3, y: 0},
+		a = (stop.y - start.y)/(stop.i - start.i), b = start.y - start.i * a;
+	for (let i = start.i; i < stop.i; i++) array.push(a * i + b);
+	
+}
+let point1 = { i: 5, y: 0.3 };
+line({ stop: point1 });
+let point2 = { i: 14, y: 1 };
+line({ start: point1, stop: point2 });
+point1 = point2;
+point2 = { i: 20, y: 5 };
+line({ start: point1, stop: point2 });
+line({ start: point2 });
+array.push(0);
+const circleId = middleCirclesCount - circlesCount - 1;
+const y = array[circleId];
+console.log('circleId = ' + circleId + ' , y = ' + y)
 					return 1 + y;
 					
 				};
