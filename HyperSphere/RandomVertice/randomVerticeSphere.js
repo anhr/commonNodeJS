@@ -28,7 +28,7 @@ const sRandomVerticesSphere = 'RandomVerticesSphere',
 	π = Math.PI, abs = Math.abs, round = Math.round, random = Math.random,
 	sin = Math.sin, asin = Math.asin, cos = Math.cos, tan = Math.tan, atan = Math.atan, atan2 = Math.atan2;
 //	range = anglesRange.longitude.range;
-export const anglesIdMax = 50;//Количество точек на окружности, расположенной на экваторе
+export const anglesIdMax = 23;// 50;//Количество точек на окружности, расположенной на экваторе
 
 /**
  * Generates a random vertice near the opposite vertice in 2D hypersphere.
