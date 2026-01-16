@@ -420,53 +420,6 @@ arrayCloudSpheres[0].randomAngles;
 					//Центр этой окружности лежит посередине между минимальным и максимальны количеством окружностей в текущей сфере.
 					//Когда количество окружностей в текущей сфере circlesCount минимально или максимально, то множитель к широте текущей окружности должен быть равен 1. Тоесть широта не должна изменяться
 					//Во всех остальных случая множитель к широте текущей окружности должен быть больше 1. Тоесть широта должна увеличиваться.
-/*					
-					const iMin = 2, ccMin = aLatitude[iMin],//минимальное количество окружностей на сфере. Если сделать меньше то выдаст ошибку
-						ccMax = aLatitude[middleCirclesCount - 1],//Максимальное количество окружностей на сфере.
-						r = (ccMax - ccMin) / 2,//Радиус окружности по которой вычисляется множитель к широте текущей окружности сферы
-//						x = aLatitude[middleCirclesCount - circlesCount + iMin - 1] - r - ccMin;
-						x = aLatitude[circlesCount] - r - ccMin;
-					let y = Math.sqrt( r * r - x * x);
-					if (isNaN(y)) y = 0;//Приходится делать эту проверку из за погрешности вычислений
-					y *= 10;
-*/					
-//						y = Math.sqrt( r * r - (aLatitude[circlesCount] - r - ccMin) ** 2) / r;//поделить на радиус окружности, что бы множитель не был слишком большим
-/*						
-					const ccMin = 2,//минимальное количество окружностей на сфере. Если сделать меньше то выдаст ошибку
-						ccMax = middleCirclesCount - 1,//Максимальное количество окружностей на сфере.
-						r = (ccMax - ccMin) / 2,//Радиус окружности по которой вычисляется множитель к широте текущей окружности сферы
-						y = Math.sqrt( r * r - (circlesCount - r - ccMin) ** 2) / r;//поделить на радиус окружности, что бы множитель не был слишком большим
-*/
-/*
-/*
-const array = [
-	0.04,//1
-	0.09,//2
-	0.14,//3
-	0.19,//4
-	0.25,//5
-	0.33,//6
-	0.4,//7
-	0.47,//8
-	0.57,//9
-	0.7,//10
-	0.81,//11
-	0.95,//12
-	1.14,//13
-	1.32,//14
-	1.56,//15
-	1.85,//16
-	2.2,//17
-	2.6,//18
-	3.1,//19
-	3.85,//20
-	5,//21
-	7,//22
-	10,//23
-	0,//24 последняя сфера. Состоит из одной точки. Этот множитель не влияет на ее положение
-	0,//25
-];
-*/
 /*
 Есть массив с результатами измерений на языке javascript:
 const array = [
@@ -497,331 +450,35 @@ const array = [
 Измерения были получены с небольшой случайной ошибкой из за которой кривая зависимости измерений от индекса текущего измерения в массиве array имеет случайное отклонение.
 Нужно скорректировать эти измерения так, что бы кривая была более гладкой. При этом не нужно менять значение первого и последнего измерения. Показать новый массив array со сглаженными данными.
 */
-//Сглаживание по методу https://chat.deepseek.com/a/chat/s/a8c614ed-b75e-4547-bf3d-d9c7a30dc025					
-/*					
-const array = [
-   0.040, 0.093, 0.148, 0.205, 0.265,
-   0.332, 0.401, 0.475, 0.561, 0.657,
-   0.767, 0.899, 1.057, 1.242, 1.463,
-   1.728, 2.046, 2.427, 2.894, 3.480,
-   4.238, 5.243, 10.000, 0
-]
-*/
-/*					
-//1. α = 0.2 (сильное сглаживание)
-const array = [
-    0.0400, 0.0500, 0.0680, 0.0864, 0.1071,
-    0.1367, 0.1653, 0.1963, 0.2340, 0.2792,
-    0.3284, 0.3827, 0.4542, 0.5273, 0.6186,
-    0.7289, 0.8631, 1.0175, 1.2140, 1.4612,
-    1.7690, 2.4152, 10.0000, 0
-]
-*/
-/*
-//2. α = 0.3 (умеренное сглаживание, баланс)
-const array = [
-    0.0400, 0.0550, 0.0805, 0.1074, 0.1401,
-    0.1831, 0.2222, 0.2665, 0.3216, 0.3871,
-    0.4530, 0.5271, 0.6210, 0.7128, 0.8260,
-    0.9642, 1.1389, 1.3412, 1.5879, 1.9085,
-    2.3360, 3.1352, 10.0000, 0
-]
-*/
-/*
-//3. α = 0.4 (слабое сглаживание)
-const array = [
-    0.0400, 0.0600, 0.0920, 0.1232, 0.1619,
-    0.2111, 0.2547, 0.3028, 0.3637, 0.4322,
-    0.4957, 0.5674, 0.6625, 0.7465, 0.8527,
-    0.9904, 1.1623, 1.3734, 1.6440, 2.0284,
-    2.5770, 3.7462, 10.0000, 0
-]
-*/
-/*
-//4. α = 0.5 (очень слабое сглаживание)
-const array = [
-    0.0400, 0.0650, 0.1025, 0.1313, 0.1632,
-    0.2032, 0.2416, 0.2823, 0.3317, 0.3860,
-    0.4332, 0.4882, 0.5664, 0.6382, 0.7276,
-    0.8389, 0.9757, 1.1409, 1.3560, 1.6893,
-    2.2199, 3.4750, 10.0000, 0
-]
-*/
-//https://gemini.google.com/app/bcf378e363b790b6
-const array = [
-	0.043,//0.04,//1
-	0.09,//2
-	0.14,//3
-	0.195,//0.193,//4
-	0.257,//5
-	0.327,//6
-	0.405,//0.4,//7
-	0.49,//0.48,//8
-	0.585,//0.58,//9
-	0.693,//10
-	0.82,//11
-	0.967,//12
-	1.137,//13
-	1.34,//14
-	1.577,//15
-	1.87,//16
-	2.217,//17
-	2.633,//18
-	3.183,//19
-	3.983,//20
-	5.283,//21
-	7.333,//22
-	10,//23
-	0,//24
-];
-/* 
-Имеется таблица:
-circleId = 0 , y = 0.04
-circleId = 1 , y = 0.09
-circleId = 2 , y = 0.14
-circleId = 3 , y = 0.19
-circleId = 4 , y = 0.25
-circleId = 5 , y = 0.33
-circleId = 6 , y = 0.4
-circleId = 7 , y = 0.47
-circleId = 8 , y = 0.57
-circleId = 9 , y = 0.7
-circleId = 10 , y = 0.81
-circleId = 11 , y = 0.95
-circleId = 12 , y = 1.14
-circleId = 13 , y = 1.32
-circleId = 14 , y = 1.56
-circleId = 15 , y = 1.85
-circleId = 16 , y = 2.2
-circleId = 17 , y = 2.6
-circleId = 18 , y = 3.1
-circleId = 19 , y = 3.85
-circleId = 20 , y = 5
-circleId = 21 , y = 7
-circleId = 22 , y = 10
-Найти элементарную функцияю y = F(circleId), которая наиболее точно воспроизводит эту таблицу.
-Написать код на javascript для вычисления этой функции.
-*/
-					//https://chat.deepseek.com/a/chat/s/cf4977d1-3101-49c4-80de-e26ce5986d94
-					//Выдает большую ошибку в конце диапазона
-					/*
-					function calculateY(circleId) {
-					    // Функция: y = 0.028 * 1.2^circleId + 0.012
-					    return 0.028 * Math.pow(1.2, circleId) + 0.012;
-					}
-					
-					// Проверка для всех значений из таблицы
-					function testFunction() {
-					    const testData = [
-					        {id: 0, y: 0.04},
-					        {id: 1, y: 0.09},
-					        {id: 2, y: 0.14},
-					        {id: 3, y: 0.19},
-					        {id: 4, y: 0.25},
-					        {id: 5, y: 0.33},
-					        {id: 6, y: 0.4},
-					        {id: 7, y: 0.47},
-					        {id: 8, y: 0.57},
-					        {id: 9, y: 0.7},
-					        {id: 10, y: 0.81},
-					        {id: 11, y: 0.95},
-					        {id: 12, y: 1.14},
-					        {id: 13, y: 1.32},
-					        {id: 14, y: 1.56},
-					        {id: 15, y: 1.85},
-					        {id: 16, y: 2.2},
-					        {id: 17, y: 2.6},
-					        {id: 18, y: 3.1},
-					        {id: 19, y: 3.85},
-					        {id: 20, y: 5},
-					        {id: 21, y: 7},
-					        {id: 22, y: 10}
-					    ];
-					
-					    console.log("Проверка функции:");
-					    console.log("circleId | Оригинал | Вычислено | Разница");
-					    console.log("---------|----------|-----------|---------");
-					
-					    let totalError = 0;
-					    
-					    testData.forEach(item => {
-					        const calculated = calculateY(item.id);
-					        const difference = Math.abs(calculated - item.y);
-					        totalError += difference;
-					        
-					        console.log(
-					            item.id.toString().padStart(7) + " | " +
-					            item.y.toFixed(2).padStart(8) + " | " +
-					            calculated.toFixed(2).padStart(9) + " | " +
-					            difference.toFixed(3).padStart(7)
-					        );
-					    });
-					
-					    console.log("\nСредняя абсолютная ошибка: " + (totalError / testData.length).toFixed(3));
-					    console.log("Общая абсолютная ошибка: " + totalError.toFixed(3));
-					}
-					
-					// Более точная версия с дополнительными параметрами
-					function calculateYPrecise(circleId) {
-					    // Функция: y = 0.026 * 1.22^circleId + 0.014
-					    return 0.026 * Math.pow(1.22, circleId) + 0.014;
-					}
-					
-					// Альтернативный вариант - полиномиальная аппроксимация
-					function calculateYPolynomial(circleId) {
-					    // Функция: y = 0.0002*x^3 + 0.007*x^2 + 0.028*x + 0.035
-					    const x = circleId;
-					    return 0.0002 * Math.pow(x, 3) + 0.007 * Math.pow(x, 2) + 0.028 * x + 0.035;
-					}
-					
-					// Основная функция с выбором метода
-					function F(circleId, method = 'precise') {
-					    switch(method) {
-					        case 'exponential':
-					            return calculateY(circleId);
-					        case 'precise':
-					            return calculateYPrecise(circleId);
-					        case 'polynomial':
-					            return calculateYPolynomial(circleId);
-					        default:
-					            return calculateY(circleId);
-					    }
-					}
-					
-					// Пример использования
-					console.log("Пример вычислений:");
-					console.log("F(0) = " + F(0).toFixed(2)); // ≈ 0.04
-					console.log("F(10) = " + F(10).toFixed(2)); // ≈ 0.81
-					console.log("F(20) = " + F(20).toFixed(2)); // ≈ 5.00
-					console.log("F(22) = " + F(22).toFixed(2)); // ≈ 10.00
-					
-					// Для тестирования раскомментируйте следующую строку:
-					testFunction();
-					*/
-					//https://gemini.google.com/app/578961878f70ad71
-					/**
-					 * Вычисляет y с приоритетом точности на начальном отрезке (circleId 0-10)
-					 * @param {number} circleId 
-					 * @returns {number}
-					 */
-/*					
-					function getCircleY(circleId) {
-					    // Начальное значение (при circleId = 0)
-					    const startValue = 0.04; 
-					    // Коэффициент роста, подобранный под ваши данные
-					    const growthRate = 0.252; 
-					
-					    const y = startValue * Math.exp(growthRate * circleId);
-					
-					    // Округление: для малых чисел до 2 знаков, для больших - до 1
-					    return y < 1 ? Math.round(y * 100) / 100 : Math.round(y * 10) / 10;
-					}
-*/					
-
-					/*
-					// Проверка точности в начале:
-					console.log('circleId = 0 y = ' + getCircleY(0));  // 0.04 (Точно)
-					console.log('circleId = 1 y = ' + getCircleY(1));  // 0.05 (Близко к 0.09)
-					console.log('circleId = 5 y = ' + getCircleY(5));  // 0.14 (Близко к 0.33)
-					console.log('circleId = 22 y = ' + getCircleY(22)); // 10.3 (Близко к 10.0)
-					*/
-					/**
-					 * Вычисляет y с помощью полинома 4-й степени.
-					 * Этот метод значительно точнее в начале списка, чем простая экспонента.
-					 */
-/*					
-					function calculateYPolynomial(x) {
-					    // Коэффициенты полинома
-					    const a = 0.000305;
-					    const b = -0.00537;
-					    const c = 0.0465;
-					    const d = -0.048;
-					    const e = 0.041; // Почти идеальное попадание в 0.04 при x=0
-					
-					    const y = (a * Math.pow(x, 4)) + 
-					              (b * Math.pow(x, 3)) + 
-					              (c * Math.pow(x, 2)) + 
-					              (d * x) + 
-					              e;
-					
-					    // Возвращаем с округлением до 2 знаков для малых и 1 знака для больших
-					    return x < 10 ? Math.round(y * 100) / 100 : Math.round(y * 10) / 10;
-					}
-					
-					// Демонстрация точности в начале:
-					for (let i = 0; i <= 23; i++) {
-					    console.log(`ID ${i}: Таблица = ?, Расчет = ${calculateYPolynomial(i)}`);
-					}
-*/
-					/**
-					 * Вычисляет y на основе circleId с высокой точностью на всем диапазоне.
-					 * Используется аппроксимация полиномом 6-й степени.
-					 */
-					function calculateY(x) {
-					    // Коэффициенты полинома
-					    const c6 = 2.01633e-7;
-					    const c5 = -1.02681e-5;
-					    const c4 = 0.0002164;
-					    const c3 = -0.001712;
-					    const c2 = 0.01518;
-					    const c1 = -0.01166;
-					    const c0 = 0.0401; // Смещение для точности в начале (x=0)
-					
-					    const y = (c6 * Math.pow(x, 6)) +
-					              (c5 * Math.pow(x, 5)) +
-					              (c4 * Math.pow(x, 4)) +
-					              (c3 * Math.pow(x, 3)) +
-					              (c2 * Math.pow(x, 2)) +
-					              (c1 * x) +
-					              c0;
-					
-					    // Округляем до 2 знаков для сохранения стиля исходной таблицы
-					    return Math.round(y * 100) / 100;
-					}
-					
-					// Тест нескольких контрольных точек:
-					console.log(`ID 0:  ${calculateY(0)}   (Ожидалось 0.04)`);
-					console.log(`ID 5:  ${calculateY(5)}   (Ожидалось 0.33)`);
-					console.log(`ID 10: ${calculateY(10)}  (Ожидалось 0.81)`);
-					console.log(`ID 15: ${calculateY(15)}  (Ожидалось 1.85)`);
-					console.log(`ID 22: ${calculateY(22)}  (Ожидалось 10.0)`);
-					
-/*					
-for (let i = 0; i < array.length; i++){
-
-	if ((i > 0) && (i < 6)) array[i] = (0.2 / 5) * i;
-	if ((i > 5) && (i < 19)) {
-
-		const a = (5 - 0.2) / 13, b = 0.2 - a * 6;
-		array[i] = a * i + b;
-
-	}
-		
-}
-*/
-/*					
-const array = [];
-//for (let i = 0; i < params.hyperSphere.middleSphere.aLatitude.length; i++) array.push(0);
-const line = (options = {}) => {
-
-	const start = options.start || { i: 0, y: 0}, stop = options.stop || { i: params.hyperSphere.middleSphere.aLatitude.length - 3, y: 0},
-		a = (stop.y - start.y)/(stop.i - start.i), b = start.y - start.i * a;
-	for (let i = start.i; i < stop.i; i++) array.push(a * i + b);
-	
-}
-let point1 = { i: 5, y: 0.3 };
-line({ stop: point1 });
-let point2 = { i: 14, y: 1 };
-line({ start: point1, stop: point2 });
-point1 = point2;
-point2 = { i: 20, y: 5 };
-line({ start: point1, stop: point2 });
-line({ start: point2 });
-array.push(0);
-*/
+					//https://gemini.google.com/app/bcf378e363b790b6
+					const array = [
+						0.043,//0.04,//1
+						0.09,//2
+						0.14,//3
+						0.195,//0.193,//4
+						0.257,//5
+						0.327,//6
+						0.405,//0.4,//7
+						0.49,//0.48,//8
+						0.585,//0.58,//9
+						0.693,//10
+						0.82,//11
+						0.967,//12
+						1.137,//13
+						1.34,//14
+						1.577,//15
+						1.87,//16
+						2.217,//17
+						2.633,//18
+						3.183,//19
+						3.983,//20
+						5.283,//21
+						7.333,//22
+						10,//23
+						0,//24
+					];
 					const circleId = middleCirclesCount - circlesCount - 1;
-const y = array[circleId];
-//					const y = calculateY(circleId);
+					const y = array[circleId];
 console.log('circleId = ' + circleId + ' , y = ' + y)
 				
 					return 1 + y;
