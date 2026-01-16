@@ -311,31 +311,31 @@ class RandomVerticeHSphere extends RandomVertice {
 						aLatitude: [],//массив широт окружностей, из которых состоит средняя сфера middleSphere в диапазне от -π/2 до π/2
 
 					},
-					
+
 					vertice: (point) => { return utils.angles([...point], params.altitude); },
 					verticesAngles: this.verticesAngles,
 
 				}
 				const cloudSphere = createCloudSphere(altitude);
-/*
-				params.verticesAngles.boNoNew = true;
-				params.altitude = altitude;
-				const cloudSphere = params.CloudSphere ? new params.CloudSphere(params) : new RandomCloudSphere(params, params.boCloud);
-				if (arrayCloudSpheres) {
-
-					//Создается облако случайных или неслучайных средних точек
-					
-					arrayCloudSpheres.push(cloudSphere);
-
-					params.speresPointsCount ||= [];//массив индексов первых точек сфер, из которых состоит гиперсфера. Нужен для выделения одной из сфер и скрытия остальных сфер, когда пользователь вручную выбрал сферу
-													//Не создается, когда нужна одна случайная средняя точка.
-
-					params.speresPointsCount.push(params.pointsCount);
-
-				}
-				delete params.altitude;
-				delete params.verticesAngles.boNoNew;
-*/
+				/*
+								params.verticesAngles.boNoNew = true;
+								params.altitude = altitude;
+								const cloudSphere = params.CloudSphere ? new params.CloudSphere(params) : new RandomCloudSphere(params, params.boCloud);
+								if (arrayCloudSpheres) {
+				
+									//Создается облако случайных или неслучайных средних точек
+									
+									arrayCloudSpheres.push(cloudSphere);
+				
+									params.speresPointsCount ||= [];//массив индексов первых точек сфер, из которых состоит гиперсфера. Нужен для выделения одной из сфер и скрытия остальных сфер, когда пользователь вручную выбрал сферу
+																	//Не создается, когда нужна одна случайная средняя точка.
+				
+									params.speresPointsCount.push(params.pointsCount);
+				
+								}
+								delete params.altitude;
+								delete params.verticesAngles.boNoNew;
+				*/
 				//Количество точек на текущей сфере равно сумме количества точек на каждой окружности, находящейся на сфере
 				let sphereAnglesCount = cloudSphere.sphereAnglesCount;
 				const angleStep1 = 1 / sphereAnglesCount,
@@ -350,7 +350,7 @@ class RandomVerticeHSphere extends RandomVertice {
 					(
 						!params.boAllocateMemory &&
 						(
-							!arraySpheres && 
+							!arraySpheres &&
 							(sphereAnglesCount > params.verticesAngles.length)
 						) || (
 							arraySpheres &&//Вычисляется одна случайная точка. Т.е. randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1
@@ -359,11 +359,69 @@ class RandomVerticeHSphere extends RandomVertice {
 					)
 				)
 					sphereAnglesCount = 1;//когда длинна дуги приближается к нулю, тоесть вершины совпадают, то angleStep стремится к нулю и sphereAnglesCount стремится к бесконечности и массив this.verticesAngles переполняется.
-											//или когда сфера находится на полюсе т.е. sphereAnglesCount === 0
-											//Делаем один угол на сфере
+				//или когда сфера находится на полюсе т.е. sphereAnglesCount === 0
+				//Делаем один угол на сфере
 				return { angleStep1, altitudeMin, altitudeMax, altitudeStep, altitudeMid, boSouthernSphere, boNorthernSphere, sphereAnglesCount, cloudSphere };
 
 			},
+/*
+Есть массив с результатами измерений на языке javascript:
+const array = [
+	0.04,//1
+	0.09,//2
+	0.14,//3
+	0.19,//4
+	0.25,//5
+	0.33,//6
+	0.4,//7
+	0.47,//8
+	0.57,//9
+	0.7,//10
+	0.81,//11
+	0.95,//12
+	1.14,//13
+	1.32,//14
+	1.56,//15
+	1.85,//16
+	2.2,//17
+	2.6,//18
+	3.1,//19
+	3.85,//20
+	5,//21
+	7,//22
+	10,//23
+];
+Измерения были получены с небольшой случайной ошибкой из за которой кривая зависимости измерений от индекса текущего измерения в массиве array имеет случайное отклонение.
+Нужно скорректировать эти измерения так, что бы кривая была более гладкой. При этом не нужно менять значение первого и последнего измерения. Показать новый массив array со сглаженными данными.
+*/
+			//Применяется в params.circleLatitudeMultiplier. Перенес сюда для оптимизации производительности. https://chat.deepseek.com/a/chat/s/4efba92b-7b32-41d3-89b1-3b2f4a3b0ac8
+			//https://gemini.google.com/app/bcf378e363b790b6	
+			aLatitudeMultipliers = [
+				0.043,//0.04,//1
+				0.09,//2
+				0.14,//3
+				0.195,//0.193,//4
+				0.257,//5
+				0.327,//6
+				0.405,//0.4,//7
+				0.49,//0.48,//8
+				0.585,//0.58,//9
+				0.693,//10
+				0.82,//11
+				0.967,//12
+				1.137,//13
+				1.34,//14
+				1.577,//15
+				1.87,//16
+				2.217,//17
+				2.633,//18
+				3.183,//19
+				3.983,//20
+				5.283,//21
+				7.333,//22
+				10,//23
+				0,//24
+			],
 			verticesAngles = (boAllocateMemory) => {
 
 				//Гиперсфера случайных точек состоит из набора сфер.
@@ -420,68 +478,17 @@ arrayCloudSpheres[0].randomAngles;
 					//Центр этой окружности лежит посередине между минимальным и максимальны количеством окружностей в текущей сфере.
 					//Когда количество окружностей в текущей сфере circlesCount минимально или максимально, то множитель к широте текущей окружности должен быть равен 1. Тоесть широта не должна изменяться
 					//Во всех остальных случая множитель к широте текущей окружности должен быть больше 1. Тоесть широта должна увеличиваться.
-/*
-Есть массив с результатами измерений на языке javascript:
-const array = [
-	0.04,//1
-	0.09,//2
-	0.14,//3
-	0.19,//4
-	0.25,//5
-	0.33,//6
-	0.4,//7
-	0.47,//8
-	0.57,//9
-	0.7,//10
-	0.81,//11
-	0.95,//12
-	1.14,//13
-	1.32,//14
-	1.56,//15
-	1.85,//16
-	2.2,//17
-	2.6,//18
-	3.1,//19
-	3.85,//20
-	5,//21
-	7,//22
-	10,//23
-];
-Измерения были получены с небольшой случайной ошибкой из за которой кривая зависимости измерений от индекса текущего измерения в массиве array имеет случайное отклонение.
-Нужно скорректировать эти измерения так, что бы кривая была более гладкой. При этом не нужно менять значение первого и последнего измерения. Показать новый массив array со сглаженными данными.
-*/
+					if (params.hyperSphere.circleLatitudeMultiplierRes && params.hyperSphere.circleLatitudeMultiplierRes.circlesCount === circlesCount) return params.hyperSphere.circleLatitudeMultiplierRes.res;//Коэфициент уже вычислен. Не нужно его вычислять повтороно
 					//https://gemini.google.com/app/bcf378e363b790b6
-					const array = [
-						0.043,//0.04,//1
-						0.09,//2
-						0.14,//3
-						0.195,//0.193,//4
-						0.257,//5
-						0.327,//6
-						0.405,//0.4,//7
-						0.49,//0.48,//8
-						0.585,//0.58,//9
-						0.693,//10
-						0.82,//11
-						0.967,//12
-						1.137,//13
-						1.34,//14
-						1.577,//15
-						1.87,//16
-						2.217,//17
-						2.633,//18
-						3.183,//19
-						3.983,//20
-						5.283,//21
-						7.333,//22
-						10,//23
-						0,//24
-					];
 					const circleId = middleCirclesCount - circlesCount - 1;
-					const y = array[circleId];
+					const y = aLatitudeMultipliers[circleId];
 console.log('circleId = ' + circleId + ' , y = ' + y)
-				
-					return 1 + y;
+
+					const res = 1 + y;
+					params.hyperSphere.circleLatitudeMultiplierRes ||= {}
+					params.hyperSphere.circleLatitudeMultiplierRes.res = res;
+					params.hyperSphere.circleLatitudeMultiplierRes.circlesCount = circlesCount;
+					return res;
 					
 				};
 				
@@ -515,6 +522,7 @@ console.log('circleId = ' + circleId + ' , y = ' + y)
 			delete params.boAllocateMemory;
 */			
 			verticesAngles(true);
+			delete params.hyperSphere.circleLatitudeMultiplierRes;
 
 		}
 		
