@@ -20,7 +20,7 @@ import * as utils from '../utilsHSphere.js'
 import RandomCloudSphere from './randomCloudSphere.js';
 //import Vertice from '../VerticeHypersphere.js'
 
-const sRandomVerticesHyperSphere = 'RandomVerticesHyperSphere',
+const sRandomVerticesHyperSphere = 'RandomVerticesHSphere',
 	π = Math.PI, abs = Math.abs, round = Math.round, random = Math.random,
 //	sin = Math.sin, cos = Math.cos, asin = Math.asin, atan2 = Math.atan2,
 	atan = Math.atan;
@@ -481,8 +481,20 @@ arrayCloudSpheres[0].randomAngles;
 					if (params.hyperSphere.circleLatitudeMultiplierRes && params.hyperSphere.circleLatitudeMultiplierRes.circlesCount === circlesCount) return params.hyperSphere.circleLatitudeMultiplierRes.res;//Коэфициент уже вычислен. Не нужно его вычислять повтороно
 					//https://gemini.google.com/app/bcf378e363b790b6
 					const circleId = middleCirclesCount - circlesCount - 1;
+					let index;
+					for (let i = 0; i < aLatitudeMultipliers.length; i++) {
+
+						if ((circleId >= i) && (circleId < (i + 1))) {
+							
+							index = i;
+							break;
+
+						}
+						
+					}
+					if (index === undefined) console.error(sRandomVerticesHyperSphere + ': params.circleLatitudeMultiplier. Invalid index = ' + index);
 					const y = aLatitudeMultipliers[circleId];
-console.log('circleId = ' + circleId + ' , y = ' + y)
+console.log('circleId = ' + circleId + ' , y = ' + y + ', index = ' + index);
 
 					const res = 1 + y;
 					params.hyperSphere.circleLatitudeMultiplierRes ||= {}
