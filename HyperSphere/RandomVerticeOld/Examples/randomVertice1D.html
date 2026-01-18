@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+	<title>1D Random Vertice</title>
+
+	<!--for mobile devices-->
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+	<!--<script src="../../../../../three.js/dev/build/three.js"></script>-->
+	<!--<script src="../../../../../three.js/dev/build/three.min.js"></script>-->
+	<!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.js"></script>-->
+	<!--<script src="https://raw.githack.com/anhr/three.js/dev/build/three.min.js"></script>-->
+	<!--<script src="https://threejs.org/build/three.js"></script>-->
+	<!--<script src="https://threejs.org/build/three.min.js"></script>-->
+</head>
+<body>
+	<script nomodule>alert( 'Fatal error: Your browser do not support modular JavaScript code.' );</script>
+	<div id="info">
+		<a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a>
+		- <a href="https://github.com/anhr/commonNodeJS/tree/master/HyperSphere" target="_blank" rel="noopener">1D Random Vertice</a>.
+		By <a href="https://github.com/anhr" target="_blank" rel="noopener">anhr</a>
+	</div>
+
+	<script type="module">
+
+		import * as THREE from '../../../../../three.js/dev/build/three.module.js';
+
+		import MyThree from '../../../myThree/myThree.js';
+		MyThree.three.THREE = THREE;
+
+		import RandomVertice from '../randomVerticeCircle.js';
+		import RandomCloud from '../randomCloudCircle.js';
+		import HyperSphere from '../../circle.js';
+		import anglesRange from '../../anglesRange.js'
+		import getHyperSphere from '../getHyperSphere.js'
+		
+		new MyThree((scene, options) => {
+
+			const pi = Math.PI;
+
+			const randomVerticeSettings = {
+
+				//R: 0.5,
+				debug: {
+					
+					notRandomVertices: true,
+				
+				},
+				//cloud: true,
+			
+			};
+			randomVerticeSettings.cloud ||= false;
+			const params = {
+
+				/*
+				vertice: [
+					pi,///2,//0,//lng
+				],
+				*/
+				oppositeVertice: [
+					pi/4,//0,//lng
+				],
+				debug: randomVerticeSettings.debug,
+
+			}
+
+			//Vertices hyperSphere 
+
+			const verticesSettings = {
+
+				//R: 0.5,
+				debug: true,
+
+			};
+			let hsVertices;
+			hsVertices = new HyperSphere(options, {
+
+				r: verticesSettings.R,
+				//edges: false,
+				//randomArc: true,
+				projectParams: { scene: scene, },
+				debug: randomVerticeSettings.debug ? {
+
+					probabilityDensity: false,
+					middleVertice: false,
+					log: false,
+
+				} : false,
+				//debug: false,
+				settings: {
+
+					object: {
+
+						name: 'Vertices',
+						color: 'white',
+						geometry: { params: params, },
+
+					},
+					overriddenProperties: { setDrawRange: (start, count) => { if (hsVertices) hsVertices.bufferGeometry.setDrawRange(start, count); } },
+
+				},
+
+			});
+			
+			//Random vertice hyperSphere 
+
+			let hsRandomVertice;
+			const createRandomVerticeHyperSphere = (randomVertice, name) => {
+				
+				if (hsRandomVertice) {
+
+					randomVertice.randomAngles;
+/*					
+					const boUpdate = params.verticesAngles.length === 0 ? false : true;
+					const randomVerticeAngles = randomVertice.randomAngles;
+					if (boUpdate) params.verticesAngles[0] = randomVerticeAngles;
+					else params.verticesAngles.push(randomVerticeAngles);
+*/					
+//					hsRandomVertice.classSettings.settings.object.geometry.angles.needsUpdate;
+					return;
+
+				}
+				const debug = {
+							
+					probabilityDensity: false,
+					middleVertice: false,
+					log: false,
+					
+				}
+				if (randomVertice.getHyperSphere) hsRandomVertice = randomVertice.getHyperSphere(options, {projectParams: { scene: scene }, debug: debug });
+				else
+					hsRandomVertice = getHyperSphere(HyperSphere, options, scene, randomVertice, { debug: debug, r: randomVerticeSettings.R, name: name });
+	
+			}
+			let randomCloud, randomVertice;//сразу не создаю эти объекты потому что они могут не понадобиться и потому, что так легче отлаживать, и потому что присоздании randomVertice обнуляется params.verticesAngles
+			const createRandomCloud = () => {
+
+					if (!randomCloud) randomCloud = new RandomCloud(params);
+					createRandomVerticeHyperSphere(randomCloud, 'Random cloud');
+				
+				},
+				createRandomVertice = () => {
+
+					if (!randomVertice) randomVertice = new RandomVertice(params);
+					createRandomVerticeHyperSphere(randomVertice, 'Random vertice');
+				
+				},
+				updateRandomVerticeHyperSphere = () => {
+
+					if (randomVerticeSettings.cloud) createRandomCloud();
+					else createRandomVertice();
+					
+				}
+			updateRandomVerticeHyperSphere();
+			
+			//GUI
+
+			const gui = options.dat.gui.addFolder('Hypersphere'),
+				onChangeLongitude = (verticeId) => {
+
+//					hsVertices.setPositionAttributeFromPoint(verticeId);
+					hsVertices.update(verticeId, 0);
+					
+					updateRandomVerticeHyperSphere();
+					
+				};
+
+			//vertice
+			const fVertice = gui.addFolder('Vertice');
+			fVertice.add(params.vertice, 'longitude', anglesRange.longitude.min, anglesRange.longitude.max, 0.001).onChange((longitude) => { onChangeLongitude(0); });
+
+			//oppositeVertice
+			const fOppositeVertice = gui.addFolder('Opposite Vertice');
+			fOppositeVertice.add(params.oppositeVertice, 'longitude', anglesRange.longitude.min, anglesRange.longitude.max, 0.001).onChange((longitude) => { onChangeLongitude(1); });
+
+			//cloud of the random points
+			{
+
+				let cloud = randomVerticeSettings.cloud;
+				Object.defineProperty(randomVerticeSettings, 'cloud', {
+			
+					get: () => { return cloud; },
+					set: (cloudNew) => {
+			
+						if (cloud === cloudNew) return true;
+						cloud = cloudNew;
+						
+						hsRandomVertice.removeHyperSphere();
+						hsRandomVertice = undefined;
+
+						delete params.verticesAngles;
+						delete params.pointsCount;
+						delete params.editAnglesId;
+
+						randomCloud = undefined;
+						randomVertice = undefined;
+						
+						updateRandomVerticeHyperSphere();
+			
+					},
+			
+				});
+
+			}
+			gui.add(randomVerticeSettings, 'cloud');
+			
+			//////////////////////////////////////////GUI
+
+		}, {
+
+			orbitControls: { enableRotate: false, },
+			camera: { position: new THREE.Vector3( 0, 0, 2 ) },
+			stereoEffect: false,
+			scales: {
+
+				x: {},
+				y: {},
+				text: { precision: 1, rect: { displayRect: false, }, }
+
+			},
+			canvas: {
+
+				noButtonFullScreen: true,
+
+			},
+			player: false,
+			playerOptions: {
+				
+				//max: Infinity,
+				//interval: 100,
+				
+			}
+
+		} );
+
+	</script>
+</body>
+</html>
