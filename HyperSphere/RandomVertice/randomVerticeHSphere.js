@@ -480,21 +480,23 @@ arrayCloudSpheres[0].randomAngles;
 					//Во всех остальных случая множитель к широте текущей окружности должен быть больше 1. Тоесть широта должна увеличиваться.
 					if (params.hyperSphere.circleLatitudeMultiplierRes && params.hyperSphere.circleLatitudeMultiplierRes.circlesCount === circlesCount) return params.hyperSphere.circleLatitudeMultiplierRes.res;//Коэфициент уже вычислен. Не нужно его вычислять повтороно
 					//https://gemini.google.com/app/bcf378e363b790b6
-					const circleId = middleCirclesCount - circlesCount - 1;
-					let index;
+					const circleId = (middleCirclesCount - circlesCount - 1) * (26 / middleCirclesCount);
+					let index, y;
 					for (let i = 0; i < aLatitudeMultipliers.length; i++) {
 
 						if ((circleId >= i) && (circleId < (i + 1))) {
 							
 							index = i;
+							const a = aLatitudeMultipliers[index + 1] - aLatitudeMultipliers[index], b = aLatitudeMultipliers[index] - a * index;
+							y = a * circleId + b;
 							break;
 
 						}
 						
 					}
 					if (index === undefined) console.error(sRandomVerticesHyperSphere + ': params.circleLatitudeMultiplier. Invalid index = ' + index);
-					const y = aLatitudeMultipliers[circleId];
-console.log('circleId = ' + circleId + ' , y = ' + y + ', index = ' + index);
+//					const y = aLatitudeMultipliers[circleId];
+console.log('circleId = ' + circleId + ' , y = ' + y + ', index = ' + index + ', circlesCount = ' + circlesCount);
 
 					const res = 1 + y;
 					params.hyperSphere.circleLatitudeMultiplierRes ||= {}
