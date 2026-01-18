@@ -487,8 +487,13 @@ arrayCloudSpheres[0].randomAngles;
 						if ((circleId >= i) && (circleId < (i + 1))) {
 							
 							index = i;
-							const a = aLatitudeMultipliers[index + 1] - aLatitudeMultipliers[index], b = aLatitudeMultipliers[index] - a * index;
-							y = a * circleId + b;
+							if ((index + 1) >= aLatitudeMultipliers.length) y = 0;
+							else {
+								
+								const a = aLatitudeMultipliers[index + 1] - aLatitudeMultipliers[index], b = aLatitudeMultipliers[index] - a * index;
+								y = a * circleId + b;
+
+							}
 							break;
 
 						}
