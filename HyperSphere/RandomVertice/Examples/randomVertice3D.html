@@ -58,7 +58,7 @@
 					randomCloud: 2,
 					
 				},
-				mode: 0,
+				mode: 1,
 			
 			};
 			/*https://gemini.google.com/
@@ -411,7 +411,7 @@
 
 			const verticesSettings = {
 
-				//R: 0.5,
+				R: randomVerticeSettings.R,
 				debug: true,
 
 			};
@@ -450,6 +450,7 @@
 
 			});
 			hsVertices.setDrawRange(hsVertices.bufferGeometry.drawRange.start, hsVertices.bufferGeometry.attributes.position.count, 0);
+			params.hsVertices = hsVertices;//используется для вычисления случайной точки в RandomVerticeHSphere HyperSphereNavigator.calculateNewPoint
 			
 			//Random vertice hyperSphere 
 

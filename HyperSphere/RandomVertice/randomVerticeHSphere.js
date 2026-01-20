@@ -914,15 +914,18 @@ altitude - высота в диапазоне от 0 до π.
 			testCustomPoint();
 			*/
 			
-			const navigator = new HyperSphereNavigator(1.0),
+			const classSettings = params.hsVertices.classSettings,
+				settings = classSettings.settings,
+				radius = classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : settings.options.player === false ? 0 : settings.options.player.getTimeId()),
+				navigator = new HyperSphereNavigator(1.0),
 				oppositeVertice = params.oppositeVertice,
 				result = navigator.calculateNewPoint(
 				oppositeVertice.latitude,
 				oppositeVertice.longitude,
 				oppositeVertice.altitude,
-				0.1,//distance
-				0,//eta
-				0//psi
+				Math.random() * radius * π,//distance максимальная дистанция находится на противоположной стороне гиперсферы
+				Math.random() * π,//eta. первый угол направления (полярный угол). 0 ≤ eta ≤ π
+				Math.random() * 2 * π//psi. второй угол направления (азимутальный угол). 0 ≤ psi < 2π или -π ≤ psi ≤ π
 			);
 			const angles = utils.angles([result.altitude, result.latitude, result.longitude]);
 			if (params.editAnglesId === undefined) {
