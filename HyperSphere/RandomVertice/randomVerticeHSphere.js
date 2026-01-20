@@ -424,6 +424,8 @@ const array = [
 			],
 			verticesAngles = (boAllocateMemory) => {
 
+				for (let i = 0; i < 20000; i++) this.getRandomAngles();
+/*
 				//Гиперсфера случайных точек состоит из набора сфер.
 				
 //				const arc = params.arc;
@@ -529,21 +531,9 @@ console.log('circleId = ' + circleId + ' , y = ' + y + ', index = ' + index + ',
 				delete params.circleLatitudeMultiplier;
 				delete params.random;
 				delete params.b;
+*/
 				
 			};
-
-		if (!arraySpheres) {//не выделять this.verticesAngles если нужно вычислить одну случайную точку randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1
-			
-			//Allocate this.verticesAngles memory
-/*			
-			params.boAllocateMemory = true;
-			verticesAngles(params.boAllocateMemory);
-			delete params.boAllocateMemory;
-*/			
-			verticesAngles(true);
-			delete params.hyperSphere.circleLatitudeMultiplierRes;
-
-		}
 		
 		let randomAngles;
 
@@ -559,361 +549,8 @@ console.log('circleId = ' + circleId + ' , y = ' + y + ', index = ' + index + ',
 */		
 		this.getAngles = () => { return params.verticesAngles; }
 		this.setAngles = (anglesNew) => { params.verticesAngles = anglesNew; }
-/*		
-		Object.defineProperty(this, 'randomAngles', {
-			
-			get: () => {
-
-				if (arraySpheres) arraySpheres.length = 0;
-				verticesAngles(false);
-				const randomVerticeId = round(random() * (this.circlesPointsCount - 1))
-
-				if (arraySpheres) {
-					
-					let verticeId = 0, verticeIdPrev;
-					for (let sphereId = 0; sphereId < arraySpheres.length; sphereId++) {
-	
-						const sphere = arraySpheres[sphereId];
-						verticeIdPrev = verticeId;
-						verticeId += sphere.sphereAnglesCount;
-						if (verticeId >= randomVerticeId) {
-	
-							//случайная вершина находится на текущей сфере.
-
-							params.altitude = sphere.altitude;
-							sphere.cloudSphere.getRandomAngle(randomVerticeId - verticeIdPrev);
-							delete params.altitude;
-							return params.verticesAngles;
-							
-						}
-	
-					}
-					console.error(sRandomVerticesHyperSphere + ': get randomAngles. rotated was not found.');
-
-				} else {
-					
-					this.angles = params.verticesAngles;
-					return this.angles;
-
-				}
-				
-			},
-			set: (anglesNew) => {},
-			
-		});
-*/		
 		this.getRandomAngles = () => {
 
-			/*
-Есть точка на поверхности 3-мерной гиперсферы встроенной в 4-мерное евклидово пространство в полярной системе координат.
-R - радиус гиперсферы. 
-Положение точки определено ее углами:
-latitude - широта в диапазоне от -π/2 до π/2.
-longitude - долгота в диапазоне от -π до π.
-altitude - высота в диапазоне от 0 до π.
-Начало координат находится в центре гиперсферы. Вычислить другую точку на гиперсфере, которая находится на определенном растоянии и под определенными углами от заданной точки.
-			*/
-			//https://chat.deepseek.com/a/chat/s/de1d7524-faab-4e09-bb49-2be8848ae401
-
-			class HyperSphereNavigator {
-				constructor(radius = 1.0) {
-					this.R = radius;
-				}
-			
-				// 1. Преобразование углов в декартовы координаты на гиперсфере
-				anglesToCartesian(latitude, longitude, altitude) {
-					const a = altitude;                 // altitude ∈ [0, π]
-					const b = Math.PI/2 - latitude;     // b ∈ [0, π]
-					const c = longitude;                // longitude ∈ [-π, π]
-					
-					const x1 = this.R * Math.cos(a);
-					const x2 = this.R * Math.sin(a) * Math.cos(b);
-					const x3 = this.R * Math.sin(a) * Math.sin(b) * Math.cos(c);
-					const x4 = this.R * Math.sin(a) * Math.sin(b) * Math.sin(c);
-					
-					return [x1, x2, x3, x4];
-				}
-			
-				// 2. Создание ортонормированного базиса в касательном пространстве
-				createTangentBasis(latitude, longitude, altitude) {
-					const a = altitude;
-					const b = Math.PI/2 - latitude;
-					const c = longitude;
-					
-					// e1 - направление увеличения altitude
-					const e1 = [
-						-Math.sin(a),
-						Math.cos(a) * Math.cos(b),
-						Math.cos(a) * Math.sin(b) * Math.cos(c),
-						Math.cos(a) * Math.sin(b) * Math.sin(c)
-					];
-					// Нормализация e1 (уже единичный, но для точности)
-					const norm_e1 = Math.sqrt(e1.reduce((sum, val) => sum + val*val, 0));
-					const e1_norm = e1.map(v => v / norm_e1);
-					
-					// e2 - направление увеличения b (уменьшения latitude)
-					const e2_raw = [
-						0,
-						-Math.sin(a) * Math.sin(b),
-						Math.sin(a) * Math.cos(b) * Math.cos(c),
-						Math.sin(a) * Math.cos(b) * Math.sin(c)
-					];
-					const norm_e2 = Math.sqrt(e2_raw.reduce((sum, val) => sum + val*val, 0));
-					const e2_norm = norm_e2 > 1e-10 ? e2_raw.map(v => v / norm_e2) : [0, 0, 0, 0];
-					
-					// e3 - направление увеличения longitude
-					const e3_raw = [
-						0,
-						0,
-						-Math.sin(a) * Math.sin(b) * Math.sin(c),
-						Math.sin(a) * Math.sin(b) * Math.cos(c)
-					];
-					const norm_e3 = Math.sqrt(e3_raw.reduce((sum, val) => sum + val*val, 0));
-					const e3_norm = norm_e3 > 1e-10 ? e3_raw.map(v => v / norm_e3) : [0, 0, 0, 0];
-					
-					return [e1_norm, e2_norm, e3_norm];
-				}
-			
-				/**
-				 * Вычисление новой точки
-				 * @param {any} lat
-				 * @param {any} lon
-				 * @param {any} alt
-				 * @param {any} distance геодезическое расстояние. Диапазон значений: 0 ≤ distance ≤ πR
-				 * @param {any} eta первый угол направления (полярный угол). Определяет наклон направления движения относительно "вертикали" в касательном пространстве.
-				 * Аналог "широты" направления или "угла места".
-				 * Диапазон значений: 0 ≤ eta ≤ π
-				 * @param {any} psi второй угол направления (азимутальный угол)
-				 * Назначение:
-				 * Определяет азимут направления движения в горизонтальной плоскости касательного пространства
-				 * Задает вращение вокруг оси e1
-				 * Диапазон значений:
-				 * Необходимый и достаточный: 0 ≤ psi < 2π
-				 * Но обычно достаточно: -π ≤ psi ≤ π (как в коде)
-				 * @returns
-				 */
-				calculateNewPoint(lat, lon, alt, distance, eta, psi) {
-					// Исходная точка
-					const P = this.anglesToCartesian(lat, lon, alt);
-					
-					// Касательный базис
-					const [e1, e2, e3] = this.createTangentBasis(lat, lon, alt);
-					
-					// Направляющий вектор в касательном пространстве
-					const u = [0, 0, 0, 0];
-					for (let i = 0; i < 4; i++) {
-						u[i] = Math.cos(eta) * e1[i] + 
-							   Math.sin(eta) * Math.cos(psi) * e2[i] + 
-							   Math.sin(eta) * Math.sin(psi) * e3[i];
-					}
-					
-					// Угловое расстояние
-					const delta = distance / this.R;
-					
-					// Экспоненциальное отображение
-					const Q = [0, 0, 0, 0];
-					for (let i = 0; i < 4; i++) {
-						Q[i] = Math.cos(delta) * P[i] + this.R * Math.sin(delta) * u[i];
-					}
-					
-					// Обратное преобразование в углы
-					return this.cartesianToAngles(Q);
-				}
-			
-				// 4. Преобразование декартовых координат в углы
-				cartesianToAngles(Q) {
-					const [q1, q2, q3, q4] = Q;
-					
-					// altitude
-					let altitude = Math.acos(q1 / this.R);
-					if (isNaN(altitude)) altitude = 0;
-					
-					// latitude и longitude
-					let latitude, longitude;
-					
-					const sinA = Math.sin(altitude);
-					if (Math.abs(sinA) < 1e-10) {
-						// Случай полюса
-						latitude = 0;
-						longitude = 0;
-					} else {
-						// b'
-						let b = Math.acos(q2 / (this.R * sinA));
-						if (isNaN(b)) b = 0;
-						
-						latitude = Math.PI/2 - b;
-						
-						// longitude
-						longitude = Math.atan2(q4, q3);
-					}
-					
-					// Приведение longitude к диапазону [-π, π]
-					if (longitude > Math.PI) longitude -= 2*Math.PI;
-					if (longitude < -Math.PI) longitude += 2*Math.PI;
-					
-					return {
-						latitude,
-						longitude,
-						altitude,
-						cartesian: Q
-					};
-				}
-			
-				// 5. Вычисление расстояния между двумя точками на гиперсфере
-				greatCircleDistance(lat1, lon1, alt1, lat2, lon2, alt2) {
-					const P1 = this.anglesToCartesian(lat1, lon1, alt1);
-					const P2 = this.anglesToCartesian(lat2, lon2, alt2);
-					
-					let dot = 0;
-					for (let i = 0; i < 4; i++) {
-						dot += P1[i] * P2[i];
-					}
-					dot /= (this.R * this.R);
-					
-					// Обеспечиваем численную стабильность
-					dot = Math.max(-1, Math.min(1, dot));
-					
-					const angle = Math.acos(dot);
-					return this.R * angle;
-				}
-			}
-			/*
-			// Примеры использования
-			function runExamples() {
-				const navigator = new HyperSphereNavigator(1.0);
-				
-				console.log("=== Пример 1: Простое движение ===");
-				const start1 = {lat: 0, lon: 0, alt: Math.PI/4}; // 45° altitude
-				const distance1 = Math.PI/4; // 45° углового расстояния
-				const eta1 = 0; // Двигаемся прямо по направлению e1
-				const psi1 = 0;
-				
-				const result1 = navigator.calculateNewPoint(
-					start1.lat, start1.lon, start1.alt, 
-					distance1, eta1, psi1
-				);
-				
-				console.log("Начальная точка:", start1);
-				console.log("Расстояние:", distance1, "радиан");
-				console.log("Новая точка:", {
-					latitude: result1.latitude.toFixed(6),
-					longitude: result1.longitude.toFixed(6),
-					altitude: result1.altitude.toFixed(6)
-				});
-				
-				// Проверка расстояния
-				const checkDist1 = navigator.greatCircleDistance(
-					start1.lat, start1.lon, start1.alt,
-					result1.latitude, result1.longitude, result1.altitude
-				);
-				console.log("Проверка расстояния:", checkDist1.toFixed(6), 
-							"(ожидается:", distance1.toFixed(6), ")");
-				
-				console.log("\n=== Пример 2: Движение под углом ===");
-				const start2 = {lat: Math.PI/6, lon: Math.PI/4, alt: Math.PI/3};
-				const distance2 = Math.PI/6; // 30°
-				const eta2 = Math.PI/4; // 45° от вертикали
-				const psi2 = Math.PI/2; // 90° азимут
-				
-				const result2 = navigator.calculateNewPoint(
-					start2.lat, start2.lon, start2.alt,
-					distance2, eta2, psi2
-				);
-				
-				console.log("Начальная точка:", start2);
-				console.log("Новая точка:", {
-					latitude: (result2.latitude * 180/Math.PI).toFixed(2) + "°",
-					longitude: (result2.longitude * 180/Math.PI).toFixed(2) + "°",
-					altitude: (result2.altitude * 180/Math.PI).toFixed(2) + "°"
-				});
-				
-				console.log("\n=== Пример 3: Большое расстояние ===");
-				const start3 = {lat: 0, lon: 0, alt: 0.1};
-				const distance3 = Math.PI/2; // 90°
-				const eta3 = Math.PI/2; // Горизонтально
-				const psi3 = 0;
-				
-				const result3 = navigator.calculateNewPoint(
-					start3.lat, start3.lon, start3.alt,
-					distance3, eta3, psi3
-				);
-				
-				console.log("Начальная точка:", start3);
-				console.log("Новая точка:", {
-					latitude: (result3.latitude * 180/Math.PI).toFixed(2) + "°",
-					longitude: (result3.longitude * 180/Math.PI).toFixed(2) + "°",
-					altitude: (result3.altitude * 180/Math.PI).toFixed(2) + "°"
-				});
-				
-				console.log("\n=== Пример 4: Крайние случаи ===");
-				// Почти северный полюс
-				const start4 = {lat: Math.PI/2 - 0.001, lon: 0, alt: 0.001};
-				const distance4 = 0.1;
-				const eta4 = 0;
-				const psi4 = 0;
-				
-				try {
-					const result4 = navigator.calculateNewPoint(
-						start4.lat, start4.lon, start4.alt,
-						distance4, eta4, psi4
-					);
-					
-					console.log("Начальная точка (почти полюс):", start4);
-					console.log("Новая точка:", {
-						latitude: (result4.latitude * 180/Math.PI).toFixed(4) + "°",
-						longitude: (result4.longitude * 180/Math.PI).toFixed(4) + "°",
-						altitude: (result4.altitude * 180/Math.PI).toFixed(4) + "°"
-					});
-				} catch (e) {
-					console.log("Ошибка в примере 4:", e.message);
-				}
-				
-				// Визуализация в 3D проекции (первые 3 координаты)
-				console.log("\n=== Декартовы координаты (первые 3 из 4) ===");
-				console.log("Пример 1 - начальная:", 
-							navigator.anglesToCartesian(start1.lat, start1.lon, start1.alt)
-								.slice(0,3).map(v => v.toFixed(4)));
-				console.log("Пример 1 - конечная:", 
-							result1.cartesian.slice(0,3).map(v => v.toFixed(4)));
-			}
-			
-			// Запуск примеров
-			runExamples();
-			
-			// Функция для интерактивного тестирования
-			function testCustomPoint() {
-				const navigator = new HyperSphereNavigator(1.0);
-				
-				// Пользовательский тест
-				const testCase = {
-					lat: Math.PI/4,    // 45°
-					lon: Math.PI/6,    // 30°
-					alt: Math.PI/3,    // 60°
-					distance: 0.5,     // радиан
-					eta: Math.PI/4,    // 45°
-					psi: Math.PI/3     // 60°
-				};
-				
-				const result = navigator.calculateNewPoint(
-					testCase.lat, testCase.lon, testCase.alt,
-					testCase.distance, testCase.eta, testCase.psi
-				);
-				
-				console.log("\n=== Пользовательский тест ===");
-				console.log("Входные параметры:", testCase);
-				console.log("Результат:", {
-					latitude: result.latitude.toFixed(6),
-					longitude: result.longitude.toFixed(6),
-					altitude: result.altitude.toFixed(6)
-				});
-				
-				return result;
-			}
-			
-			// Выполнить пользовательский тест
-			testCustomPoint();
-			*/
-			
 			const classSettings = params.hsVertices.classSettings,
 				settings = classSettings.settings,
 				radius = classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : settings.options.player === false ? 0 : settings.options.player.getTimeId()),
@@ -989,7 +626,12 @@ altitude - высота в диапазоне от 0 до π.
 		
 		/////////////////////////////overridden methods
 
-		if (arraySpheres) {
+		if (!arraySpheres) {//не выделять this.verticesAngles если нужно вычислить одну случайную точку randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1
+
+			verticesAngles(true);
+//			delete params.hyperSphere.circleLatitudeMultiplierRes;
+
+		} else {
 			
 			//Когда создается облако случайных точек randomVerticeSettings.mode = randomVerticeSettings.modes.randomCloud = 2, то boInitRandomAngles = false и не нужно инициализировать случайные точки для экономии времени.
 			//Если создается одна случайная точка randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1, то boInitRandomAngles = true и нужно инициализировать случайные точки.
@@ -1019,55 +661,315 @@ altitude - высота в диапазоне от 0 до π.
 	/////////////////////////////overridden methods
 
 }
-const VerticeObjectToArray = (verticeObject) => { return utils.angles([verticeObject.altitude, verticeObject.latitude, verticeObject.longitude]); }
+//const VerticeObjectToArray = (verticeObject) => { return utils.angles([verticeObject.altitude, verticeObject.latitude, verticeObject.longitude]); }
 /*
-const Vertice = (vertice, altitude) => {
+Есть точка на поверхности 3-мерной гиперсферы встроенной в 4-мерное евклидово пространство в полярной системе координат.
+R - радиус гиперсферы. 
+Положение точки определено ее углами:
+latitude - широта в диапазоне от -π/2 до π/2.
+longitude - долгота в диапазоне от -π до π.
+altitude - высота в диапазоне от 0 до π.
+Начало координат находится в центре гиперсферы. Вычислить другую точку на гиперсфере, которая находится на определенном растоянии и под определенными углами от заданной точки.
+*/
+//https://chat.deepseek.com/a/chat/s/de1d7524-faab-4e09-bb49-2be8848ae401
 
-//	if (vertice.longitude != undefined) return;
-	while (vertice.length < 3)
-		vertice.unshift((vertice.length === 2) && (altitude != undefined) ? altitude : 0);
-	if (vertice.longitude === undefined)
-		Object.defineProperty(vertice, 'longitude', {
-			
-			get: () => { return vertice[2]; },
-			set: (longitude) => {
-	
-				if (vertice[2] === longitude) return true;
-				vertice[2] = longitude;
-				return true;
-	
-			},
-		
-		});
-	if (vertice.latitude === undefined)
-		Object.defineProperty(vertice, 'latitude', {
-			
-			get: () => { return vertice[1]; },
-			set: (latitude) => {
-	
-				if (vertice[1] === latitude) return true;
-				vertice[1] = latitude;
-				return true;
-	
-			},
-		
-		});
-	if (vertice.altitude === undefined)
-		Object.defineProperty(vertice, 'altitude', {
-			
-			get: () => { return vertice[0]; },
-			set: (altitude) => {
-	
-				if (vertice[0] === altitude) return true;
-				vertice[0] = altitude;
-				return true;
-	
-			},
-		
-		});
-	return vertice;
+class HyperSphereNavigator {
+	constructor(radius = 1.0) {
+		this.R = radius;
+	}
 
+	// 1. Преобразование углов в декартовы координаты на гиперсфере
+	anglesToCartesian(latitude, longitude, altitude) {
+		const a = altitude;                 // altitude ∈ [0, π]
+		const b = Math.PI / 2 - latitude;     // b ∈ [0, π]
+		const c = longitude;                // longitude ∈ [-π, π]
+
+		const x1 = this.R * Math.cos(a);
+		const x2 = this.R * Math.sin(a) * Math.cos(b);
+		const x3 = this.R * Math.sin(a) * Math.sin(b) * Math.cos(c);
+		const x4 = this.R * Math.sin(a) * Math.sin(b) * Math.sin(c);
+
+		return [x1, x2, x3, x4];
+	}
+
+	// 2. Создание ортонормированного базиса в касательном пространстве
+	createTangentBasis(latitude, longitude, altitude) {
+		const a = altitude;
+		const b = Math.PI / 2 - latitude;
+		const c = longitude;
+
+		// e1 - направление увеличения altitude
+		const e1 = [
+			-Math.sin(a),
+			Math.cos(a) * Math.cos(b),
+			Math.cos(a) * Math.sin(b) * Math.cos(c),
+			Math.cos(a) * Math.sin(b) * Math.sin(c)
+		];
+		// Нормализация e1 (уже единичный, но для точности)
+		const norm_e1 = Math.sqrt(e1.reduce((sum, val) => sum + val * val, 0));
+		const e1_norm = e1.map(v => v / norm_e1);
+
+		// e2 - направление увеличения b (уменьшения latitude)
+		const e2_raw = [
+			0,
+			-Math.sin(a) * Math.sin(b),
+			Math.sin(a) * Math.cos(b) * Math.cos(c),
+			Math.sin(a) * Math.cos(b) * Math.sin(c)
+		];
+		const norm_e2 = Math.sqrt(e2_raw.reduce((sum, val) => sum + val * val, 0));
+		const e2_norm = norm_e2 > 1e-10 ? e2_raw.map(v => v / norm_e2) : [0, 0, 0, 0];
+
+		// e3 - направление увеличения longitude
+		const e3_raw = [
+			0,
+			0,
+			-Math.sin(a) * Math.sin(b) * Math.sin(c),
+			Math.sin(a) * Math.sin(b) * Math.cos(c)
+		];
+		const norm_e3 = Math.sqrt(e3_raw.reduce((sum, val) => sum + val * val, 0));
+		const e3_norm = norm_e3 > 1e-10 ? e3_raw.map(v => v / norm_e3) : [0, 0, 0, 0];
+
+		return [e1_norm, e2_norm, e3_norm];
+	}
+
+	/**
+	 * Вычисление новой точки
+	 * @param {any} lat
+	 * @param {any} lon
+	 * @param {any} alt
+	 * @param {any} distance геодезическое расстояние. Диапазон значений: 0 ≤ distance ≤ πR
+	 * @param {any} eta первый угол направления (полярный угол). Определяет наклон направления движения относительно "вертикали" в касательном пространстве.
+	 * Аналог "широты" направления или "угла места".
+	 * Диапазон значений: 0 ≤ eta ≤ π
+	 * @param {any} psi второй угол направления (азимутальный угол)
+	 * Назначение:
+	 * Определяет азимут направления движения в горизонтальной плоскости касательного пространства
+	 * Задает вращение вокруг оси e1
+	 * Диапазон значений:
+	 * Необходимый и достаточный: 0 ≤ psi < 2π
+	 * Но обычно достаточно: -π ≤ psi ≤ π (как в коде)
+	 * @returns
+	 */
+	calculateNewPoint(lat, lon, alt, distance, eta, psi) {
+		// Исходная точка
+		const P = this.anglesToCartesian(lat, lon, alt);
+
+		// Касательный базис
+		const [e1, e2, e3] = this.createTangentBasis(lat, lon, alt);
+
+		// Направляющий вектор в касательном пространстве
+		const u = [0, 0, 0, 0];
+		for (let i = 0; i < 4; i++) {
+			u[i] = Math.cos(eta) * e1[i] +
+				Math.sin(eta) * Math.cos(psi) * e2[i] +
+				Math.sin(eta) * Math.sin(psi) * e3[i];
+		}
+
+		// Угловое расстояние
+		const delta = distance / this.R;
+
+		// Экспоненциальное отображение
+		const Q = [0, 0, 0, 0];
+		for (let i = 0; i < 4; i++) {
+			Q[i] = Math.cos(delta) * P[i] + this.R * Math.sin(delta) * u[i];
+		}
+
+		// Обратное преобразование в углы
+		return this.cartesianToAngles(Q);
+	}
+
+	// 4. Преобразование декартовых координат в углы
+	cartesianToAngles(Q) {
+		const [q1, q2, q3, q4] = Q;
+
+		// altitude
+		let altitude = Math.acos(q1 / this.R);
+		if (isNaN(altitude)) altitude = 0;
+
+		// latitude и longitude
+		let latitude, longitude;
+
+		const sinA = Math.sin(altitude);
+		if (Math.abs(sinA) < 1e-10) {
+			// Случай полюса
+			latitude = 0;
+			longitude = 0;
+		} else {
+			// b'
+			let b = Math.acos(q2 / (this.R * sinA));
+			if (isNaN(b)) b = 0;
+
+			latitude = Math.PI / 2 - b;
+
+			// longitude
+			longitude = Math.atan2(q4, q3);
+		}
+
+		// Приведение longitude к диапазону [-π, π]
+		if (longitude > Math.PI) longitude -= 2 * Math.PI;
+		if (longitude < -Math.PI) longitude += 2 * Math.PI;
+
+		return {
+			latitude,
+			longitude,
+			altitude,
+			cartesian: Q
+		};
+	}
+
+	// 5. Вычисление расстояния между двумя точками на гиперсфере
+	greatCircleDistance(lat1, lon1, alt1, lat2, lon2, alt2) {
+		const P1 = this.anglesToCartesian(lat1, lon1, alt1);
+		const P2 = this.anglesToCartesian(lat2, lon2, alt2);
+
+		let dot = 0;
+		for (let i = 0; i < 4; i++) {
+			dot += P1[i] * P2[i];
+		}
+		dot /= (this.R * this.R);
+
+		// Обеспечиваем численную стабильность
+		dot = Math.max(-1, Math.min(1, dot));
+
+		const angle = Math.acos(dot);
+		return this.R * angle;
+	}
 }
+/*
+// Примеры использования
+function runExamples() {
+	const navigator = new HyperSphereNavigator(1.0);
+	
+	console.log("=== Пример 1: Простое движение ===");
+	const start1 = {lat: 0, lon: 0, alt: Math.PI/4}; // 45° altitude
+	const distance1 = Math.PI/4; // 45° углового расстояния
+	const eta1 = 0; // Двигаемся прямо по направлению e1
+	const psi1 = 0;
+	
+	const result1 = navigator.calculateNewPoint(
+		start1.lat, start1.lon, start1.alt, 
+		distance1, eta1, psi1
+	);
+	
+	console.log("Начальная точка:", start1);
+	console.log("Расстояние:", distance1, "радиан");
+	console.log("Новая точка:", {
+		latitude: result1.latitude.toFixed(6),
+		longitude: result1.longitude.toFixed(6),
+		altitude: result1.altitude.toFixed(6)
+	});
+	
+	// Проверка расстояния
+	const checkDist1 = navigator.greatCircleDistance(
+		start1.lat, start1.lon, start1.alt,
+		result1.latitude, result1.longitude, result1.altitude
+	);
+	console.log("Проверка расстояния:", checkDist1.toFixed(6), 
+				"(ожидается:", distance1.toFixed(6), ")");
+	
+	console.log("\n=== Пример 2: Движение под углом ===");
+	const start2 = {lat: Math.PI/6, lon: Math.PI/4, alt: Math.PI/3};
+	const distance2 = Math.PI/6; // 30°
+	const eta2 = Math.PI/4; // 45° от вертикали
+	const psi2 = Math.PI/2; // 90° азимут
+	
+	const result2 = navigator.calculateNewPoint(
+		start2.lat, start2.lon, start2.alt,
+		distance2, eta2, psi2
+	);
+	
+	console.log("Начальная точка:", start2);
+	console.log("Новая точка:", {
+		latitude: (result2.latitude * 180/Math.PI).toFixed(2) + "°",
+		longitude: (result2.longitude * 180/Math.PI).toFixed(2) + "°",
+		altitude: (result2.altitude * 180/Math.PI).toFixed(2) + "°"
+	});
+	
+	console.log("\n=== Пример 3: Большое расстояние ===");
+	const start3 = {lat: 0, lon: 0, alt: 0.1};
+	const distance3 = Math.PI/2; // 90°
+	const eta3 = Math.PI/2; // Горизонтально
+	const psi3 = 0;
+	
+	const result3 = navigator.calculateNewPoint(
+		start3.lat, start3.lon, start3.alt,
+		distance3, eta3, psi3
+	);
+	
+	console.log("Начальная точка:", start3);
+	console.log("Новая точка:", {
+		latitude: (result3.latitude * 180/Math.PI).toFixed(2) + "°",
+		longitude: (result3.longitude * 180/Math.PI).toFixed(2) + "°",
+		altitude: (result3.altitude * 180/Math.PI).toFixed(2) + "°"
+	});
+	
+	console.log("\n=== Пример 4: Крайние случаи ===");
+	// Почти северный полюс
+	const start4 = {lat: Math.PI/2 - 0.001, lon: 0, alt: 0.001};
+	const distance4 = 0.1;
+	const eta4 = 0;
+	const psi4 = 0;
+	
+	try {
+		const result4 = navigator.calculateNewPoint(
+			start4.lat, start4.lon, start4.alt,
+			distance4, eta4, psi4
+		);
+		
+		console.log("Начальная точка (почти полюс):", start4);
+		console.log("Новая точка:", {
+			latitude: (result4.latitude * 180/Math.PI).toFixed(4) + "°",
+			longitude: (result4.longitude * 180/Math.PI).toFixed(4) + "°",
+			altitude: (result4.altitude * 180/Math.PI).toFixed(4) + "°"
+		});
+	} catch (e) {
+		console.log("Ошибка в примере 4:", e.message);
+	}
+	
+	// Визуализация в 3D проекции (первые 3 координаты)
+	console.log("\n=== Декартовы координаты (первые 3 из 4) ===");
+	console.log("Пример 1 - начальная:", 
+				navigator.anglesToCartesian(start1.lat, start1.lon, start1.alt)
+					.slice(0,3).map(v => v.toFixed(4)));
+	console.log("Пример 1 - конечная:", 
+				result1.cartesian.slice(0,3).map(v => v.toFixed(4)));
+}
+	
+// Запуск примеров
+runExamples();
+	
+// Функция для интерактивного тестирования
+function testCustomPoint() {
+	const navigator = new HyperSphereNavigator(1.0);
+	
+	// Пользовательский тест
+	const testCase = {
+		lat: Math.PI/4,    // 45°
+		lon: Math.PI/6,    // 30°
+		alt: Math.PI/3,    // 60°
+		distance: 0.5,     // радиан
+		eta: Math.PI/4,    // 45°
+		psi: Math.PI/3     // 60°
+	};
+	
+	const result = navigator.calculateNewPoint(
+		testCase.lat, testCase.lon, testCase.alt,
+		testCase.distance, testCase.eta, testCase.psi
+	);
+	
+	console.log("\n=== Пользовательский тест ===");
+	console.log("Входные параметры:", testCase);
+	console.log("Результат:", {
+		latitude: result.latitude.toFixed(6),
+		longitude: result.longitude.toFixed(6),
+		altitude: result.altitude.toFixed(6)
+	});
+	
+	return result;
+}
+	
+// Выполнить пользовательский тест
+testCustomPoint();
 */
 //RandomVerticeHSphere.Vertice = Vertice;
 export default RandomVerticeHSphere;
