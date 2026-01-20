@@ -917,7 +917,7 @@ altitude - высота в диапазоне от 0 до π.
 			const classSettings = params.hsVertices.classSettings,
 				settings = classSettings.settings,
 				radius = classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : settings.options.player === false ? 0 : settings.options.player.getTimeId()),
-				navigator = new HyperSphereNavigator(1.0),
+				navigator = new HyperSphereNavigator(radius),
 				oppositeVertice = params.oppositeVertice,
 				result = navigator.calculateNewPoint(
 				oppositeVertice.latitude,
