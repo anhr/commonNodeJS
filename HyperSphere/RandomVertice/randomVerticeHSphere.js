@@ -424,7 +424,7 @@ const array = [
 			],
 			verticesAngles = (boAllocateMemory) => {
 
-				for (let i = 0; i < 20000; i++) this.getRandomAngles();
+				for (let i = 0; i < 750; i++) this.getRandomAngles();
 /*
 				//Гиперсфера случайных точек состоит из набора сфер.
 				
@@ -551,16 +551,20 @@ console.log('circleId = ' + circleId + ' , y = ' + y + ', index = ' + index + ',
 		this.setAngles = (anglesNew) => { params.verticesAngles = anglesNew; }
 		this.getRandomAngles = () => {
 
-			const classSettings = params.hsVertices.classSettings,
-				settings = classSettings.settings,
-				radius = classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : settings.options.player === false ? 0 : settings.options.player.getTimeId()),
-				navigator = new HyperSphereNavigator(radius),
-				oppositeVertice = params.oppositeVertice,
-				result = navigator.calculateNewPoint(
+			if (!this.navigator) {
+				
+				const classSettings = params.hsVertices.classSettings,
+					settings = classSettings.settings,
+					radius = classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : settings.options.player === false ? 0 : settings.options.player.getTimeId());
+				this.navigator = new HyperSphereNavigator(radius);
+
+			}
+			const oppositeVertice = params.oppositeVertice,
+				result = this.navigator.calculateNewPoint(
 				oppositeVertice.latitude,
 				oppositeVertice.longitude,
 				oppositeVertice.altitude,
-				Math.random() * radius * π,//distance максимальная дистанция находится на противоположной стороне гиперсферы
+				0.5,//Math.random() * this.navigator.R * π,//distance максимальная дистанция находится на противоположной стороне гиперсферы
 				Math.random() * π,//eta. первый угол направления (полярный угол). 0 ≤ eta ≤ π
 				Math.random() * 2 * π//psi. второй угол направления (азимутальный угол). 0 ≤ psi < 2π или -π ≤ psi ≤ π
 			);
@@ -813,7 +817,7 @@ class HyperSphereNavigator {
 			latitude,
 			longitude,
 			altitude,
-			cartesian: Q
+			//cartesian: Q
 		};
 	}
 
