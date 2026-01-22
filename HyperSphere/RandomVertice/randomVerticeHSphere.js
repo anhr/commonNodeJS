@@ -422,9 +422,15 @@ const array = [
 				10,//23
 				0,//24
 			],
-			verticesAngles = (boAllocateMemory) => {
+			verticesAngles = (editAngles = false/*boAllocateMemory*/) => {
 
-				for (let i = 0; i < 750; i++) this.getRandomAngles();
+				for (let i = 0; i < (boCloud ? 750 : 1); i++) {
+
+					if (editAngles) params.editAnglesId = i;
+					this.getRandomAngles();
+
+				}
+				delete params.editAnglesId;
 /*
 				//Гиперсфера случайных точек состоит из набора сфер.
 				
@@ -549,6 +555,7 @@ console.log('circleId = ' + circleId + ' , y = ' + y + ', index = ' + index + ',
 */		
 		this.getAngles = () => { return params.verticesAngles; }
 		this.setAngles = (anglesNew) => { params.verticesAngles = anglesNew; }
+		this.oppositeVerticeOnChange = () => { verticesAngles(true); }
 		this.getRandomAngles = () => {
 
 			if (!this.navigator) {
@@ -614,6 +621,7 @@ console.log('circleId = ' + circleId + ' , y = ' + y + ', index = ' + index + ',
 
 			}
 */			
+			return this.angles;
 			
 		}
 		
@@ -632,7 +640,7 @@ console.log('circleId = ' + circleId + ' , y = ' + y + ', index = ' + index + ',
 
 		if (!arraySpheres) {//не выделять this.verticesAngles если нужно вычислить одну случайную точку randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1
 
-			verticesAngles(true);
+			verticesAngles();//true);
 //			delete params.hyperSphere.circleLatitudeMultiplierRes;
 
 		} else {

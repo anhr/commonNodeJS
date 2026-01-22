@@ -34,6 +34,29 @@ class RandomVertice {
 
 		params.vertice ||= this.ZeroArray();
 		params.oppositeVertice ||= this.ZeroArray();
+
+		const _this = this;
+
+		params.oppositeVertice = new Proxy( params.oppositeVertice, {
+
+			set: (oppositeVertice, name, value) => {
+
+				switch (name) {
+	
+					case 'altitude':
+					case 'latitude':
+					case 'longitude':
+						//_this.randomAngles;
+						_this.oppositeVerticeOnChange();
+						break;
+						
+				}
+				oppositeVertice[name] = value;
+				return true;
+	
+			},
+			
+		});
 		
 		if (params.verticesAngles && !params.verticesAngles.boNoNew) params.verticesAngles.length = 0;
 		params.verticesAngles ||= [];
