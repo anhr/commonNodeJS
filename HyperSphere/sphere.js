@@ -18,13 +18,9 @@
 import Circle from './circle.js';
 import three from '../three.js'
 import { RandomVerticeSphere as RandomVertice } from './RandomVertice/randomVerticeSphere.js';
-import RandomCloud from './RandomVertice/randomCloudSphere.js';
+//import RandomCloud from './RandomVertice/randomCloudSphere.js';
 import * as utils from './utilsSphere.js'
-//import Vertice from './VerticeSphere.js'
 import Position from './position.js'
-//import anglesToCartesian from './anglesToCasterianSphere.js'
-//import casterianToAngles from './casterianToAnglesSphere.js'
-//import { anglesToCartesian, casterianToAngles } from './utilsSphere.js'
 
 const sSphere = 'Sphere',
 	π = Math.PI;

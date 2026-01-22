@@ -31,7 +31,7 @@
 
 		//import RandomVertice from '../randomVerticeSphere.js';
 		import { RandomVerticeSphere as RandomVertice } from '../randomVerticeSphere.js';
-		import RandomCloud from '../randomCloudSphere.js';
+		//import RandomCloud from '../randomCloudSphere.js';
 		import Cloud from '../cloudSphere.js';
 		import HyperSphere from '../../sphere.js';
 		import anglesRange from '../../anglesRange.js'
@@ -268,7 +268,8 @@
 							createRandomVerticeHyperSphere(randomVertice, 'Random vertice'); break;
 						case modes.randomCloud: 
 							if (!randomCloud)
-								randomCloud = new RandomCloud(params);
+								randomCloud = new RandomVertice(params, true, false);
+//								randomCloud = new RandomCloud(params);
 							createRandomVerticeHyperSphere(randomCloud, 'Random Cloud');
 							randomVertice = undefined;
 							break;
@@ -323,20 +324,6 @@
 						randomVertice = undefined;
 
 						mode = parseInt(modeNew);
-/*						
-						const modes = randomVerticeSettings.modes;
-						switch (mode){
-
-							case modes.cloud: break;
-							case modes.randomVertice:
-								if (!randomVertice) randomVertice = new RandomVertice(params);
-								else randomVertice.randomAngles;
-								break;
-							case modes.randomCloud: break;
-							default: console.error('Invalid mode = ' + mode);
-								
-						}
-*/						
 						
 						updateRandomVerticeHyperSphere();
 			

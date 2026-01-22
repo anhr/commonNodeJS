@@ -17,8 +17,7 @@ import RandomVertice from './randomVertice.js';
 import { anglesIdMax } from './randomVerticeSphere.js';
 import anglesRange from '../anglesRange.js'
 import * as utils from '../utilsHSphere.js'
-import RandomCloudSphere from './randomCloudSphere.js';
-//import Vertice from '../VerticeHypersphere.js'
+//import RandomCloudSphere from './randomCloudSphere.js';
 
 const sRandomVerticesHyperSphere = 'RandomVerticesHSphere',
 	π = Math.PI, abs = Math.abs, round = Math.round, random = Math.random,
@@ -640,6 +639,7 @@ console.log('circleId = ' + circleId + ' , y = ' + y + ', index = ' + index + ',
 
 		if (!arraySpheres) {//не выделять this.verticesAngles если нужно вычислить одну случайную точку randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1
 
+			params.pointsCount = 0;
 			verticesAngles();//true);
 //			delete params.hyperSphere.circleLatitudeMultiplierRes;
 

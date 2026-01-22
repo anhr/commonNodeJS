@@ -30,7 +30,7 @@
 		MyThree.three.THREE = THREE;
 
 		import RandomVertice from '../randomVerticeHSphere.js';
-		import RandomCloud from '../randomCloudHSphere.js';
+		//import RandomCloud from '../randomCloudHSphere.js';
 		import Cloud from '../cloudHyperSphere.js';
 		import HyperSphere from '../../hyperSphere3D.js';
 		
@@ -58,7 +58,7 @@
 					randomCloud: 2,
 					
 				},
-				mode: 1,
+				mode: 2,
 			
 			};
 			/*https://gemini.google.com/
@@ -519,7 +519,8 @@
 							createRandomVerticeHyperSphere(randomVertice, 'Random vertice'); break;
 						case modes.randomCloud: 
 							if (!randomCloud)
-								randomCloud = new RandomCloud(params);
+								randomCloud = new RandomVertice(params, true, false);
+//								randomCloud = new RandomCloud(params);
 							createRandomVerticeHyperSphere(randomCloud, 'Random Cloud'); break;
 						default: console.error('Invalid mode = ' + mode);
 							
@@ -594,19 +595,6 @@
 
 						mode = parseInt(modeNew);
 						spheres.display(parseInt(modeNew) === randomVerticeSettings.modes.cloud);
-/*						
-						const modes = randomVerticeSettings.modes;
-						switch (mode){
-
-							case modes.cloud: break;
-							case modes.randomVertice:
-								if (!randomVertice) randomVertice = new RandomVertice(params);
-								randomVertice.randomAngles; break;
-							case modes.randomCloud: break;
-							default: console.error('Invalid mode = ' + mode);
-								
-						}
-*/						
 						updateRandomVerticeHyperSphere();
 						spheres.cSpheresAppendChild();
 			
