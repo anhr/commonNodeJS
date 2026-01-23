@@ -512,14 +512,15 @@
 
 						case modes.cloud:
 							if (!cloud)
-								cloud = new Cloud(params);
+								cloud = new RandomVertice(params, true, false);
+//								cloud = new Cloud(params);
 							createRandomVerticeHyperSphere(cloud, 'Cloud'); break;
 						case modes.randomVertice:
 							if (!randomVertice) randomVertice = new RandomVertice(params);
 							createRandomVerticeHyperSphere(randomVertice, 'Random vertice'); break;
 						case modes.randomCloud: 
 							if (!randomCloud)
-								randomCloud = new RandomVertice(params, true, false);
+								randomCloud = new RandomVertice(params, true);
 //								randomCloud = new RandomCloud(params);
 							createRandomVerticeHyperSphere(randomCloud, 'Random Cloud'); break;
 						default: console.error('Invalid mode = ' + mode);
@@ -735,7 +736,8 @@
 				//max: Infinity,
 				//interval: 100,
 				
-			}
+			},
+			axesHelper: false,
 
 		} );
 

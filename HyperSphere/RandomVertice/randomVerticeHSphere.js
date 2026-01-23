@@ -21,7 +21,7 @@ import * as utils from '../utilsHSphere.js'
 
 const sRandomVerticesHyperSphere = 'RandomVerticesHSphere',
 	π = Math.PI, abs = Math.abs, round = Math.round, random = Math.random,
-//	sin = Math.sin, cos = Math.cos, asin = Math.asin, atan2 = Math.atan2,
+	cos = Math.cos, sin = Math.sin,// asin = Math.asin, atan2 = Math.atan2,
 	atan = Math.atan;
 
 /**
@@ -31,13 +31,14 @@ const sRandomVerticesHyperSphere = 'RandomVerticesHSphere',
  */
 class RandomVerticeHSphere extends RandomVertice {
 
+	// * @param {boolean} [boInitRandomAngles=true] true - init random angles.
+	
 	/**
 	 * Generates a random vertice near the opposite vertice in 3D hypersphere.
 	 * @param {object} [params={}] See the <b>params</b> of the <a href="./module-RandomVertice-RandomVertice.html" target="_blank"><b>RandomVertice</b></a> constructor for details.
 	 * @param {object} [boCloud=false] true - generates a random vertice cloud.
-	 * @param {boolean} [boInitRandomAngles=true] true - init random angles.
 	 */
-	constructor(params, boCloud = false, boInitRandomAngles = true) {
+	constructor(params, boCloud = false/*, boInitRandomAngles = true*/, boRandomVertice = true) {
 
 		super(params);
 
@@ -423,11 +424,40 @@ const array = [
 			],
 			verticesAngles = (editAngles = false/*boAllocateMemory*/) => {
 
-				for (let i = 0; i < (boCloud ? 750 : 1); i++) {
+				if (boRandomVertice) {
+					
+					for (let i = 0; i < (boCloud ? 7500 : 1); i++) {
+	
+						if (editAngles) params.editAnglesId = i;
+						this.getRandomAngles();
+	
+					}
 
-					if (editAngles) params.editAnglesId = i;
-					this.getRandomAngles();
+				} else {
 
+					let i = 0;
+					for (let iDistance = 0; iDistance < 1; iDistance += 0.1) {
+
+						//первый угол направления (полярный угол).
+						for (let iEta = 0; iEta < 1; iEta += 0.1) {
+
+							//второй угол направления (азимутальный угол)
+							for (let iPsi = 0; iPsi < 1; iPsi += 0.1) {
+			
+								if (editAngles) {
+									
+									params.editAnglesId = i;
+									i++
+
+								}
+								this.getRandomAngles({ iDistance: iDistance, iEta: iEta, iPsi: iPsi });
+			
+							}
+		
+						}
+	
+					}
+					
 				}
 				delete params.editAnglesId;
 /*
@@ -555,7 +585,7 @@ console.log('circleId = ' + circleId + ' , y = ' + y + ', index = ' + index + ',
 		this.getAngles = () => { return params.verticesAngles; }
 		this.setAngles = (anglesNew) => { params.verticesAngles = anglesNew; }
 		this.oppositeVerticeOnChange = () => { verticesAngles(true); }
-		this.getRandomAngles = () => {
+		this.getRandomAngles = (point) => {
 
 			if (!this.navigator) {
 				
@@ -565,14 +595,34 @@ console.log('circleId = ' + circleId + ' , y = ' + y + ', index = ' + index + ',
 				this.navigator = new HyperSphereNavigator(radius);
 
 			}
+			const iEta = (point ? point.iEta : random()) * π;
+/*			
+const u = sin(0), f = cos(0);
+let k = 0;
+for(let i = 0; i <= 1.05; i+=0.05) {
+	
+	const iEta = i * π;
+//	const s = sin(iEta * 2) + 1, eta = s * iEta;
+//	const s = sin(iEta), eta = iEta * s;
+	const s = sin(iEta * 2), eta = iEta + s;
+	console.log('k = ' + k + ' iEta = ' + iEta + ' sin = ' + s + ' eta = ' + eta);
+	k++;
+}
+*/
 			const oppositeVertice = params.oppositeVertice,
 				result = this.navigator.calculateNewPoint(
 				oppositeVertice.latitude,
 				oppositeVertice.longitude,
 				oppositeVertice.altitude,
-				0.5,//Math.random() * this.navigator.R * π,//distance максимальная дистанция находится на противоположной стороне гиперсферы
-				Math.random() * π,//eta. первый угол направления (полярный угол). 0 ≤ eta ≤ π
-				Math.random() * 2 * π//psi. второй угол направления (азимутальный угол). 0 ≤ psi < 2π или -π ≤ psi ≤ π
+				0.5,//random() * this.navigator.R * π,//distance максимальная дистанция находится на противоположной стороне гиперсферы
+//				(point ? point.iEta : random()) * π,//eta. первый угол направления (полярный угол). 0 ≤ eta ≤ π
+				point ? point.iEta : Math.acos(2*Math.random() - 1),//eta. первый угол направления (полярный угол). 0 ≤ eta ≤ π
+//				(sin(iEta) + 1) * iEta,//eta. первый угол направления (полярный угол). 0 ≤ eta ≤ π
+//				sin(iEta * 2) + iEta,//eta. первый угол направления (полярный угол). 0 ≤ eta ≤ π
+//				cos(iEta) / 10 + iEta,//eta. первый угол направления (полярный угол). 0 ≤ eta ≤ π
+				(point ? point.iPsi : random()) * 2 * π//psi. второй угол направления (азимутальный угол). 0 ≤ psi < 2π или -π ≤ psi ≤ π
+//				point ? point.iPsi : 2*π*Math.random() - π//psi. второй угол направления (азимутальный угол). 0 ≤ psi < 2π или -π ≤ psi ≤ π
+				//psi. второй угол направления (азимутальный угол). 0 ≤ psi < 2π или -π ≤ psi ≤ π
 			);
 			const angles = utils.angles([result.altitude, result.latitude, result.longitude]);
 			if (params.editAnglesId === undefined) {
@@ -645,16 +695,13 @@ console.log('circleId = ' + circleId + ' , y = ' + y + ', index = ' + index + ',
 
 		} else {
 			
-			//Когда создается облако случайных точек randomVerticeSettings.mode = randomVerticeSettings.modes.randomCloud = 2, то boInitRandomAngles = false и не нужно инициализировать случайные точки для экономии времени.
-			//Если создается одна случайная точка randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1, то boInitRandomAngles = true и нужно инициализировать случайные точки.
-			//Иначе при изменении положения вершины или противоположной вершины почему то появляется несколько случайных точек.
-			if (boInitRandomAngles) {
+//			if (boInitRandomAngles) {
 
-				params.pointsCount = 0;
-				this.randomAngles;//Вычислить случайную точку если нужна одна случайная точка т.е. randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1 или randomVerticeSettings.mode = randomVerticeSettings.modes.randomCloud = 2
-				params.editAnglesId = 0;
+			params.pointsCount = 0;
+			this.randomAngles;//Вычислить случайную точку если нужна одна случайная точка т.е. randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1 или randomVerticeSettings.mode = randomVerticeSettings.modes.randomCloud = 2
+			params.editAnglesId = 0;
 
-			}
+//			}
 			
 		}
 

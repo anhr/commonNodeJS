@@ -37,14 +37,15 @@ export const anglesIdMax = 50;//Количество точек на окруж�
  */
 export class RandomVerticeSphere extends RandomVertice {
 
+	//* @param { boolean } [boInitRandomAngles = true] true - init random angles.
+
 	/**
 	 * Generates a random vertice near the opposite vertice in 2D hypersphere.
 	 * @param {object} [params={}] See the <b>params</b> of the <a href="./module-RandomVertice-RandomVertice.html" target="_blank"><b>RandomVertice</b></a> constructor for details.
 	 * @param {object} [params.circlesCount] Count of the circles in the sphere.
 	 * @param {boolean} [boCloud=false] true - generates a random vertice cloud.
-	 * @param {boolean} [boInitRandomAngles=true] true - init random angles.
 	 */
-	constructor(params={}, boCloud = false, boInitRandomAngles = true) {
+	constructor(params={}, boCloud = false/*, boInitRandomAngles = true*/) {
 
 		super(params);
 
@@ -452,16 +453,13 @@ export class RandomVerticeSphere extends RandomVertice {
 
 		if (arrayCircles) {
 
-			//Когда создается облако случайных точек randomVerticeSettings.mode = randomVerticeSettings.modes.randomCloud = 2, то boInitRandomAngles = false и не нужно инициализировать случайные точки для экономии времени.
-			//Если создается одна случайная точка randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1, то boInitRandomAngles = true и нужно инициализировать случайные точки.
-			//Иначе при изменении положения вершины или противоположной вершины почему то появляется несколько случайных точек.
-			if (boInitRandomAngles) {
+//			if (boInitRandomAngles) {
 
-				params.pointsCount = 0;
-				this.randomAngles;//Вычислить случайную точку если нужна одна случайная точка т.е. randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1 или randomVerticeSettings.mode = randomVerticeSettings.modes.randomCloud = 2
-				params.editAnglesId = 0;
+			params.pointsCount = 0;
+			this.randomAngles;//Вычислить случайную точку если нужна одна случайная точка т.е. randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1 или randomVerticeSettings.mode = randomVerticeSettings.modes.randomCloud = 2
+			params.editAnglesId = 0;
 
-			}
+//			}
 			
 		} else verticesAngles(false);//Вычислить облако случайных точек
 
