@@ -41,17 +41,16 @@ class RandomVertice {
 
 			set: (oppositeVertice, name, value) => {
 
+				oppositeVertice[name] = value;
 				switch (name) {
 	
 					case 'altitude':
 					case 'latitude':
 					case 'longitude':
-						oppositeVertice[name] = value;
 						_this.oppositeVerticeOnChange();
-						return true;
+						break;
 						
 				}
-				oppositeVertice[name] = value;
 				return true;
 	
 			},
