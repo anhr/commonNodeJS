@@ -46,9 +46,9 @@ class RandomVertice {
 					case 'altitude':
 					case 'latitude':
 					case 'longitude':
-						//_this.randomAngles;
+						oppositeVertice[name] = value;
 						_this.oppositeVerticeOnChange();
-						break;
+						return true;
 						
 				}
 				oppositeVertice[name] = value;
