@@ -20,9 +20,9 @@ import * as utils from '../utilsHSphere.js'
 //import RandomCloudSphere from './randomCloudSphere.js';
 
 const sRandomVerticesHyperSphere = 'RandomVerticesHSphere',
-	π = Math.PI, abs = Math.abs, round = Math.round, random = Math.random,
-	cos = Math.cos, sin = Math.sin,// asin = Math.asin, atan2 = Math.atan2,
-	atan = Math.atan;
+	π = Math.PI, round = Math.round, random = Math.random,//abs = Math.abs, 
+	//cos = Math.cos, sin = Math.sin,
+	atan = Math.atan, acos = Math.acos;// asin = Math.asin, atan2 = Math.atan2,
 
 /**
  * Generates a random vertice near the opposite vertice in 3D hypersphere.
@@ -595,28 +595,66 @@ console.log('circleId = ' + circleId + ' , y = ' + y + ', index = ' + index + ',
 				this.navigator = new HyperSphereNavigator(radius);
 
 			}
-			const iEta = (point ? point.iEta : random()) * π;
-/*			
-const u = sin(0), f = cos(0);
-let k = 0;
-for(let i = 0; i <= 1.05; i+=0.05) {
-	
-	const iEta = i * π;
-//	const s = sin(iEta * 2) + 1, eta = s * iEta;
-//	const s = sin(iEta), eta = iEta * s;
-	const s = sin(iEta * 2), eta = iEta + s;
-	console.log('k = ' + k + ' iEta = ' + iEta + ' sin = ' + s + ' eta = ' + eta);
-	k++;
-}
-*/
+
+			/**
+			 * Обратная функция распределения для равномерной выборки на S³
+			 * Для равномерного распределения на 3-сфере от северного полюса:
+			 * Плотность: f(θ) ∝ sin³(θ), где θ = distance/R
+			 * CDF: F(θ) = (3θ - 3sinθcosθ + 2sin³θ) / 4
+			 * Здесь используем численное решение обратной функции
+			 */
+			const inverseCDF_S3 = (u) => {
+				// u ∈ [0, 1] равномерно
+				// Ищем θ такой, что CDF(θ) = u, θ ∈ [0, π]
+
+				// Численное решение методом бисекции
+				let low = 0;
+				let high = Math.PI;
+				const tolerance = 1e-10;
+				const maxIterations = 100;
+
+				for (let i = 0; i < maxIterations; i++) {
+					const mid = (low + high) / 2;
+					const cdfValue = CDF_S3(mid);
+
+					if (Math.abs(cdfValue - u) < tolerance) {
+						return mid;
+					}
+
+					if (cdfValue < u) {
+						low = mid;
+					} else {
+						high = mid;
+					}
+				}
+
+				return (low + high) / 2;
+			}
+
+			/**
+			 * Функция распределения (CDF) для расстояния на S³
+			 */
+			const CDF_S3 = (theta) => {
+				// CDF(θ) = (3θ - 3sinθcosθ + 2sin³θ) / 4
+				const sinTheta = Math.sin(theta);
+				const cosTheta = Math.cos(theta);
+				const sin3Theta = sinTheta * sinTheta * sinTheta;
+
+				return (3 * theta - 3 * sinTheta * cosTheta + 2 * sin3Theta) / 4;
+			}
+
+			// Правильное распределение для равномерного покрытия:
+	        // Вероятность попасть в сферическую шапочку радиуса d пропорциональна sin^3(d/R)
+	        const distance = this.navigator.R * inverseCDF_S3(random()); // см. объяснение ниже
+			
 			const oppositeVertice = params.oppositeVertice,
 				result = this.navigator.calculateNewPoint(
 				oppositeVertice.latitude,
 				oppositeVertice.longitude,
 				oppositeVertice.altitude,
-				0.5,//random() * this.navigator.R * π,//distance максимальная дистанция находится на противоположной стороне гиперсферы
+				distance,//0.5,//random() * this.navigator.R * π,//distance максимальная дистанция находится на противоположной стороне гиперсферы
 //				(point ? point.iEta : random()) * π,//eta. первый угол направления (полярный угол). 0 ≤ eta ≤ π
-				point ? point.iEta : Math.acos(2*Math.random() - 1),//eta. первый угол направления (полярный угол). 0 ≤ eta ≤ π
+				point ? point.iEta : acos(2 * random() - 1),//eta. первый угол направления (полярный угол). 0 ≤ eta ≤ π
 //				(sin(iEta) + 1) * iEta,//eta. первый угол направления (полярный угол). 0 ≤ eta ≤ π
 //				sin(iEta * 2) + iEta,//eta. первый угол направления (полярный угол). 0 ≤ eta ≤ π
 //				cos(iEta) / 10 + iEta,//eta. первый угол направления (полярный угол). 0 ≤ eta ≤ π
