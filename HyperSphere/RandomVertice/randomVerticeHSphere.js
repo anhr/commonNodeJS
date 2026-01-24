@@ -422,11 +422,21 @@ const array = [
 				10,//23
 				0,//24
 			],
+			createHyperSphereNavigator = () => {
+				
+				const classSettings = params.hsVertices.classSettings,
+					settings = classSettings.settings,
+					radius = classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : settings.options.player === false ? 0 : settings.options.player.getTimeId());
+				this.navigator = new HyperSphereNavigator(radius);
+				
+			},
 			verticesAngles = (editAngles = false/*boAllocateMemory*/) => {
 
 				if (boRandomVertice) {
 					
-					for (let i = 0; i < (boCloud ? 7500 : 1); i++) {
+					createHyperSphereNavigator();
+					
+					for (let i = 0; i < (boCloud ? 750 : 1); i++) {
 	
 						if (editAngles) params.editAnglesId = i;
 						this.getRandomAngles();
@@ -589,32 +599,37 @@ console.log('circleId = ' + circleId + ' , y = ' + y + ', index = ' + index + ',
 
 			if (!this.navigator) {
 				
+/*			
 				const classSettings = params.hsVertices.classSettings,
 					settings = classSettings.settings,
 					radius = classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : settings.options.player === false ? 0 : settings.options.player.getTimeId());
 				this.navigator = new HyperSphereNavigator(radius);
+*/			
+				createHyperSphereNavigator();
 
 			}
 
 			// Правильное распределение для равномерного покрытия:
 	        // Вероятность попасть в сферическую шапочку радиуса d пропорциональна sin^3(d/R)
-	        const distance = this.navigator.R * this.navigator.inverseCDF_S3(random()); // см. объяснение ниже
+	        const distance = this.navigator.R * this.navigator.inverseCDF_S3(random()) / (1+ 100 * random()); // см. объяснение ниже
 			
 			const oppositeVertice = params.oppositeVertice,
 				result = this.navigator.calculateNewPoint(
-				oppositeVertice.latitude,
-				oppositeVertice.longitude,
-				oppositeVertice.altitude,
-				distance,//0.5,//random() * this.navigator.R * π,//distance максимальная дистанция находится на противоположной стороне гиперсферы
-//				(point ? point.iEta : random()) * π,//eta. первый угол направления (полярный угол). 0 ≤ eta ≤ π
-				point ? point.iEta : acos(2 * random() - 1),//eta. первый угол направления (полярный угол). 0 ≤ eta ≤ π
-//				(sin(iEta) + 1) * iEta,//eta. первый угол направления (полярный угол). 0 ≤ eta ≤ π
-//				sin(iEta * 2) + iEta,//eta. первый угол направления (полярный угол). 0 ≤ eta ≤ π
-//				cos(iEta) / 10 + iEta,//eta. первый угол направления (полярный угол). 0 ≤ eta ≤ π
-				(point ? point.iPsi : random()) * 2 * π//psi. второй угол направления (азимутальный угол). 0 ≤ psi < 2π или -π ≤ psi ≤ π
-//				point ? point.iPsi : 2*π*Math.random() - π//psi. второй угол направления (азимутальный угол). 0 ≤ psi < 2π или -π ≤ psi ≤ π
-				//psi. второй угол направления (азимутальный угол). 0 ≤ psi < 2π или -π ≤ psi ≤ π
-			);
+					this.navigator.startingPointParams(
+						oppositeVertice.latitude,
+						oppositeVertice.longitude,
+						oppositeVertice.altitude,
+					),
+					distance,//0.5,//random() * this.navigator.R * π,//distance максимальная дистанция находится на противоположной стороне гиперсферы
+	//				(point ? point.iEta : random()) * π,//eta. первый угол направления (полярный угол). 0 ≤ eta ≤ π
+					point ? point.iEta : acos(2 * random() - 1),//eta. первый угол направления (полярный угол). 0 ≤ eta ≤ π
+	//				(sin(iEta) + 1) * iEta,//eta. первый угол направления (полярный угол). 0 ≤ eta ≤ π
+	//				sin(iEta * 2) + iEta,//eta. первый угол направления (полярный угол). 0 ≤ eta ≤ π
+	//				cos(iEta) / 10 + iEta,//eta. первый угол направления (полярный угол). 0 ≤ eta ≤ π
+					(point ? point.iPsi : random()) * 2 * π//psi. второй угол направления (азимутальный угол). 0 ≤ psi < 2π или -π ≤ psi ≤ π
+	//				point ? point.iPsi : 2*π*Math.random() - π//psi. второй угол направления (азимутальный угол). 0 ≤ psi < 2π или -π ≤ psi ≤ π
+					//psi. второй угол направления (азимутальный угол). 0 ≤ psi < 2π или -π ≤ psi ≤ π
+				);
 			const angles = utils.angles([result.altitude, result.latitude, result.longitude]);
 			if (params.editAnglesId === undefined) {
 				
@@ -830,10 +845,32 @@ class HyperSphereNavigator {
 	}
 
 	/**
-	 * Вычисление новой точки
 	 * @param {any} lat
 	 * @param {any} lon
 	 * @param {any} alt
+	*/
+	startingPointParams(lat, lon, alt) {
+		
+		// Исходная точка
+		const P = this.anglesToCartesian(lat, lon, alt);
+
+		// Касательный базис
+		const [e1, e2, e3] = this.createTangentBasis(lat, lon, alt);
+
+		return {
+
+			P: P,
+			e1: e1,
+			e2: e2,
+			e3: e3,
+			
+		}
+		
+	}
+
+	/**
+	 * Вычисление новой точки
+	 * @param {object} startingPointParams see startingPointParams above.
 	 * @param {any} distance геодезическое расстояние. Диапазон значений: 0 ≤ distance ≤ πR
 	 * @param {any} eta первый угол направления (полярный угол). Определяет наклон направления движения относительно "вертикали" в касательном пространстве.
 	 * Аналог "широты" направления или "угла места".
@@ -847,12 +884,14 @@ class HyperSphereNavigator {
 	 * Но обычно достаточно: -π ≤ psi ≤ π (как в коде)
 	 * @returns
 	 */
-	calculateNewPoint(lat, lon, alt, distance, eta, psi) {
+	calculateNewPoint(startingPointParams, distance, eta, psi) {
 		// Исходная точка
-		const P = this.anglesToCartesian(lat, lon, alt);
+//		const P = this.anglesToCartesian(lat, lon, alt);
+		const P = startingPointParams.P;
 
 		// Касательный базис
-		const [e1, e2, e3] = this.createTangentBasis(lat, lon, alt);
+//		const [e1, e2, e3] = this.createTangentBasis(lat, lon, alt);
+		const [e1, e2, e3] = [startingPointParams.e1, startingPointParams.e2, startingPointParams.e3];
 
 		// Направляющий вектор в касательном пространстве
 		const u = [0, 0, 0, 0];
