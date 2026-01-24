@@ -596,56 +596,9 @@ console.log('circleId = ' + circleId + ' , y = ' + y + ', index = ' + index + ',
 
 			}
 
-			/**
-			 * Обратная функция распределения для равномерной выборки на S³
-			 * Для равномерного распределения на 3-сфере от северного полюса:
-			 * Плотность: f(θ) ∝ sin³(θ), где θ = distance/R
-			 * CDF: F(θ) = (3θ - 3sinθcosθ + 2sin³θ) / 4
-			 * Здесь используем численное решение обратной функции
-			 */
-			const inverseCDF_S3 = (u) => {
-				// u ∈ [0, 1] равномерно
-				// Ищем θ такой, что CDF(θ) = u, θ ∈ [0, π]
-
-				// Численное решение методом бисекции
-				let low = 0;
-				let high = Math.PI;
-				const tolerance = 1e-10;
-				const maxIterations = 100;
-
-				for (let i = 0; i < maxIterations; i++) {
-					const mid = (low + high) / 2;
-					const cdfValue = CDF_S3(mid);
-
-					if (Math.abs(cdfValue - u) < tolerance) {
-						return mid;
-					}
-
-					if (cdfValue < u) {
-						low = mid;
-					} else {
-						high = mid;
-					}
-				}
-
-				return (low + high) / 2;
-			}
-
-			/**
-			 * Функция распределения (CDF) для расстояния на S³
-			 */
-			const CDF_S3 = (theta) => {
-				// CDF(θ) = (3θ - 3sinθcosθ + 2sin³θ) / 4
-				const sinTheta = Math.sin(theta);
-				const cosTheta = Math.cos(theta);
-				const sin3Theta = sinTheta * sinTheta * sinTheta;
-
-				return (3 * theta - 3 * sinTheta * cosTheta + 2 * sin3Theta) / 4;
-			}
-
 			// Правильное распределение для равномерного покрытия:
 	        // Вероятность попасть в сферическую шапочку радиуса d пропорциональна sin^3(d/R)
-	        const distance = this.navigator.R * inverseCDF_S3(random()); // см. объяснение ниже
+	        const distance = this.navigator.R * this.navigator.inverseCDF_S3(random()); // см. объяснение ниже
 			
 			const oppositeVertice = params.oppositeVertice,
 				result = this.navigator.calculateNewPoint(
@@ -827,6 +780,53 @@ class HyperSphereNavigator {
 		const e3_norm = norm_e3 > 1e-10 ? e3_raw.map(v => v / norm_e3) : [0, 0, 0, 0];
 
 		return [e1_norm, e2_norm, e3_norm];
+	}
+	
+	/**
+	 * Обратная функция распределения для равномерной выборки на S³
+	 * Для равномерного распределения на 3-сфере от северного полюса:
+	 * Плотность: f(θ) ∝ sin³(θ), где θ = distance/R
+	 * CDF: F(θ) = (3θ - 3sinθcosθ + 2sin³θ) / 4
+	 * Здесь используем численное решение обратной функции
+	 */
+	inverseCDF_S3(u) {
+		// u ∈ [0, 1] равномерно
+		// Ищем θ такой, что CDF(θ) = u, θ ∈ [0, π]
+
+		// Численное решение методом бисекции
+		let low = 0;
+		let high = Math.PI;
+		const tolerance = 1e-10;
+		const maxIterations = 100;
+
+		for (let i = 0; i < maxIterations; i++) {
+			const mid = (low + high) / 2;
+			const cdfValue = this.CDF_S3(mid);
+
+			if (Math.abs(cdfValue - u) < tolerance) {
+				return mid;
+			}
+
+			if (cdfValue < u) {
+				low = mid;
+			} else {
+				high = mid;
+			}
+		}
+
+		return (low + high) / 2;
+	}
+
+	/**
+	 * Функция распределения (CDF) для расстояния на S³
+	 */
+	CDF_S3(theta) {
+		// CDF(θ) = (3θ - 3sinθcosθ + 2sin³θ) / 4
+		const sinTheta = Math.sin(theta);
+		const cosTheta = Math.cos(theta);
+		const sin3Theta = sinTheta * sinTheta * sinTheta;
+
+		return (3 * theta - 3 * sinTheta * cosTheta + 2 * sin3Theta) / 4;
 	}
 
 	/**
