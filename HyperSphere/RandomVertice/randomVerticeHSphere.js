@@ -610,8 +610,8 @@ console.log('circleId = ' + circleId + ' , y = ' + y + ', index = ' + index + ',
 			}
 
 			// Правильное распределение для равномерного покрытия:
-	        // Вероятность попасть в сферическую шапочку радиуса d пропорциональна sin^3(d/R)
-	        const distance = this.navigator.R * this.navigator.inverseCDF_S3(random()) / (1+ 100 * random()); // см. объяснение ниже
+			// Вероятность попасть в сферическую шапочку радиуса d пропорциональна sin^3(d/R)
+			const distance = this.navigator.R * this.navigator.inverseCDF_S3(random()) / (1+ 100 * random()); // см. объяснение ниже
 			
 			const oppositeVertice = params.oppositeVertice,
 				result = this.navigator.calculateNewPoint(
