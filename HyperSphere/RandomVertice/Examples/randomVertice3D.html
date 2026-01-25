@@ -450,7 +450,8 @@
 
 			});
 			hsVertices.setDrawRange(hsVertices.bufferGeometry.drawRange.start, hsVertices.bufferGeometry.attributes.position.count, 0);
-			params.hsVertices = hsVertices;//используется для вычисления случайной точки в RandomVerticeHSphere HyperSphereNavigator.calculateNewPoint
+//			params.hsVertices = hsVertices;//используется для вычисления случайной точки в RandomVerticeHSphere HyperSphereNavigator.calculateNewPoint
+			params.classSettings = hsVertices.classSettings;//используется для вычисления случайной точки в RandomVerticeHSphere HyperSphereNavigator.calculateNewPoint
 			
 			//Random vertice hyperSphere 
 

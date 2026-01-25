@@ -579,7 +579,7 @@ class Sphere extends Circle {
 	 */
 	newRandomVertices(scene, options, randomVerticesSettings) { return new RandomVertices(scene, options, randomVerticesSettings); }
 	get RandomVertice() { return RandomVertice; }
-	get RandomCloud() { return RandomCloud; }
+//	get RandomCloud() { return RandomCloud; }
 
 	///////////////////////////////Overridden methods from base class
 

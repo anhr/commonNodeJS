@@ -19,6 +19,7 @@ import Sphere from './sphere.js';
 import three from '../three.js'
 import FibonacciSphereGeometry from '../FibonacciSphere/FibonacciSphereGeometry.js'
 import anglesRange from './anglesRange.js'
+import RandomVertice from './RandomVertice/randomVerticeHSphere.js';
 //import RandomCloud from './RandomVertice/randomCloudHSphere.js';
 import * as utils from './utilsHSphere.js'
 //import Vertice from './VerticeHypersphere.js'
@@ -658,7 +659,7 @@ class HyperSphere3D extends Sphere {
 //					return result;
 
 				}
-				_this.randomVertices(_this.vertice2angles(middleVertice));
+				_this.randomVertices(_this.vertice2angles(middleVertice), _this.object3D.parent);
 				return middleVertice;
 				
 			}
@@ -1418,6 +1419,7 @@ class HyperSphere3D extends Sphere {
 	 * @returns new RandomVertices child class.
 	 */
 	newRandomVertices(scene, options, randomVerticesSettings) { return new RandomVertices(scene, options, randomVerticesSettings); }
+	get RandomVertice() { return RandomVertice; }
 //	get RandomCloud() { return RandomCloud; }
 
 }

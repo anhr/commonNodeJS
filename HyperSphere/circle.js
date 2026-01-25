@@ -18,7 +18,7 @@
 import HyperSphere from './hyperSphere.js';
 import three from '../three.js'
 import RandomVertice from './RandomVertice/randomVerticeCircle.js';
-import RandomCloud from './RandomVertice/randomCloudCircle.js';
+//import RandomCloud from './RandomVertice/randomCloudCircle.js';
 //import Vertice from './VerticeCircle.js'
 import * as utils from './utilsCircle.js'
 
@@ -133,7 +133,7 @@ class Circle extends HyperSphere {
 		
 	}
 
-	randomVertices(middleVerticeAngles) {
+	randomVertices(middleVerticeAngles, scene) {
 		
 		const classSettings = this.classSettings;
 		if (!classSettings.randomArc) return;
@@ -144,13 +144,16 @@ class Circle extends HyperSphere {
 				oppositeVertice: middleVerticeAngles,
 				arc: this.arc,
 				debug: classSettings.debug ? { notRandomVertices: true,} : false,
+				classSettings: classSettings,//используется для вычисления случайной точки в RandomVerticeHSphere HyperSphereNavigator.calculateNewPoint
 				
 			}
 		if (this.randomVertice) this.randomVertice.params = params;
 		else {
 			
-			this.randomVertice = new this.RandomCloud(params);
-			this.hsRandomVertice = this.randomVertice.getHyperSphere(classSettings.settings.options, classSettings, this.middleVerticeColor);
+//			this.randomVertice = new this.RandomCloud(params);
+			this.randomVertice = new this.RandomVertice(params, true);
+//			this.hsRandomVertice = this.randomVertice.getHyperSphere(classSettings.settings.options, classSettings, this.middleVerticeColor);
+			this.hsRandomVertice = this.randomVertice.getHyperSphere(classSettings, scene, this.middleVerticeColor);
 
 		}
 		
@@ -603,7 +606,7 @@ class Circle extends HyperSphere {
 	//overridden methods
 	
 	get RandomVertice() { return RandomVertice; }
-	get RandomCloud() { return RandomCloud; }
+//	get RandomCloud() { return RandomCloud; }
 	
 	/////////////////////////////overridden methods
 	

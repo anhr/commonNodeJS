@@ -18,6 +18,8 @@ import { anglesIdMax } from './randomVerticeSphere.js';
 import anglesRange from '../anglesRange.js'
 import * as utils from '../utilsHSphere.js'
 //import RandomCloudSphere from './randomCloudSphere.js';
+import getHyperSphere from './getHyperSphere.js'
+import HyperSphere from '../hyperSphere3D.js';
 
 const sRandomVerticesHyperSphere = 'RandomVerticesHSphere',
 	π = Math.PI, round = Math.round, random = Math.random,//abs = Math.abs, 
@@ -424,7 +426,8 @@ const array = [
 			],
 			createHyperSphereNavigator = () => {
 				
-				const classSettings = params.hsVertices.classSettings,
+//				const classSettings = params.hsVertices.classSettings,
+				const classSettings = params.classSettings,
 					settings = classSettings.settings,
 					radius = classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : settings.options.player === false ? 0 : settings.options.player.getTimeId());
 				this.navigator = new HyperSphereNavigator(radius);
@@ -721,6 +724,31 @@ console.log('circleId = ' + circleId + ' , y = ' + y + ', index = ' + index + ',
 		utils.angles(params.vertice);
 		utils.angles(params.oppositeVertice);
 		
+	}
+	getHyperSphere(classSettings, scene, middleVerticeColor) {
+		
+		const debug = {
+					
+				probabilityDensity: false,
+				middleVertice: false,
+				log: false,
+				
+			},
+			settings = classSettings.settings,
+			options = settings.options;
+		getHyperSphere(
+			HyperSphere,
+			options,
+			scene,
+			this,
+			{
+				
+				debug: debug,
+				r: classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : options.player.getTimeId()),
+				name: 'Random Cloud'
+				
+			});
+	
 	}
 	
 	/////////////////////////////overridden methods
