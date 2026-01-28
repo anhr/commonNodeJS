@@ -1021,6 +1021,7 @@ class HyperSphere extends MyObject {
 //												vertice: vertice,
 												arc: _this.arc,
 												oppositeVertice: middleVertice,
+												classSettings: classSettings,//используется для вычисления случайной точки в RandomVerticeHSphere HyperSphereNavigator.calculateNewPoint
 												
 											}).angles[0]; }
 											
