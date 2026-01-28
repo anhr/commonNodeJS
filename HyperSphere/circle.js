@@ -133,7 +133,7 @@ class Circle extends HyperSphere {
 		
 	}
 
-	randomVertices(middleVerticeAngles, scene) {
+	randomVertices(middleVerticeAngles, scene, boCloud = false) {
 		
 		const classSettings = this.classSettings;
 		if (!classSettings.randomArc) return;
@@ -151,7 +151,7 @@ class Circle extends HyperSphere {
 		else {
 			
 //			this.randomVertice = new this.RandomCloud(params);
-			this.randomVertice = new this.RandomVertice(params, true);
+			this.randomVertice = new this.RandomVertice(params, boCloud);
 //			this.hsRandomVertice = this.randomVertice.getHyperSphere(classSettings.settings.options, classSettings, this.middleVerticeColor);
 			this.hsRandomVertice = this.randomVertice.getHyperSphere(classSettings, scene, this.middleVerticeColor);
 

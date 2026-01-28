@@ -208,7 +208,7 @@ class HyperSphere3D extends Sphere {
 
 	//Overridden methods from base class
 
-	middlePosition(points) {
+	middlePosition(points, boCloud = false) {
 
 		const _this = this;
 		
@@ -222,9 +222,10 @@ class HyperSphere3D extends Sphere {
 			/**
 			 * Находит точку на гиперсфере, равноудаленную от заданных точек
 			 * @param {Array<Array<number>>} points - Массив точек на гиперсфере
+			 * @param {boolean} [boCloud=false] true - generates a random vertice cloud.
 			 * @returns {Array<number>} Точка на гиперсфере, равноудаленная от заданных
 			 */
-			static findEquidistantPoint(points) {
+			static findEquidistantPoint(points, boCloud = false) {
 
 				const n = points[0].length; // Размерность пространства
 				const radius = _this.r;
@@ -659,7 +660,7 @@ class HyperSphere3D extends Sphere {
 //					return result;
 
 				}
-				_this.randomVertices(_this.vertice2angles(middleVertice), _this.object3D.parent);
+				_this.randomVertices(_this.vertice2angles(middleVertice), _this.object3D.parent, boCloud);
 				return middleVertice;
 				
 			}
@@ -835,7 +836,7 @@ class HyperSphere3D extends Sphere {
 			module.exports = HypersphereEquidistantPoint;
 		}
 */		
-		return HypersphereEquidistantPoint.findEquidistantPoint(points);
+		return HypersphereEquidistantPoint.findEquidistantPoint(points, boCloud);
 
 	}
 	ZeroArray() { return [0, 0, 0]; }

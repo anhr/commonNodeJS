@@ -955,7 +955,7 @@ class HyperSphere extends MyObject {
 
 									switch (name) {
 
-										case 'middleVertice': return (oppositeVerticesId = vertice.oppositeVerticesId, timeId, boPushMiddleVertice = true) => {
+										case 'middleVertice': return (oppositeVerticesId = vertice.oppositeVerticesId, timeId, boPushMiddleVertice = true, boCloud = false) => {
 
 											//find middle vertice between opposite vertices
 /*
@@ -1010,7 +1010,7 @@ class HyperSphere extends MyObject {
 											let middleVertice = isZero ? _this.getRandomMiddleAngles(oppositeVertices) : _this.vertice2angles(aSum);
 */											
 
-											let middleVertice = _this.vertice2angles(this.middlePosition(oppositeVertices));
+											let middleVertice = _this.vertice2angles(this.middlePosition(oppositeVertices, boCloud));
 //											const geometry = settings.object.geometry;
 											if (boPushMiddleVertice) classSettings.overriddenProperties.pushMiddleVertice(timeId, middleVertice);
 											if (classSettings.randomMiddleVertice) { middleVertice = new this.RandomVertice({
@@ -1072,12 +1072,16 @@ class HyperSphere extends MyObject {
 							const verticeId = parseInt(name);
 							if (!isNaN(verticeId)) {
 
+/*Не помню зачем так написал
 								const verticeAngles = angles[verticeId];
 								if (classSettings.debug && ((verticeAngles.length != (_this.dimension - 1)) || (value.length != (_this.dimension - 1)))) console.error(sHyperSphere + ': Set vertice[' + verticeId + '] angles failed. Invalid angles count.')
 								this.isSetPositionAttributeFromPoint = false;
 								for (let j = 0; j < value.length; j++) verticeAngles[j] = value[j];
 								delete this.isSetPositionAttributeFromPoint;
 								this.setPositionAttributeFromPoint(verticeId);//обновляем geometry.attributes
+*/								
+								this.setPositionAttributeFromPoint(verticeId, this.a2v(value, classSettings.overriddenProperties.r(classSettings.settings.guiPoints ? classSettings.settings.guiPoints.timeId : 0)));
+								this.bufferGeometry.attributes.position.needsUpdate = true;
 
 							} else angles[name] = value;
 							return true;
@@ -2453,7 +2457,7 @@ this.object = () => {
 											classSettings.randomMiddleVertice = false;//Среднюю вершину вычисляем не случайно
 
 										}
-										const middleVerticeAngles = angles.middleVertice(oppositeVerticesId, timeId + 1, false),
+										const middleVerticeAngles = angles.middleVertice(oppositeVerticesId, timeId + 1, false, true),
 											middleVertice = _this.angles2Vertice(middleVerticeAngles, timeId);
 										if (randomMiddleVerticeOld != undefined) {
 											

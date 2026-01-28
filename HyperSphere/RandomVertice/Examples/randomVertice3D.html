@@ -474,6 +474,7 @@
 						log: false,
 						
 					}
+/*					
 					if (randomVertice.getHyperSphere) hsRandomVertice = randomVertice.getHyperSphere(options, {
 						
 							projectParams: { scene: scene },
@@ -483,6 +484,8 @@
 						});
 					else
 						hsRandomVertice = getHyperSphere(HyperSphere, options, scene, randomVertice, { debug: debug, r: randomVerticeSettings.R, name: name });
+*/						
+					hsRandomVertice = randomVertice.getHyperSphere(hsVertices.classSettings, scene);
 					
 				}
 				hsRandomVertice.classSettings.settings.bufferGeometry.userData.drawRange = () => {
