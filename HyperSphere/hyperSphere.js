@@ -353,9 +353,9 @@ class HyperSphere extends MyObject {
 		this.middleVerticeColor = middleVerticeColor;
 
 		let edgesOld;
-/*Не помню зачем это		
 		if (classSettings.edges != false) {//Если в настройках запрещены ребра, то не брать настройки ребер из cookie
 			
+/*Не помню зачем это		
 			const cookieOptions = {};
 			if (options.dat) options.dat.cookie.getObject(this.cookieName, cookieOptions);
 			
@@ -363,11 +363,11 @@ class HyperSphere extends MyObject {
 			if (classSettings.overriddenProperties && !classSettings.overriddenProperties.edges) classSettings.overriddenProperties.edges = () => { return false; };
 			classSettings.edges = ((cookieOptions.edges === false) && classSettings.overriddenProperties) ? classSettings.overriddenProperties.edges() : cookieOptions.edges || classSettings.edges;
 			if (classSettings.edges != false) classSettings.edges = classSettings.edges || {};
+*/		
+			classSettings.edges = classSettings.edges || {};
 			if ((classSettings.edges != false) && (classSettings.edges.project === undefined)) classSettings.edges.project = true;
 
 		}
-*/		
-		if ((classSettings.edges != false) && (classSettings.edges.project === undefined)) classSettings.edges.project = true;
 		
 		if (classSettings.r === undefined) classSettings.r = 1;
 		//Нельзя менять радиус гиперсферы
@@ -958,7 +958,7 @@ class HyperSphere extends MyObject {
 
 									switch (name) {
 
-										case 'middleVertice': return (oppositeVerticesId = vertice.oppositeVerticesId, timeId, boPushMiddleVertice = true, boCloud = false) => {
+										case 'middleVertice': return (oppositeVerticesId = vertice.oppositeVerticesId, timeId, boPushMiddleVertice = true, boCloud = false, boCreateHypersphere = true) => {
 
 											//find middle vertice between opposite vertices
 /*
@@ -1013,7 +1013,7 @@ class HyperSphere extends MyObject {
 											let middleVertice = isZero ? _this.getRandomMiddleAngles(oppositeVertices) : _this.vertice2angles(aSum);
 */											
 
-											let middleVertice = _this.vertice2angles(this.middlePosition(oppositeVertices, boCloud));
+											let middleVertice = _this.vertice2angles(this.middlePosition(oppositeVertices, boCloud, boCreateHypersphere));
 //											const geometry = settings.object.geometry;
 											if (boPushMiddleVertice) classSettings.overriddenProperties.pushMiddleVertice(timeId, middleVertice);
 											if (classSettings.randomMiddleVertice) { middleVertice = new this.RandomVertice({
@@ -2850,7 +2850,7 @@ this.object = () => {
 						progressBar.value = verticeId;
 						const stepItem = () => {
 
-							const vertice = overriddenProperties.position0.angles[verticeId].middleVertice(undefined, timeId);
+							const vertice = overriddenProperties.position0.angles[verticeId].middleVertice(undefined, timeId, true, false, false);
 							if (vertices) vertices.push(vertice);
 							verticeId += 1;
 							if (verticeId >= position.length) {
