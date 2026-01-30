@@ -151,13 +151,13 @@ class Circle extends HyperSphere {
 		else {
 			
 //			this.randomVertice = new this.RandomCloud(params);
-			this.randomVertice = new this.RandomVertice(params, boCloud);
+			if (this.randomVertice) this.randomVertice.oppositeVerticeOnChange(middleVerticeAngles);
+				else this.randomVertice = new this.RandomVertice(params, boCloud);
 
 		}
 		if (boCreateHypersphere) {
 			
-//			this.hsRandomVertice = this.randomVertice.getHyperSphere(classSettings.settings.options, classSettings, this.middleVerticeColor);
-			this.hsRandomVertice = this.randomVertice.getHyperSphere(classSettings, scene, this.middleVerticeColor);
+			if (!this.hsRandomVertice) this.hsRandomVertice = this.randomVertice.getHyperSphere(classSettings, scene, this.middleVerticeColor);
 
 		}
 		

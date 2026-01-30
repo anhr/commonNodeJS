@@ -245,6 +245,7 @@ class RandomVerticeHSphere extends RandomVertice {
 		
 					if (arc === undefined) console.error(sRandomVerticesHyperSphere + ': set params.arc. Invalid arc = ' + arc);
 					else arc = arcNew;
+					verticesAngles(true);
 					return true;
 		
 				},
@@ -597,7 +598,12 @@ console.log('circleId = ' + circleId + ' , y = ' + y + ', index = ' + index + ',
 */		
 		this.getAngles = () => { return params.verticesAngles; }
 		this.setAngles = (anglesNew) => { params.verticesAngles = anglesNew; }
-		this.oppositeVerticeOnChange = () => { verticesAngles(true); }
+		this.oppositeVerticeOnChange = (oppositeVertice) => {
+
+			if (oppositeVertice) for (let i = 0; i < params.oppositeVertice.length; i++) params.oppositeVertice[i] = oppositeVertice[i];
+			verticesAngles(true);
+		
+		}
 		this.getRandomAngles = (point) => {
 
 			if (!this.navigator) {
