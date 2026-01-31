@@ -18,7 +18,7 @@ import { anglesIdMax } from './randomVerticeSphere.js';
 import anglesRange from '../anglesRange.js'
 import * as utils from '../utilsHSphere.js'
 //import RandomCloudSphere from './randomCloudSphere.js';
-import getHyperSphere from './getHyperSphere.js'
+//import getHyperSphere from './getHyperSphere.js'
 import HyperSphere from '../hyperSphere3D.js';
 
 const sRandomVerticesHyperSphere = 'RandomVerticesHSphere',
@@ -732,6 +732,7 @@ console.log('params.arc = ' + params.arc)
 		utils.angles(params.oppositeVertice);
 		
 	}
+/*	
 	getHyperSphere(classSettings, scene, middleVerticeColor) {
 		
 		const debug = {
@@ -757,6 +758,8 @@ console.log('params.arc = ' + params.arc)
 			});
 	
 	}
+*/	
+	get HyperSphere() { return HyperSphere; }
 	
 	/////////////////////////////overridden methods
 

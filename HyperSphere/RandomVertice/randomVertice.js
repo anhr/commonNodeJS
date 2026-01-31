@@ -13,6 +13,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 
+import getHyperSphere from './getHyperSphere.js'
+
 const sRandomVertice = 'RandomVertice',
 	sOver = ': Please, override %s method in your ' + sRandomVertice + ' child class.',
 	π = Math.PI;
@@ -82,6 +84,31 @@ class RandomVertice {
 	
 	get angles() { console.error(sRandomCloud + sOver.replace('%s', 'get angles')) }
 	get randomAngles() { console.error(sRandomCloud + sOver.replace('%s', 'get randomAngles')) }
+	getHyperSphere(classSettings, scene, middleVerticeColor) {
+		
+		const debug = {
+					
+				probabilityDensity: false,
+				middleVertice: false,
+				log: false,
+				
+			},
+			settings = classSettings.settings,
+			options = settings.options;
+		return getHyperSphere(
+			this.HyperSphere,
+			options,
+			scene,
+			this,
+			{
+				
+				debug: debug,
+				r: classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : options.player ? options.player.getTimeId() : 0),
+				name: 'Random Cloud'
+				
+			});
+	
+	}
 	
 	/////////////////////////////overridden methods
 
