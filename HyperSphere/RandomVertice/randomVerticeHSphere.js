@@ -440,10 +440,16 @@ const array = [
 					
 					createHyperSphereNavigator();
 					
+					const oppositeVertice = params.oppositeVertice,
+						startingPointParams = this.navigator.startingPointParams(
+								oppositeVertice.latitude,
+								oppositeVertice.longitude,
+								oppositeVertice.altitude,
+							);
 					for (let i = 0; i < (boCloud ? 750 : 1); i++) {
 	
 						if (editAngles) params.editAnglesId = i;
-						this.getRandomAngles();
+						this.getRandomAngles(undefined, startingPointParams);
 	
 					}
 
@@ -605,7 +611,7 @@ console.log('params.arc = ' + params.arc)
 			verticesAngles(true);
 		
 		}
-		this.getRandomAngles = (point) => {
+		this.getRandomAngles = (point, startingPointParams) => {
 
 			if (!this.navigator) {
 				
@@ -622,23 +628,29 @@ console.log('params.arc = ' + params.arc)
 			// Правильное распределение для равномерного покрытия:
 			// Вероятность попасть в сферическую шапочку радиуса d пропорциональна sin^3(d/R)
 			const distance = this.navigator.R * this.navigator.inverseCDF_S3(random()) / (1+ 100 * random()); // см. объяснение ниже
-			
-			const oppositeVertice = params.oppositeVertice,
-				result = this.navigator.calculateNewPoint(
+
+			if (!startingPointParams) {
+				
+				const oppositeVertice = params.oppositeVertice;
+				startingPointParams = this.navigator.startingPointParams(
+						oppositeVertice.latitude,
+						oppositeVertice.longitude,
+						oppositeVertice.altitude,
+					)
+					
+			}
+			const result = this.navigator.calculateNewPoint(
+					startingPointParams,
+/*					
 					this.navigator.startingPointParams(
 						oppositeVertice.latitude,
 						oppositeVertice.longitude,
 						oppositeVertice.altitude,
 					),
+*/					
 					distance,//0.5,//random() * this.navigator.R * π,//distance максимальная дистанция находится на противоположной стороне гиперсферы
-	//				(point ? point.iEta : random()) * π,//eta. первый угол направления (полярный угол). 0 ≤ eta ≤ π
 					point ? point.iEta : acos(2 * random() - 1),//eta. первый угол направления (полярный угол). 0 ≤ eta ≤ π
-	//				(sin(iEta) + 1) * iEta,//eta. первый угол направления (полярный угол). 0 ≤ eta ≤ π
-	//				sin(iEta * 2) + iEta,//eta. первый угол направления (полярный угол). 0 ≤ eta ≤ π
-	//				cos(iEta) / 10 + iEta,//eta. первый угол направления (полярный угол). 0 ≤ eta ≤ π
 					(point ? point.iPsi : random()) * 2 * π//psi. второй угол направления (азимутальный угол). 0 ≤ psi < 2π или -π ≤ psi ≤ π
-	//				point ? point.iPsi : 2*π*Math.random() - π//psi. второй угол направления (азимутальный угол). 0 ≤ psi < 2π или -π ≤ psi ≤ π
-					//psi. второй угол направления (азимутальный угол). 0 ≤ psi < 2π или -π ≤ psi ≤ π
 				);
 			const angles = utils.angles([result.altitude, result.latitude, result.longitude]);
 			if (params.editAnglesId === undefined) {
