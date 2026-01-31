@@ -598,9 +598,10 @@ console.log('circleId = ' + circleId + ' , y = ' + y + ', index = ' + index + ',
 */		
 		this.getAngles = () => { return params.verticesAngles; }
 		this.setAngles = (anglesNew) => { params.verticesAngles = anglesNew; }
-		this.oppositeVerticeOnChange = (oppositeVertice) => {
+		this.oppositeVerticeOnChange = (/*oppositeVertice*/) => {
 
-			if (oppositeVertice) for (let i = 0; i < params.oppositeVertice.length; i++) params.oppositeVertice[i] = oppositeVertice[i];
+//			if (oppositeVertice) for (let i = 0; i < params.oppositeVertice.length; i++) params.oppositeVertice[i] = oppositeVertice[i];
+console.log('params.arc = ' + params.arc)
 			verticesAngles(true);
 		
 		}

@@ -138,21 +138,23 @@ class Circle extends HyperSphere {
 		const classSettings = this.classSettings;
 		if (!classSettings.randomArc) return;
 
-		const params = {
+		if (!this.params) this.params = {
 				
-				//vertice: angles,
-				oppositeVertice: middleVerticeAngles,
-				arc: this.arc,
+//				oppositeVertice: middleVerticeAngles,
+//				arc: this.arc,
 				debug: classSettings.debug ? { notRandomVertices: true,} : false,
 				classSettings: classSettings,//используется для вычисления случайной точки в RandomVerticeHSphere HyperSphereNavigator.calculateNewPoint
 				
 			}
-		if (this.randomVertice && (boCloud === false) && (boCreateHypersphere === false)) this.randomVertice.params = params;//Делается очередной шаг проигрывателя и это уже не первая точка
+		this.params.oppositeVertice = middleVerticeAngles;
+		this.params.arc = this.arc;
+		
+		if (this.randomVertice && (boCloud === false) && (boCreateHypersphere === false)) this.randomVertice.params = this.params;//Делается очередной шаг проигрывателя и это уже не первая точка
 		else {
 			
 //			this.randomVertice = new this.RandomCloud(params);
-			if (this.randomVertice) this.randomVertice.oppositeVerticeOnChange(middleVerticeAngles);
-				else this.randomVertice = new this.RandomVertice(params, boCloud);
+			if (this.randomVertice) this.randomVertice.oppositeVerticeOnChange();//middleVerticeAngles);
+			else this.randomVertice = new this.RandomVertice(this.params, boCloud);
 
 		}
 		if (boCreateHypersphere) {

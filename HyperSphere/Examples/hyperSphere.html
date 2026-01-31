@@ -69,7 +69,7 @@
 				},
 				//edges: false,
 				randomArc: true,
-				//randomMiddleVertice: false,
+				randomMiddleVertice: false,
 				projectParams:{
 					
 					scene: scene,
@@ -250,17 +250,6 @@
 								[Math.PI / 2, 0, 0],//3. Position = [1,0,0,0]
 								[Math.PI / 2, 0, 0],//4. Position = [1,0,0,0]
 							],
-							//центроид в начале координат. Положение средней точки не определено, то есть случайно может находиться в нескольких местах
-							//одновременно Вырожденный случай: точки лежат в подпространстве меньшей размерности
-							angles: [
-								[],//0. Position = [0,0,0,0]
-								[Math.PI / 2, 0, 0],//1. Position = [1,0,0,0]
-								//[Math.PI / 2 + Math.PI / 40, 0, 0],//1.
-								[Math.PI / 2, 0, Math.PI],//2. Position = [-1,0,0,0]
-								[Math.PI / 2, 0, Math.PI / 2],//3. Position = [0, 1, 0, 0]
-								[Math.PI / 2, 0, - Math.PI / 2],//4. Position = [0, 1, 0, 0]
-							],
-
 							//pentahedroid https://en.wikipedia.org/wiki/5-cell
 							angles: [
 								[],//0
@@ -272,6 +261,16 @@
 								],//2
 								[Math.PI / 2, - Math.PI / 6, Math.PI * 2 * 1 / 3],//3
 								[Math.PI / 2, - Math.PI / 6, - Math.PI * 2 * 1 / 3],//4
+							],
+							//центроид в начале координат. Положение средней точки не определено, то есть случайно может находиться в нескольких местах
+							//одновременно Вырожденный случай: точки лежат в подпространстве меньшей размерности
+							angles: [
+								[],//0. Position = [0,0,0,0]
+								[Math.PI / 2, 0, 0],//1. Position = [1,0,0,0]
+								//[Math.PI / 2 + Math.PI / 40, 0, 0],//1.
+								[Math.PI / 2, 0, Math.PI],//2. Position = [-1,0,0,0]
+								[Math.PI / 2, 0, Math.PI / 2],//3. Position = [0, 1, 0, 0]
+								[Math.PI / 2, 0, - Math.PI / 2],//4. Position = [0, 1, 0, 0]
 							],
 							//angles: { count: 1000, },
 							//angles: angles,
