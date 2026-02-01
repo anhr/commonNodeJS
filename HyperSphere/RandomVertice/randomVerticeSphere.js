@@ -342,16 +342,30 @@ export class RandomVerticeSphere extends RandomVertice {
 			};
 */		
 
-		if (!arrayCircles) {//не выделять this.verticesAngles если нужно вычислить одну случайную точку randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1
-
-			params.pointsCount = 0;
-//			verticesAngles();
-			this.verticesAngles(false);
-
-		}
-
 		//overridden methods
 
+		this.verticesAngles = (editAngles = false) => {
+
+			console.error('Under constraction')
+/*			
+			createHyperSphereNavigator();
+
+			const oppositeVertice = params.oppositeVertice,
+				startingPointParams = this.navigator.startingPointParams(
+					oppositeVertice.latitude,
+					oppositeVertice.longitude,
+					oppositeVertice.altitude,
+				);
+			for (let i = 0; i < (boCloud ? 750 : 1); i++) {
+
+				if (editAngles) params.editAnglesId = i;
+				this.getRandomAngles(undefined, startingPointParams);
+
+			}
+			delete params.editAnglesId;
+*/			
+
+		};
 /*		
 		Object.defineProperty(this, 'angles', {
 			
@@ -449,6 +463,29 @@ export class RandomVerticeSphere extends RandomVertice {
 		
 		/////////////////////////////overridden methods
 
+
+		if (!arrayCircles) {//не выделять this.verticesAngles если нужно вычислить одну случайную точку randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1
+
+			params.pointsCount = 0;
+			this.verticesAngles(false);
+
+		} else {
+
+			params.pointsCount = 0;
+			this.randomAngles;//Вычислить случайную точку если нужна одна случайная точка т.е. randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1 или randomVerticeSettings.mode = randomVerticeSettings.modes.randomCloud = 2
+			params.editAnglesId = 0;
+
+		}
+/*
+		if (!arrayCircles) {//не выделять this.verticesAngles если нужно вычислить одну случайную точку randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1
+
+			params.pointsCount = 0;
+			//			verticesAngles();
+			this.verticesAngles(false);
+
+		}
+*/
+/*
 		if (arrayCircles) {
 
 //			if (boInitRandomAngles) {
@@ -460,6 +497,7 @@ export class RandomVerticeSphere extends RandomVertice {
 //			}
 			
 		} else this.verticesAngles(false);//Вычислить облако случайных точек
+*/
 
 	}
 	
@@ -562,7 +600,7 @@ rotatedPosition должна получиться равной position1.
 		utils.angles(params.oppositeVertice);
 		
 	}
-	resultAngles(result) { return utils.angles([result.latitude, result.longitude]); }
+//	resultAngles(result) { return utils.angles([result.latitude, result.longitude]); }
 	get HyperSphere() { return HyperSphere; }
 	
 	/////////////////////////////overridden methods
