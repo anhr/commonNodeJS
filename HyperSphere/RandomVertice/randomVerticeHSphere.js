@@ -585,6 +585,7 @@ class RandomVerticeHSphere extends RandomVertice {
 		utils.angles(params.oppositeVertice);
 		
 	}
+	resultAngles(result) { return utils.angles([result.altitude, result.latitude, result.longitude]); }
 /*	
 	getHyperSphere(classSettings, scene, middleVerticeColor) {
 		

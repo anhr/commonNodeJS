@@ -101,11 +101,11 @@ if (boCloud === undefined) console.error('RandomVertice.constructor: under const
 			}
 			const result = this.navigator.calculateNewPoint(
 				startingPointParams,
-				0.5,//distance,//random() * this.navigator.R * π,//distance максимальная дистанция находится на противоположной стороне гиперсферы
+				distance,//distance максимальная дистанция находится на противоположной стороне гиперсферы
 				point ? point.iEta : acos(2 * random() - 1),//eta. первый угол направления (полярный угол). 0 ≤ eta ≤ π
 				(point ? point.iPsi : random()) * 2 * π//psi. второй угол направления (азимутальный угол). 0 ≤ psi < 2π или -π ≤ psi ≤ π
 			);
-			const angles = utils.angles([result.altitude, result.latitude, result.longitude]);
+			const angles = this.resultAngles(result);
 			if (params.editAnglesId === undefined) {
 
 				params.verticesAngles.push(angles);

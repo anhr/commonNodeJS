@@ -562,6 +562,7 @@ rotatedPosition должна получиться равной position1.
 		utils.angles(params.oppositeVertice);
 		
 	}
+	resultAngles(result) { return utils.angles([result.latitude, result.longitude]); }
 	get HyperSphere() { return HyperSphere; }
 	
 	/////////////////////////////overridden methods
