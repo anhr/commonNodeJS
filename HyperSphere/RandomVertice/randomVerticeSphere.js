@@ -43,9 +43,9 @@ export class RandomVerticeSphere extends RandomVertice {
 	 * @param {object} [params.circlesCount] Count of the circles in the sphere.
 	 * @param {boolean} [boCloud=false] true - generates a random vertice cloud.
 	 */
-	constructor(params={}, boCloud = false/*, boInitRandomAngles = true*/) {
+	constructor(params={}, boCloud = false) {
 
-		super(params);
+		super(params, boCloud);
 
 		this.Euler(params);
 		
@@ -282,7 +282,8 @@ export class RandomVerticeSphere extends RandomVertice {
 */				
 				return rotated;
 				
-			},
+			};
+/*			
 			verticesAngles = (boAllocateMemory) => {
 
 				//Сфера случайных точек состоит из набора окружностей.
@@ -292,11 +293,6 @@ export class RandomVerticeSphere extends RandomVertice {
 					0;//в противном случае в массиве this.verticesAngles редактируется item с индексом this.circlesPointsCount
 				let latitudePrev = 0;//широта предыдущей окружности
 				const euler = !boAllocateMemory && params.Euler ? params.Euler() : undefined;
-/*				
-					latitudeMultiplier = (params.circleLatitudeMultiplier ?
-						params.circleLatitudeMultiplier(circlesCount)://Присоздании облака случайных точек гиперсферы широту каждой окружности текущей сферы надо умножить на некоторый коэфициент что бы облако случайных точек приоблело сферическую форму
-						1);
-*/						
 				const b = params.b ? params.b : utils.b(params);
 				for(let circleId = 0; circleId < circlesCount; circleId++){
 
@@ -344,17 +340,13 @@ export class RandomVerticeSphere extends RandomVertice {
 				delete params.b;
 				
 			};
+*/		
 
 		if (!arrayCircles) {//не выделять this.verticesAngles если нужно вычислить одну случайную точку randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1
 
 			params.pointsCount = 0;
-			verticesAngles();
-/*			
-			//Allocate this.verticesAngles memory
-			params.boAllocateMemory = true;
-			verticesAngles(params.boAllocateMemory);
-			delete params.boAllocateMemory;
-*/			
+//			verticesAngles();
+			this.verticesAngles(false);
 
 		}
 
@@ -368,8 +360,10 @@ export class RandomVerticeSphere extends RandomVertice {
 			
 		});
 */
+/*
 		this.getAngles = () => { return params.verticesAngles; }
 		this.setAngles = (anglesNew) => { params.verticesAngles = anglesNew; }
+*/
 /*		
 		Object.defineProperty(this, 'randomAngles', {
 
@@ -387,6 +381,7 @@ export class RandomVerticeSphere extends RandomVertice {
 
 		});
 */		
+/*		
 		this.getRandomAngles = () => {
 			
 			if (arrayCircles) arrayCircles.length = 0;
@@ -398,6 +393,7 @@ export class RandomVerticeSphere extends RandomVertice {
 			else return this.angles;
 			
 		}
+*/		
 
 		Object.defineProperty(this, 'сirclesParams', {
 			
@@ -463,7 +459,7 @@ export class RandomVerticeSphere extends RandomVertice {
 
 //			}
 			
-		} else verticesAngles(false);//Вычислить облако случайных точек
+		} else this.verticesAngles(false);//Вычислить облако случайных точек
 
 	}
 	
