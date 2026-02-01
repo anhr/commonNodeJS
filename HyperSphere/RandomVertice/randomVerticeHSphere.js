@@ -427,10 +427,13 @@ class RandomVerticeHSphere extends RandomVertice {
 			],
 			createHyperSphereNavigator = () => {
 
+/*				
 				const classSettings = params.classSettings,
 					settings = classSettings.settings,
 					radius = classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : settings.options.player === false ? 0 : settings.options.player.getTimeId());
 				this.navigator = new HyperSphereNavigator(radius);
+*/				
+				this.navigator = new HyperSphereNavigator();
 
 			};
 		
