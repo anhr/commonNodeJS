@@ -146,17 +146,11 @@ if (boCloud === undefined) console.error('RandomVertice.constructor: under const
 
 		}
 */
-/*		
 		this.verticesAngles = (editAngles = false) => {
 
-			createHyperSphereNavigator();
+//			createHyperSphereNavigator();
 
-			const oppositeVertice = params.oppositeVertice,
-				startingPointParams = this.navigator.startingPointParams(
-					oppositeVertice.latitude,
-					oppositeVertice.longitude,
-					oppositeVertice.altitude,
-				);
+			const startingPointParams = this.navigator.startingPointParams();
 			for (let i = 0; i < (boCloud ? 750 : 1); i++) {
 
 				if (editAngles) params.editAnglesId = i;
@@ -166,7 +160,6 @@ if (boCloud === undefined) console.error('RandomVertice.constructor: under const
 			delete params.editAnglesId;
 
 		};
-*/		
 		this.distance = (distance, R) => {
 			
 			const arc = π - params.arc;

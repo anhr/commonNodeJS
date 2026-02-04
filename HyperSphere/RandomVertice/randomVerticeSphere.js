@@ -339,31 +339,38 @@ export class RandomVerticeSphere extends RandomVertice {
 				delete params.b;
 				
 			};
-*/		
+*/
+		this.navigator = {
+
+			startingPointParams: () => {
+
+/*				
+				const oppositeVertice = params.oppositeVertice;
+				return { lat: oppositeVertice.latitude, lon: oppositeVertice.longitude }
+*/				
+				
+			},
+			
+		}
 
 		//overridden methods
 
+/*		
 		this.verticesAngles = (editAngles = false) => {
 
-/*			
-			createHyperSphereNavigator();
+//			createHyperSphereNavigator();
 
-			const oppositeVertice = params.oppositeVertice,
-				startingPointParams = this.navigator.startingPointParams(
-					oppositeVertice.latitude,
-					oppositeVertice.longitude,
-					oppositeVertice.altitude,
-				);
-*/			
+			const startingPointParams = this.navigator.startingPointParams();
 			for (let i = 0; i < (boCloud ? 750 : 1); i++) {
 
 				if (editAngles) params.editAnglesId = i;
-				this.getRandomAngles();
+				this.getRandomAngles(undefined, startingPointParams);
 
 			}
 			delete params.editAnglesId;
 
 		};
+*/		
 /*		
 		Object.defineProperty(this, 'angles', {
 			
@@ -668,7 +675,7 @@ longitude - долгота в диапазоне от -π до π.
 			}
 */
 
-		this.getRandomAngles = () => {
+		this.getRandomAngles = (point, startingPointParams) => {
 
 			/*
 Написать на javascript код, который будет использовать функцию calculatePointOnSphere для вычисления случайных точек на поверхности сферы, таким образом,
