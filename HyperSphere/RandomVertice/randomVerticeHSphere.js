@@ -522,14 +522,15 @@ class RandomVerticeHSphere extends RandomVertice {
 		this.getAngles = () => { return params.verticesAngles; }
 		this.setAngles = (anglesNew) => { params.verticesAngles = anglesNew; }
 */
-//		this.oppositeVerticeOnChange = () => { this.verticesAngles(true); }
+//		this.paramsVerticeOnChange = () => { this.verticesAngles(true); }
 		this.getRandomAngles = (point, startingPointParams) => {
 
 			if (!this.navigator) createHyperSphereNavigator();
 
 			// Правильное распределение для равномерного покрытия:
 			// Вероятность попасть в сферическую шапочку радиуса d пропорциональна sin^3(d/R)
-			const distance = this.navigator.R * this.navigator.inverseCDF_S3(random()) / (1+ 100 * random()); // см. объяснение ниже
+//			const distance = this.navigator.R * this.navigator.inverseCDF_S3(random()) / (1+ 100 * random()); // см. объяснение ниже
+			const R = this.navigator.R, distance = this.distance(R * this.navigator.inverseCDF_S3(random()), R);
 
 			if (!startingPointParams) {
 				
@@ -548,17 +549,7 @@ class RandomVerticeHSphere extends RandomVertice {
 					(point ? point.iPsi : random()) * 2 * π//psi. второй угол направления (азимутальный угол). 0 ≤ psi < 2π или -π ≤ psi ≤ π
 				);
 			const angles = utils.angles([result.altitude, result.latitude, result.longitude]);
-			if (params.editAnglesId === undefined) {
-				
-				params.verticesAngles.push(angles);
-				params.pointsCount++;
-
-			} else {
-				
-				params.verticesAngles[params.editAnglesId] = angles;
-				params.verticesAngles.needsUpdate;
-
-			}
+			this.paramsVerticesAngles(angles);
 			return this.angles;
 			
 		}

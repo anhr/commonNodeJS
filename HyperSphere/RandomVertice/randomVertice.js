@@ -44,20 +44,35 @@ if (boCloud === undefined) console.error('RandomVertice.constructor: under const
 
 		const _this = this;
 
+		const setVertice = (vertice, name, value) => {
+			
+			vertice[name] = value;
+			switch (name) {
+
+				case 'altitude':
+				case 'latitude':
+				case 'longitude':
+					_this.paramsVerticeOnChange();
+					break;
+					
+			}
+			
+		}
+		params.vertice = new Proxy( params.vertice, {
+
+			set: (vertice, name, value) => {
+
+				setVertice(vertice, name, value);
+				return true;
+	
+			},
+			
+		});
 		params.oppositeVertice = new Proxy( params.oppositeVertice, {
 
 			set: (oppositeVertice, name, value) => {
 
-				oppositeVertice[name] = value;
-				switch (name) {
-	
-					case 'altitude':
-					case 'latitude':
-					case 'longitude':
-						_this.oppositeVerticeOnChange();
-						break;
-						
-				}
+				setVertice(oppositeVertice, name, value);
 				return true;
 	
 			},
@@ -80,7 +95,7 @@ if (boCloud === undefined) console.error('RandomVertice.constructor: under const
 			set: (anglesNew) => { },
 
 		});
-		this.oppositeVerticeOnChange = () => { this.verticesAngles(true); }
+		this.paramsVerticeOnChange = () => { this.verticesAngles(true); }
 /*
 		this.getRandomAngles = (point, startingPointParams) => {
 
@@ -152,7 +167,37 @@ if (boCloud === undefined) console.error('RandomVertice.constructor: under const
 
 		};
 */		
+		this.distance = (distance, R) => {
+			
+			const arc = π - params.arc;
+			
+			/*Есть декартова система координат. Ось x обозначим как arc. Найди элементарную функцию которая неогранниченно растет в точке arc = 0 и равна нулю в точке arc = π.
+			arc меняется только в диапазоне от 0 до π. arc это не угол.
+			Написать код на javascript
+			*/
+			//https://chat.deepseek.com/a/chat/s/0b71542a-46a2-47e2-9888-f95f26f0fa37
+			const y = 1 / arc - 1 / π;
+			
+//			const distance = (Math.acos(1 - 2 * random()) * R) / (1 + (y * R * random()));
+			return distance / (1 + (y * R * random()));
+			
+		}
+		this.paramsVerticesAngles = (angles) => {
+			
+			if (params.editAnglesId === undefined) {
+				
+				params.verticesAngles.push(angles);
+				params.pointsCount++;
 
+			} else {
+				
+				params.verticesAngles[params.editAnglesId] = angles;
+				params.verticesAngles.needsUpdate;
+
+			}
+			
+		}
+		
 		//overridden methods
 
 		this.getAngles = () => { return params.verticesAngles; }

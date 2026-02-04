@@ -23,9 +23,8 @@ import HyperSphere from '../sphere.js';
 
 
 const sRandomVerticesSphere = 'RandomVerticesSphere',
-	π = Math.PI, abs = Math.abs, round = Math.round, random = Math.random,
-	sin = Math.sin, asin = Math.asin, cos = Math.cos, tan = Math.tan, atan = Math.atan, atan2 = Math.atan2;
-//	range = anglesRange.longitude.range;
+	π = Math.PI, round = Math.round, random = Math.random,// abs = Math.abs,
+	cos = Math.cos;//, atan = Math.atan, sin = Math.sin, asin = Math.asin, tan = Math.tan, atan2 = Math.atan2;
 export const anglesIdMax = 50;//Количество точек на окружности, расположенной на экваторе
 
 /**
@@ -346,7 +345,6 @@ export class RandomVerticeSphere extends RandomVertice {
 
 		this.verticesAngles = (editAngles = false) => {
 
-			console.error('Under constraction')
 /*			
 			createHyperSphereNavigator();
 
@@ -356,14 +354,14 @@ export class RandomVerticeSphere extends RandomVertice {
 					oppositeVertice.longitude,
 					oppositeVertice.altitude,
 				);
+*/			
 			for (let i = 0; i < (boCloud ? 750 : 1); i++) {
 
 				if (editAngles) params.editAnglesId = i;
-				this.getRandomAngles(undefined, startingPointParams);
+				this.getRandomAngles();
 
 			}
 			delete params.editAnglesId;
-*/			
 
 		};
 /*		
@@ -394,20 +392,320 @@ export class RandomVerticeSphere extends RandomVertice {
 			set: (anglesNew) => { },
 
 		});
-*/		
-/*		
-		this.getRandomAngles = () => {
-			
-			if (arrayCircles) arrayCircles.length = 0;
-			verticesAngles(false);
-			params.verticesAngles.needsUpdate;
-			const randomVerticeId = round(random() * (this.circlesPointsCount - 1))
+*/
+		/*
+Есть точка на поверхности сферы в полярной системе координат.
+R - радиус сферы. 
+Положение точки определено ее углами:
+latitude - широта в диапазоне от -π/2 до π/2.
+longitude - долгота в диапазоне от -π до π.
+Начало координат находится в центре сферы. Вычислить координаты другой точки на сфере, которая находится на определенном растоянии и под определенным углом от заданной точки.
+		*/
+		//https://chat.deepseek.com/a/chat/s/e304455b-5714-4923-88f5-6ac9c6adee40
+		/**
+		 * Вычисляет точку на сфере, находящуюся на заданном расстоянии и азимуте от исходной точки
+		 * @param {number} latA - Широта исходной точки в радианах [-π/2, π/2]
+		 * @param {number} lonA - Долгота исходной точки в радианах [-π, π]
+		 * @param {number} R - Радиус сферы
+		 * @param {number} distance - Расстояние по поверхности сферы (в тех же единицах, что и R)
+		 * @param {number} azimuth - Азимут (направление) в радианах, отсчитывается от севера по часовой стрелке [0, 2π]
+		 * @returns {Object} Объект с координатами {lat, lon, x, y, z}
+		 */
+		const calculatePointOnSphere = (latA, lonA, R, distance, azimuth) => {
+			if (distance > (2 * π * R)) console.error(sRandomVerticesSphere + '.calculatePointOnSphere. Invalid distance = ' + distance);
+			// Обработка нулевого расстояния
+			if (Math.abs(distance) < 1e-12) {
+				return {
+					lat: latA,
+					lon: lonA,
+/*						
+					x: R * Math.cos(latA) * Math.cos(lonA),
+					y: R * Math.cos(latA) * Math.sin(lonA),
+					z: R * Math.sin(latA)
+*/
+				};
+			}
 
-			if (arrayCircles) return this.getRandomAngle(randomVerticeId);
-			else return this.angles;
+			// Центральный угол
+			const gamma = distance / R;
+
+			// Обработка антиподной точки
+			if (Math.abs(gamma - Math.PI) < 1e-12) {
+				const latB = -latA;
+				const lonB = lonA + Math.PI;
+				// Нормализация долготы
+				const normalizedLon = ((lonB + Math.PI) % (2 * Math.PI) - Math.PI);
+
+				return {
+					lat: latB,
+					lon: normalizedLon,
+/*						
+					x: R * Math.cos(latB) * Math.cos(normalizedLon),
+					y: R * Math.cos(latB) * Math.sin(normalizedLon),
+					z: R * Math.sin(latB)
+*/
+				};
+			}
+
+			// Проверка на полюса
+			const isNorthPole = Math.abs(latA - Math.PI / 2) < 1e-12;
+			const isSouthPole = Math.abs(latA + Math.PI / 2) < 1e-12;
+
+			// Если исходная точка на полюсе
+			if (isNorthPole || isSouthPole) {
+				// Для полюса направление "север" всегда к полюсу,
+				// поэтому движение происходит по меридиану с заданным азимутом
+
+				// Широта конечной точки
+				const latB = latA - Math.cos(azimuth) * gamma;
+
+				// Для северного полюса азимут равен конечной долготе
+				// Для южного полюса - противоположен
+				let lonB;
+				if (isNorthPole) {
+					lonB = azimuth;
+				} else { // isSouthPole
+					lonB = azimuth + Math.PI;
+				}
+
+				// Нормализация долготы
+				lonB = ((lonB + Math.PI) % (2 * Math.PI) - Math.PI);
+
+				// Корректировка широты для диапазона [-π/2, π/2]
+				const clampedLatB = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, latB));
+
+				return {
+					lat: clampedLatB,
+					lon: lonB,
+/*						
+					x: R * Math.cos(clampedLatB) * Math.cos(lonB),
+					y: R * Math.cos(clampedLatB) * Math.sin(lonB),
+					z: R * Math.sin(clampedLatB)
+*/
+				};
+			}
+
+			// Общий случай (не полюс)
+
+			// Единичный вектор точки A
+			const cosLatA = Math.cos(latA);
+			const sinLatA = Math.sin(latA);
+			const cosLonA = Math.cos(lonA);
+			const sinLonA = Math.sin(lonA);
+
+			const a_x = cosLatA * cosLonA;
+			const a_y = cosLatA * sinLonA;
+			const a_z = sinLatA;
+
+			// Векторы севера и востока
+			const N_x = -sinLatA * cosLonA;
+			const N_y = -sinLatA * sinLonA;
+			const N_z = cosLatA;
+
+			const E_x = -sinLonA;
+			const E_y = cosLonA;
+			const E_z = 0;
+
+			// Вектор направления D
+			const cosAz = Math.cos(azimuth);
+			const sinAz = Math.sin(azimuth);
+
+			const D_x = cosAz * N_x + sinAz * E_x;
+			const D_y = cosAz * N_y + sinAz * E_y;
+			const D_z = cosAz * N_z + sinAz * E_z;
+
+			// Единичный вектор точки B
+			const cosGamma = Math.cos(gamma);
+			const sinGamma = Math.sin(gamma);
+
+			const b_x = cosGamma * a_x + sinGamma * D_x;
+			const b_y = cosGamma * a_y + sinGamma * D_y;
+			const b_z = cosGamma * a_z + sinGamma * D_z;
+
+			// Декартовы координаты
+			const xB = R * b_x;
+			const yB = R * b_y;
+			const zB = R * b_z;
+
+			// Сферические координаты
+			// Используем atan2 для численной устойчивости при малых значениях
+			let latB, lonB;
+
+			// Вычисление широты
+			latB = Math.asin(b_z);
+
+			// Вычисление долготы с обработкой сингулярностей
+			const xyNorm = Math.sqrt(b_x * b_x + b_y * b_y);
+			if (xyNorm < 1e-12) {
+				// Точка близка к полюсу
+				lonB = 0; // Произвольно выбираем 0
+			} else {
+				lonB = Math.atan2(b_y, b_x);
+			}
+
+			// Нормализация долготы в диапазон [-π, π]
+			if (lonB > Math.PI) lonB -= 2 * Math.PI;
+			if (lonB < -Math.PI) lonB += 2 * Math.PI;
+
+			return {
+				lat: latB,
+				lon: lonB,
+/*					
+					x: xB,
+					y: yB,
+					z: zB
+*/
+			};
+		}
+
+		/**
+		 * Вспомогательная функция для нормализации углов
+		 * @param {number} angle - Угол в радианах
+		 * @returns {number} Угол в диапазоне [-π, π]
+		 */
+		/*
+		function normalizeAngle(angle) {
+			let normalized = angle % (2 * Math.PI);
+			if (normalized > Math.PI) normalized -= 2 * Math.PI;
+			if (normalized < -Math.PI) normalized += 2 * Math.PI;
+			return normalized;
+		}
+		*/
+
+		/**
+		 * Вспомогательная функция для конвертации градусов в радианы
+		 * @param {number} degrees - Угол в градусах
+		 * @returns {number} Угол в радианах
+		 */
+		/*
+		function degToRad(degrees) {
+			return degrees * Math.PI / 180;
+		}
+		*/
+
+		/**
+		 * Вспомогательная функция для конвертации радиан в градусы
+		 * @param {number} radians - Угол в радианах
+		 * @returns {number} Угол в градусах
+		 */
+		/*
+		function radToDeg(radians) {
+			return radians * 180 / Math.PI;
+		}
+		*/
+
+		/**
+		 * Пример использования функции
+		 */
+		/*
+		function example() {
+			// Пример 1: Движение от точки на экваторе
+			console.log("Пример 1: Движение от точки на экваторе");
+			const result1 = calculatePointOnSphere(
+				0, // lat = 0° (экватор)
+				0, // lon = 0°
+				6371, // R Земли в км
+				1000, // расстояние 1000 км
+				degToRad(45) // азимут 45° (северо-восток)
+			);
+			console.log("Широта:", radToDeg(result1.lat).toFixed(4), "°");
+			console.log("Долгота:", radToDeg(result1.lon).toFixed(4), "°");
+			console.log("Декартовы координаты:", result1.x.toFixed(2), result1.y.toFixed(2), result1.z.toFixed(2));
+
+			// Пример 2: Движение от северного полюса
+			console.log("\nПример 2: Движение от северного полюса");
+			const result2 = calculatePointOnSphere(
+				Math.PI / 2, // Северный полюс
+				0, // долгота не важна для полюса
+				6371,
+				1000,
+				degToRad(90) // на восток от полюса = вдоль параллели
+			);
+			console.log("Широта:", radToDeg(result2.lat).toFixed(4), "°");
+			console.log("Долгота:", radToDeg(result2.lon).toFixed(4), "°");
+
+			// Пример 3: Нулевое расстояние
+			console.log("\nПример 3: Нулевое расстояние");
+			const result3 = calculatePointOnSphere(
+				degToRad(45),
+				degToRad(30),
+				6371,
+				0, // нулевое расстояние
+				degToRad(90)
+			);
+			console.log("Исходная и конечная точки совпадают:");
+			console.log("Широта:", radToDeg(result3.lat).toFixed(4), "°");
+			console.log("Долгота:", radToDeg(result3.lon).toFixed(4), "°");
+
+			// Пример 4: Антиподная точка
+			console.log("\nПример 4: Антиподная точка");
+			const result4 = calculatePointOnSphere(
+				degToRad(40),
+				degToRad(50),
+				6371,
+				6371 * Math.PI, // половина окружности Земли
+				degToRad(0)
+			);
+			console.log("Антиподная точка:");
+			console.log("Широта:", radToDeg(result4.lat).toFixed(4), "°");
+			console.log("Долгота:", radToDeg(result4.lon).toFixed(4), "°");
+			console.log("Ожидаемая широта:", -40, "°");
+			console.log("Ожидаемая долгота:", 50 + 180 > 180 ? 50 - 180 : 50 + 180, "°");
+		}
+
+		// Запуск примера
+		example();
+		*/
+/*
+			// Экспорт функций для использования в других модулях
+			if (typeof module !== 'undefined' && module.exports) {
+				module.exports = {
+					calculatePointOnSphere,
+					normalizeAngle,
+					degToRad,
+					radToDeg
+				};
+			}
+*/
+
+		this.getRandomAngles = () => {
+
+			/*
+Написать на javascript код, который будет использовать функцию calculatePointOnSphere для вычисления случайных точек на поверхности сферы, таким образом,
+что бы эти случайные точки были равномерно распределены по поверхности сферы.
+			*/
+			//https://chat.deepseek.com/a/chat/s/e304455b-5714-4923-88f5-6ac9c6adee40
+
+			/**
+			* Метод 5: Использование calculatePointOnSphere для равномерного покрытия
+			* с движением от полюсов и экватора
+			*/
+
+			const R = 1, TWO_PI = 2 * π, oppositeVertice = params.oppositeVertice;
+			//strategy 3
+			const distance = this.distance(Math.acos(1 - 2 * random()) * R, R);
+			const result = calculatePointOnSphere(
+				oppositeVertice.latitude,//Math.asin(2 * Math.random() - 1),//lat
+				oppositeVertice.longitude,//Math.random() * TWO_PI - π,//lon
+				R,
+				distance,
+				Math.random() * TWO_PI//azimuth
+			);
+/*			
+			const R = 1, distance = random() * R * 2 * π, oppositeVertice = params.oppositeVertice,
+				result = calculatePointOnSphere(
+					oppositeVertice.latitude, // lat
+					oppositeVertice.longitude, // lon
+					R, // R
+					distance, // расстояние
+					random() * 2 * π // азимут
+				);
+*/				
+			const angles = utils.angles([result.lat, result.lon]);
+			this.paramsVerticesAngles(angles);
+			return this.angles;
 			
 		}
-*/		
 
 		Object.defineProperty(this, 'сirclesParams', {
 			
