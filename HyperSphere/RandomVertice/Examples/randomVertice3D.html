@@ -454,6 +454,7 @@
 			//Random vertice hyperSphere 
 
 			let hsRandomVertice;
+/*			
 			const createRandomVerticeHyperSphere = (randomVertice, name) => {
 
 				if (hsRandomVertice) {
@@ -472,17 +473,6 @@
 						log: false,
 						
 					}
-/*					
-					if (randomVertice.getHyperSphere) hsRandomVertice = randomVertice.getHyperSphere(options, {
-						
-							projectParams: { scene: scene },
-							debug: debug,
-							r: randomVerticeSettings.R,
-						
-						});
-					else
-						hsRandomVertice = getHyperSphere(HyperSphere, options, scene, randomVertice, { debug: debug, r: randomVerticeSettings.R, name: name });
-*/						
 					hsRandomVertice = randomVertice.getHyperSphere(hsVertices.classSettings, scene);
 					
 				}
@@ -506,9 +496,29 @@
 //					hsRandomVertice.setVerticesRange(0, randomVertice.circlesPointsCount != undefined ? randomVertice.circlesPointsCount : 1);
 	
 			}
-			let randomCloud, cloud, randomVertice;//сразу не создаю эти объекты потому что они могут не понадобиться и потому, что так легче отлаживать
+*/			
+			let randomCloud;// cloud, randomVertice;//сразу не создаю эти объекты потому что они могут не понадобиться и потому, что так легче отлаживать
 			const updateRandomVerticeHyperSphere = () => {
 
+				if (!randomCloud) randomCloud = new RandomVertice(params, 750);//, true);
+				if (hsRandomVertice) {
+					
+					const guiSelectPoint = hsRandomVertice.classSettings.settings.options.guiSelectPoint;
+					if (guiSelectPoint && guiSelectPoint.isSelectedMesh(hsRandomVertice.object3D)) guiSelectPoint.selectMesh(-1);
+					
+				} else {
+
+					const debug = {
+								
+						probabilityDensity: false,
+						middleVertice: false,
+						log: false,
+						
+					}
+					hsRandomVertice = randomCloud.getHyperSphere(hsVertices.classSettings, scene);
+					
+				}
+/*				
 					const modes = randomVerticeSettings.modes;
 					switch (randomVerticeSettings.mode){
 
@@ -528,6 +538,7 @@
 						default: console.error('Invalid mode = ' + mode);
 							
 					}
+*/					
 					
 				}
 			updateRandomVerticeHyperSphere();
