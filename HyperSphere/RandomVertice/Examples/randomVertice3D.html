@@ -30,8 +30,6 @@
 		MyThree.three.THREE = THREE;
 
 		import RandomVertice from '../randomVerticeHSphere.js';
-		//import RandomCloud from '../randomCloudHSphere.js';
-		import Cloud from '../cloudHyperSphere.js';
 		import HyperSphere from '../../hyperSphere3D.js';
 		
 		import anglesRange from '../../anglesRange.js'
@@ -50,15 +48,6 @@
 					notRandomVertices: true,
 				
 				},
-				
-				modes: {
-
-					cloud: 0,
-					randomVertice: 1,
-					randomCloud: 2,
-					
-				},
-				mode: 2,
 			
 			};
 			/*https://gemini.google.com/
@@ -69,141 +58,10 @@
 			point1.altitude - полярный угол от оси W.
 			
 			Вычислить координаты антиподальной точки point2
-
-			Решение:
-			
-			Для 3-мерной гиперсферы, встроенной в 4-мерное евклидово пространство, положение точки можно описать с помощью трех углов:
-			ϕ (point1.altitude) - полярный угол от оси W (от 0 до π).
-			θ (point1.latitude) - широта или зенитный угол (от 0 до π).
-			ψ (point1.longitude) - долгота или азимутальный угол (от 0 до 2π).
-			
-			Координаты точки point1 в 4-мерном евклидовом пространстве (W, X, Y, Z) могут быть выражены как:
-			
-			W=Rcos(ϕ)
-			X=Rsin(ϕ)sin(θ)cos(ψ)
-			Y=Rsin(ϕ)sin(θ)sin(ψ)
-			Z=Rsin(ϕ)cos(θ)
-			
-			Антиподальная точка point2 - это точка, которая находится на противоположной стороне гиперсферы относительно центра. Координаты антиподальной точки просто имеют противоположные знаки:
-			
-			W2=−W1=−Rcos(ϕ)
-			X2=−X1=−Rsin(ϕ)sin(θ)cos(ψ)
-			Y2=−Y1=−Rsin(ϕ)sin(θ)sin(ψ)
-			Z2=−Z1=−Rsin(ϕ)cos(θ)
-			
-			Теперь найдем углы point2.altitude (ϕ2), point2.latitude (θ2) и point2.longitude (ψ2) для антиподальной точки point2.
-			
-			1. Вычисление point2.altitude (ϕ2)
-			Мы знаем, что cos(ϕ2)=W2/R=−Rcos(ϕ)/R=−cos(ϕ).
-			Так как ϕ лежит в диапазоне от 0 до $ \pi $, −cos(ϕ) соответствует cos(π−ϕ).
-			Следовательно, ϕ2=π−ϕ.
-			
-			point2.altitude = π - point1.altitude
-			
-			2. Вычисление point2.latitude (θ2)
-			Мы знаем, что cos(θ2)= Z2/Rsin(ϕ2)=−Rsin(ϕ)cos(θ)/Rsin(π−ϕ).
-			Так как $ \sin(\pi - \phi) = \sin(\phi) $, получаем:
-			cos(θ2)=sin(ϕ)−sin(ϕ)cos(θ)=−cos(θ).
-			Так как θ лежит в диапазоне от 0 до $ \pi $, −cos(θ) соответствует cos(π−θ).
-			Следовательно, θ2=π−θ.
-			
-			point2.latitude = π - point1.latitude
-			
-			3. Вычисление point2.longitude (ψ2)
-			Мы знаем, что tan(ψ2)=Y2/X2=(−Rsin(ϕ)sin(θ)sin(ψ))/(−Rsin(ϕ)sin(θ)cos(ψ))=tan(ψ).
-			Угол ψ может быть в диапазоне от 0 до 2π. Есть два угла, тангенс которых равен $ \tan(\psi) $: ψ и ψ+π.
-			Чтобы определить правильный угол, нужно посмотреть на знаки X2 и Y2.
-			
-			Если ψ в квадрантах 1 и 2 (от 0 до π), то ψ2=ψ+π.
-			
-			Если ψ в квадрантах 3 и 4 (от π до 2π), то ψ2=ψ−π.
-			
-			Это можно объединить в одну формулу, используя оператор по модулю:
-			ψ2=(ψ+π)(mod2π).
-			
-			Итоговый результат:
-			
-			point2.altitude = π - point1.altitude
-			point2.latitude = π - point1.latitude
-			point2.longitude = (point1.longitude + π) $ \pmod{2\pi} $
-			
-			*/
-			/**
-			 * Вычисляет полярные координаты антиподальной точки на 3-мерной гиперсфере.
-			 * @param {Object} point1 - Массив, представляющий точку с полярными координатами.
-			 * @param {number} point1.latitude - Широта (зенитный угол) в радианах, от 0 до PI.
-			 * @param {number} point1.longitude - Долгота (азимутальный угол) в радианах, от 0 до 2*PI.
-			 * @param {number} point1.altitude - Полярный угол от оси W в радианах, от 0 до PI.
-			 * @returns {Object} Массив, представляющий антиподальную точку point2 с такими же полями, как point1.
-			 */
-/*			
-			const findAntipodalPoint = (point1) => {
-				
-				// Проверяем, что входные данные являются действительными числами
-				if (typeof point1.latitude !== 'number' ||
-					typeof point1.longitude !== 'number' ||
-					typeof point1.altitude !== 'number') {
-					console.error("Invalid input data format");
-					return;
-				}
-			
-				const PI = Math.PI;
-			
-				// Вычисляем altitude (полярный угол от оси W)
-				// Антиподальная точка будет находиться на противоположной стороне,
-				// поэтому угол смещается на PI радиан.
-				const altitude2 = PI - point1.altitude;
-				
-				// Вычисляем latitude (зенитный угол)
-				// Аналогично, зенитный угол смещается на PI радиан.
-				const latitude2 = PI - point1.latitude;
-				
-				// Вычисляем longitude (азимутальный угол)
-				// Долгота смещается на PI радиан. Используем операцию по модулю,
-				// чтобы остаться в диапазоне от 0 до 2*PI.
-				const longitude2 = (point1.longitude + PI) % (2 * PI);
-
-				return [
-					altitude2,
-					latitude2,
-					longitude2,
-				];
-			}
-*/
-			/*
-			// Пример использования:
-			// Задаем координаты point1 в радианах
-			const point1 = {
-				latitude: Math.PI / 4,    // 45 градусов
-				longitude: Math.PI / 2,   // 90 градусов
-				altitude: Math.PI / 3     // 60 градусов
-			};
-			
-			// Вычисляем координаты антиподальной точки
-			const point2 = findAntipodalPoint(point1);
-			
-			// Выводим результат
-			console.log("point1:");
-			console.log(point1);
-			console.log("\nantipodal point2:");
-			console.log(point2);
 			*/
 
 			const findAntipodalPoint = (point1) => {
 
-/*				
-			  // Проверяем, что point1 имеет все необходимые свойства
-			  if (
-				typeof point1 !== "object" ||
-				!point1.hasOwnProperty("latitude") ||
-				!point1.hasOwnProperty("longitude") ||
-				!point1.hasOwnProperty("altitude")
-			  ) {
-				throw new Error(
-				  "point1 должен быть объектом с latitude, longitude и altitude."
-				);
-			  }
-*/			  
 			
 			  let latitude2 = -point1.latitude;
 			  let longitude2 = point1.longitude + Math.PI;
@@ -216,15 +74,6 @@
 			  if (longitude2 < -Math.PI) {
 				longitude2 += 2 * Math.PI;
 			  }
-/*			
-			  const point2 = {
-				latitude: latitude2,
-				longitude: longitude2,
-				altitude: altitude2,
-			  };
-			
-			  return point2;
-*/				  
 				return [
 					altitude2,
 					latitude2,
@@ -257,84 +106,6 @@
 			console.log("Координаты антиподальной точки (point4):", point4);
 			*/
 			
-			//DeepSeek
-			/*
-			const calculateAntipodalPoint = (point1) => {
-				// Антиподальная точка получается добавлением π к каждому углу
-				// с учетом периодичности углов
-				
-				let latitude2 = (point1.latitude + Math.PI) % (2 * Math.PI);
-				let longitude2 = (point1.longitude + Math.PI) % (2 * Math.PI);
-				let altitude2 = (point1.altitude + Math.PI) % (2 * Math.PI);
-				
-				// Нормализуем углы к стандартным диапазонам
-				if (latitude2 > Math.PI) {
-					latitude2 = 2 * Math.PI - latitude2;
-					longitude2 = (longitude2 + Math.PI) % (2 * Math.PI);
-					altitude2 = (altitude2 + Math.PI) % (2 * Math.PI);
-				}
-				
-				if (altitude2 > Math.PI) {
-					altitude2 = 2 * Math.PI - altitude2;
-					latitude2 = (latitude2 + Math.PI) % (2 * Math.PI);
-					longitude2 = (longitude2 + Math.PI) % (2 * Math.PI);
-				}
-				
-//			    return new HyperSpherePoint(latitude2, longitude2, altitude2);
-				return [
-					altitude2,
-					latitude2,
-					longitude2,
-				];
-				
-			}			
-			// Альтернативный метод через преобразование в декартовы координаты
-			function calculateAntipodalPointViaCartesian(point1) {
-				// Преобразуем сферические координаты в декартовы
-				const x = Math.sin(point1.altitude) * Math.sin(point1.latitude) * Math.cos(point1.longitude);
-				const y = Math.sin(point1.altitude) * Math.sin(point1.latitude) * Math.sin(point1.longitude);
-				const z = Math.sin(point1.altitude) * Math.cos(point1.latitude);
-				const w = Math.cos(point1.altitude);
-				
-				// Антиподальная точка - противоположная по всем координатам
-				const x2 = -x;
-				const y2 = -y;
-				const z2 = -z;
-				const w2 = -w;
-				
-				// Преобразуем обратно в сферические координаты
-				const altitude2 = Math.acos(w2);
-				let latitude2, longitude2;
-				
-				if (Math.abs(w2) === 1) {
-					// Особый случай: на полюсах
-					latitude2 = 0;
-					longitude2 = 0;
-				} else {
-					latitude2 = Math.acos(z2 / Math.sqrt(x2*x2 + y2*y2 + z2*z2));
-					longitude2 = Math.atan2(y2, x2);
-					
-					// Нормализуем углы
-					if (longitude2 < 0) longitude2 += 2 * Math.PI;
-				}
-				
-//			    return new HyperSpherePoint(latitude2, longitude2, altitude2);
-				return [
-					-altitude2,
-					latitude2,
-					longitude2,
-				];
-				
-			}			
-			// Функция для проверки, что точки действительно антиподальны
-			const areAntipodal = (point1, point2, tolerance = 1e-10) => {
-				const dx = Math.abs(point1.latitude - ((point2.latitude + Math.PI) % (2 * Math.PI)));
-				const dy = Math.abs(point1.longitude - ((point2.longitude + Math.PI) % (2 * Math.PI)));
-				const dz = Math.abs(point1.altitude - ((point2.altitude + Math.PI) % (2 * Math.PI)));
-				
-				return dx < tolerance && dy < tolerance && dz < tolerance;
-			}
-			*/
 			/*
 			const vertice = [
 				0,//altitude
@@ -347,7 +118,6 @@
 				pi / 4,//Latitude
 				pi / 3,//Longitude
 			]
-//			RandomVertice.Vertice(vertice);
 			utils.angles(vertice);
 			
 			const params = {
@@ -360,18 +130,6 @@
 					-0.785,//0,//Latitude
 					-2.094 + 0.107,//-1.987 Longitude
 				],
-				/*
-				vertice: [
-					pi / 6,//altitude
-					0.785,//Latitude
-					pi,//Longitude
-				],
-				oppositeVertice: [
-					pi / 6,//altitude
-					0.051,//0,//Latitude
-					pi,//Longitude
-				],
-				*/
 				vertice: [
 					pi / 4,//altitude
 					pi / 50,//Latitude
@@ -400,6 +158,16 @@
 				vertice: vertice,
 				oppositeVertice: findAntipodalPoint(vertice),//calculateAntipodalPointViaCartesian(vertice),//calculateAntipodalPoint(vertice),
 				*/
+				vertice: [
+					pi / 6,//altitude
+					0.785,//Latitude
+					pi,//Longitude
+				],
+				oppositeVertice: [
+					pi / 6,//altitude
+					0.051,//0,//Latitude
+					pi,//Longitude
+				],
 				debug: randomVerticeSettings.debug,
 
 			}
@@ -436,7 +204,6 @@
 						//color: 'white',
 						geometry: {
 
-							//							angles: [params.vertice, params.oppositeVertice],
 							params: params,
 
 						},
@@ -447,56 +214,10 @@
 				},
 
 			});
-			hsVertices.setDrawRange(hsVertices.bufferGeometry.drawRange.start, hsVertices.bufferGeometry.attributes.position.count, 0);
-//			params.hsVertices = hsVertices;//используется для вычисления случайной точки в RandomVerticeHSphere HyperSphereNavigator.calculateNewPoint
-//			params.classSettings = hsVertices.classSettings;//используется для вычисления случайной точки в RandomVertice HyperSphereNavigator.calculateNewPoint
 			
 			//Random vertice hyperSphere 
 
 			let hsRandomVertice;
-/*			
-			const createRandomVerticeHyperSphere = (randomVertice, name) => {
-
-				if (hsRandomVertice) {
-					
-//					randomVertice.randomAngles;
-//					hsRandomVertice.setPositionAttributeFromPoints(randomVertice.randomAngles, true);
-					const guiSelectPoint = hsRandomVertice.classSettings.settings.options.guiSelectPoint;
-					if (guiSelectPoint && guiSelectPoint.isSelectedMesh(hsRandomVertice.object3D)) guiSelectPoint.selectMesh(-1);
-					
-				} else {
-
-					const debug = {
-								
-						probabilityDensity: false,
-						middleVertice: false,
-						log: false,
-						
-					}
-					hsRandomVertice = randomVertice.getHyperSphere(hsVertices.classSettings, scene);
-					
-				}
-				hsRandomVertice.classSettings.settings.bufferGeometry.userData.drawRange = () => {
-
-					return { start: 0, count: params.pointsCount };//устанавливает количество точек в органе управления 'Meshes\Points'
-//					return { start: 0, count: randomVertice.circlesPointsCount != undefined ? randomVertice.circlesPointsCount : 1 };//устанавливает количество точек в органе управления 'Meshes\Points'
-					
-				}
-				if (hsRandomVertice.classSettings.edges.project) {
-
-					hsRandomVertice.classSettings.overriddenProperties.onCreateEdgesCompleted = () => {
-
-						hsRandomVertice.setDrawRange(0, randomCloud.circlesPointsCount * 2 - 1);//Умножаем на 2 потому что на каждую точку облака случайных точек приходится два ребра
-						delete hsRandomVertice.classSettings.overriddenProperties.onCreateEdgesCompleted;
-						
-					}
-					
-				} else
-					hsRandomVertice.setVerticesRange(0, params.pointsCount != undefined ? params.pointsCount : 1);
-//					hsRandomVertice.setVerticesRange(0, randomVertice.circlesPointsCount != undefined ? randomVertice.circlesPointsCount : 1);
-	
-			}
-*/			
 			let randomCloud;// cloud, randomVertice;//сразу не создаю эти объекты потому что они могут не понадобиться и потому, что так легче отлаживать
 			const updateRandomVerticeHyperSphere = () => {
 
@@ -518,27 +239,6 @@
 					hsRandomVertice = randomCloud.getHyperSphere(hsVertices.classSettings, scene);
 					
 				}
-/*				
-					const modes = randomVerticeSettings.modes;
-					switch (randomVerticeSettings.mode){
-
-						case modes.cloud:
-							if (!cloud)
-								cloud = new RandomVertice(params, true, false);
-//								cloud = new Cloud(params);
-							createRandomVerticeHyperSphere(cloud, 'Cloud'); break;
-						case modes.randomVertice:
-							if (!randomVertice) randomVertice = new RandomVertice(params);
-							createRandomVerticeHyperSphere(randomVertice, 'Random vertice'); break;
-						case modes.randomCloud: 
-							if (!randomCloud)
-								randomCloud = new RandomVertice(params);//, 750);//, true);
-//								randomCloud = new RandomCloud(params);
-							createRandomVerticeHyperSphere(randomCloud, 'Random Cloud'); break;
-						default: console.error('Invalid mode = ' + mode);
-							
-					}
-*/					
 					
 				}
 			updateRandomVerticeHyperSphere();
@@ -548,24 +248,10 @@
 			const gui = options.dat.gui.addFolder('Hypersphere'),
 				onChangeVertice = (verticeId) => {
 
-//					hsVertices.setPositionAttributeFromPoint(verticeId);
 					hsVertices.update(verticeId, 0);
 
-//					params.verticesAngles.length = 0;//Если оставить эту строку, то в режиме отображения одной точки randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1 эта точка будет исчезать
 					updateRandomVerticeHyperSphere();
 
-					//select sphere
-					const modes = randomVerticeSettings.modes;
-					switch (randomVerticeSettings.mode){
-
-						case modes.cloud:
-							spheres.onChangeVertice();
-							break;
-						case modes.randomVertice:
-						case modes.randomCloud: break;
-						default: console.error('Invalid mode = ' + mode);
-							
-					}
 					
 				};
 
@@ -581,130 +267,6 @@
 			fOppositeVertice.add(params.oppositeVertice, 'latitude', anglesRange.latitude.min, anglesRange.latitude.max, 0.001).onChange(() => { onChangeVertice(1); });
 			fOppositeVertice.add(params.oppositeVertice, 'longitude', anglesRange.longitude.min, anglesRange.longitude.max, 0.001).onChange(() => { onChangeVertice(1); });
 
-
-			//mode
-			{
-
-				let mode = randomVerticeSettings.mode;
-				Object.defineProperty(randomVerticeSettings, 'mode', {
-			
-					get: () => { return mode; },
-					set: (modeNew) => {
-
-						spheres.selectSphere(-1);
-						delete params.speresPointsCount;
-						
-						hsRandomVertice.removeHyperSphere();
-						hsRandomVertice = undefined;
-
-						delete params.verticesAngles;
-						delete params.pointsCount;
-						delete params.editAnglesId;
-						delete params.hyperSphere;
-						delete params.CloudSphere;
-
-						randomCloud = undefined;
-						cloud = undefined;
-						randomVertice = undefined;
-
-						mode = parseInt(modeNew);
-						spheres.display(parseInt(modeNew) === randomVerticeSettings.modes.cloud);
-						updateRandomVerticeHyperSphere();
-						spheres.cSpheresAppendChild();
-			
-					},
-			
-				});
-
-			}
-			gui.add(randomVerticeSettings, 'mode', randomVerticeSettings.modes);
-
-			//Divide hypersphere to spheres
-			const Spheres = (fParent, getLanguageCode = () => { return 'en' }, dat = { controllerNameAndTitle: () => {}}) => {
-
-				//Localization
-		
-				const lang = {
-		
-					notSelected: 'not selected',
-		
-//					randomVertices: 'Random vertices',
-					
-					spheres: 'Spheres',
-					spheresTitle: 'Spheres of the random vertices',
-				
-				};
-		
-				const _languageCode = getLanguageCode();
-		
-				switch (_languageCode) {
-		
-					case 'ru'://Russian language
-		
-						lang.notSelected = 'Не выбрана';
-						
-//						lang.randomVertices = 'Случайные вершины';
-						
-						lang.spheres = 'Сферы';
-						lang.spheresTitle = 'Сферы случайных вершин';
-		
-						break;
-					default://Custom language
-		
-				}
-//				const fRandomVertices = fParent.addFolder(lang.randomVertices),
-				const cSpheres = fParent.add({ Spheres: lang.notSelected }, 'Spheres', { [lang.notSelected]: -1 }).onChange((value) => {
-		
-						const sphereId = parseInt(value);
-						const verticesRange = { start: 0, count: 0, }
-						if (sphereId != -1) {
-
-							verticesRange.start = sphereId > 0 ? params.speresPointsCount[sphereId - 1] : 0;
-							verticesRange.count = params.speresPointsCount[sphereId] - verticesRange.start;
-		
-						} else {
-		
-							verticesRange.start = 0;
-							verticesRange.count = params.pointsCount;
-		
-						}
-						hsRandomVertice.setVerticesRange(verticesRange.start, verticesRange.count);
-						
-					});
-				cSpheres.__select[0].selected = true;
-				dat.controllerNameAndTitle(cSpheres, lang.spheres, lang.spheresTitle);
-				const cSpheresAppendChild = () => {
-		
-					if (
-						!params.speresPointsCount ||//Список сфер не нужен
-						(cSpheres.__select.length != 1 )//Список сфер уже создан
-					) return;
-					const appendItem = (innerHTML, value = innerHTML) => {
-						
-						const opt = document.createElement('option');
-						opt.innerHTML = innerHTML;
-						opt.setAttribute('value', value);
-						cSpheres.__select.appendChild(opt);
-						
-					};
-					let itemId = 0;
-					appendItem(itemId++);
-					for (; itemId < params.speresPointsCount.length; itemId++) { appendItem(itemId); }
-							
-				}
-				cSpheresAppendChild();
-				return {
-					
-					onChangeVertice: () => { cSpheres.__onChange(cSpheres.__select.selectedIndex - 1); },
-					selectSphere: (index) => { cSpheres.setValue(index); },
-					display: () => { cSpheres.domElement.parentElement.parentElement.style.display = randomVerticeSettings.mode === randomVerticeSettings.modes.cloud ? 'block' : 'none'; },
-					cSpheresAppendChild: cSpheresAppendChild,
-
-				}
-				
-			}
-			const spheres = Spheres(gui);
-			spheres.display(randomVerticeSettings.mode === randomVerticeSettings.modes.cloud);
 			
 			//////////////////////////////////////////GUI
 
