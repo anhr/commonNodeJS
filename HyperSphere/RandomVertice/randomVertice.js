@@ -26,6 +26,7 @@ const sRandomVertice = 'RandomVertice',
  */
 class RandomVertice {
 
+	 //* @param {boolean} boCloud=false true - generates a random vertice cloud.
 	/**
 	 * Generates random angles between a vertice and its opposite vertice.
 	 * @param {object} [params={}] The following parameters are available.
@@ -33,12 +34,10 @@ class RandomVertice {
 	 * @param {Array} [params.oppositeVertice=[0, 0, 0]] Second vertice of the arc between two vertices.
 	 * @param {object} [params.debug] Debug mode.
 	 * @param {object} [params.debug.notRandomVertices] true - replacing random vertices with strictly defined vertices.
-	 * @param {boolean} boCloud=false true - generates a random vertice cloud.
+	 * @param {number} [verticesCount=1] count of vertices in the random vertices cloud.
 	 */
-	constructor(params={}, boCloud) {
+	constructor(params={}, verticesCount = 1) {
 
-if (boCloud === undefined) console.error('RandomVertice.constructor: under constraction')
-	
 		params.vertice ||= this.ZeroArray();
 		params.oppositeVertice ||= this.ZeroArray();
 
@@ -151,7 +150,8 @@ if (boCloud === undefined) console.error('RandomVertice.constructor: under const
 //			createHyperSphereNavigator();
 
 			const startingPointParams = this.navigator.startingPointParams();
-			for (let i = 0; i < (boCloud ? 750 : 1); i++) {
+//			for (let i = 0; i < (boCloud ? 750 : 1); i++)
+			for (let i = 0; i < verticesCount; i++) {
 
 				if (editAngles) params.editAnglesId = i;
 				this.getRandomAngles(undefined, startingPointParams);

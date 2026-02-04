@@ -33,19 +33,21 @@ const sRandomVerticesHyperSphere = 'RandomVerticesHSphere',
  */
 class RandomVerticeHSphere extends RandomVertice {
 
-	// * @param {boolean} [boInitRandomAngles=true] true - init random angles.
+	// * @param {boolean} [boCloud=false] true - generates a random vertice cloud.
 	
 	/**
 	 * Generates a random vertice near the opposite vertice in 3D hypersphere.
 	 * @param {object} [params={}] See the <b>params</b> of the <a href="./module-RandomVertice-RandomVertice.html" target="_blank"><b>RandomVertice</b></a> constructor for details.
-	 * @param {boolean} [boCloud=false] true - generates a random vertice cloud.
+	 * @param {number} verticesCount count of vertices in the random vertices cloud.
 	 */
-	constructor(params, boCloud = false, boRandomVertice = true) {
+	constructor(params, verticesCount/*, boRandomVertice = true*/) {
 
-		super(params, boCloud);
+		super(params, verticesCount);
 
+/*		
 		const arraySpheres = boCloud ? undefined : [],//Массив с параметрами сфер, из которых состоит гиперсфера. Создается когда нужно облако случайных или неслучайных средних точек.
 			arrayCloudSpheres = arraySpheres ? undefined : [];//Массив сфер RandomCloudSphere, из которых состоит гиперсфера.
+*/			
 			
 		if (!params.boArcIsdefined) {
 
@@ -945,6 +947,9 @@ class RandomVerticeHSphere extends RandomVertice {
 		
 		/////////////////////////////overridden methods
 
+		params.pointsCount = 0;
+		this.verticesAngles(false);
+/*		
 		if (!arraySpheres) {//не выделять this.verticesAngles если нужно вычислить одну случайную точку randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1
 
 			params.pointsCount = 0;
@@ -962,6 +967,7 @@ class RandomVerticeHSphere extends RandomVertice {
 //			}
 			
 		}
+*/		
 
 	}
 	
