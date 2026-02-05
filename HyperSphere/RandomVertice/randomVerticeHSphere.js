@@ -60,8 +60,9 @@ class RandomVerticeHSphere extends RandomVertice {
 					if (params.boAllocateMemory) return π;//Выделяется память для облака точек. arc нужно сделать максимально возможным то есть вершины расположены друг против друга. В этом случае выделяется максимальный объем памяти.
 					let centralAngle;
 					if (arc === undefined) {
-						
-						const vertice = params.vertice, oppositeVertice = params.oppositeVertice;
+
+						console.error(sRandomVerticesHyperSphere + ': get params.arc. Invalid arc = ' + arc);
+//						const vertice = params.vertice, oppositeVertice = params.oppositeVertice;
 	
 						/*
 						gemini.google.com
@@ -159,6 +160,7 @@ class RandomVerticeHSphere extends RandomVertice {
 						point.altitude - полярный угол от оси W  в диапазоне от 0 до π.
 						Писать все формулы в одну строку.
 						*/
+/*						
 						const calculateCentralAngle = (point1, point2) => {
 	
 							let {
@@ -200,6 +202,7 @@ class RandomVerticeHSphere extends RandomVertice {
 							return centralAngle;
 	
 						}
+*/							
 						/*
 						// Example usage with points in radians
 						const point1 = {
@@ -218,7 +221,7 @@ class RandomVerticeHSphere extends RandomVertice {
 						console.log(`Центральный угол между точками в градусах: ${angle * 180 / Math.PI}`);
 						*/
 						
-						centralAngle = calculateCentralAngle(vertice, oppositeVertice);
+//						centralAngle = calculateCentralAngle(vertice, oppositeVertice);
 	
 						/*
 						if (params.debug) {
@@ -247,7 +250,7 @@ class RandomVerticeHSphere extends RandomVertice {
 		
 					if (arc === undefined) console.error(sRandomVerticesHyperSphere + ': set params.arc. Invalid arc = ' + arc);
 					else arc = arcNew;
-					verticesAngles(true);
+					this.verticesAngles(true);
 					return true;
 		
 				},
@@ -976,7 +979,7 @@ class RandomVerticeHSphere extends RandomVertice {
 	ZeroArray() { return [0, 0, 0]; }
 	Center(params) {
 	
-		utils.angles(params.vertice);
+//		utils.angles(params.vertice);
 		utils.angles(params.oppositeVertice);
 		
 	}

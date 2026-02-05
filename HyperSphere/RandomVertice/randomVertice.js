@@ -38,7 +38,8 @@ class RandomVertice {
 	 */
 	constructor(params={}, verticesCount = 1) {
 
-		params.vertice ||= this.ZeroArray();
+//		params.vertice ||= this.ZeroArray();
+		if (params.arc === undefined) params.arc = 0;
 		params.oppositeVertice ||= this.ZeroArray();
 
 		const _this = this;
@@ -57,6 +58,7 @@ class RandomVertice {
 			}
 			
 		}
+/*		
 		params.vertice = new Proxy( params.vertice, {
 
 			set: (vertice, name, value) => {
@@ -67,6 +69,7 @@ class RandomVertice {
 			},
 			
 		});
+*/			
 		params.oppositeVertice = new Proxy( params.oppositeVertice, {
 
 			set: (oppositeVertice, name, value) => {

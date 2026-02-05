@@ -426,9 +426,12 @@ class HyperSphere extends MyObject {
 
 			if (settings.object.geometry.angles) console.error(sHyperSphere + ': "settings.object.geometry.angles" has not effect if "settings.object.geometry.params" is exists');
 			const params = settings.object.geometry.params;
-			params.vertice ||= this.ZeroArray();
+//			params.vertice ||= this.ZeroArray();
 			params.oppositeVertice ||= this.ZeroArray();
-			settings.object.geometry.angles = [params.vertice, params.oppositeVertice];
+//			settings.object.geometry.angles = [params.vertice, params.oppositeVertice];
+			const vertice = [];
+			for (let i = 0; i < params.oppositeVertice.length; i++) vertice.push(0);
+			settings.object.geometry.angles = [vertice, params.oppositeVertice];
 			
 		}
 		settings.object.geometry.angles = settings.object.geometry.angles || this.defaultAngles();
@@ -706,7 +709,7 @@ class HyperSphere extends MyObject {
 			if (settings.object.geometry.params) {
 
 				const params = settings.object.geometry.params, angles = settings.object.geometry.angles;
-				params.vertice = angles[0];
+//				params.vertice = angles[0];
 				params.oppositeVertice = angles[1];
 				
 			}

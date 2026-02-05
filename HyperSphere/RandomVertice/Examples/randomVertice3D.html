@@ -50,90 +50,15 @@
 				},
 			
 			};
-			/*https://gemini.google.com/
-			Имеется точка point1 на поверхности 3-мерной гиперсферы встроенной в 4-мерное евклидово пространство. Для обозначения положения точки применим полярную систему координат.
-			Положение точки обозначим как
-			point1.latitude - широта (зенитный угол),
-			point1.longitude - долгота (азимутальный угол) и 
-			point1.altitude - полярный угол от оси W.
-			
-			Вычислить координаты антиподальной точки point2
-			*/
-
-			const findAntipodalPoint = (point1) => {
-
-			
-			  let latitude2 = -point1.latitude;
-			  let longitude2 = point1.longitude + Math.PI;
-			  let altitude2 = Math.PI - point1.altitude;
-			
-			  // Приведение долготы к диапазону от -π до π
-			  if (longitude2 > Math.PI) {
-				longitude2 -= 2 * Math.PI;
-			  }
-			  if (longitude2 < -Math.PI) {
-				longitude2 += 2 * Math.PI;
-			  }
-				return [
-					altitude2,
-					latitude2,
-					longitude2,
-				];
-				
-			}
-			/*
-			// Пример использования
-			const point1 = {
-			  latitude: Math.PI / 4, // 45 градусов
-			  longitude: Math.PI / 2, // 90 градусов
-			  altitude: Math.PI / 3, // 60 градусов
-			};
-			
-			const point2 = findAntipodalPoint(point1);
-			
-			console.log("Координаты исходной точки (point1):", point1);
-			console.log("Координаты антиподальной точки (point2):", point2);
-			
-			// Дополнительный пример для проверки приведения долготы
-			const point3 = {
-			  latitude: 0,
-			  longitude: 3 * Math.PI / 4, // 135 градусов
-			  altitude: Math.PI / 2,
-			};
-			
-			const point4 = findAntipodalPoint(point3);
-			console.log("\nКоординаты исходной точки (point3):", point3);
-			console.log("Координаты антиподальной точки (point4):", point4);
-			*/
-			
-			/*
-			const vertice = [
-				0,//altitude
-				pi / 4,//Latitude
-				0,//Longitude
-			]
-			*/
-			const vertice = [
-				pi / 6,//altitude. Если 0 или pi, то arc = pi
-				pi / 4,//Latitude
-				pi / 3,//Longitude
-			]
-			utils.angles(vertice);
 			
 			const params = {
 
 				//вершины расположены почти друг против друга по диагонали (antipodal points). Облако случайных вершин стянулось недалеко от противоположной вершины
 				//Вершины взял из передыдущих вершин и немного изменил Longitude в oppositeVertice
-				vertice: vertice,
 				oppositeVertice: [
 					2.617,//altitude
 					-0.785,//0,//Latitude
 					-2.094 + 0.107,//-1.987 Longitude
-				],
-				vertice: [
-					pi / 4,//altitude
-					pi / 50,//Latitude
-					0,//Longitude
 				],
 				oppositeVertice: [
 					pi / 4,//altitude
@@ -142,11 +67,6 @@
 				],
 				/*
 				//Вершина и противоположная вершина почти одинаковые. Облако случайных вершин почти равномерно распределено по гиперсфере
-				vertice: [
-					pi / 6,//altitude
-					pi / 4,// + pi / 50,//Latitude
-					0,//Longitude
-				],
 				oppositeVertice: [
 					pi / 6,//altitude
 					pi / 4,//Latitude
@@ -154,15 +74,8 @@
 				],
 				*/
 				/*
-				//вершины расположены друг против друга по диагонали (antipodal points). arc = π. Облако случайных вершин стянулось в точку
-				vertice: vertice,
-				oppositeVertice: findAntipodalPoint(vertice),//calculateAntipodalPointViaCartesian(vertice),//calculateAntipodalPoint(vertice),
 				*/
-				vertice: [
-					pi / 6,//altitude
-					0.785,//Latitude
-					pi,//Longitude
-				],
+				arc: pi / 2,
 				oppositeVertice: [
 					pi / 6,//altitude
 					0.051,//0,//Latitude
@@ -255,11 +168,7 @@
 					
 				};
 
-			//vertice
-			const fVertice = gui.addFolder('Vertice');
-			fVertice.add(params.vertice, 'altitude', anglesRange.altitude.min, anglesRange.altitude.max, 0.001).onChange(() => { onChangeVertice(0); });
-			fVertice.add(params.vertice, 'latitude', anglesRange.latitude.min, anglesRange.latitude.max, 0.001).onChange(() => { onChangeVertice(0); });
-			fVertice.add(params.vertice, 'longitude', anglesRange.longitude.min, anglesRange.longitude.max, 0.001).onChange(() => { onChangeVertice(0); });
+			gui.add(params, 'arc', 0, pi, 0.001);
 
 			//oppositeVertice
 			const fOppositeVertice = gui.addFolder('Opposite Vertice');
