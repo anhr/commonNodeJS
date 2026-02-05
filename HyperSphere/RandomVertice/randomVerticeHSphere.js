@@ -243,7 +243,8 @@ class RandomVerticeHSphere extends RandomVertice {
 						*/
 	
 					} else centralAngle = arc;
-					return this.arc(centralAngle);
+					return centralAngle;
+//					return this.arc(centralAngle);
 				
 				},
 				set: (arcNew) => {

@@ -203,7 +203,7 @@ class RandomVertice {
 
 	}
 	circlesPointsCount;
-	arc(arc) { return π - arc; }
+//	arc(arc) { return π - arc; }
 	
 	//overridden methods
 	
