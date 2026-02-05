@@ -88,16 +88,10 @@
 
 			//Vertices hyperSphere 
 
-			const verticesSettings = {
-
-				R: randomVerticeSettings.R,
-				debug: true,
-
-			};
 			let hsVertices;
 			hsVertices = new HyperSphere(options, {
 
-				r: verticesSettings.R,
+				r: randomVerticeSettings.R,
 				//edges: false,
 				//randomArc: true,
 				projectParams: { scene: scene, },
@@ -131,7 +125,7 @@
 			//Random vertice hyperSphere 
 
 			let hsRandomVertice;
-			let randomCloud;// cloud, randomVertice;//сразу не создаю эти объекты потому что они могут не понадобиться и потому, что так легче отлаживать
+			let randomCloud;
 			const updateRandomVerticeHyperSphere = () => {
 
 				if (!randomCloud) randomCloud = new RandomVertice(params, 750);//, true);

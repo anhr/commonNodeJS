@@ -78,7 +78,8 @@ export class RandomVerticeSphere extends RandomVertice {
 						if (isNaN(θ)) console.error(sRandomVerticesSphere + ': getArcAngle. Invalid θ = ' + θ);
 
 					} else θ = arc;
-					return this.arc(θ);
+					return θ;
+//					return this.arc(θ);
 				
 				},
 				set: (arcNew) => {
@@ -881,7 +882,7 @@ rotatedPosition должна получиться равной position1.
 	}
 	Center(params) {
 
-		utils.angles(params.vertice);
+//		utils.angles(params.vertice);
 		utils.angles(params.oppositeVertice);
 		
 	}

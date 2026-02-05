@@ -40,6 +40,27 @@ class RandomVertice {
 
 //		params.vertice ||= this.ZeroArray();
 		if (params.arc === undefined) params.arc = 0;
+			
+		if (!params.boArcIsdefined) {
+
+			params.boArcIsdefined = true;
+			let arc = params.arc;
+			Object.defineProperty(params, 'arc', {
+	
+				get: () => { return arc; },
+				set: (arcNew) => {
+		
+					if (arc === undefined) console.error(sRandomVertice + ': set params.arc. Invalid arc = ' + arc);
+					else arc = arcNew;
+					this.verticesAngles(true);
+					return true;
+		
+				},
+		
+			});
+
+		}
+		
 		params.oppositeVertice ||= this.ZeroArray();
 
 		const _this = this;
@@ -165,7 +186,8 @@ class RandomVertice {
 		};
 		this.distance = (distance, R) => {
 			
-			const arc = π - params.arc;
+			let arc = π - params.arc;
+			if (arc < 0) arc = 0;//Эта ошибка возникает потому что в GUI переменная arc округляется до 4 знаков
 			
 			/*Есть декартова система координат. Ось x обозначим как arc. Найди элементарную функцию которая неогранниченно растет в точке arc = 0 и равна нулю в точке arc = π.
 			arc меняется только в диапазоне от 0 до π. arc это не угол.
@@ -173,8 +195,8 @@ class RandomVertice {
 			*/
 			//https://chat.deepseek.com/a/chat/s/0b71542a-46a2-47e2-9888-f95f26f0fa37
 			const y = 1 / arc - 1 / π;
+if (y < 0) console.log(y)
 			
-//			const distance = (Math.acos(1 - 2 * random()) * R) / (1 + (y * R * random()));
 			return distance / (1 + (y * R * random()));
 			
 		}
