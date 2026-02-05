@@ -32,7 +32,6 @@
 		import { RandomVerticeSphere as RandomVertice } from '../randomVerticeSphere.js';
 		import HyperSphere from '../../sphere.js';
 		import anglesRange from '../../anglesRange.js'
-		import getHyperSphere from '../getHyperSphere.js'
 		
 		new MyThree((scene, options) => {
 
@@ -51,6 +50,7 @@
 			
 			const params = {
 
+				arc: pi / 2,
 				/*
 				//вершины расположены друг против друга по диагонали. arc = π
 				oppositeVertice: [
