@@ -195,7 +195,7 @@ class RandomVertice {
 			*/
 			//https://chat.deepseek.com/a/chat/s/0b71542a-46a2-47e2-9888-f95f26f0fa37
 			const y = 1 / arc - 1 / π;
-if (y < 0) console.log(y)
+//if (y < 0) console.log(y)
 			
 			return distance / (1 + (y * R * random()));
 			
@@ -206,18 +206,17 @@ if (y < 0) console.log(y)
 				
 				params.verticesAngles.push(angles);
 				params.pointsCount++;
-
-			} else {
-				
-				params.verticesAngles[params.editAnglesId] = angles;
-				params.verticesAngles.needsUpdate;
+				return;
 
 			}
+			params.verticesAngles[params.editAnglesId] = angles;
+			params.verticesAngles.needsUpdate;
 			
 		}
 		
 		//overridden methods
 
+		this.navigator = { startingPointParams: () => {}, }
 		this.getAngles = () => { return params.verticesAngles; }
 		this.setAngles = (anglesNew) => { params.verticesAngles = anglesNew; }
 		

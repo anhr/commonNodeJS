@@ -16,9 +16,10 @@
 import RandomVertice from './randomVertice.js';
 import * as utils from '../utilsCircle.js'
 //import Vertice from '../VerticeCircle.js'
+import HyperSphere from '../circle.js';
 
 //const sRandomVerticeCircle = 'RandomVerticeCircle';
-const π = Math.PI, tan = Math.tan;
+const π = Math.PI, tan = Math.tan, random = Math.random;
 
 /**
  * Generates a random vertice near the opposite vertice in 1D hypersphere.
@@ -30,13 +31,15 @@ class RandomVerticeCircle extends RandomVertice {
 	/**
 	 * Generates a random vertice near the opposite vertice in 1D hypersphere.
 	 * @param {object} [params={}] See the <b>params</b> of the <a href="./module-RandomVertice-RandomVertice.html" target="_blank"><b>RandomVertice</b></a> constructor for details.
+	 * @param {number} verticesCount count of vertices in the random vertices cloud.
 	 */
-	constructor(params={}) {
+	constructor(params={}, verticesCount) {
 
-		super(params);
+		super(params, verticesCount);
 
 		let randomAngles;
-		
+
+/*		
 		this.anglesCircle = (utils) => {
 			
 			const random = (params.random === undefined ? Math.random() : params.random) - 0.5,
@@ -54,6 +57,7 @@ class RandomVerticeCircle extends RandomVertice {
 			return angle;
 			
 		}
+*/		
 
 		//overridden methods
 
@@ -82,6 +86,14 @@ class RandomVerticeCircle extends RandomVertice {
 */		
 		this.getRandomAngles = () => {
 
+			const R = 1, oppositeVertice = params.oppositeVertice;
+			//strategy 3
+			const distance = this.distance(random() * 2 * π * R, R);
+			const result = { lon: distance + oppositeVertice.longitude }
+			const angles = utils.angles([result.lon]);
+			this.paramsVerticesAngles(angles);
+			return this.angles;
+/*			
 			const longitude = this.anglesCircle(utils);
 			if (randomAngles) {
 				
@@ -91,12 +103,15 @@ class RandomVerticeCircle extends RandomVertice {
 			}
 			randomAngles = [[longitude]];
 			return utils.angles(randomAngles[0]);
+*/			
 			
 		}
 		
 		/////////////////////////////overridden methods
 
-		this.randomAngles;
+//		this.randomAngles;
+		params.pointsCount = 0;
+		this.verticesAngles(false);
 
 	}
 	
@@ -105,30 +120,11 @@ class RandomVerticeCircle extends RandomVertice {
 	ZeroArray() { return [0]; }
 	Center(params) {
 
-/*		
-		const Vertice = (vertice) => {
-		
-			if (vertice.longitude != undefined) return;
-			if (vertice.length === 0) vertice.push(0);
-			Object.defineProperty(vertice, 'longitude', {
-				
-				get: () => { return vertice[0]; },
-				set: (longitude) => {
-		
-					if (vertice[0] === longitude) return true;
-					vertice[0] = longitude;
-					return true;
-		
-				},
-			
-			});
-		
-		}
-*/		
-		utils.angles(params.vertice);
+//		utils.angles(params.vertice);
 		utils.angles(params.oppositeVertice);
 		
 	}
+	get HyperSphere() { return HyperSphere; }
 	
 	/////////////////////////////overridden methods
 

@@ -611,9 +611,10 @@ class RandomVerticeHSphere extends RandomVertice {
 		// Выполнить пользовательский тест
 		testCustomPoint();
 		*/
-		this.navigator = new HyperSphereNavigator();
 
 		//overridden methods
+		
+		this.navigator = new HyperSphereNavigator();
 /*
 		this.verticesAngles = (editAngles = false) => {
 

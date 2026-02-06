@@ -30,10 +30,8 @@
 		MyThree.three.THREE = THREE;
 
 		import RandomVertice from '../randomVerticeCircle.js';
-		import RandomCloud from '../randomCloudCircle.js';
 		import HyperSphere from '../../circle.js';
 		import anglesRange from '../../anglesRange.js'
-		import getHyperSphere from '../getHyperSphere.js'
 		
 		new MyThree((scene, options) => {
 
@@ -47,17 +45,11 @@
 					notRandomVertices: true,
 				
 				},
-				//cloud: true,
 			
 			};
-			randomVerticeSettings.cloud ||= false;
 			const params = {
 
-				/*
-				vertice: [
-					pi,///2,//0,//lng
-				],
-				*/
+				arc: pi / 2,
 				oppositeVertice: [
 					pi/4,//0,//lng
 				],
@@ -67,16 +59,10 @@
 
 			//Vertices hyperSphere 
 
-			const verticesSettings = {
-
-				//R: 0.5,
-				debug: true,
-
-			};
 			let hsVertices;
 			hsVertices = new HyperSphere(options, {
 
-				r: verticesSettings.R,
+				r: randomVerticeSettings.R,
 				//edges: false,
 				//randomArc: true,
 				projectParams: { scene: scene, },
@@ -106,45 +92,29 @@
 			//Random vertice hyperSphere 
 
 			let hsRandomVertice;
-			const createRandomVerticeHyperSphere = (randomVertice, name) => {
-				
+			let randomCloud;
+			const updateRandomVerticeHyperSphere = () => {
+
+				if (!randomCloud) randomCloud = new RandomVertice(params, 750);//, true);
 				if (hsRandomVertice) {
 
-//					randomVertice.randomAngles;
-					return;
+					const guiSelectPoint = hsRandomVertice.classSettings.settings.options.guiSelectPoint;
+					if (guiSelectPoint && guiSelectPoint.isSelectedMesh(hsRandomVertice.object3D)) guiSelectPoint.selectMesh(-1);
+
+				} else {
+
+					const debug = {
+
+						probabilityDensity: false,
+						middleVertice: false,
+						log: false,
+
+					}
+					hsRandomVertice = randomCloud.getHyperSphere(hsVertices.classSettings, scene);
 
 				}
-				const debug = {
-							
-					probabilityDensity: false,
-					middleVertice: false,
-					log: false,
-					
-				}
-				if (randomVertice.getHyperSphere) hsRandomVertice = randomVertice.getHyperSphere(options, {projectParams: { scene: scene }, debug: debug });
-				else
-					hsRandomVertice = getHyperSphere(HyperSphere, options, scene, randomVertice, { debug: debug, r: randomVerticeSettings.R, name: name });
-	
+
 			}
-			let randomCloud, randomVertice;//сразу не создаю эти объекты потому что они могут не понадобиться и потому, что так легче отлаживать, и потому что присоздании randomVertice обнуляется params.verticesAngles
-			const createRandomCloud = () => {
-
-					if (!randomCloud) randomCloud = new RandomCloud(params);
-					createRandomVerticeHyperSphere(randomCloud, 'Random cloud');
-				
-				},
-				createRandomVertice = () => {
-
-					if (!randomVertice) randomVertice = new RandomVertice(params);
-					createRandomVerticeHyperSphere(randomVertice, 'Random vertice');
-				
-				},
-				updateRandomVerticeHyperSphere = () => {
-
-					if (randomVerticeSettings.cloud) createRandomCloud();
-					else createRandomVertice();
-					
-				}
 			updateRandomVerticeHyperSphere();
 			
 			//GUI
@@ -152,51 +122,17 @@
 			const gui = options.dat.gui.addFolder('Hypersphere'),
 				onChangeLongitude = (verticeId) => {
 
-//					hsVertices.setPositionAttributeFromPoint(verticeId);
 					hsVertices.update(verticeId, 0);
 					
 					updateRandomVerticeHyperSphere();
 					
 				};
 
-			//vertice
-			const fVertice = gui.addFolder('Vertice');
-			fVertice.add(params.vertice, 'longitude', anglesRange.longitude.min, anglesRange.longitude.max, 0.001).onChange((longitude) => { onChangeLongitude(0); });
+			gui.add(params, 'arc', 0, pi, 0.001);
 
 			//oppositeVertice
 			const fOppositeVertice = gui.addFolder('Opposite Vertice');
 			fOppositeVertice.add(params.oppositeVertice, 'longitude', anglesRange.longitude.min, anglesRange.longitude.max, 0.001).onChange((longitude) => { onChangeLongitude(1); });
-
-			//cloud of the random points
-			{
-
-				let cloud = randomVerticeSettings.cloud;
-				Object.defineProperty(randomVerticeSettings, 'cloud', {
-			
-					get: () => { return cloud; },
-					set: (cloudNew) => {
-			
-						if (cloud === cloudNew) return true;
-						cloud = cloudNew;
-						
-						hsRandomVertice.removeHyperSphere();
-						hsRandomVertice = undefined;
-
-						delete params.verticesAngles;
-						delete params.pointsCount;
-						delete params.editAnglesId;
-
-						randomCloud = undefined;
-						randomVertice = undefined;
-						
-						updateRandomVerticeHyperSphere();
-			
-					},
-			
-				});
-
-			}
-			gui.add(randomVerticeSettings, 'cloud');
 			
 			//////////////////////////////////////////GUI
 

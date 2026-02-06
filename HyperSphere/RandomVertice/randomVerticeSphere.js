@@ -340,18 +340,6 @@ export class RandomVerticeSphere extends RandomVertice {
 				
 			};
 */
-		this.navigator = {
-
-			startingPointParams: () => {
-
-/*				
-				const oppositeVertice = params.oppositeVertice;
-				return { lat: oppositeVertice.latitude, lon: oppositeVertice.longitude }
-*/				
-				
-			},
-			
-		}
 
 		//overridden methods
 
@@ -675,7 +663,7 @@ longitude - долгота в диапазоне от -π до π.
 			}
 */
 
-		this.getRandomAngles = (point, startingPointParams) => {
+		this.getRandomAngles = () => {
 
 			/*
 Написать на javascript код, который будет использовать функцию calculatePointOnSphere для вычисления случайных точек на поверхности сферы, таким образом,
