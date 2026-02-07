@@ -69,8 +69,8 @@ class RandomVerticeCircle extends RandomVertice {
 			
 		});
 */
-		this.getAngles = () => { return randomAngles; }
-		this.setAngles = (anglesNew) => { randomAngles = anglesNew; }
+//		this.getAngles = () => { return randomAngles; }
+//		this.setAngles = (anglesNew) => { randomAngles = anglesNew; }
 /*		
 		Object.defineProperty(this, 'randomAngles', {
 			
@@ -88,7 +88,7 @@ class RandomVerticeCircle extends RandomVertice {
 
 			const R = 1, oppositeVertice = params.oppositeVertice;
 			//strategy 3
-			const distance = this.distance(random() * 2 * π * R, R);
+			const distance = this.distance((random() * 2 * π - π) * R, R);
 			const result = { lon: distance + oppositeVertice.longitude }
 			const angles = utils.angles([result.lon]);
 			this.paramsVerticesAngles(angles);

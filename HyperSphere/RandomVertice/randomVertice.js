@@ -213,12 +213,12 @@ class RandomVertice {
 			params.verticesAngles.needsUpdate;
 			
 		}
+		this.getAngles = () => { return params.verticesAngles; }
+		this.setAngles = (anglesNew) => { params.verticesAngles = anglesNew; }
 		
 		//overridden methods
 
 		this.navigator = { startingPointParams: () => {}, }
-		this.getAngles = () => { return params.verticesAngles; }
-		this.setAngles = (anglesNew) => { params.verticesAngles = anglesNew; }
 		
 		/////////////////////////////overridden methods
 
