@@ -261,7 +261,7 @@ class HyperSphere3D extends Sphere {
 				// 2. Нормализуем, чтобы получить точку на гиперсфере
 				const norm = Math.sqrt(centroid.reduce((sum, val) => sum + val * val, 0));
 				
-				_this.setArc(radius, norm);
+				_this.setArc(radius, 1 - norm);
 
 				let middleVertice;
 				
