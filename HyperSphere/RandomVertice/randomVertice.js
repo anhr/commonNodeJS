@@ -186,7 +186,8 @@ class RandomVertice {
 		};
 		this.distance = (distance, R) => {
 			
-			let arc = π - params.arc;
+//			let arc = π - params.arc;
+			let arc = params.arc;
 			if (arc < 0) arc = 0;//Эта ошибка возникает потому что в GUI переменная arc округляется до 4 знаков
 			
 			/*Есть декартова система координат. Ось x обозначим как arc. Найди элементарную функцию которая неогранниченно растет в точке arc = 0 и равна нулю в точке arc = π.

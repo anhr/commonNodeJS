@@ -154,7 +154,7 @@ class Circle extends HyperSphere {
 			
 //			this.randomVertice = new this.RandomCloud(params);
 			if (this.randomVertice) this.randomVertice.paramsVerticeOnChange();//middleVerticeAngles);
-			else this.randomVertice = new this.RandomVertice(this.params, boCloud);
+			else this.randomVertice = new this.RandomVertice(this.params, 200);
 
 		}
 		if (boCreateHypersphere) {
@@ -167,7 +167,7 @@ class Circle extends HyperSphere {
 
 	//Overridden methods from base class
 
-	middlePosition(points) {
+	middlePosition(points, boCloud, boCreateHypersphere) {
 	
 		const _this = this;
 		//https://chat.deepseek.com/a/chat/s/348ed591-765f-4ab2-8924-a3546b62ef24
@@ -261,7 +261,8 @@ class Circle extends HyperSphere {
 
 			}
 
-			_this.randomVertices(middleVerticeAngles);
+//			_this.randomVertices(middleVerticeAngles);
+			_this.randomVertices(middleVerticeAngles, _this.object3D.parent, boCloud, boCreateHypersphere);
 /*			
 			const classSettings = _this.classSettings;
 			if (classSettings.randomArc) {

@@ -145,7 +145,7 @@ class Sphere extends Circle {
 
 	//Overridden methods from base class
 
-	middlePosition(points) {
+	middlePosition(points, boCloud, boCreateHypersphere) {
 
 		const _this = this;
 		
@@ -181,9 +181,8 @@ class Sphere extends Circle {
 
 			// Нормализуем сумму, чтобы получить точку на сфере
 			const [x, y, z] = sumVector;
-//			const x = sumVector[0] / points.length, y = sumVector[1] / points.length, z = sumVector[2] / points.length;
 			const length = Math.sqrt(x * x + y * y + z * z);
-			_this.setArc(sphereRadius, length / points.length);
+			_this.setArc(sphereRadius, 1 - length / points.length);
 			
 			let middleVertice;//, middleVerticeAngles;
 
@@ -204,13 +203,6 @@ class Sphere extends Circle {
 				const pointB = new THREE.Vector3(oppositeVerticeB.x, oppositeVerticeB.y, oppositeVerticeB.z);//(0, 3, -4);
 				const oppositeVerticeC = oppositeVertices[2];
 				const pointC = new THREE.Vector3(oppositeVerticeC.x, oppositeVerticeC.y, oppositeVerticeC.z);//(-3, -4, 0);
-
-				/*
-				// Нормализуем точки, чтобы они точно лежали на сфере
-				pointA.normalize().multiplyScalar(sphereRadius);
-				pointB.normalize().multiplyScalar(sphereRadius);
-				pointC.normalize().multiplyScalar(sphereRadius);
-				*/
 
 				// Функция для построения плоскости по трем точкам
 				function createPlaneFromPoints(p1, p2, p3) {
@@ -237,38 +229,10 @@ class Sphere extends Circle {
 				// Вычисление точек пересечения нормали со сферой
 				middleVertice = findSphereNormalIntersections(normal, sphereRadius);
 //				middleVerticeAngles = _this.vertice2angles(middleVertice);
-/*				
-				const point = findSphereNormalIntersections(normal, sphereRadius);
-
-				return point;
-//				return _this.a2v(_this.vertice2angles(Position([point.x, point.y, point.z])), sphereRadius);
-*/				
 
 			} else middleVertice = [x / length, y / length, z / length];
 
-			_this.randomVertices(_this.vertice2angles(middleVertice));
-/*			
-			const classSettings = _this.classSettings;
-			if (classSettings.randomArc) {
-
-				const params = {
-						
-						//vertice: angles,
-						oppositeVertice: _this.vertice2angles(middleVertice),
-						arc: _this.arc,
-						debug: classSettings.debug ? { notRandomVertices: true,} : false,
-						
-					}
-				if (_this.randomVertice) _this.randomVertice.params = params;
-				else {
-					
-					_this.randomVertice = new _this.RandomCloud(params);
-					_this.hsRandomVertice = _this.randomVertice.getHyperSphere(classSettings.settings.options, classSettings, _this.middleVerticeColor);
-
-				}
-				
-			}
-*/			
+			_this.randomVertices(_this.vertice2angles(middleVertice), _this.object3D.parent, boCloud, boCreateHypersphere);
 			return middleVertice;
 			
 		}
