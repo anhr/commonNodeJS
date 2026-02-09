@@ -572,7 +572,7 @@ class HyperSphere extends MyObject {
 										if(_this.isSetPositionAttributeFromPoint != false) {
 
 											const position = verticeAnglesFromPosition ? this.a2v(verticeAnglesFromPosition, classSettings.overriddenProperties.r(classSettings.settings.guiPoints ? classSettings.settings.guiPoints.timeId : 0)) : undefined
-											_this.setPositionAttributeFromPoint(verticeId, position);//обновляем только одну ось в декартовой системе координат
+											_this.setPositionAttributeFromPoint(verticeId, Position(position));//обновляем только одну ось в декартовой системе координат
 											_this.bufferGeometry.attributes.position.needsUpdate = true;
 	
 										}
@@ -2283,6 +2283,7 @@ this.object = () => {
 //																	console.error(sHyperSphere + ': Непонятно когда сюда попадает')
 																	const arcEdges = [];
 																	for (let i = 0; i < (aAngleControls.MAX_POINTS - 1); i++) arcEdges.push([i, i + 1]);
+																	const palette = classSettings.settings.options.palette;
 																	aAngleControls.arc = this.line({
 																	
 																		cookieName: 'arc',//если не задать cookieName, то настройки дуги будут браться из настроек гиперсферы
@@ -2308,6 +2309,7 @@ this.object = () => {
 																		},
 																	
 																	});
+																	classSettings.settings.options.setPalette(palette);//если не восстанавливать палитру после создания дуги, то будет неверно отображаться цвет точек Random Cloud когда меняется координата одной из противоположных вершин на странице hyperSphere.html
 
 																}
 
