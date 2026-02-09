@@ -14,8 +14,8 @@
 */
 
 import getHyperSphere from './getHyperSphere.js'
-import anglesRange from '../anglesRange.js'
-import * as utils from '../utilsHSphere.js'
+//import anglesRange from '../anglesRange.js'
+//import * as utils from '../utilsHSphere.js'
 
 const sRandomVertice = 'RandomVertice',
 	sOver = ': Please, override %s method in your ' + sRandomVertice + ' child class.',

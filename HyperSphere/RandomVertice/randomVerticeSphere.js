@@ -448,6 +448,15 @@ longitude - долгота в диапазоне от -π до π.
 
 			// Если исходная точка на полюсе
 			if (isNorthPole || isSouthPole) {
+				
+				return {
+					
+//					lat: Math.sin(random() * π - π / 2) * π / 2,
+					lat: Math.asin(random() * 2 - 1),
+					lon: random() * π * 2,//lonB,
+
+				}
+/*				
 				// Для полюса направление "север" всегда к полюсу,
 				// поэтому движение происходит по меридиану с заданным азимутом
 
@@ -468,16 +477,33 @@ longitude - долгота в диапазоне от -π до π.
 
 				// Корректировка широты для диапазона [-π/2, π/2]
 				const clampedLatB = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, latB));
-
+*/					
+/*
+				const res = utils.angles([
+						
+					R * Math.cos(clampedLatB) * Math.cos(lonB),
+					R * Math.cos(clampedLatB) * Math.sin(lonB),
+					R * Math.sin(clampedLatB)
+					
+				]);
+				return {
+					
+					lat: res.latitude,
+					lon: res.longitude,
+					
+				};
+*/
+/*				
 				return {
 					lat: clampedLatB,
-					lon: lonB,
-/*						
+					lon: random() * 2 * π,//lonB,
+*/					
+/*
 					x: R * Math.cos(clampedLatB) * Math.cos(lonB),
 					y: R * Math.cos(clampedLatB) * Math.sin(lonB),
 					z: R * Math.sin(clampedLatB)
-*/
-				};
+*/					
+//				};
 			}
 
 			// Общий случай (не полюс)
@@ -684,7 +710,7 @@ longitude - долгота в диапазоне от -π до π.
 				oppositeVertice.longitude,//Math.random() * TWO_PI - π,//lon
 				R,
 				distance,
-				Math.random() * TWO_PI//azimuth
+				random() * TWO_PI//azimuth
 			);
 /*			
 			const R = 1, distance = random() * R * 2 * π, oppositeVertice = params.oppositeVertice,

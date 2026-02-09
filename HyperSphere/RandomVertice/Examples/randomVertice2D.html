@@ -50,7 +50,7 @@
 			
 			const params = {
 
-				arc: pi / 2,
+				arc: pi,// / 2,
 				/*
 				//вершины расположены друг против друга по диагонали. arc = π
 				oppositeVertice: [
@@ -64,9 +64,9 @@
 					pi,//Longitude
 				],
 				*/
-				//Противоположная вершина расположена на северном полюсе
+				//Противоположная вершина расположена на полюсе
 				oppositeVertice: [
-					pi/2,//Latitude
+					-pi/2,//Latitude
 					0,//Longitude
 				],
 				/*
@@ -119,7 +119,7 @@
 			let randomCloud;
 			const updateRandomVerticeHyperSphere = () => {
 
-				if (!randomCloud) randomCloud = new RandomVertice(params, 750);//, true);
+				if (!randomCloud) randomCloud = new RandomVertice(params, 7500);//, true);
 				if (hsRandomVertice) {
 
 					const guiSelectPoint = hsRandomVertice.classSettings.settings.options.guiSelectPoint;
