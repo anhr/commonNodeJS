@@ -72,10 +72,16 @@
 				*/
 				/*
 				*/
-				arc: pi / 2,
+				arc: pi,// / 2,
 				oppositeVertice: [
 					pi / 6,//altitude
 					0.051,//0,//Latitude
+					pi,//Longitude
+				],
+				//Противоположная вершина расположена на полюсе
+				oppositeVertice: [
+					1.1334517520303806,//altitude
+					-pi / 2,//0,//Latitude
 					pi,//Longitude
 				],
 				debug: randomVerticeSettings.debug,

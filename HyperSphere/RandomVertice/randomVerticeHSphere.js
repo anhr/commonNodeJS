@@ -351,9 +351,11 @@ class RandomVerticeHSphere extends RandomVertice {
 
 				const oppositeVertice = params.oppositeVertice,
 					lat = oppositeVertice.latitude, lon = oppositeVertice.longitude, alt = oppositeVertice.altitude;
+/*				
 				if (alt === undefined) alt = anglesRange.altitude.range / 2;
 				if (lon === undefined) console.error('startingPointParams: under constraction');
 				if (lat === undefined) console.error('startingPointParams: under constraction');
+*/				
 
 				// Исходная точка
 				const P = this.anglesToCartesian(lat, lon, alt);
@@ -363,6 +365,8 @@ class RandomVerticeHSphere extends RandomVertice {
 
 				return {
 
+					lat: lat,
+					alt: alt,
 					P: P,
 					e1: e1,
 					e2: e2,
@@ -415,7 +419,10 @@ class RandomVerticeHSphere extends RandomVertice {
 				}
 
 				// Обратное преобразование в углы
-				return this.cartesianToAngles(Q);
+				const angles = this.cartesianToAngles(Q);
+
+				if (Math.abs((Math.abs(startingPointParams.lat) - π / 2)) < 1e-12) angles.longitude = random() * 2 * π - π;//Противоположная вершина находится на полюсе
+				return angles;
 			}
 
 			// 4. Преобразование декартовых координат в углы
@@ -701,7 +708,7 @@ class RandomVerticeHSphere extends RandomVertice {
 			// Правильное распределение для равномерного покрытия:
 			// Вероятность попасть в сферическую шапочку радиуса d пропорциональна sin^3(d/R)
 //			const distance = this.navigator.R * this.navigator.inverseCDF_S3(random()) / (1+ 100 * random()); // см. объяснение ниже
-			const R = this.navigator.R, distance = this.distance(R * this.navigator.inverseCDF_S3(random()), R);
+			const R = this.navigator.R, distance = this.distance(R * this.navigator.inverseCDF_S3(random()), R) * 2;
 
 			if (!startingPointParams) {
 
