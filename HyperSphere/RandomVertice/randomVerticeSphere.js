@@ -46,7 +46,7 @@ export class RandomVerticeSphere extends RandomVertice {
 
 		super(params, verticesCount);
 
-		this.Euler(params);
+//		this.Euler(params);
 		
 //		const arrayCircles = boCloud ? undefined : [];
 			
@@ -727,7 +727,7 @@ longitude - долгота в диапазоне от -π до π.
 			return this.angles;
 			
 		}
-
+/*
 		Object.defineProperty(this, 'сirclesParams', {
 			
 			get: () => {
@@ -740,6 +740,8 @@ longitude - долгота в диапазоне от -π до π.
 			set: (anglesNew) => {},
 			
 		});
+*/		
+/*		
 		this.getRandomAngle = (randomVerticeId) => {
 
 			let verticeId = 0;
@@ -768,7 +770,8 @@ longitude - долгота в диапазоне от -π до π.
 			console.error(sRandomVerticesSphere + '.getRandomAngle. Random vertice was not found.');
 			
 		}
-		
+*/		
+/*		
 		Object.defineProperty(this, 'cloud', {
 			
 			get: () => {
@@ -779,6 +782,7 @@ longitude - долгота в диапазоне от -π до π.
 			},
 			
 		});
+*/		
 		
 		/////////////////////////////overridden methods
 
@@ -804,96 +808,7 @@ longitude - долгота в диапазоне от -π до π.
 	//overridden methods
 	
 	ZeroArray() { return [0, 0]; }
-	Euler(params) {
-
 //		if (!params) return;
-		params.Euler = () => {
-
-			const r = 1;//радиус может быть любой this.r;//this.classSettings.r;
-
-			/*
-Заданы две произвольные точки position0 и position1 на поверхности сферы в декартовой системе координат. Начало координат находится в центре сферы.
-Вычислить кватернионы, применяя которые можно точку position0 переместить в точку position1.
-Обрабатать случай, когда точка близка к полюсам.
-Написать пример, в котором вычисляется точка rotatedPosition как применение вычисленных кватернионов к точке position0.
-rotatedPosition должна получиться равной position1.
-Затем точку rotatedPosition повернуть обратно так, что бы она снова оказалась в положении точки position0.
-Написать код на Javascript.
-Применить библиотеку three.js.
-			*/
-			//https://giga.chat/agents/019a5d95-ab99-7c86-a31c-610dad03b054/sessions/019ac367-b6d9-748f-a904-2bca5017e564
-			// Импортируем необходимую библиотеку
-			//			import * as THREE from 'https://cdn.skypack.dev/three';
-			const THREE = three.THREE;
-
-			// Начальные точки
-			//			let position0 = new THREE.Vector3(1, 0, 0); // первая точка на сфере
-			//			let position1 = new THREE.Vector3(0, 1, 0); // вторая точка на сфере
-//			const position = this.classSettings.settings.object.geometry.position, p0 = position[0], p1 = position[1];
-			const p1 = Position(utils.anglesToCartesian(params.oppositeVertice, r));
-			//			let position0 = new THREE.Vector3(p0.x, p0.y, p0.z); // первая точка на сфере
-			const position0 = new THREE.Vector3(0, 0, r); // первая точка на сфере
-			const position1 = new THREE.Vector3(p1.x, p1.y, p1.z); // вторая точка на сфере
-
-			// Функция, возвращающая кватернион, переносящий position0 в position1
-			function getRotationQuaternion(v0, v1) {
-				// Убедимся, что точки являются единичными векторами (находятся на поверхности сферы)
-				v0.normalize();
-				v1.normalize();
-
-				// Векторное произведение даёт нам ось вращения
-				let axis = new THREE.Vector3().crossVectors(v0, v1);
-
-				// Особый случай: точки равны или диаметрально противоположны
-				if (axis.lengthSq() < Number.EPSILON) {
-					if (v0.dot(v1) >= 0) {
-						// Вектора одинаковы, значит никакого вращения не требуется
-						return new THREE.Quaternion().identity();
-					} else {
-						// Диаметральные противоположные точки, используем специальную ось вращения
-						// Можно выбрать любую фиксированную ось, отличную от направления обоих векторов
-						axis.set(0, 1, 0); // ось Y, можно выбрать любую удобную ось
-					}
-				} else {
-					// Иначе используем найденную ось вращения
-					axis.normalize();
-				}
-
-				// Получаем угол между векторами
-				let angle = v0.angleTo(v1);
-
-				// Строим кватернион
-				return new THREE.Quaternion().setFromAxisAngle(axis, angle);
-			}
-
-			// Расчёт кватерниона для перемещения точки position0 в position1
-			const forwardQuaternion = getRotationQuaternion(position0, position1);
-
-			/*Проверка
-
-			console.log("position0:", position0.toArray());
-			console.log("position1:", position1.toArray());
-			
-			// Перемещаем точку position0 с помощью кватерниона
-			const rotatedPosition = position0.clone().applyQuaternion(forwardQuaternion);
-
-			// Проверка результата (должна получиться точка position1)
-			console.log("Повернутая позиция:", rotatedPosition.toArray());
-
-			// Возвращаемся обратно, создавая инверсный кватернион
-			const backwardQuaternion = forwardQuaternion.clone().invert();
-
-			// Поворачиваем обратно
-			const backPosition = rotatedPosition.clone().applyQuaternion(backwardQuaternion);
-
-			// Проверка возвращения обратно (должна стать равна position0)
-			console.log("Возвращённая позиция:", backPosition.toArray());
-			*/
-			return forwardQuaternion;
-
-		}
-
-	}
 	Center(params) {
 
 //		utils.angles(params.vertice);
