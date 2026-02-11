@@ -979,7 +979,11 @@ class HyperSphere extends MyObject {
 											const oppositeVertices = [];
 											oppositeVerticesId.forEach(oppositeAngleId => {
 
-												const oppositeVertice = settings.bufferGeometry.userData.position[oppositeAngleId];
+												//не работает в Universe. Непонятно почему применил эту строку
+//												const oppositeVertice = settings.bufferGeometry.userData.position[oppositeAngleId];
+												
+												const oppositeVertice = classSettings.overriddenProperties.oppositeVertice(oppositeAngleId, timeId);
+												//console.log('oppositeAngleId = ' + oppositeAngleId + ' oppositeVertice = [' + oppositeVertice.x + ', ' + oppositeVertice.y + ', ' + oppositeVertice.z + ']')
 /*												
 												oppositeVertice.forEach((axis, i) => {
 

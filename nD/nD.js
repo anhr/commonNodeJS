@@ -1025,11 +1025,9 @@ class ND extends MyObject {
 
 		function proxyGeometryPosition() {
 
-/*			
 			const geometry = settings.object.geometry;
 			if ( geometry.position && geometry.position.isProxy ) return geometry.position;
-*/			
-			if ( settings.object.geometry.position && settings.object.geometry.position.isProxy ) return settings.object.geometry.position;
+//			if ( settings.object.geometry.position && settings.object.geometry.position.isProxy ) return settings.object.geometry.position;
 			const playerPosition = settings.object.geometry.playerPosition, position = playerPosition ? geometry.playerPosition[0] : settings.object.geometry.position ? settings.object.geometry.position : [];
 			return new Proxy(
 				
