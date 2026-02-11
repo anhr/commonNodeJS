@@ -44,18 +44,15 @@
 import RandomVertice from './randomVertice.js';
 import anglesRange from '../anglesRange.js'
 import * as utils from '../utilsSphere.js'
-//import Vertice from '../VerticeSphere.js'
 import Position from '../position.js'
-//import anglesToCartesian from '../anglesToCasterianSphere.js'
-//import casterianToAngles from '../casterianToAnglesSphere.js'
-//import { anglesToCartesian, casterianToAngles } from '../utilsSphere.js'
 import three from '../../three.js'
+//import getHyperSphere from './getHyperSphere.js'
+import HyperSphere from '../sphere.js';
 
 
 const sRandomVerticesSphere = 'RandomVerticesSphere',
-	π = Math.PI, abs = Math.abs, round = Math.round, random = Math.random,
-	sin = Math.sin, asin = Math.asin, cos = Math.cos, tan = Math.tan, atan = Math.atan, atan2 = Math.atan2;
-//	range = anglesRange.longitude.range;
+	π = Math.PI, round = Math.round, random = Math.random,// abs = Math.abs,
+	cos = Math.cos;//, atan = Math.atan, sin = Math.sin, asin = Math.asin, tan = Math.tan, atan2 = Math.atan2;
 export const anglesIdMax = 50;//Количество точек на окружности, расположенной на экваторе
 
 /**
@@ -65,22 +62,22 @@ export const anglesIdMax = 50;//Количество точек на окруж�
  */
 export class RandomVerticeSphere extends RandomVertice {
 
+	// * @param {boolean} [boCloud=false] true - generates a random vertice cloud.
+
 	/**
 	 * Generates a random vertice near the opposite vertice in 2D hypersphere.
 	 * @param {object} [params={}] See the &lt;b>params&lt;/b> of the &lt;a href="./module-RandomVertice-RandomVertice.html" target="_blank">&lt;b>RandomVertice&lt;/b>&lt;/a> constructor for details.
 	 * @param {object} [params.circlesCount] Count of the circles in the sphere.
-	 * @param {boolean} [boCloud=false] true - generates a random vertice cloud.
-	 * @param {boolean} [boInitRandomAngles=true] true - init random angles.
+	 * @param {number} verticesCount count of vertices in the random vertices cloud.
 	 */
-	constructor(params={}, boCloud = false, boInitRandomAngles = true) {
+	constructor(params={}, verticesCount) {
 
-		super(params);
+		super(params, verticesCount);
 
 		this.Euler(params);
 		
-		const arrayCircles = boCloud ? undefined : [];
+//		const arrayCircles = boCloud ? undefined : [];
 			
-//		if (params.arc === undefined)
 		if (!params.boArcIsdefined) {
 
 			params.boArcIsdefined = true;
@@ -109,7 +106,8 @@ export class RandomVerticeSphere extends RandomVertice {
 						if (isNaN(θ)) console.error(sRandomVerticesSphere + ': getArcAngle. Invalid θ = ' + θ);
 
 					} else θ = arc;
-					return this.arc(θ);
+					return θ;
+//					return this.arc(θ);
 				
 				},
 				set: (arcNew) => {
@@ -124,10 +122,10 @@ export class RandomVerticeSphere extends RandomVertice {
 
 		}
 		
-		this.latitude = (utils) => {
+		this.latitude = (b/*utils*/) => {
 
 			const rnd = (params.random === undefined ? random() : params.random),//rng range from 0 to 1
-				b = params.b ? params.b : utils.b(params),
+//				b = params.b ? params.b : utils.b(params),
 				angle = (
 						(
 							(atan((
@@ -311,7 +309,8 @@ export class RandomVerticeSphere extends RandomVertice {
 */				
 				return rotated;
 				
-			},
+			};
+/*			
 			verticesAngles = (boAllocateMemory) => {
 
 				//Сфера случайных точек состоит из набора окружностей.
@@ -321,11 +320,12 @@ export class RandomVerticeSphere extends RandomVertice {
 					0;//в противном случае в массиве this.verticesAngles редактируется item с индексом this.circlesPointsCount
 				let latitudePrev = 0;//широта предыдущей окружности
 				const euler = !boAllocateMemory &amp;&amp; params.Euler ? params.Euler() : undefined;
+				const b = params.b ? params.b : utils.b(params);
 				for(let circleId = 0; circleId &lt; circlesCount; circleId++){
 
 					params.random = k * circleId;
 
-					const latitude = this.latitude(utils);
+					const latitude = this.latitude(b);//utils);// * latitudeMultiplier;
 					if (
 						!boAllocateMemory &amp;&amp;//Не выделяется память
 						params.hyperSphere &amp;&amp;//Создается облако гиперсферы случайных точек. Состоит из массива сфер на разной высоте. Сейчас создается сфера на высоте противоположной вершины params.oppositeVertice.altitude.
@@ -367,18 +367,26 @@ export class RandomVerticeSphere extends RandomVertice {
 				delete params.b;
 				
 			};
-
-		if (!arrayCircles) {//не выделять this.verticesAngles если нужно вычислить одну случайную точку randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1
-			
-			//Allocate this.verticesAngles memory
-			params.boAllocateMemory = true;
-			verticesAngles(params.boAllocateMemory);
-			delete params.boAllocateMemory;
-
-		}
+*/
 
 		//overridden methods
 
+/*		
+		this.verticesAngles = (editAngles = false) => {
+
+//			createHyperSphereNavigator();
+
+			const startingPointParams = this.navigator.startingPointParams();
+			for (let i = 0; i &lt; (boCloud ? 750 : 1); i++) {
+
+				if (editAngles) params.editAnglesId = i;
+				this.getRandomAngles(undefined, startingPointParams);
+
+			}
+			delete params.editAnglesId;
+
+		};
+*/		
 /*		
 		Object.defineProperty(this, 'angles', {
 			
@@ -387,8 +395,10 @@ export class RandomVerticeSphere extends RandomVertice {
 			
 		});
 */
+/*
 		this.getAngles = () => { return params.verticesAngles; }
 		this.setAngles = (anglesNew) => { params.verticesAngles = anglesNew; }
+*/
 /*		
 		Object.defineProperty(this, 'randomAngles', {
 
@@ -405,16 +415,344 @@ export class RandomVerticeSphere extends RandomVertice {
 			set: (anglesNew) => { },
 
 		});
-*/		
-		this.getRandomAngles = () => {
-			
-			if (arrayCircles) arrayCircles.length = 0;
-			verticesAngles(false);
-			params.verticesAngles.needsUpdate;
-			const randomVerticeId = round(random() * (this.circlesPointsCount - 1))
+*/
+		/*
+Есть точка на поверхности сферы в полярной системе координат.
+R - радиус сферы. 
+Положение точки определено ее углами:
+latitude - широта в диапазоне от -π/2 до π/2.
+longitude - долгота в диапазоне от -π до π.
+Начало координат находится в центре сферы. Вычислить координаты другой точки на сфере, которая находится на определенном растоянии и под определенным углом от заданной точки.
+		*/
+		//https://chat.deepseek.com/a/chat/s/e304455b-5714-4923-88f5-6ac9c6adee40
+		/**
+		 * Вычисляет точку на сфере, находящуюся на заданном расстоянии и азимуте от исходной точки
+		 * @param {number} latA - Широта исходной точки в радианах [-π/2, π/2]
+		 * @param {number} lonA - Долгота исходной точки в радианах [-π, π]
+		 * @param {number} R - Радиус сферы
+		 * @param {number} distance - Расстояние по поверхности сферы (в тех же единицах, что и R)
+		 * @param {number} azimuth - Азимут (направление) в радианах, отсчитывается от севера по часовой стрелке [0, 2π]
+		 * @returns {Object} Объект с координатами {lat, lon, x, y, z}
+		 */
+		const calculatePointOnSphere = (latA, lonA, R, distance, azimuth) => {
+			if (distance > (2 * π * R)) console.error(sRandomVerticesSphere + '.calculatePointOnSphere. Invalid distance = ' + distance);
+			// Обработка нулевого расстояния
+			if (Math.abs(distance) &lt; 1e-12) {
+				return {
+					lat: latA,
+					lon: lonA,
+/*						
+					x: R * Math.cos(latA) * Math.cos(lonA),
+					y: R * Math.cos(latA) * Math.sin(lonA),
+					z: R * Math.sin(latA)
+*/
+				};
+			}
 
-			if (arrayCircles) return this.getRandomAngle(randomVerticeId);
-			else return this.angles;
+			// Центральный угол
+			const gamma = distance / R;
+
+			// Обработка антиподной точки
+			if (Math.abs(gamma - Math.PI) &lt; 1e-12) {
+				const latB = -latA;
+				const lonB = lonA + Math.PI;
+				// Нормализация долготы
+				const normalizedLon = ((lonB + Math.PI) % (2 * Math.PI) - Math.PI);
+
+				return {
+					lat: latB,
+					lon: normalizedLon,
+/*						
+					x: R * Math.cos(latB) * Math.cos(normalizedLon),
+					y: R * Math.cos(latB) * Math.sin(normalizedLon),
+					z: R * Math.sin(latB)
+*/
+				};
+			}
+
+			// Проверка на полюса
+			const isNorthPole = Math.abs(latA - Math.PI / 2) &lt; 1e-12;
+			const isSouthPole = Math.abs(latA + Math.PI / 2) &lt; 1e-12;
+
+			// Если исходная точка на полюсе
+			if (isNorthPole || isSouthPole) {
+				
+				return {
+					
+//					lat: Math.sin(random() * π - π / 2) * π / 2,
+					lat: Math.asin(random() * 2 - 1),
+					lon: random() * π * 2,//lonB,
+
+				}
+/*				
+				// Для полюса направление "север" всегда к полюсу,
+				// поэтому движение происходит по меридиану с заданным азимутом
+
+				// Широта конечной точки
+				const latB = latA - Math.cos(azimuth) * gamma;
+
+				// Для северного полюса азимут равен конечной долготе
+				// Для южного полюса - противоположен
+				let lonB;
+				if (isNorthPole) {
+					lonB = azimuth;
+				} else { // isSouthPole
+					lonB = azimuth + Math.PI;
+				}
+
+				// Нормализация долготы
+				lonB = ((lonB + Math.PI) % (2 * Math.PI) - Math.PI);
+
+				// Корректировка широты для диапазона [-π/2, π/2]
+				const clampedLatB = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, latB));
+*/					
+/*
+				const res = utils.angles([
+						
+					R * Math.cos(clampedLatB) * Math.cos(lonB),
+					R * Math.cos(clampedLatB) * Math.sin(lonB),
+					R * Math.sin(clampedLatB)
+					
+				]);
+				return {
+					
+					lat: res.latitude,
+					lon: res.longitude,
+					
+				};
+*/
+/*				
+				return {
+					lat: clampedLatB,
+					lon: random() * 2 * π,//lonB,
+*/					
+/*
+					x: R * Math.cos(clampedLatB) * Math.cos(lonB),
+					y: R * Math.cos(clampedLatB) * Math.sin(lonB),
+					z: R * Math.sin(clampedLatB)
+*/					
+//				};
+			}
+
+			// Общий случай (не полюс)
+
+			// Единичный вектор точки A
+			const cosLatA = Math.cos(latA);
+			const sinLatA = Math.sin(latA);
+			const cosLonA = Math.cos(lonA);
+			const sinLonA = Math.sin(lonA);
+
+			const a_x = cosLatA * cosLonA;
+			const a_y = cosLatA * sinLonA;
+			const a_z = sinLatA;
+
+			// Векторы севера и востока
+			const N_x = -sinLatA * cosLonA;
+			const N_y = -sinLatA * sinLonA;
+			const N_z = cosLatA;
+
+			const E_x = -sinLonA;
+			const E_y = cosLonA;
+			const E_z = 0;
+
+			// Вектор направления D
+			const cosAz = Math.cos(azimuth);
+			const sinAz = Math.sin(azimuth);
+
+			const D_x = cosAz * N_x + sinAz * E_x;
+			const D_y = cosAz * N_y + sinAz * E_y;
+			const D_z = cosAz * N_z + sinAz * E_z;
+
+			// Единичный вектор точки B
+			const cosGamma = Math.cos(gamma);
+			const sinGamma = Math.sin(gamma);
+
+			const b_x = cosGamma * a_x + sinGamma * D_x;
+			const b_y = cosGamma * a_y + sinGamma * D_y;
+			const b_z = cosGamma * a_z + sinGamma * D_z;
+
+			// Декартовы координаты
+			const xB = R * b_x;
+			const yB = R * b_y;
+			const zB = R * b_z;
+
+			// Сферические координаты
+			// Используем atan2 для численной устойчивости при малых значениях
+			let latB, lonB;
+
+			// Вычисление широты
+			latB = Math.asin(b_z);
+
+			// Вычисление долготы с обработкой сингулярностей
+			const xyNorm = Math.sqrt(b_x * b_x + b_y * b_y);
+			if (xyNorm &lt; 1e-12) {
+				// Точка близка к полюсу
+				lonB = 0; // Произвольно выбираем 0
+			} else {
+				lonB = Math.atan2(b_y, b_x);
+			}
+
+			// Нормализация долготы в диапазон [-π, π]
+			if (lonB > Math.PI) lonB -= 2 * Math.PI;
+			if (lonB &lt; -Math.PI) lonB += 2 * Math.PI;
+
+			return {
+				lat: latB,
+				lon: lonB,
+/*					
+					x: xB,
+					y: yB,
+					z: zB
+*/
+			};
+		}
+
+		/**
+		 * Вспомогательная функция для нормализации углов
+		 * @param {number} angle - Угол в радианах
+		 * @returns {number} Угол в диапазоне [-π, π]
+		 */
+		/*
+		function normalizeAngle(angle) {
+			let normalized = angle % (2 * Math.PI);
+			if (normalized > Math.PI) normalized -= 2 * Math.PI;
+			if (normalized &lt; -Math.PI) normalized += 2 * Math.PI;
+			return normalized;
+		}
+		*/
+
+		/**
+		 * Вспомогательная функция для конвертации градусов в радианы
+		 * @param {number} degrees - Угол в градусах
+		 * @returns {number} Угол в радианах
+		 */
+		/*
+		function degToRad(degrees) {
+			return degrees * Math.PI / 180;
+		}
+		*/
+
+		/**
+		 * Вспомогательная функция для конвертации радиан в градусы
+		 * @param {number} radians - Угол в радианах
+		 * @returns {number} Угол в градусах
+		 */
+		/*
+		function radToDeg(radians) {
+			return radians * 180 / Math.PI;
+		}
+		*/
+
+		/**
+		 * Пример использования функции
+		 */
+		/*
+		function example() {
+			// Пример 1: Движение от точки на экваторе
+			console.log("Пример 1: Движение от точки на экваторе");
+			const result1 = calculatePointOnSphere(
+				0, // lat = 0° (экватор)
+				0, // lon = 0°
+				6371, // R Земли в км
+				1000, // расстояние 1000 км
+				degToRad(45) // азимут 45° (северо-восток)
+			);
+			console.log("Широта:", radToDeg(result1.lat).toFixed(4), "°");
+			console.log("Долгота:", radToDeg(result1.lon).toFixed(4), "°");
+			console.log("Декартовы координаты:", result1.x.toFixed(2), result1.y.toFixed(2), result1.z.toFixed(2));
+
+			// Пример 2: Движение от северного полюса
+			console.log("\nПример 2: Движение от северного полюса");
+			const result2 = calculatePointOnSphere(
+				Math.PI / 2, // Северный полюс
+				0, // долгота не важна для полюса
+				6371,
+				1000,
+				degToRad(90) // на восток от полюса = вдоль параллели
+			);
+			console.log("Широта:", radToDeg(result2.lat).toFixed(4), "°");
+			console.log("Долгота:", radToDeg(result2.lon).toFixed(4), "°");
+
+			// Пример 3: Нулевое расстояние
+			console.log("\nПример 3: Нулевое расстояние");
+			const result3 = calculatePointOnSphere(
+				degToRad(45),
+				degToRad(30),
+				6371,
+				0, // нулевое расстояние
+				degToRad(90)
+			);
+			console.log("Исходная и конечная точки совпадают:");
+			console.log("Широта:", radToDeg(result3.lat).toFixed(4), "°");
+			console.log("Долгота:", radToDeg(result3.lon).toFixed(4), "°");
+
+			// Пример 4: Антиподная точка
+			console.log("\nПример 4: Антиподная точка");
+			const result4 = calculatePointOnSphere(
+				degToRad(40),
+				degToRad(50),
+				6371,
+				6371 * Math.PI, // половина окружности Земли
+				degToRad(0)
+			);
+			console.log("Антиподная точка:");
+			console.log("Широта:", radToDeg(result4.lat).toFixed(4), "°");
+			console.log("Долгота:", radToDeg(result4.lon).toFixed(4), "°");
+			console.log("Ожидаемая широта:", -40, "°");
+			console.log("Ожидаемая долгота:", 50 + 180 > 180 ? 50 - 180 : 50 + 180, "°");
+		}
+
+		// Запуск примера
+		example();
+		*/
+/*
+			// Экспорт функций для использования в других модулях
+			if (typeof module !== 'undefined' &amp;&amp; module.exports) {
+				module.exports = {
+					calculatePointOnSphere,
+					normalizeAngle,
+					degToRad,
+					radToDeg
+				};
+			}
+*/
+
+		this.getRandomAngles = () => {
+
+			/*
+Написать на javascript код, который будет использовать функцию calculatePointOnSphere для вычисления случайных точек на поверхности сферы, таким образом,
+что бы эти случайные точки были равномерно распределены по поверхности сферы.
+			*/
+			//https://chat.deepseek.com/a/chat/s/e304455b-5714-4923-88f5-6ac9c6adee40
+
+			/**
+			* Метод 5: Использование calculatePointOnSphere для равномерного покрытия
+			* с движением от полюсов и экватора
+			*/
+
+			const R = 1, TWO_PI = 2 * π, oppositeVertice = params.oppositeVertice;
+			//strategy 3
+			const distance = this.distance(Math.acos(1 - 2 * random()) * R, R);
+			const result = calculatePointOnSphere(
+				oppositeVertice.latitude,//Math.asin(2 * Math.random() - 1),//lat
+				oppositeVertice.longitude,//Math.random() * TWO_PI - π,//lon
+				R,
+				distance,
+				random() * TWO_PI//azimuth
+			);
+/*			
+			const R = 1, distance = random() * R * 2 * π, oppositeVertice = params.oppositeVertice,
+				result = calculatePointOnSphere(
+					oppositeVertice.latitude, // lat
+					oppositeVertice.longitude, // lon
+					R, // R
+					distance, // расстояние
+					random() * 2 * π // азимут
+				);
+*/				
+			const angles = utils.angles([result.lat, result.lon]);
+			this.paramsVerticesAngles(angles);
+			return this.angles;
 			
 		}
 
@@ -472,20 +810,22 @@ export class RandomVerticeSphere extends RandomVertice {
 		
 		/////////////////////////////overridden methods
 
-		if (arrayCircles) {
+		params.pointsCount = 0;
+		this.verticesAngles(false);
+/*
+		if (!arrayCircles) {//не выделять this.verticesAngles если нужно вычислить одну случайную точку randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1
 
-			//Когда создается облако случайных точек randomVerticeSettings.mode = randomVerticeSettings.modes.randomCloud = 2, то boInitRandomAngles = false и не нужно инициализировать случайные точки для экономии времени.
-			//Если создается одна случайная точка randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1, то boInitRandomAngles = true и нужно инициализировать случайные точки.
-			//Иначе при изменении положения вершины или противоположной вершины почему то появляется несколько случайных точек.
-			if (boInitRandomAngles) {
+			params.pointsCount = 0;
+			this.verticesAngles(false);
 
-				params.pointsCount = 0;
-				this.randomAngles;//Вычислить случайную точку если нужна одна случайная точка т.е. randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1 или randomVerticeSettings.mode = randomVerticeSettings.modes.randomCloud = 2
-				params.editAnglesId = 0;
+		} else {
 
-			}
-			
-		} else verticesAngles(false);//Вычислить облако случайных точек
+			params.pointsCount = 0;
+			this.randomAngles;//Вычислить случайную точку если нужна одна случайная точка т.е. randomVerticeSettings.mode = randomVerticeSettings.modes.randomVertice = 1 или randomVerticeSettings.mode = randomVerticeSettings.modes.randomCloud = 2
+			params.editAnglesId = 0;
+
+		}
+*/		
 
 	}
 	
@@ -578,253 +918,18 @@ rotatedPosition должна получиться равной position1.
 			console.log("Возвращённая позиция:", backPosition.toArray());
 			*/
 			return forwardQuaternion;
-			/*
-Заданы две произвольные точки position1 и position2 на поверхности сферы в декартовой системе координат. Начало координат находится в центре сферы.
-Радиус сферы r.
-Положение точек обозначить как
-position1.x
-position1.y
-position1.z
-
-position2.x
-position2.y
-position2.z
-Вычислить углы Эйлера, применяя которые можно точку position1 переместить в точку position2.
-Обрабатать случай, когда точка близка к полюсам.
-Написать пример, в котором вычисляется точка rotatedPosition как применение вычисленных углов Эйлера к точке position1.
-rotatedPosition должна получиться равной position2.
-Затем точку rotatedPosition повернуть обратно так, что бы она снова оказалась в положении точки position1.
-Написать код на Javascript.
-Применить библиотеку three.js.
-			*/
-			//https://giga.chat/agents/019a5d95-ab99-7c86-a31c-610dad03b054/sessions/019ac2e3-afcf-72c3-ac94-808023192cf3
-			/*https://chat.deepseek.com/a/chat/s/d4122bcc-0fa5-4cc3-b9c0-a1eb2cca6154
-			Есть две точки на поверхости сферы.
-			Название первой точки: vertice.
-			Название второй точки: oppositeVertice.
-			Как вычислить углы Эйлера, с помощию которых можно переместить точку 1 в точку 2? Написать пример на Javascript
-			*/
-			/**
-			 * Вычисляет углы Эйлера для поворота точки A в точку B на поверхности сферы
-			 * @param {Array} oppositeVertice - Координаты второй точки [x, y, z]
-			 * @param {Array} [vertice=[0, 0, r]] - Координаты первой точки [x, y, z]. По умолчанию северный полюс
-			 * @returns {Object} Объект с углами Эйлера в радианах и градусах
-			 */
-			/*
-						function calculateEulerAngles(oppositeVertice, vertice=[0, 0, r]) {
-							
-							// Нормализуем векторы (предполагаем, что они уже на поверхности единичной сферы)
-							const v1 = normalize(vertice);
-							const v2 = normalize(oppositeVertice);
-			
-							// Вычисляем ось вращения (векторное произведение)
-							const axis = crossProduct(v1, v2);
-			
-							// Если точки совпадают или противоположны, возвращаем нулевые углы
-							if (magnitude(axis) &lt; 1e-10) {
-								// Проверяем, являются ли точки противоположными
-								if (dotProduct(v1, v2) &lt; -0.999) {
-									// Для противоположных точек выбираем произвольную ось вращения
-									return {
-										alpha: Math.PI,
-										beta: 0,
-										gamma: 0,
-										alphaDeg: 180,
-										betaDeg: 0,
-										gammaDeg: 0
-									};
-								}
-								return {
-									alpha: 0,
-									beta: 0,
-									gamma: 0,
-									alphaDeg: 0,
-									betaDeg: 0,
-									gammaDeg: 0
-								};
-							}
-			
-							// Нормализуем ось вращения
-							const axisNorm = normalize(axis);
-			
-							// Вычисляем угол вращения (скалярное произведение)
-							const cosAngle = dotProduct(v1, v2);
-							const angle = Math.acos(Math.max(-1, Math.min(1, cosAngle)));
-			
-							// Преобразуем ось вращения в углы Эйлера (ZYX конвенция)
-							// Сначала вычисляем матрицу вращения из оси и угла
-							const rotationMatrix = axisAngleToRotationMatrix(axisNorm, angle);
-			
-							// Затем преобразуем матрицу вращения в углы Эйлера
-							const eulerAngles = rotationMatrixToEulerZYX(rotationMatrix);
-			
-							return {
-								alpha: eulerAngles.alpha,
-								beta: eulerAngles.beta,
-								gamma: eulerAngles.gamma,
-							};
-						}
-			
-						// Вспомогательные функции
-			
-						function normalize(v) {
-							const mag = magnitude(v);
-							return [v[0] / mag, v[1] / mag, v[2] / mag];
-						}
-			
-						function magnitude(v) {
-							return Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
-						}
-			
-						function dotProduct(a, b) {
-							return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
-						}
-			
-						function crossProduct(a, b) {
-							return [
-								a[1] * b[2] - a[2] * b[1],
-								a[2] * b[0] - a[0] * b[2],
-								a[0] * b[1] - a[1] * b[0]
-							];
-						}
-			
-						function axisAngleToRotationMatrix(axis, angle) {
-							const [x, y, z] = axis;
-							const c = Math.cos(angle);
-							const s = Math.sin(angle);
-							const t = 1 - c;
-			
-							return [
-								[t * x * x + c, t * x * y - s * z, t * x * z + s * y],
-								[t * x * y + s * z, t * y * y + c, t * y * z - s * x],
-								[t * x * z - s * y, t * y * z + s * x, t * z * z + c]
-							];
-						}
-			
-						function rotationMatrixToEulerZYX(matrix) {
-							const [m00, m01, m02] = matrix[0];
-							const [m10, m11, m12] = matrix[1];
-							const [m20, m21, m22] = matrix[2];
-			
-							let alpha, beta, gamma;
-			
-							if (Math.abs(m20) &lt; 0.999999) {
-								beta = Math.atan2(-m20, Math.sqrt(m00 * m00 + m10 * m10));
-								alpha = Math.atan2(m10, m00);
-								gamma = Math.atan2(m21, m22);
-							} else {
-								// Сингулярность (gimbal lock)
-								alpha = Math.atan2(-m01, m11);
-								beta = -Math.PI / 2 * Math.sign(m20);
-								gamma = 0;
-							}
-			
-							return { alpha, beta, gamma };
-						}
-						const THREE = three.THREE;
-						const position = this.classSettings.settings.object.geometry.position;
-			//			const vertice = position[0];
-			//			const vertice = [0, 0, this.classSettings.r];
-			//			const oppositeVertice = position[1];
-						const euler = calculateEulerAngles(position[1]);//vertice);
-						const eulerTHREE = new THREE.Euler(euler.gamma, euler.beta, euler.alpha, 'ZYX');
-			*/
-
-			/*
-			// Пример использования
-			//const vertice = this.a2v(utils.angles([0.1, 0.2]));//[1, 0, 0];
-			//const oppositeVertice = this.a2v(utils.angles([0.4, 0.5]));//[0, 1, 0];
-
-
-			console.log('Углы Эйлера (радианы):');
-			console.log(`alpha: ${euler.alpha.toFixed(4)}`);
-			console.log(`beta: ${euler.beta.toFixed(4)}`);
-			console.log(`gamma: ${euler.gamma.toFixed(4)}`);
-
-			// Проверка: применяем поворот к исходной точке
-			function applyEulerRotation(point, alpha, beta, gamma) {
-				
-//				const [x, y, z] = point;
-				const x = point.x, y = point.y, z = point.z;
-
-				// Поворот вокруг Z (alpha)
-				const x1 = x * Math.cos(alpha) - y * Math.sin(alpha);
-				const y1 = x * Math.sin(alpha) + y * Math.cos(alpha);
-				const z1 = z;
-
-				// Поворот вокруг Y (beta)
-				const x2 = x1 * Math.cos(beta) + z1 * Math.sin(beta);
-				const y2 = y1;
-				const z2 = -x1 * Math.sin(beta) + z1 * Math.cos(beta);
-
-				// Поворот вокруг X (gamma)
-				const x3 = x2;
-				const y3 = y2 * Math.cos(gamma) - z2 * Math.sin(gamma);
-				const z3 = y2 * Math.sin(gamma) + z2 * Math.cos(gamma);
-
-				return [x3, y3, z3];
-			}
-
-			const rotatedPoint = applyEulerRotation(
-				vertice,
-				euler.alpha,
-				euler.beta,
-				euler.gamma
-			);
-
-			const verticeTHREE = new THREE.Vector3(vertice[0], vertice[1], vertice[2]);
-			verticeTHREE.applyEuler(eulerTHREE);
-
-			console.log('\nПроверка:');
-			console.log('Исходная точка: x= ' + vertice.x + ' y = ' + vertice.y + ' z = ' + vertice.z);
-//			console.log('Целевая точка:', oppositeVertice);
-			console.log('Целевая точка: x= ' + oppositeVertice.x + ' y = ' + oppositeVertice.y + ' z = ' + oppositeVertice.z);
-			console.log('После поворота THREE:', verticeTHREE);
-			console.log('После поворота:', rotatedPoint);
-			*/
-			//			return eulerTHREE;
 
 		}
 
 	}
 	Center(params) {
 
-/*		
-		const Vertice = (vertice) => {
-		
-			if (vertice.longitude != undefined) return;
-			while (vertice.length &lt; 2) vertice.push(0);
-			Object.defineProperty(vertice, 'longitude', {
-				
-				get: () => { return vertice[1]; },
-				set: (longitude) => {
-		
-					if (vertice[1] === longitude) return true;
-					vertice[1] = longitude;
-					return true;
-		
-				},
-			
-			});
-			Object.defineProperty(vertice, 'latitude', {
-				
-				get: () => { return vertice[0]; },
-				set: (latitude) => {
-		
-					if (vertice[0] === latitude) return true;
-					vertice[0] = latitude;
-					return true;
-		
-				},
-			
-			});
-		
-		}
-*/		
-		utils.angles(params.vertice);
+//		utils.angles(params.vertice);
 		utils.angles(params.oppositeVertice);
 		
 	}
+//	resultAngles(result) { return utils.angles([result.latitude, result.longitude]); }
+	get HyperSphere() { return HyperSphere; }
 	
 	/////////////////////////////overridden methods
 
@@ -839,13 +944,13 @@ rotatedPosition должна получиться равной position2.
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Cloud.html">Cloud</a></li><li><a href="module-CloudHyperSphere.html">CloudHyperSphere</a></li><li><a href="module-CloudSphere.html">CloudSphere</a></li><li><a href="module-RandomCloud.html">RandomCloud</a></li><li><a href="module-RandomCloudBase.html">RandomCloudBase</a></li><li><a href="module-RandomCloudCircle.html">RandomCloudCircle</a></li><li><a href="module-RandomCloudHSphere.html">RandomCloudHSphere</a></li><li><a href="module-RandomCloudSphere.html">RandomCloudSphere</a></li><li><a href="module-RandomVertice.html">RandomVertice</a></li><li><a href="module-RandomVerticeCircle.html">RandomVerticeCircle</a></li><li><a href="module-RandomVerticeHSphere.html">RandomVerticeHSphere</a></li><li><a href="module-RandomVerticeSphere.html">RandomVerticeSphere</a></li><li><a href="module-getHyperSphere.html">getHyperSphere</a></li></ul><h3>Classes</h3><ul><li><a href="module-CloudHyperSphere-CloudHyperSphere.html">CloudHyperSphere</a></li><li><a href="module-CloudSphere-CloudSphere.html">CloudSphere</a></li><li><a href="module-Cloud-Cloud.html">Cloud</a></li><li><a href="module-RandomCloudBase-RandomCloudBase.html">RandomCloudBase</a></li><li><a href="module-RandomCloudCircle-RandomCloudCircle.html">RandomCloudCircle</a></li><li><a href="module-RandomCloudHSphere-RandomCloudHSphere.html">RandomCloudHSphere</a></li><li><a href="module-RandomCloudSphere-RandomCloudSphere.html">RandomCloudSphere</a></li><li><a href="module-RandomCloud-RandomCloud.html">RandomCloud</a></li><li><a href="module-RandomVerticeCircle-RandomVerticeCircle.html">RandomVerticeCircle</a></li><li><a href="module-RandomVerticeHSphere-RandomVerticeHSphere.html">RandomVerticeHSphere</a></li><li><a href="module-RandomVerticeSphere.RandomVerticeSphere.html">RandomVerticeSphere</a></li><li><a href="module-RandomVertice-RandomVertice.html">RandomVertice</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-RandomVertice.html">RandomVertice</a></li><li><a href="module-RandomVerticeCircle.html">RandomVerticeCircle</a></li><li><a href="module-RandomVerticeHSphere.html">RandomVerticeHSphere</a></li><li><a href="module-RandomVerticeSphere.html">RandomVerticeSphere</a></li><li><a href="module-getHyperSphere.html">getHyperSphere</a></li></ul><h3>Classes</h3><ul><li><a href="module-RandomVerticeCircle-RandomVerticeCircle.html">RandomVerticeCircle</a></li><li><a href="module-RandomVerticeHSphere-RandomVerticeHSphere.html">RandomVerticeHSphere</a></li><li><a href="module-RandomVerticeSphere.RandomVerticeSphere.html">RandomVerticeSphere</a></li><li><a href="module-RandomVertice-RandomVertice.html">RandomVertice</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Tue Jan 06 2026 13:08:10 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Wed Feb 11 2026 10:36:05 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

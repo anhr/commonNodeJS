@@ -46,13 +46,9 @@
 import Circle from './circle.js';
 import three from '../three.js'
 import { RandomVerticeSphere as RandomVertice } from './RandomVertice/randomVerticeSphere.js';
-import RandomCloud from './RandomVertice/randomCloudSphere.js';
+//import RandomCloud from './RandomVertice/randomCloudSphere.js';
 import * as utils from './utilsSphere.js'
-//import Vertice from './VerticeSphere.js'
 import Position from './position.js'
-//import anglesToCartesian from './anglesToCasterianSphere.js'
-//import casterianToAngles from './casterianToAnglesSphere.js'
-//import { anglesToCartesian, casterianToAngles } from './utilsSphere.js'
 
 const sSphere = 'Sphere',
 	π = Math.PI;
@@ -177,7 +173,7 @@ class Sphere extends Circle {
 
 	//Overridden methods from base class
 
-	middlePosition(points) {
+	middlePosition(points, boCloud, boCreateHypersphere) {
 
 		const _this = this;
 		
@@ -213,9 +209,8 @@ class Sphere extends Circle {
 
 			// Нормализуем сумму, чтобы получить точку на сфере
 			const [x, y, z] = sumVector;
-//			const x = sumVector[0] / points.length, y = sumVector[1] / points.length, z = sumVector[2] / points.length;
 			const length = Math.sqrt(x * x + y * y + z * z);
-			_this.setArc(sphereRadius, length / points.length);
+			_this.setArc(sphereRadius, 1 - length / points.length);
 			
 			let middleVertice;//, middleVerticeAngles;
 
@@ -236,13 +231,6 @@ class Sphere extends Circle {
 				const pointB = new THREE.Vector3(oppositeVerticeB.x, oppositeVerticeB.y, oppositeVerticeB.z);//(0, 3, -4);
 				const oppositeVerticeC = oppositeVertices[2];
 				const pointC = new THREE.Vector3(oppositeVerticeC.x, oppositeVerticeC.y, oppositeVerticeC.z);//(-3, -4, 0);
-
-				/*
-				// Нормализуем точки, чтобы они точно лежали на сфере
-				pointA.normalize().multiplyScalar(sphereRadius);
-				pointB.normalize().multiplyScalar(sphereRadius);
-				pointC.normalize().multiplyScalar(sphereRadius);
-				*/
 
 				// Функция для построения плоскости по трем точкам
 				function createPlaneFromPoints(p1, p2, p3) {
@@ -269,38 +257,10 @@ class Sphere extends Circle {
 				// Вычисление точек пересечения нормали со сферой
 				middleVertice = findSphereNormalIntersections(normal, sphereRadius);
 //				middleVerticeAngles = _this.vertice2angles(middleVertice);
-/*				
-				const point = findSphereNormalIntersections(normal, sphereRadius);
-
-				return point;
-//				return _this.a2v(_this.vertice2angles(Position([point.x, point.y, point.z])), sphereRadius);
-*/				
 
 			} else middleVertice = [x / length, y / length, z / length];
 
-			_this.randomVertices(_this.vertice2angles(middleVertice));
-/*			
-			const classSettings = _this.classSettings;
-			if (classSettings.randomArc) {
-
-				const params = {
-						
-						//vertice: angles,
-						oppositeVertice: _this.vertice2angles(middleVertice),
-						arc: _this.arc,
-						debug: classSettings.debug ? { notRandomVertices: true,} : false,
-						
-					}
-				if (_this.randomVertice) _this.randomVertice.params = params;
-				else {
-					
-					_this.randomVertice = new _this.RandomCloud(params);
-					_this.hsRandomVertice = _this.randomVertice.getHyperSphere(classSettings.settings.options, classSettings, _this.middleVerticeColor);
-
-				}
-				
-			}
-*/			
+			_this.randomVertices(_this.vertice2angles(middleVertice), _this.object3D.parent, boCloud, boCreateHypersphere);
 			return middleVertice;
 			
 		}
@@ -611,7 +571,7 @@ class Sphere extends Circle {
 	 */
 	newRandomVertices(scene, options, randomVerticesSettings) { return new RandomVertices(scene, options, randomVerticesSettings); }
 	get RandomVertice() { return RandomVertice; }
-	get RandomCloud() { return RandomCloud; }
+//	get RandomCloud() { return RandomCloud; }
 
 	///////////////////////////////Overridden methods from base class
 
@@ -895,13 +855,13 @@ export default Sphere;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Circle.html">Circle</a></li><li><a href="module-HyperSphere.html">HyperSphere</a></li><li><a href="module-HyperSphere3D.html">HyperSphere3D</a></li><li><a href="module-Sphere.html">Sphere</a></li><li><a href="module-utilsCircle.html">utilsCircle</a></li><li><a href="module-utilsHSphere.html">utilsHSphere</a></li><li><a href="module-utilsSphere.html">utilsSphere</a></li></ul><h3>Classes</h3><ul><li><a href="module-Circle-Circle.html">Circle</a></li><li><a href="module-HyperSphere3D-HyperSphere3D.html">HyperSphere3D</a></li><li><a href="module-HyperSphere-HyperSphere.html">HyperSphere</a></li><li><a href="module-HyperSphere-RandomVertices.html">RandomVertices</a></li><li><a href="module-Sphere-Sphere.html">Sphere</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Circle.html">Circle</a></li><li><a href="module-HyperSphere.html">HyperSphere</a></li><li><a href="module-HyperSphere3D.html">HyperSphere3D</a></li><li><a href="module-Sphere.html">Sphere</a></li></ul><h3>Classes</h3><ul><li><a href="module-Circle-Circle.html">Circle</a></li><li><a href="module-HyperSphere3D-HyperSphere3D.html">HyperSphere3D</a></li><li><a href="module-HyperSphere-HyperSphere.html">HyperSphere</a></li><li><a href="module-HyperSphere-RandomVertices.html">RandomVertices</a></li><li><a href="module-Sphere-Sphere.html">Sphere</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Tue Jan 06 2026 13:10:41 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Wed Feb 11 2026 10:28:20 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -383,17 +383,20 @@ class HyperSphere extends MyObject {
 		let edgesOld;
 		if (classSettings.edges != false) {//Если в настройках запрещены ребра, то не брать настройки ребер из cookie
 			
+/*Не помню зачем это		
 			const cookieOptions = {};
 			if (options.dat) options.dat.cookie.getObject(this.cookieName, cookieOptions);
 			
 			edgesOld = cookieOptions.edgesOld || { project: true, };
 			if (classSettings.overriddenProperties &amp;&amp; !classSettings.overriddenProperties.edges) classSettings.overriddenProperties.edges = () => { return false; };
 			classSettings.edges = ((cookieOptions.edges === false) &amp;&amp; classSettings.overriddenProperties) ? classSettings.overriddenProperties.edges() : cookieOptions.edges || classSettings.edges;
-//			classSettings.edges = classSettings.edges === false ? classSettings.overriddenProperties.edges() : classSettings.edges;
 			if (classSettings.edges != false) classSettings.edges = classSettings.edges || {};
+*/		
+			classSettings.edges = classSettings.edges || {};
 			if ((classSettings.edges != false) &amp;&amp; (classSettings.edges.project === undefined)) classSettings.edges.project = true;
 
 		}
+		
 		if (classSettings.r === undefined) classSettings.r = 1;
 		//Нельзя менять радиус гиперсферы
 		Object.defineProperty( classSettings, "r", { writable: false, });//classSettings.r freeze. https://stackoverflow.com/a/10843598/5175935
@@ -419,7 +422,7 @@ class HyperSphere extends MyObject {
 		//Высота сегмента hs = d / sc = 2 / 5 = 0.4
 		//Нижняя граница сегмента hb = hs * i - r
 		//Верхняя граница сегмента ht = hs * (i + 1) - r
-		//где r = 1 - радиус сферыб d = 2 * r = 2 - диаметр сферы, i - индекс сегмента
+		//где r = 1 - радиус сферы, d = 2 * r = 2 - диаметр сферы, i - индекс сегмента
 		if (classSettings.debug &amp;&amp; (classSettings.debug.probabilityDensity != false)) classSettings.debug.probabilityDensity = [];
 		const probabilityDensity = classSettings.debug.probabilityDensity;
 		if (probabilityDensity) {
@@ -451,9 +454,12 @@ class HyperSphere extends MyObject {
 
 			if (settings.object.geometry.angles) console.error(sHyperSphere + ': "settings.object.geometry.angles" has not effect if "settings.object.geometry.params" is exists');
 			const params = settings.object.geometry.params;
-			params.vertice ||= this.ZeroArray();
+//			params.vertice ||= this.ZeroArray();
 			params.oppositeVertice ||= this.ZeroArray();
-			settings.object.geometry.angles = [params.vertice, params.oppositeVertice];
+//			settings.object.geometry.angles = [params.vertice, params.oppositeVertice];
+			const vertice = [];
+			for (let i = 0; i &lt; params.oppositeVertice.length; i++) vertice.push(0);
+			settings.object.geometry.angles = [vertice, params.oppositeVertice];
 			
 		}
 		settings.object.geometry.angles = settings.object.geometry.angles || this.defaultAngles();
@@ -594,7 +600,7 @@ class HyperSphere extends MyObject {
 										if(_this.isSetPositionAttributeFromPoint != false) {
 
 											const position = verticeAnglesFromPosition ? this.a2v(verticeAnglesFromPosition, classSettings.overriddenProperties.r(classSettings.settings.guiPoints ? classSettings.settings.guiPoints.timeId : 0)) : undefined
-											_this.setPositionAttributeFromPoint(verticeId, position);//обновляем только одну ось в декартовой системе координат
+											_this.setPositionAttributeFromPoint(verticeId, Position(position));//обновляем только одну ось в декартовой системе координат
 											_this.bufferGeometry.attributes.position.needsUpdate = true;
 	
 										}
@@ -731,7 +737,7 @@ class HyperSphere extends MyObject {
 			if (settings.object.geometry.params) {
 
 				const params = settings.object.geometry.params, angles = settings.object.geometry.angles;
-				params.vertice = angles[0];
+//				params.vertice = angles[0];
 				params.oppositeVertice = angles[1];
 				
 			}
@@ -983,7 +989,7 @@ class HyperSphere extends MyObject {
 
 									switch (name) {
 
-										case 'middleVertice': return (oppositeVerticesId = vertice.oppositeVerticesId, timeId, boPushMiddleVertice = true) => {
+										case 'middleVertice': return (oppositeVerticesId = vertice.oppositeVerticesId, timeId, boPushMiddleVertice = true, boCloud = false, boCreateHypersphere = true) => {
 
 											//find middle vertice between opposite vertices
 /*
@@ -1001,7 +1007,11 @@ class HyperSphere extends MyObject {
 											const oppositeVertices = [];
 											oppositeVerticesId.forEach(oppositeAngleId => {
 
-												const oppositeVertice = settings.bufferGeometry.userData.position[oppositeAngleId];
+												//не работает в Universe. Непонятно почему применил эту строку
+//												const oppositeVertice = settings.bufferGeometry.userData.position[oppositeAngleId];
+												
+												const oppositeVertice = classSettings.overriddenProperties.oppositeVertice(oppositeAngleId, timeId);
+												//console.log('oppositeAngleId = ' + oppositeAngleId + ' oppositeVertice = [' + oppositeVertice.x + ', ' + oppositeVertice.y + ', ' + oppositeVertice.z + ']')
 /*												
 												oppositeVertice.forEach((axis, i) => {
 
@@ -1038,7 +1048,7 @@ class HyperSphere extends MyObject {
 											let middleVertice = isZero ? _this.getRandomMiddleAngles(oppositeVertices) : _this.vertice2angles(aSum);
 */											
 
-											let middleVertice = _this.vertice2angles(this.middlePosition(oppositeVertices));
+											let middleVertice = _this.vertice2angles(this.middlePosition(oppositeVertices, boCloud, boCreateHypersphere));
 //											const geometry = settings.object.geometry;
 											if (boPushMiddleVertice) classSettings.overriddenProperties.pushMiddleVertice(timeId, middleVertice);
 											if (classSettings.randomMiddleVertice) { middleVertice = new this.RandomVertice({
@@ -1046,6 +1056,7 @@ class HyperSphere extends MyObject {
 //												vertice: vertice,
 												arc: _this.arc,
 												oppositeVertice: middleVertice,
+												classSettings: classSettings,//используется для вычисления случайной точки в RandomVerticeHSphere HyperSphereNavigator.calculateNewPoint
 												
 											}).angles[0]; }
 											
@@ -1100,12 +1111,16 @@ class HyperSphere extends MyObject {
 							const verticeId = parseInt(name);
 							if (!isNaN(verticeId)) {
 
+/*Не помню зачем так написал
 								const verticeAngles = angles[verticeId];
 								if (classSettings.debug &amp;&amp; ((verticeAngles.length != (_this.dimension - 1)) || (value.length != (_this.dimension - 1)))) console.error(sHyperSphere + ': Set vertice[' + verticeId + '] angles failed. Invalid angles count.')
 								this.isSetPositionAttributeFromPoint = false;
 								for (let j = 0; j &lt; value.length; j++) verticeAngles[j] = value[j];
 								delete this.isSetPositionAttributeFromPoint;
 								this.setPositionAttributeFromPoint(verticeId);//обновляем geometry.attributes
+*/								
+								this.setPositionAttributeFromPoint(verticeId, this.a2v(value, classSettings.overriddenProperties.r(classSettings.settings.guiPoints ? classSettings.settings.guiPoints.timeId : 0)));
+								this.bufferGeometry.attributes.position.needsUpdate = true;
 
 							} else angles[name] = value;
 							return true;
@@ -1245,7 +1260,7 @@ class HyperSphere extends MyObject {
 					angles2vertice = this.a2v(vertice2angles, r);
 				const value = vertice;
 				if (angles2vertice.length != value.length) console.error(sHyperSphere + ': Set vertice failed. angles2vertice.length = ' + angles2vertice.length + ' is not equal value.length = ' + value.length);
-				const d = 7e-16;
+				const d = 4e-15;
 				angles2vertice.forEach((axis, i) => { if(Math.abs(axis - value[i]) > d) console.error(sHyperSphere + ': Set vertices[' + anglesId + '] failed. axis = ' + axis + ' is not equal to value[' + i + '] = ' + value[i]) } );
 				
 			}
@@ -2300,6 +2315,7 @@ this.object = () => {
 //																	console.error(sHyperSphere + ': Непонятно когда сюда попадает')
 																	const arcEdges = [];
 																	for (let i = 0; i &lt; (aAngleControls.MAX_POINTS - 1); i++) arcEdges.push([i, i + 1]);
+																	const palette = classSettings.settings.options.palette;
 																	aAngleControls.arc = this.line({
 																	
 																		cookieName: 'arc',//если не задать cookieName, то настройки дуги будут браться из настроек гиперсферы
@@ -2325,6 +2341,7 @@ this.object = () => {
 																		},
 																	
 																	});
+																	classSettings.settings.options.setPalette(palette);//если не восстанавливать палитру после создания дуги, то будет неверно отображаться цвет точек Random Cloud когда меняется координата одной из противоположных вершин на странице hyperSphere.html
 
 																}
 
@@ -2481,7 +2498,7 @@ this.object = () => {
 											classSettings.randomMiddleVertice = false;//Среднюю вершину вычисляем не случайно
 
 										}
-										const middleVerticeAngles = angles.middleVertice(oppositeVerticesId, timeId + 1, false),
+										const middleVerticeAngles = angles.middleVertice(oppositeVerticesId, timeId + 1, false, true),
 											middleVertice = _this.angles2Vertice(middleVerticeAngles, timeId);
 										if (randomMiddleVerticeOld != undefined) {
 											
@@ -2871,7 +2888,7 @@ this.object = () => {
 						progressBar.value = verticeId;
 						const stepItem = () => {
 
-							const vertice = overriddenProperties.position0.angles[verticeId].middleVertice(undefined, timeId);
+							const vertice = overriddenProperties.position0.angles[verticeId].middleVertice(undefined, timeId, true, false, false);
 							if (vertices) vertices.push(vertice);
 							verticeId += 1;
 							if (verticeId >= position.length) {
@@ -4600,13 +4617,13 @@ const _display = (element, boDisplay) => { element.style.display = boDisplay ===
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Circle.html">Circle</a></li><li><a href="module-HyperSphere.html">HyperSphere</a></li><li><a href="module-HyperSphere3D.html">HyperSphere3D</a></li><li><a href="module-Sphere.html">Sphere</a></li><li><a href="module-utilsCircle.html">utilsCircle</a></li><li><a href="module-utilsHSphere.html">utilsHSphere</a></li><li><a href="module-utilsSphere.html">utilsSphere</a></li></ul><h3>Classes</h3><ul><li><a href="module-Circle-Circle.html">Circle</a></li><li><a href="module-HyperSphere3D-HyperSphere3D.html">HyperSphere3D</a></li><li><a href="module-HyperSphere-HyperSphere.html">HyperSphere</a></li><li><a href="module-HyperSphere-RandomVertices.html">RandomVertices</a></li><li><a href="module-Sphere-Sphere.html">Sphere</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Circle.html">Circle</a></li><li><a href="module-HyperSphere.html">HyperSphere</a></li><li><a href="module-HyperSphere3D.html">HyperSphere3D</a></li><li><a href="module-Sphere.html">Sphere</a></li></ul><h3>Classes</h3><ul><li><a href="module-Circle-Circle.html">Circle</a></li><li><a href="module-HyperSphere3D-HyperSphere3D.html">HyperSphere3D</a></li><li><a href="module-HyperSphere-HyperSphere.html">HyperSphere</a></li><li><a href="module-HyperSphere-RandomVertices.html">RandomVertices</a></li><li><a href="module-Sphere-Sphere.html">Sphere</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Tue Jan 06 2026 13:10:40 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Wed Feb 11 2026 10:28:20 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

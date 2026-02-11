@@ -390,7 +390,7 @@ class RandomVerticeHSphere extends RandomVertice {
 			 * Диапазон значений:
 			 * Необходимый и достаточный: 0 ≤ psi < 2π
 			 * Но обычно достаточно: -π ≤ psi ≤ π (как в коде)
-			 * @returns
+			 * @returns координаты новой точки в полярной системе координат
 			 */
 			calculateNewPoint(startingPointParams, distance, eta, psi) {
 				// Исходная точка
