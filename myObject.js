@@ -508,7 +508,6 @@ class MyObject {
 			const drawRange = settings.bufferGeometry.drawRange;
 			if ((drawRange.count === Infinity) || (((drawRange.start + drawRange.count) * ((settings.bufferGeometry.index === null) ? itemSize : 1)) < positionId)){
 
-//				this.setVerticesRange(drawRange.start, (positionId - drawRange.start + 1) / itemSize);
 				this.setVerticesRange(drawRange.start, (positionId + 1) / itemSize - drawRange.start);
 				if (!Number.isInteger(drawRange.count) && (drawRange.count != Infinity)) console.error(sMyObject + '.setPositionAttributeFromPoint failed. Invalid drawRange.count = ' + drawRange.count);
 
@@ -623,15 +622,7 @@ class MyObject {
 		 * @param {number} positionId Position identifier for start time.
 		 * @returns Offset of the position identifier for current time.
 		 */
-		this.positionOffsetId = (positionId) => {
-
-/*			
-			const settings = this.classSettings.settings;
-			return settings.bufferGeometry.userData.timeId * settings.object.geometry.angles.length + positionId;
-*/			
-			return settings.overriddenProperties.positionOffsetId(positionId);
-			
-		}
+		this.positionOffsetId = (positionId) => { return settings.overriddenProperties.positionOffsetId(positionId); }
 		
 	}
 	
@@ -660,15 +651,7 @@ class MyObject {
 	 * @param {number} positionId Position identifier for start time.
 	 * @returns Offset of the position in the <b>position</b> attribute for current time.
 	 */
-	positionOffset(position, positionId) {
-
-		return this.positionOffsetId(positionId) * position.itemSize;
-/*		
-		const settings = this.classSettings.settings;
-		return (settings.bufferGeometry.userData.timeId * settings.object.geometry.angles.length + positionId) * position.itemSize;
-*/		
-		
-	}
+	positionOffset(position, positionId) { return this.positionOffsetId(positionId) * position.itemSize; }
 
 }
 export default MyObject;

@@ -1027,7 +1027,6 @@ class ND extends MyObject {
 
 			const geometry = settings.object.geometry;
 			if ( geometry.position && geometry.position.isProxy ) return geometry.position;
-//			if ( settings.object.geometry.position && settings.object.geometry.position.isProxy ) return settings.object.geometry.position;
 			const playerPosition = settings.object.geometry.playerPosition, position = playerPosition ? geometry.playerPosition[0] : settings.object.geometry.position ? settings.object.geometry.position : [];
 			return new Proxy(
 				
@@ -1115,7 +1114,6 @@ class ND extends MyObject {
 										if ( _prevLine.prevLine ) {
 											
 											_prevLine.prevLine.geometry.attributes.position.array = new THREE.BufferGeometry().setFromPoints( geometry.D3.points ).attributes.position.array;
-//											_prevLine.prevLine.geometry.attributes.position.array = new THREE.BufferGeometry().setFromPoints( geometry2.D3.points ).attributes.position.array;
 											_prevLine.prevLine.geometry.attributes.position.needsUpdate = true;
 
 										}
@@ -2086,14 +2084,11 @@ class ND extends MyObject {
 		 * @returns Vector of the <b>i</b> position of the <b>settings.bufferGeometry.attributes.position</b>
 		 */
 		this.getPoint = ( i ) => { return settings.bufferGeometry.userData.position[i]; }
-//		this.setPoint = ( i, point ) => { settings.bufferGeometry.userData.position[i] = point; }
 
 		vectorPlane = vectorPlane || new Vector( settings.vectorPlane );
 		if ( !vectorPlane || !vectorPlane.point ) vectorPlane = new Vector( vectorPlane );
 
 		var objectIntersect;//проекция объекта пересечения панеди с графическим объектом на 3D пространство.
-
-//		this.opacity = ( object3D, transparent, opacity ) => { _ND.verticesOpacity( transparent, opacity ); }
 
 		//The user has selected a segment of nD object
 		const selectSegment = {
@@ -2118,7 +2113,6 @@ class ND extends MyObject {
 				else {
 
 					if (!item.parent) parentObject.add(item);
-//					_ND.opacity( item, transparent, opacity );
 					_ND.verticesOpacity( transparent, opacity );
 
 				}
@@ -2496,10 +2490,6 @@ class ND extends MyObject {
 
 							//Vertices
 							removeVerticeControls();
-
-							//если так сделать, то при выборе объекта пересечения почемуто исчезают _prevLine.prevLine и object3D
-							//и как результат появляется ошибка когда пользователь изменяет положение вершины
-//							const vertice = geometry.geometry.position[segment[selectedIndex].i];
 
 							const vertice = settings.object.geometry.position[segment[selectedIndex].i];
 							for ( var i = 0; i < vertice.length; i++ ) {
@@ -2954,7 +2944,6 @@ class ND extends MyObject {
 										position: positionWorld.copy(),
 									
 									},
-//									color: 'white',
 										 
 								}, indice: i, iSegments: iSegments, options: options } ),
 								s = iSegments - 1;
@@ -3158,10 +3147,6 @@ class ND extends MyObject {
 			const scales = options.scales;
 			if ( n <= 1 ) scales.y = undefined;
 			if ( n <= 2 ) scales.z = undefined;
-/*is not compatible with build of the nD.module.min.js
-			scales.text ||= {};
-			scales.text.rect ||=  {};
-*/
 			if ( !scales.text ) scales.text = {};
 			if ( !scales.text.rect ) scales.text.rect = {};
 			if ( scales.text.rect.displayRect === undefined ) scales.text.rect.displayRect = false;
@@ -3203,7 +3188,6 @@ class ND extends MyObject {
 			} );
 
 		}
-//const geometry2 = geometry;
 		projectTo3D();
 
 		//Plane
