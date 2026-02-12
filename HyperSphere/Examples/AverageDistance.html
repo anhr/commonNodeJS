@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Динамическое распределение точек на сфере</title>
+	<style>
+		body {
+			margin: 0;
+			overflow: hidden;
+			font-family: Arial, Helvetica, sans-serif;
+		}
+
+		#info {
+			position: absolute;
+			top: 20px;
+			left: 20px;
+			background: rgba(0, 0, 0, 0.7);
+			color: white;
+			padding: 15px 25px;
+			border-radius: 8px;
+			pointer-events: none;
+			z-index: 100;
+			box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+			border-left: 5px solid #ffaa00;
+		}
+
+		#controls {
+			position: absolute;
+			bottom: 30px;
+			left: 30px;
+			background: rgba(0, 0, 0, 0.7);
+			color: white;
+			padding: 20px;
+			border-radius: 8px;
+			pointer-events: auto;
+			z-index: 100;
+			backdrop-filter: blur(5px);
+			border: 1px solid rgba(255,255,255,0.2);
+		}
+
+		button {
+			padding: 10px 20px;
+			margin: 5px;
+			cursor: pointer;
+			background: #ffaa00;
+			border: none;
+			border-radius: 4px;
+			font-weight: bold;
+			color: black;
+			transition: all 0.3s;
+		}
+
+			button:hover {
+				background: #ffc34d;
+				transform: scale(1.05);
+			}
+
+			button:disabled {
+				background: #666;
+				cursor: not-allowed;
+				transform: none;
+			}
+
+		#stats {
+			position: absolute;
+			top: 20px;
+			right: 20px;
+			background: rgba(0, 0, 0, 0.7);
+			color: white;
+			padding: 15px 25px;
+			border-radius: 8px;
+			pointer-events: none;
+			border-right: 5px solid #00aaff;
+		}
+
+		h3 {
+			margin-top: 0;
+			color: #ffaa00;
+		}
+	</style>
+</head>
+<body>
+	<div id="info">
+		<h2>🌐 Распределение точек на сфере</h2>
+		<p>Точки стремятся к максимальному удалению друг от друга</p>
+	</div>
+
+	<div id="stats">
+		<h3>📊 Статистика</h3>
+		<p id="pointCount">Количество точек: 20</p>
+		<p id="iteration">Итерация: 0</p>
+		<p id="avgDistance">Ср. расстояние: 0</p>
+	</div>
+
+	<div id="controls">
+		<h3>⚙️ Управление</h3>
+		<button id="startBtn">▶ Запустить движение</button>
+		<button id="stopBtn" disabled>⏸ Пауза</button>
+		<button id="resetBtn">🔄 Сбросить</button>
+		<button id="addPointsBtn">➕ Добавить 5 точек</button>
+		<button id="removePointsBtn">➖ Удалить 5 точек</button>
+		<div style="margin-top: 15px;">
+			<label>Скорость: </label>
+			<input type="range" id="speedRange" min="0.1" max="2" step="0.1" value="1">
+			<span id="speedValue">1.0</span>
+		</div>
+	</div>
+
+	<!-- Подключение Three.js и OrbitControls -->
+	<script type="importmap">
+		{
+			"imports": {
+				"three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+				"three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
+			}
+		}
+	</script>
+
+	<script type="module">
+		/*
+Написать функцию на языке javascript.
+Задан массив : const vertices = [].
+В этот массив добавить несколько  точек, случайно расположенных на поверхности сферы в полярной системе координат. Начало координат находится в центре сферы.
+Каждая точка имеет вид: const angles = {
+   latitude: latitude,//широта в диапазоне от -π/2 до π/2
+   longitude: longitude//долгота в диапазоне от -π до π
+}
+Количество точек задано параметром функции verticesCount.
+Разработать итерационный процесс, на каждом шаге которого все точки постепенно движутся в положение, при котором точки окажутся на максимальном удалении друг от друга.
+Создать веб страницу, на которой будет визуально отображаться движение точек в процессе итерации.
+На веб странице использовать библиотеку three.js для визуализации движения точек.
+		*/
+		//https://chat.deepseek.com/a/chat/s/e808c17c-8258-4029-b70c-d65be630df03
+		import * as THREE from 'three';
+		import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+		// --- Глобальные переменные ---
+		const vertices = []; // Массив точек в полярных координатах
+		let spheres = []; // Массив сфер Three.js для визуализации
+		let scene, camera, renderer, controls;
+		let animationId = null;
+		let isAnimating = false;
+		let iteration = 0;
+
+		// Параметры
+		const RADIUS = 5; // Радиус сферы
+		let VERTICES_COUNT = 20; // Начальное количество точек
+		const REPULSION_STRENGTH = 0.05; // Сила отталкивания
+		const DAMPING = 0.95; // Демпфирование движения
+
+		// Скорости точек (для инерции)
+		let velocities = [];
+
+		// --- Инициализация Three.js ---
+		function initThree() {
+			scene = new THREE.Scene();
+			scene.background = new THREE.Color(0x050510);
+
+			camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+			camera.position.set(12, 6, 15);
+			camera.lookAt(0, 0, 0);
+
+			renderer = new THREE.WebGLRenderer({ antialias: true });
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			renderer.shadowMap.enabled = true;
+			renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+			renderer.setPixelRatio(window.devicePixelRatio);
+			document.body.appendChild(renderer.domElement);
+
+			controls = new OrbitControls(camera, renderer.domElement);
+			controls.enableDamping = true;
+			controls.dampingFactor = 0.05;
+			controls.autoRotate = true;
+			controls.autoRotateSpeed = 0.5;
+			controls.enableZoom = true;
+			controls.enablePan = true;
+			controls.enableShadow = true;
+
+			// Освещение
+			const ambientLight = new THREE.AmbientLight(0x404060);
+			scene.add(ambientLight);
+
+			const mainLight = new THREE.DirectionalLight(0xffeedd, 1);
+			mainLight.position.set(10, 10, 20);
+			mainLight.castShadow = true;
+			mainLight.receiveShadow = true;
+			mainLight.shadow.mapSize.width = 1024;
+			mainLight.shadow.mapSize.height = 1024;
+			scene.add(mainLight);
+
+			const backLight = new THREE.PointLight(0x4466aa, 0.5);
+			backLight.position.set(-10, 0, -10);
+			scene.add(backLight);
+
+			// Добавляем звезды для фона
+			const starsGeometry = new THREE.BufferGeometry();
+			const starsCount = 2000;
+			const starsPositions = new Float32Array(starsCount * 3);
+			for (let i = 0; i < starsCount * 3; i += 3) {
+				starsPositions[i] = (Math.random() - 0.5) * 200;
+				starsPositions[i+1] = (Math.random() - 0.5) * 200;
+				starsPositions[i+2] = (Math.random() - 0.5) * 200;
+			}
+			starsGeometry.setAttribute('position', new THREE.BufferAttribute(starsPositions, 3));
+			const starsMaterial = new THREE.PointsMaterial({color: 0xffffff, size: 0.3, transparent: true});
+			const stars = new THREE.Points(starsGeometry, starsMaterial);
+			scene.add(stars);
+
+			// Создаем прозрачную сферу для визуализации
+			const sphereGeometry = new THREE.SphereGeometry(RADIUS, 64, 32);
+			const sphereMaterial = new THREE.MeshPhongMaterial({
+				color: 0x2266aa,
+				transparent: true,
+				opacity: 0.1,
+				wireframe: true,
+				emissive: 0x112233,
+				side: THREE.DoubleSide
+			});
+			const wireframeSphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+			wireframeSphere.receiveShadow = true;
+			wireframeSphere.castShadow = true;
+			scene.add(wireframeSphere);
+
+			// Добавляем сетку и оси для ориентации
+			const gridHelper = new THREE.GridHelper(30, 20, 0x88aaff, 0x446688);
+			scene.add(gridHelper);
+
+			const axesHelper = new THREE.AxesHelper(10);
+			scene.add(axesHelper);
+		}
+
+		// --- Функции для работы с координатами ---
+
+		// Преобразование полярных координат в декартовы
+		function polarToCartesian(latitude, longitude) {
+			return {
+				x: RADIUS * Math.cos(latitude) * Math.cos(longitude),
+				y: RADIUS * Math.sin(latitude),
+				z: RADIUS * Math.cos(latitude) * Math.sin(longitude)
+			};
+		}
+
+		// Преобразование декартовых координат в полярные
+		function cartesianToPolar(x, y, z) {
+			const r = Math.sqrt(x*x + y*y + z*z);
+			const latitude = Math.asin(y / r);
+			const longitude = Math.atan2(z, x);
+			return {
+				latitude: latitude,
+				longitude: longitude
+			};
+		}
+
+		// Нормализация точки на сфере
+		function normalizeToSphere(x, y, z) {
+			const r = Math.sqrt(x*x + y*y + z*z);
+			return {
+				x: (x / r) * RADIUS,
+				y: (y / r) * RADIUS,
+				z: (z / r) * RADIUS
+			};
+		}
+
+		// --- Генерация случайной точки на сфере ---
+		function generateRandomPoint() {
+			// Равномерное распределение на сфере
+			const theta = 2 * Math.PI * Math.random(); // долгота
+			const phi = Math.acos(2 * Math.random() - 1); // угол от оси Z
+			const latitude = Math.asin(Math.cos(phi)); // преобразование в широту
+			const longitude = theta - Math.PI; // диапазон от -π до π
+
+			return {
+				latitude: latitude,
+				longitude: longitude
+			};
+		}
+
+		// --- Инициализация массива точек ---
+		function initVertices(count) {
+			vertices.length = 0;
+			for (let i = 0; i < count; i++) {
+				vertices.push(generateRandomPoint());
+			}
+
+			// Инициализируем скорости
+			velocities = new Array(count).fill(null).map(() => ({ x: 0, y: 0, z: 0 }));
+
+			iteration = 0;
+			document.getElementById('iteration').innerHTML = `Итерация: ${iteration}`;
+		}
+
+		// --- Обновление визуализации точек ---
+		function updateVisualization() {
+			// Удаляем старые точки
+			spheres.forEach(sphere => scene.remove(sphere));
+			spheres = [];
+
+			// Создаем новые точки
+			vertices.forEach((point, index) => {
+				const { x, y, z } = polarToCartesian(point.latitude, point.longitude);
+
+				// Создаем светящуюся сферу
+				const geometry = new THREE.SphereGeometry(0.25, 32, 16);
+
+				// Разные цвета для разных точек
+				const hue = (index / vertices.length) * 0.8 + 0.2;
+				const color = new THREE.Color().setHSL(hue, 0.9, 0.6);
+
+				const material = new THREE.MeshStandardMaterial({
+					color: color,
+					emissive: color,
+					emissiveIntensity: 0.3,
+					roughness: 0.3,
+					metalness: 0.1
+				});
+
+				const sphere = new THREE.Mesh(geometry, material);
+				sphere.position.set(x, y, z);
+				sphere.castShadow = true;
+				sphere.receiveShadow = true;
+
+				scene.add(sphere);
+				spheres.push(sphere);
+
+				// Добавляем маленькую точку-индикатор
+				const pointGeometry = new THREE.SphereGeometry(0.08, 8, 8);
+				const pointMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+				const pointLight = new THREE.Mesh(pointGeometry, pointMaterial);
+				pointLight.position.set(x, y, z);
+				scene.add(pointLight);
+				spheres.push(pointLight);
+			});
+
+			// Обновляем статистику
+			document.getElementById('pointCount').innerHTML = `Количество точек: ${vertices.length}`;
+			updateAverageDistance();
+		}
+
+		// --- Вычисление среднего расстояния между точками ---
+		function updateAverageDistance() {
+			if (vertices.length < 2) {
+				document.getElementById('avgDistance').innerHTML = `Ср. расстояние: 0`;
+				return;
+			}
+
+			let totalDist = 0;
+			let pairs = 0;
+
+			for (let i = 0; i < vertices.length; i++) {
+				const pos1 = polarToCartesian(vertices[i].latitude, vertices[i].longitude);
+				for (let j = i + 1; j < vertices.length; j++) {
+					const pos2 = polarToCartesian(vertices[j].latitude, vertices[j].longitude);
+					const dx = pos1.x - pos2.x;
+					const dy = pos1.y - pos2.y;
+					const dz = pos1.z - pos2.z;
+					totalDist += Math.sqrt(dx*dx + dy*dy + dz*dz);
+					pairs++;
+				}
+			}
+
+			const avgDist = pairs > 0 ? (totalDist / pairs).toFixed(3) : 0;
+			document.getElementById('avgDistance').innerHTML = `Ср. расстояние: ${avgDist}`;
+		}
+
+		// --- Итерационный процесс движения точек ---
+		function iterationStep() {
+			if (!isAnimating) return;
+
+			// Вычисляем силы отталкивания для каждой точки
+			const forces = new Array(vertices.length).fill(null).map(() => ({ x: 0, y: 0, z: 0 }));
+
+			// Для каждой пары точек
+			for (let i = 0; i < vertices.length; i++) {
+				const pos1 = polarToCartesian(vertices[i].latitude, vertices[i].longitude);
+
+				for (let j = i + 1; j < vertices.length; j++) {
+					const pos2 = polarToCartesian(vertices[j].latitude, vertices[j].longitude);
+
+					// Вектор от i к j
+					let dx = pos1.x - pos2.x;
+					let dy = pos1.y - pos2.y;
+					let dz = pos1.z - pos2.z;
+
+					const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
+
+					if (dist < 0.001) continue;
+
+					// Сила обратно пропорциональна расстоянию
+					const forceMagnitude = REPULSION_STRENGTH / (dist * dist);
+
+					// Нормализуем вектор
+					dx /= dist;
+					dy /= dist;
+					dz /= dist;
+
+					// Применяем силу: отталкивание
+					forces[i].x += dx * forceMagnitude;
+					forces[i].y += dy * forceMagnitude;
+					forces[i].z += dz * forceMagnitude;
+
+					forces[j].x -= dx * forceMagnitude;
+					forces[j].y -= dy * forceMagnitude;
+					forces[j].z -= dz * forceMagnitude;
+				}
+			}
+
+			// Применяем силы к точкам
+			for (let i = 0; i < vertices.length; i++) {
+				const pos = polarToCartesian(vertices[i].latitude, vertices[i].longitude);
+
+				// Обновляем скорость с учетом силы и демпфирования
+				velocities[i].x = velocities[i].x * DAMPING + forces[i].x;
+				velocities[i].y = velocities[i].y * DAMPING + forces[i].y;
+				velocities[i].z = velocities[i].z * DAMPING + forces[i].z;
+
+				// Обновляем позицию
+				let newX = pos.x + velocities[i].x;
+				let newY = pos.y + velocities[i].y;
+				let newZ = pos.z + velocities[i].z;
+
+				// Нормализуем на сферу
+				const normalized = normalizeToSphere(newX, newY, newZ);
+
+				// Преобразуем обратно в полярные координаты
+				const polar = cartesianToPolar(normalized.x, normalized.y, normalized.z);
+				vertices[i].latitude = polar.latitude;
+				vertices[i].longitude = polar.longitude;
+			}
+
+			// Обновляем визуализацию
+			updateVisualization();
+
+			iteration++;
+			document.getElementById('iteration').innerHTML = `Итерация: ${iteration}`;
+		}
+
+		// --- Анимационный цикл ---
+		function animate() {
+			requestAnimationFrame(animate);
+
+			if (isAnimating) {
+				// Выполняем несколько итераций за кадр для более быстрой сходимости
+				for (let i = 0; i < 3; i++) {
+					iterationStep();
+				}
+			}
+
+			controls.update();
+			renderer.render(scene, camera);
+		}
+
+		// --- Обработчики событий UI ---
+		function setupEventListeners() {
+			document.getElementById('startBtn').addEventListener('click', () => {
+				isAnimating = true;
+				document.getElementById('startBtn').disabled = true;
+				document.getElementById('stopBtn').disabled = false;
+				controls.autoRotate = false;
+			});
+
+			document.getElementById('stopBtn').addEventListener('click', () => {
+				isAnimating = false;
+				document.getElementById('startBtn').disabled = false;
+				document.getElementById('stopBtn').disabled = true;
+				controls.autoRotate = true;
+			});
+
+			document.getElementById('resetBtn').addEventListener('click', () => {
+				isAnimating = false;
+				document.getElementById('startBtn').disabled = false;
+				document.getElementById('stopBtn').disabled = true;
+				controls.autoRotate = true;
+
+				initVertices(vertices.length);
+				velocities = new Array(vertices.length).fill(null).map(() => ({ x: 0, y: 0, z: 0 }));
+				updateVisualization();
+			});
+
+			document.getElementById('addPointsBtn').addEventListener('click', () => {
+				for (let i = 0; i < 5; i++) {
+					vertices.push(generateRandomPoint());
+				}
+				velocities = velocities.concat(new Array(5).fill(null).map(() => ({ x: 0, y: 0, z: 0 })));
+				updateVisualization();
+			});
+
+			document.getElementById('removePointsBtn').addEventListener('click', () => {
+				if (vertices.length > 1) {
+					const removeCount = Math.min(5, vertices.length - 1);
+					vertices.splice(-removeCount);
+					velocities.splice(-removeCount);
+					updateVisualization();
+				}
+			});
+
+			const speedRange = document.getElementById('speedRange');
+			const speedValue = document.getElementById('speedValue');
+			speedRange.addEventListener('input', () => {
+				speedValue.textContent = speedRange.value;
+				// Изменяем силу отталкивания в зависимости от скорости
+				REPULSION_STRENGTH = 0.05 * parseFloat(speedRange.value);
+			});
+
+			window.addEventListener('resize', onWindowResize, false);
+		}
+
+		function onWindowResize() {
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+			renderer.setSize(window.innerWidth, window.innerHeight);
+		}
+
+		// --- Инициализация всего приложения ---
+		function init() {
+			initThree();
+			initVertices(VERTICES_COUNT);
+			updateVisualization();
+			setupEventListeners();
+			animate();
+		}
+
+		// Запуск
+		init();
+	</script>
+</body>
+</html>
