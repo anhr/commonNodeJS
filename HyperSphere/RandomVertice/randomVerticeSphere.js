@@ -49,7 +49,8 @@ export class RandomVerticeSphere extends RandomVertice {
 //		this.Euler(params);
 		
 //		const arrayCircles = boCloud ? undefined : [];
-			
+
+/*		
 		if (!params.boArcIsdefined) {
 
 			params.boArcIsdefined = true;
@@ -93,6 +94,7 @@ export class RandomVerticeSphere extends RandomVertice {
 			});
 
 		}
+*/		
 		
 		this.latitude = (b/*utils*/) => {
 
