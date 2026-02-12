@@ -6663,7 +6663,7 @@
 
   		options = options || {};
   		options.settings = options.settings || {};
-  		options.settings.zoomMultiplier = options.settings.zoomMultiplier || 1.1;
+  		if ( options.settings.zoomMultiplier === undefined ) options.settings.zoomMultiplier = 1.1;
 
   		super( {
 
@@ -6834,7 +6834,7 @@
   	 * @extends controllers.CustomController.
   	 * @param {Event} onclickController
   	 * @param {object} [options={}] the following options are available:
-  	 * @param {number} [options.settings={}] time settings.
+  	 * @param {object} [options.settings={}] time settings.
   	 * @param {number} [options.settings.offset=0.1] offset.
   	 * @param {number} [options.min=0.1] Minimal offset.
   	 * @param {number} [options.max=10] Maximal offset.
@@ -6849,7 +6849,7 @@
 
   		if ( options.min === undefined ) options.min = 0.1;
   		if ( options.max === undefined ) options.max = 10;
-  		if ( settings.offset === undefined ) settings.offset = 0.1;
+  		if ( settings.offset === undefined ) { settings.offset = 0.1; }
   		if ( options.step === undefined ) options.step = 0.1;
 
   		super( {
@@ -6915,7 +6915,9 @@
   					title: lang.add,
   					onclick: function () {
 
-  						onclickController( customController.controller.getValue() );
+  						if ( !customController.controller )
+  							console.error('PositionController: addButton ↑ . Invalid customController.controller');
+  						onclickController( customController.controller ? customController.controller.getValue() : 0 );
 
   					}
 
@@ -11668,7 +11670,7 @@
   			rect = options.rect || optionsUpdate.rect || {},
   			color = 'rgba(255, 255, 255, 1)',
   			fontColor = options.fontColor || optionsUpdate.fontColor || color,
-  			center = SpriteText$1.getCenter( options.center || optionsUpdate.center, position );
+  			center = SpriteText$1.getCenter( options.center || optionsUpdate.center, new THREE.Vector3().copy(position).applyEuler( options.group.rotation ) );
   			
   		if ( fov !== undefined )
   			textHeight = fov * textHeight / 50;
@@ -11761,7 +11763,17 @@
   		sprite.material.map.needsUpdate = true;
 
   		const th = textHeight * linesCount;// * angleDistance;
+
+  		//scale
   		sprite.scale.set( th * canvas.width / canvas.height, th );
+  		let parent = options.group.parent;//Если не брать тут родительскую группу, то неврно будет отображаться размер всплывающего текста, когда пользователь наводит мышку на вершину
+  		while ( parent ){
+
+  			sprite.scale.divide( parent.scale );
+  			parent = parent.parent;
+  			
+  		}
+  		
   		sprite.position.copy( position );
   		sprite.center = center;
 
@@ -12931,7 +12943,7 @@
   		(//Custom text
   			intersection.object.userData.raycaster && intersection.object.userData.raycaster.text ? intersection.object.userData.raycaster.text( intersection ) : ''
   		),
-  		intersection.pointSpriteText ? intersection.pointSpriteText : intersection.point,//position,
+  		intersection.pointSpriteText ? intersection.pointSpriteText : intersection.point,
   		options.spriteOptions
   	);
 
@@ -13232,7 +13244,9 @@
   			const settings = options.orbitControls || {};
   			_this.orbitControls = new three$1.OrbitControls( camera, renderer.domElement );
   			if ( settings.enableRotate !== undefined ) _this.orbitControls.enableRotate = settings.enableRotate;
-  			_this.orbitControls.target.set( scene.position.x * 2, scene.position.y * 2, scene.position.z * 2 );
+  			if ( settings.target )
+  				_this.orbitControls.target.copy(settings.target);
+  			else _this.orbitControls.target.copy( scene.position).multiply( new three$1.THREE.Vector3().copy( scene.scale ).addScalar( 1 ) );
   			_this.orbitControls.saveState();//For reset of the orbitControls settings in the CameraGui and OrbitControlsGui
   			_this.orbitControls.update();
 
@@ -13272,7 +13286,8 @@
   			}
 
   			const scenePosition = new three$1.THREE.Vector3().copy( scene.position ),
-  				cameraPosition = new three$1.THREE.Vector3().copy( camera.position );
+  				cameraPosition = new three$1.THREE.Vector3().copy( camera.position ),
+  				target = options.orbitControls != false ? new three$1.THREE.Vector3().copy( options.orbitControls.target ) : undefined;
 
   			three$1.dat.controllerNameAndTitle( options.dat.gui.add( {
   				defaultF: function ( value ) {
@@ -13283,7 +13298,8 @@
   					scene.position.copy( scenePosition );
   					if ( options.orbitControls !== false ) {
 
-  						options.orbitControls.target = new three$1.THREE.Vector3();
+  //						options.orbitControls.target = new three.THREE.Vector3();
+  						options.orbitControls.target.copy( target );
   						options.orbitControls.object.position.copy( camera.position );
   						options.orbitControls.update();
 
@@ -13758,7 +13774,7 @@
 
   											get: () => {
 
-  												if ( !scale || !scale.min ) return axisName === 'w' ? 0 : -1;
+  												if ( !scale || ( scale.min === undefined ) ) return axisName === 'w' ? 0 : -1;
   												return scale.min;
 
   											},
@@ -13771,7 +13787,7 @@
 
   												//максимальное значение шкалы w по умолчанию беру из THREE.Vector4
   												//потому что в противном случае неверно будет отображаться цвет точки, заданной как THREE.Vector4()
-  												if ( !scale || !scale.max ) return axisName === 'w' ? new three$1.THREE.Vector4().w : 1;
+  												if ( !scale || ( scale.max === undefined ) ) return axisName === 'w' ? new three$1.THREE.Vector4().w : 1;
   												return scale.max;
 
   											},
@@ -13810,15 +13826,41 @@
   //											set: function ( marks ) { scale.marks = marks; },
 
   										},
+  										zoomMultiplier: {
+
+  											get: () => {
+
+  												if ( !scale ) return undefined;
+  												if ( !scale.zoomMultiplier ) scale.zoomMultiplier = 1.1;
+  												return scale.zoomMultiplier;
+
+  											},
+  											set: ( zoomMultiplier ) => { setScale( () => { scale.zoomMultiplier = zoomMultiplier; }); },
+
+  										},
+  										offset: {
+
+  											get: () => {
+
+  												if ( !scale ) return undefined;
+  												if ( !scale.offset ) scale.offset = 0.1;
+  												return scale.offset;
+
+  											},
+  											set: ( offset ) => { setScale( () => { scale.offset = offset; }); },
+
+  										},
 
   									} );
 
   									//For debugging. Find a hidden keys
+  									/*Uncompatible with http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/randomArc.html
   									for ( var propertyName in scale ) {
 
   										if ( this[propertyName] === undefined ) console.error( 'Options.Scales: scale.' + propertyName + ' key is hidden' );
 
   									}
+  									*/
 
   								}
 
@@ -14637,6 +14679,58 @@
 
   			},
 
+  			/**
+  			 * getter
+  			 * <pre>
+  			 * scene
+  			 * </pre>
+  			 **/
+  			scene: {
+
+  				get: () => {
+
+  					options.scene ||= {};
+  					options.scene.position ||= new three$1.THREE.Vector3( 0, 0, 0 );
+  					return options.scene;
+  					
+  				}
+
+  			},
+
+  			/**
+  			 * getter
+  			 * <pre>
+  			 * User has changed a selected mesh event
+  			 * </pre>
+  			 **/
+  			onChangeSelectedMesh: { get: () => { return options.onChangeSelectedMesh; } },
+
+  			/**
+  			 * getter and setter
+  			 * <pre>
+  			 * Renderer
+  			 * </pre>
+  			 **/
+  			renderer: {
+  				
+  				get: () => { return options.renderer; },
+  				set: ( renderer ) => { options.renderer = renderer; }
+  			
+  			},
+
+  			/**
+  			 * getter and setter
+  			 * <pre>
+  			 * New time of the <a href="../../player/jsdoc/index.html" target="_blank">Player</a>.
+  			 * </pre>
+  			 **/
+  			onSelectScene: {
+  				
+  				get: () => { return options.onSelectScene; },
+  				set: ( onSelectScene ) => { options.onSelectScene = onSelectScene; }
+  			
+  			},
+
   		} ); 
 
   		//For debugging. Find a hidden keys
@@ -14757,7 +14851,7 @@
   					scales: options.scales,
   					spriteOptions: {
 
-  						textHeight: options.spriteText.textHeight,
+  						textHeight: options.spriteText.textHeight || 0.03,
   						fontColor: options.spriteText.fontColor,
   						rect: rect,
   						group: scene,
@@ -14768,7 +14862,7 @@
 
   						}
 
-  					}
+  					},
 
   				} );
   				spriteTextIntersection.scale.divide( scene.scale );
@@ -14894,6 +14988,9 @@
   					raycaster.ray.at( three.options.camera.near + (three.options.camera.far - three.options.camera.near)/1000, intersection.pointSpriteText );
   				//Поэтому оставляю как было раньше
   				else intersection.pointSpriteText = intersection.point;
+  				intersection.pointSpriteText.sub( settings.scene.position );
+  				intersection.pointSpriteText.applyEuler( new three.THREE.Euler( -settings.scene.rotation.x, -settings.scene.rotation.y, -settings.scene.rotation.z ) );
+  				intersection.pointSpriteText.divide( settings.scene.scale );
 
   				var boDetected = false;
   				intersectedObjects.forEach( function ( intersectedObject ) {
@@ -14906,17 +15003,13 @@
   					}
 
   				} );
-  				if ( !boDetected ) {
-
-  					intersectedObjects.push( intersection );
-
-  				}
+  				if ( !boDetected ) intersectedObjects.push( intersection );
   				if (
   					intersection &&
   					intersection.object.userData.raycaster &&
   					intersection.object.userData.raycaster.onIntersection
   				) 
-  				intersection.object.userData.raycaster.onIntersection( intersection, mouse );
+  					intersection.object.userData.raycaster.onIntersection( intersection, mouse );
   				else {
 
   					if ( !settings.scene )
@@ -18445,9 +18538,17 @@
 
   		this.isSetPosition = settings.isSetPosition;
 
-  		const timeId = (settings.options && settings.options.player) ? settings.options.player.getTimeId() : 0, geometry = settings.object.geometry,
+  		(settings.options && settings.options.player) ? settings.options.player.getTimeId() : 0; const geometry = settings.object.geometry,
   			geometryPosition = geometry.position;
-  		if ((timeId === 0) && (!geometryPosition || !geometryPosition.isPositionProxy)) {
+  		if (
+  			//(timeId === 0) && если оставить эту строку, то не смогу изменять положение вершины в nD.
+  			//Для проверки открыть http://localhost/anhr/commonNodeJS/master/nD/Examples/
+  			//сделать 3D на весь экран
+  			//В gui выбрать Mesh\nD\Faces\Edges\Vertices и поменять одну из координат
+  			//Положение ыбанной вершины должно меняться
+  			
+  			(!geometryPosition || !geometryPosition.isPositionProxy)
+  		) {
 
   			geometry.position = new Proxy(geometryPosition || [], {
   	
@@ -18699,7 +18800,7 @@
   							set: (vertice, name, value) => {
 
   								//edit vertice in http://localhost/anhr/commonNodeJS/master/nD/Examples/ for testing
-  								const axisId = parseInt(name);
+  								const axisId = name === 'x' ? 0 : name === 'y' ? 1 : name === 'z' ? 2 : name === 'w' ? 3 : parseInt(name);
   								if (!isNaN(axisId)) {
 
   									array[positionOffset + axisId] = value;
@@ -18881,16 +18982,16 @@
   			const attributes = settings.bufferGeometry.attributes, positionData = this.getPositionData(i, timeId),
   				positionBlockLength = positionData.positionBlockLength;
   			let itemSize = positionData.itemSize, positionId = positionData.positionId, array = attributes.position.array;
-  			                  array [positionId] = vertice.x != undefined ? vertice.x : vertice[0] != undefined ? vertice[0] : 0;
+  							  array [positionId] = vertice.x != undefined ? vertice.x : vertice[0] != undefined ? vertice[0] : 0;
   			if (itemSize > 1) array [++positionId] = vertice.y != undefined ? vertice.y : vertice[1] != undefined ? vertice[1] : 0;
   			if (itemSize > 2) array [++positionId] = vertice.z != undefined ? vertice.z : vertice[2] != undefined ? vertice[2] : 0;
   			const w = vertice.w != undefined ? vertice.w : vertice[3];
   			if (itemSize > 3) array [++positionId] = w;
+  			if (this.onSetPositionAttributeFromPoint) this.onSetPositionAttributeFromPoint(i);
 
   			const drawRange = settings.bufferGeometry.drawRange;
   			if ((drawRange.count === Infinity) || (((drawRange.start + drawRange.count) * ((settings.bufferGeometry.index === null) ? itemSize : 1)) < positionId)){
 
-  //				this.setVerticesRange(drawRange.start, (positionId - drawRange.start + 1) / itemSize);
   				this.setVerticesRange(drawRange.start, (positionId + 1) / itemSize - drawRange.start);
   				if (!Number.isInteger(drawRange.count) && (drawRange.count != Infinity)) console.error(sMyObject + '.setPositionAttributeFromPoint failed. Invalid drawRange.count = ' + drawRange.count);
 
@@ -18901,7 +19002,7 @@
   				object3D = this.object3D;
   			if (guiSelectPoint && (guiSelectPoint.getSelectedPointIndexShort() === i) && guiSelectPoint.isSelectedMesh(object3D)) {
   				
-  				guiSelectPoint.setPosition( { index: i, object: object3D });
+  				guiSelectPoint.setPosition( { index: i, nearestEdgeVerticeId: i, object: object3D });
   				if (object3D && object3D.userData.gui) object3D.userData.gui.reset();//в hyperSphere обновить выделенные ребра, среднюю вершину и плоскости вращения углов
 
   			}
@@ -18934,6 +19035,11 @@
 
   			//opacity
   			if (attributes.color.itemSize > 3) this.verticeOpacity(i);
+
+  			//Необходимо для того, что бы отоборажалась информация о вершине при наведении на нее мышки
+  			//Внимание. Иногда эта функция работает и без удаления boundingSphere
+  			delete settings.bufferGeometry.boundingSphere;
+  			settings.bufferGeometry.boundingSphere = null;
 
   			return vertice;
   			
@@ -19000,15 +19106,7 @@
   		 * @param {number} positionId Position identifier for start time.
   		 * @returns Offset of the position identifier for current time.
   		 */
-  		this.positionOffsetId = (positionId) => {
-
-  /*			
-  			const settings = this.classSettings.settings;
-  			return settings.bufferGeometry.userData.timeId * settings.object.geometry.angles.length + positionId;
-  */			
-  			return settings.overriddenProperties.positionOffsetId(positionId);
-  			
-  		};
+  		this.positionOffsetId = (positionId) => { return settings.overriddenProperties.positionOffsetId(positionId); };
   		
   	}
   	
@@ -19037,15 +19135,7 @@
   	 * @param {number} positionId Position identifier for start time.
   	 * @returns Offset of the position in the <b>position</b> attribute for current time.
   	 */
-  	positionOffset(position, positionId) {
-
-  		return this.positionOffsetId(positionId) * position.itemSize;
-  /*		
-  		const settings = this.classSettings.settings;
-  		return (settings.bufferGeometry.userData.timeId * settings.object.geometry.angles.length + positionId) * position.itemSize;
-  */		
-  		
-  	}
+  	positionOffset(position, positionId) { return this.positionOffsetId(positionId) * position.itemSize; }
 
   }
 
@@ -19698,6 +19788,20 @@
 
   			}
   			setRotations();
+  			
+  			let parent = null;
+  			Object.defineProperty(points, 'parent', {
+  	
+  				get: () => { return parent; },
+  				set: (group) => {
+
+  					parent = group;
+  					if ( ( group === null ) && options.guiSelectPoint ) options.guiSelectPoint.removeMesh( points );
+  				
+  				},
+  	
+  			});
+  			
   			group.add(points);
 
   			points.userData.myObject = _this;
@@ -20523,18 +20627,17 @@
   		options.scales.text.rect = options.scales.text.rect || {};
   		options.scales.text.rect.displayRect = options.scales.text.rect.displayRect !== undefined ? options.scales.text.rect.displayRect : true;
   		options.scales.text.rect.borderRadius = options.scales.text.rect.borderRadius !== undefined ? options.scales.text.rect.borderRadius : 15;
+  /*		
   		function setScale( axisName ) {
 
   			const scale = options.scales[axisName];
   			if ( !scale ) return;
-  //			if ( scale.marks === undefined ) scale.marks = 3;
-  			if ( scale.offset === undefined ) scale.offset = 0.1;
-  			if ( scale.zoomMultiplier === undefined ) scale.zoomMultiplier = 1.1;
 
   		}
   		setScale( 'x' );
   		setScale( 'y' );
   		setScale( 'z' );
+  */		
 
   		/**
   		 * See the <b>options</b> parameter of the <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
@@ -20554,6 +20657,15 @@
 
   		options.scales.posAxesIntersection = options.scales.posAxesIntersection || new THREE.Vector3();//For moving of the axes intersection to the center of the canvas ( to the camera focus )
 
+  		const sceneScale = new THREE.Vector3().addScalar( 1 );
+  		let parent = group;
+  		while( parent ) {
+
+  			sceneScale.multiply( parent.scale );
+  			parent = parent.parent;
+  			
+  		}
+  		
   		/**
   		 * create axis
   		 * @param {string} axisName axis name
@@ -20623,13 +20735,10 @@
 
   			if ( scale.marks !== undefined ) {
 
-  				const SpriteMark = function (
-  					position,
-  				) {
+  				const SpriteMark = function ( position ) {
 
   					position = position || new THREE.Vector3( 0, 0, 0 );
   					const sizeAttenuation = false;
-
 
   					const sprite = new THREE.Sprite( new THREE.SpriteMaterial( {
 
@@ -20654,14 +20763,36 @@
   								1//For x and z axes риска сдвигается вниз
 
   						);
-  						var width = 3;//, linesCount = 1,
-  						context.fillStyle = options.scales.color;//'rgba(0, 255, 0, 1)';
+  						var width = 3;
+  						context.fillStyle = options.scales.color;
   						context.fillRect( 0, 0, canvas.width, canvas.height );
 
   						// Inject canvas into sprite
   						sprite.material.map.image = canvas;
   						sprite.material.map.needsUpdate = true;
+  /*
+  						if ( axisName === 'y' ) {
 
+  							sprite.scale.x = ( width * ( canvas.width / canvas.height ) ) / canvas.width;
+  //							sprite.scale.x = ( ( width * ( canvas.width / canvas.height ) ) / canvas.width ) / sceneScale.x;
+  							sprite.scale.y = 1 / canvas.height;
+  //							sprite.scale.y = ( 1 / canvas.height ) / sceneScale.y;
+
+  						} else if ( axisName === 'x' ) {
+
+  							sprite.scale.x = 1 / canvas.width;
+  //							sprite.scale.y = ( width / canvas.height ) / sceneScale.y;
+  							sprite.scale.y = width / canvas.height;
+
+  						} else {//z
+
+  							sprite.scale.x = 1 / canvas.width;
+  //							sprite.scale.x = ( 1 / canvas.width ) / sceneScale.x;
+  							sprite.scale.y = width / canvas.height;
+  //							sprite.scale.y = ( width / canvas.height ) / sceneScale.y;
+
+  						}
+  */						
   						if ( axisName === 'y' ) {
 
   							sprite.scale.x = ( width * ( canvas.width / canvas.height ) ) / canvas.width;
@@ -20672,10 +20803,15 @@
   							sprite.scale.x = 1 / canvas.width;
   							sprite.scale.y = width / canvas.height;
 
-  						}
+  						} 
 
+  /*						
   						sprite.scale.x *= options.camera.fov / ( 50 * 2 );
   						sprite.scale.y *= options.camera.fov / ( 50 * 2 );
+  */
+  						const multiplicator = options.camera.fov / ( 50 * 2 );
+  						sprite.scale.x *= multiplicator / sceneScale.x;
+  						sprite.scale.y *= multiplicator / sceneScale.y;
 
   						sprite.position.copy( position );
   						sprite.center = center;
@@ -20852,12 +20988,10 @@
   						if ( !line )
   							return;//Current axis is not exists
   						var lineVertices = line.geometry.attributes.position.array;
-  						lineVertices[0] = axisName === 'x' ? pointVertice.x :
-  							verticeAxis( 'x' );//group.position.x, group.scale.x );
-  						lineVertices[1] = axisName === 'y' ? pointVertice.y :
-  							verticeAxis( 'y' );//group.position.y, group.scale.y );
-  						lineVertices[2] = axisName === 'z' ? pointVertice.z :
-  							verticeAxis( 'z' );//group.position.z, group.scale.z );
+
+  						lineVertices[0] = axisName === 'x' ? pointVertice.x : ( verticeAxis( 'x' ) + group.position.x / group.scale.x );
+  						lineVertices[1] = axisName === 'y' ? pointVertice.y : ( verticeAxis( 'y' ) + group.position.y / group.scale.y );
+  						lineVertices[2] = axisName === 'z' ? pointVertice.z : ( verticeAxis( 'z' ) + group.position.z / group.scale.z );
 
   						lineVertices[3] = pointVertice.x;
   						lineVertices[4] = pointVertice.y;
@@ -22130,7 +22264,12 @@
 
   				setTarget( orbitControls.target[axisIndex] + shift );
 
-  			} ) );
+  			}, {
+  				
+  //				settings: { offset: 0.1 },
+  				getLanguageCode: options.getLanguageCode,
+  			
+  			}  ) );
 
   			//target
   			const target = dat.controllerZeroStep( folder, orbitControls.target, axisIndex, function ( value ) {
@@ -23396,6 +23535,16 @@
 
   		};
   		/**
+  		 * Selects a mesh in the meshs list control
+  		 * @param {number} index index of the mesh in the meshs list control
+  		 */
+  		this.selectMesh = function (index) {
+
+  			cMeshs.__onChange(index);
+  			cMeshs.__select[index + 1].selected = true;
+
+  		};
+  		/**
   		 * Removes a mesh from the select point GUI
   		 * @param {THREE.Mesh} mesh [Mech]{@link https://threejs.org/docs/index.html#api/en/objects/Mesh} for removing.
   		 * @param {boolean} [boHideF3DObjects=true] true - hide the 'Meshes' folder if no any mesh exists in the meshs dropdown menu.
@@ -23559,7 +23708,8 @@
   			if ( cMeshs.__select[index].selected === false ) {
 
   				cMeshs.__select[index].selected = true;
-  				cMeshs.__onChange( index - 1, intersectionSelected );
+  				//cMeshs.__onChange( index - 1, intersectionSelected );Если оставить эту строку, то в http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/randomArc.html неверно выбирается линия Probability, когда она выбирается мышью а не из gui
+  				cMeshs.__onChange( index, intersectionSelected );
 
   			} else {
 
@@ -23974,8 +24124,9 @@
   				}
   				fMesh.domElement.style.display = display;
 
-  				if ( ( mesh !== undefined ) && ( mesh.userData.traceAll !== undefined ) )
-  					cTraceAll.setValue( mesh.userData.traceAll );
+  				if ( ( mesh !== undefined ) && ( mesh.userData.traceAll !== undefined ) ) cTraceAll.setValue( mesh.userData.traceAll );
+
+  				if ( options.onChangeSelectedMesh ) options.onChangeSelectedMesh( value - 1 );
 
   			} );
   			dat.controllerNameAndTitle( cMeshs, lang.select );
@@ -25352,6 +25503,7 @@
   		function update() {
 
   			const cameraTarget = options.playerOptions.cameraTarget.get( options );
+  //console.log('camera.rotation = (' + camera.rotation.x + ', ' + camera.rotation.y + ', ' + camera.rotation.z + ')')			
   			
   			if ( controllersPosition.x ) controllersPosition.x.setValue( camera.position.x );
   			if ( controllersPosition.y ) controllersPosition.y.setValue( camera.position.y );
@@ -28865,11 +29017,13 @@
   	 * 
   	 * @param {THREE.Scene} [options.scene] [Scene]{@link https://threejs.org/docs/index.html#api/en/scenes/Scene}.
   	 * @param {THREE.Vector3} [options.scene.position=new THREE.Vector3( 0, 0, 0 )] scene position.
+  	 * @param {THREE.Vector3} [options.scene.scale=new THREE.Vector3( 1, 1, 1 )] scene scale.
   	 * @param {boolean|object} [options.orbitControls] false - do not add the [OrbitControls]{@link https://threejs.org/docs/index.html#examples/en/controls/OrbitControls}. Allow the camera to orbit around a target.
   	 * <pre>
   	 * or
   	 * </pre>
   	 * @param {boolean} [options.orbitControls.enableRotate=true] Enable or disable horizontal and vertical rotation of the camera.
+  	 * @param {boolean} [options.orbitControls.target ] See [OrbitControls.target]{@link https://threejs.org/docs/?q=OrbitControls#OrbitControls.target}.
   	 * @param {boolean} [options.axesHelper] false - do not add the <a href="../../AxesHelper/jsdoc/index.html" target="_blank">AxesHelper</a>.
   	 * @param {boolean} [options.canvasMenu] false - do not create a <a href="../../canvasMenu/jsdoc/index.html" target="_blank">canvasMenu</a> instance.
   	 * @param {boolean} [options.stereoEffect] false - do not use <a href="../../StereoEffect/jsdoc/index.html" target="_blank">StereoEffect</a>.
@@ -28974,8 +29128,13 @@
   	 * <pre>
   	 * or element <b>id</b>.
   	 * </pre>
-  	 * @param {event} [options.onSelectScene] New time of the <a href="../../player/jsdoc/index.html" target="_blank">Player</a>.
   	 * @param {string} [options.title] text in the top left corner of the canvas.
+  	 * @param {event} [options.onSelectScene] New time of the <a href="../../player/jsdoc/index.html" target="_blank">Player</a>.
+  	 * @param {event} [options.onChangeSelectedMesh] This event occurs when user has changed a selected mesh.
+  	 * <pre>
+  	 * Parameters:
+  	 *	<b>meshId</b> - mesh identifier.
+  	 * </pre>
   	 */
   	constructor(createXDobjects, options) {
 
@@ -29168,6 +29327,9 @@
   			scene = new THREE.Scene();
   			scene.background = new THREE.Color(0x000000);
   			scene.fog = new THREE.Fog(0x000000, 250, 1400);
+  			scene.position.copy( options.scene.position );
+  			if (options.scene.rotation) scene.rotation.copy( options.scene.rotation );
+  			if (options.scene.scale) scene.scale.copy( options.scene.scale );
   			scene.userData.optionsSpriteText = {
 
   				textHeight: 0.04,
