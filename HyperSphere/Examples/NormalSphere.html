@@ -1,235 +1,235 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Сфера, плоскость и нормаль</title>
-    <style>
-        body {
-            margin: 0;
-        }
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Сфера, плоскость и нормаль</title>
+	<style>
+		body {
+			margin: 0;
+		}
 
-        #info {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 10px;
-            border-radius: 5px;
-            font-family: monospace;
-            z-index: 100;
-        }
-    </style>
+		#info {
+			position: absolute;
+			top: 10px;
+			left: 10px;
+			background: rgba(0, 0, 0, 0.8);
+			color: white;
+			padding: 10px;
+			border-radius: 5px;
+			font-family: monospace;
+			z-index: 100;
+		}
+	</style>
 </head>
 <body>
-    <div id="info"></div>
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-            }
-        }
-    </script>
-    <script type="module">
+	<div id="info"></div>
+	<script type="importmap">
+		{
+			"imports": {
+				"three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+				"three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+			}
+		}
+	</script>
+	<script type="module">
 
-        //https://chat.deepseek.com/a/chat/s/4da8f178-9dd3-4325-83d8-9ffda519f45b
-        /*
-        Дана сфера. На поверхности сферы заданы три точки в декартовой системе координат. Начало координат находится в центре сферы.
+		//https://chat.deepseek.com/a/chat/s/4da8f178-9dd3-4325-83d8-9ffda519f45b
+		/*
+		Дана сфера. На поверхности сферы заданы три точки в декартовой системе координат. Начало координат находится в центре сферы.
 Построить плоскость, проходящую через заданные три точки.
 Построить нормаль к этой плоскости такую, что бы она проходила через центр сферы.
 Вычислить координаты двух точек, в которых норамль пересекается с данной сферой.
 Написать код на javascript. В коде использовать библиотеку three.js.
-        */
-        import * as THREE from 'three';
-        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+		*/
+		import * as THREE from 'three';
+		import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-        // Инициализация сцены, камеры и рендерера
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
+		// Инициализация сцены, камеры и рендерера
+		const scene = new THREE.Scene();
+		const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+		const renderer = new THREE.WebGLRenderer({ antialias: true });
+		renderer.setSize(window.innerWidth, window.innerHeight);
+		document.body.appendChild(renderer.domElement);
 
-        // Добавление освещения
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-        scene.add(ambientLight);
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-        directionalLight.position.set(5, 10, 7);
-        scene.add(directionalLight);
+		// Добавление освещения
+		const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+		scene.add(ambientLight);
+		const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+		directionalLight.position.set(5, 10, 7);
+		scene.add(directionalLight);
 
-        // Добавление OrbitControls
-        const controls = new OrbitControls(camera, renderer.domElement);
-        camera.position.set(10, 10, 10);
-        controls.update();
+		// Добавление OrbitControls
+		const controls = new OrbitControls(camera, renderer.domElement);
+		camera.position.set(10, 10, 10);
+		controls.update();
 
-        // Радиус сферы
-        const sphereRadius = 5;
+		// Радиус сферы
+		const sphereRadius = 5;
 
-        // Создание сферы
-        const sphereGeometry = new THREE.SphereGeometry(sphereRadius, 32, 32);
-        const sphereMaterial = new THREE.MeshPhongMaterial({
-            color: 0x2194ce,
-            transparent: true,
-            opacity: 0.3,
-            side: THREE.DoubleSide
-        });
-        const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-        scene.add(sphere);
+		// Создание сферы
+		const sphereGeometry = new THREE.SphereGeometry(sphereRadius, 32, 32);
+		const sphereMaterial = new THREE.MeshPhongMaterial({
+			color: 0x2194ce,
+			transparent: true,
+			opacity: 0.3,
+			side: THREE.DoubleSide
+		});
+		const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+		scene.add(sphere);
 
-        // Добавление осей координат
-        const axesHelper = new THREE.AxesHelper(7);
-        scene.add(axesHelper);
+		// Добавление осей координат
+		const axesHelper = new THREE.AxesHelper(7);
+		scene.add(axesHelper);
 
-        // Заданные три точки на сфере (в декартовых координатах)
-        const pointA = new THREE.Vector3(3, 4, 0);
-        const pointB = new THREE.Vector3(0, 3, -4);
-        const pointC = new THREE.Vector3(-3, -4, 0);
+		// Заданные три точки на сфере (в декартовых координатах)
+		const pointA = new THREE.Vector3(3, 4, 0);
+		const pointB = new THREE.Vector3(0, 3, -4);
+		const pointC = new THREE.Vector3(-3, -4, 0);
 
-        // Нормализуем точки, чтобы они точно лежали на сфере
-        pointA.normalize().multiplyScalar(sphereRadius);
-        pointB.normalize().multiplyScalar(sphereRadius);
-        pointC.normalize().multiplyScalar(sphereRadius);
+		// Нормализуем точки, чтобы они точно лежали на сфере
+		pointA.normalize().multiplyScalar(sphereRadius);
+		pointB.normalize().multiplyScalar(sphereRadius);
+		pointC.normalize().multiplyScalar(sphereRadius);
 
-        // Функция для построения плоскости по трем точкам
-        function createPlaneFromPoints(p1, p2, p3) {
-            // Вычисляем нормаль плоскости через векторное произведение
-            const v1 = new THREE.Vector3().subVectors(p2, p1);
-            const v2 = new THREE.Vector3().subVectors(p3, p1);
-            const normal = new THREE.Vector3().crossVectors(v1, v2).normalize();
+		// Функция для построения плоскости по трем точкам
+		function createPlaneFromPoints(p1, p2, p3) {
+			// Вычисляем нормаль плоскости через векторное произведение
+			const v1 = new THREE.Vector3().subVectors(p2, p1);
+			const v2 = new THREE.Vector3().subVectors(p3, p1);
+			const normal = new THREE.Vector3().crossVectors(v1, v2).normalize();
 
-            // Создаем геометрию плоскости
-            const planeGeometry = new THREE.PlaneGeometry(15, 15);
+			// Создаем геометрию плоскости
+			const planeGeometry = new THREE.PlaneGeometry(15, 15);
 
-            // Создаем материал для плоскости
-            const planeMaterial = new THREE.MeshPhongMaterial({
-                color: 0xff8800,
-                transparent: true,
-                opacity: 0.5,
-                side: THREE.DoubleSide
-            });
+			// Создаем материал для плоскости
+			const planeMaterial = new THREE.MeshPhongMaterial({
+				color: 0xff8800,
+				transparent: true,
+				opacity: 0.5,
+				side: THREE.DoubleSide
+			});
 
-            // Создаем mesh плоскости
-            const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+			// Создаем mesh плоскости
+			const plane = new THREE.Mesh(planeGeometry, planeMaterial);
 
-            // Позиционируем плоскость
-            plane.position.copy(p1);
+			// Позиционируем плоскость
+			plane.position.copy(p1);
 
-            // Ориентируем плоскость по нормали
-            plane.lookAt(new THREE.Vector3().addVectors(p1, normal));
+			// Ориентируем плоскость по нормали
+			plane.lookAt(new THREE.Vector3().addVectors(p1, normal));
 
-            // Возвращаем плоскость и ее нормаль
-            return { plane, normal };
-        }
+			// Возвращаем плоскость и ее нормаль
+			return { plane, normal };
+		}
 
-        // Функция для вычисления точек пересечения нормали со сферой
-        function findSphereNormalIntersections(normal, radius) {
-            // Нормаль уже проходит через центр сферы (начало координат)
-            // Уравнение пересечения: |t * normal| = radius
-            // t = ±radius (так как normal - единичный вектор)
+		// Функция для вычисления точек пересечения нормали со сферой
+		function findSphereNormalIntersections(normal, radius) {
+			// Нормаль уже проходит через центр сферы (начало координат)
+			// Уравнение пересечения: |t * normal| = radius
+			// t = ±radius (так как normal - единичный вектор)
 
-            const point1 = normal.clone().multiplyScalar(radius);
-            const point2 = normal.clone().multiplyScalar(-radius);
+			const point1 = normal.clone().multiplyScalar(radius);
+			const point2 = normal.clone().multiplyScalar(-radius);
 
-            return { point1, point2 };
-        }
+			return { point1, point2 };
+		}
 
-        // Создание плоскости
-        const { plane, normal } = createPlaneFromPoints(pointA, pointB, pointC);
-        scene.add(plane);
+		// Создание плоскости
+		const { plane, normal } = createPlaneFromPoints(pointA, pointB, pointC);
+		scene.add(plane);
 
-        // Вычисление точек пересечения нормали со сферой
-        const { point1, point2 } = findSphereNormalIntersections(normal, sphereRadius);
+		// Вычисление точек пересечения нормали со сферой
+		const { point1, point2 } = findSphereNormalIntersections(normal, sphereRadius);
 
-        // Функция для создания маркера точки
-        function createPointMarker(position, color, label) {
-            const geometry = new THREE.SphereGeometry(0.2, 16, 16);
-            const material = new THREE.MeshPhongMaterial({ color });
-            const marker = new THREE.Mesh(geometry, material);
-            marker.position.copy(position);
+		// Функция для создания маркера точки
+		function createPointMarker(position, color, label) {
+			const geometry = new THREE.SphereGeometry(0.2, 16, 16);
+			const material = new THREE.MeshPhongMaterial({ color });
+			const marker = new THREE.Mesh(geometry, material);
+			marker.position.copy(position);
 
-            // Добавляем линию к центру
-            const lineGeometry = new THREE.BufferGeometry().setFromPoints([
-                new THREE.Vector3(0, 0, 0),
-                position
-            ]);
-            const lineMaterial = new THREE.LineBasicMaterial({
-                color,
-                transparent: true,
-                opacity: 0.5
-            });
-            const line = new THREE.Line(lineGeometry, lineMaterial);
+			// Добавляем линию к центру
+			const lineGeometry = new THREE.BufferGeometry().setFromPoints([
+				new THREE.Vector3(0, 0, 0),
+				position
+			]);
+			const lineMaterial = new THREE.LineBasicMaterial({
+				color,
+				transparent: true,
+				opacity: 0.5
+			});
+			const line = new THREE.Line(lineGeometry, lineMaterial);
 
-            return { marker, line, label, position };
-        }
+			return { marker, line, label, position };
+		}
 
-        // Создание маркеров для трех заданных точек
-        const pointAMarker = createPointMarker(pointA, 0xff0000, 'A');
-        const pointBMarker = createPointMarker(pointB, 0x00ff00, 'B');
-        const pointCMarker = createPointMarker(pointC, 0x0000ff, 'C');
+		// Создание маркеров для трех заданных точек
+		const pointAMarker = createPointMarker(pointA, 0xff0000, 'A');
+		const pointBMarker = createPointMarker(pointB, 0x00ff00, 'B');
+		const pointCMarker = createPointMarker(pointC, 0x0000ff, 'C');
 
-        scene.add(pointAMarker.marker);
-        scene.add(pointAMarker.line);
-        scene.add(pointBMarker.marker);
-        scene.add(pointBMarker.line);
-        scene.add(pointCMarker.marker);
-        scene.add(pointCMarker.line);
+		scene.add(pointAMarker.marker);
+		scene.add(pointAMarker.line);
+		scene.add(pointBMarker.marker);
+		scene.add(pointBMarker.line);
+		scene.add(pointCMarker.marker);
+		scene.add(pointCMarker.line);
 
-        // Создание маркеров для точек пересечения нормали
-        const intersection1 = createPointMarker(point1, 0xffff00, 'N1');
-        const intersection2 = createPointMarker(point2, 0xff00ff, 'N2');
+		// Создание маркеров для точек пересечения нормали
+		const intersection1 = createPointMarker(point1, 0xffff00, 'N1');
+		const intersection2 = createPointMarker(point2, 0xff00ff, 'N2');
 
-        scene.add(intersection1.marker);
-        scene.add(intersection1.line);
-        scene.add(intersection2.marker);
-        scene.add(intersection2.line);
+		scene.add(intersection1.marker);
+		scene.add(intersection1.line);
+		scene.add(intersection2.marker);
+		scene.add(intersection2.line);
 
-        // Создание визуализации нормали
-        const normalLength = 8;
-        const normalGeometry = new THREE.BufferGeometry().setFromPoints([
-            normal.clone().multiplyScalar(-normalLength),
-            normal.clone().multiplyScalar(normalLength)
-        ]);
-        const normalMaterial = new THREE.LineBasicMaterial({
-            color: 0xffffff,
-            linewidth: 2
-        });
-        const normalLine = new THREE.Line(normalGeometry, normalMaterial);
-        scene.add(normalLine);
+		// Создание визуализации нормали
+		const normalLength = 8;
+		const normalGeometry = new THREE.BufferGeometry().setFromPoints([
+			normal.clone().multiplyScalar(-normalLength),
+			normal.clone().multiplyScalar(normalLength)
+		]);
+		const normalMaterial = new THREE.LineBasicMaterial({
+			color: 0xffffff,
+			linewidth: 2
+		});
+		const normalLine = new THREE.Line(normalGeometry, normalMaterial);
+		scene.add(normalLine);
 
-        // Обновление информации на экране
-        function updateInfo() {
-            const infoDiv = document.getElementById('info');
-            infoDiv.innerHTML = `
-                <div>Сфера: радиус = ${sphereRadius}</div>
-                <div>Точка A: (${pointA.x.toFixed(2)}, ${pointA.y.toFixed(2)}, ${pointA.z.toFixed(2)})</div>
-                <div>Точка B: (${pointB.x.toFixed(2)}, ${pointB.y.toFixed(2)}, ${pointB.z.toFixed(2)})</div>
-                <div>Точка C: (${pointC.x.toFixed(2)}, ${pointC.y.toFixed(2)}, ${pointC.z.toFixed(2)})</div>
-                <div>Нормаль плоскости: (${normal.x.toFixed(2)}, ${normal.y.toFixed(2)}, ${normal.z.toFixed(2)})</div>
-                <div>Точка N1: (${point1.x.toFixed(2)}, ${point1.y.toFixed(2)}, ${point1.z.toFixed(2)})</div>
-                <div>Точка N2: (${point2.x.toFixed(2)}, ${point2.y.toFixed(2)}, ${point2.z.toFixed(2)})</div>
-                <div>Управление: ЛКМ + перемещение = вращение, ПКМ + перемещение = панорамирование, Колёсико = масштаб</div>
-            `;
-        }
+		// Обновление информации на экране
+		function updateInfo() {
+			const infoDiv = document.getElementById('info');
+			infoDiv.innerHTML = `
+				<div>Сфера: радиус = ${sphereRadius}</div>
+				<div>Точка A: (${pointA.x.toFixed(2)}, ${pointA.y.toFixed(2)}, ${pointA.z.toFixed(2)})</div>
+				<div>Точка B: (${pointB.x.toFixed(2)}, ${pointB.y.toFixed(2)}, ${pointB.z.toFixed(2)})</div>
+				<div>Точка C: (${pointC.x.toFixed(2)}, ${pointC.y.toFixed(2)}, ${pointC.z.toFixed(2)})</div>
+				<div>Нормаль плоскости: (${normal.x.toFixed(2)}, ${normal.y.toFixed(2)}, ${normal.z.toFixed(2)})</div>
+				<div>Точка N1: (${point1.x.toFixed(2)}, ${point1.y.toFixed(2)}, ${point1.z.toFixed(2)})</div>
+				<div>Точка N2: (${point2.x.toFixed(2)}, ${point2.y.toFixed(2)}, ${point2.z.toFixed(2)})</div>
+				<div>Управление: ЛКМ + перемещение = вращение, ПКМ + перемещение = панорамирование, Колёсико = масштаб</div>
+			`;
+		}
 
-        // Анимация
-        function animate() {
-            requestAnimationFrame(animate);
-            controls.update();
-            renderer.render(scene, camera);
-        }
+		// Анимация
+		function animate() {
+			requestAnimationFrame(animate);
+			controls.update();
+			renderer.render(scene, camera);
+		}
 
-        // Обработка изменения размера окна
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
+		// Обработка изменения размера окна
+		window.addEventListener('resize', () => {
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+			renderer.setSize(window.innerWidth, window.innerHeight);
+		});
 
-        // Инициализация
-        updateInfo();
-        animate();
-    </script>
+		// Инициализация
+		updateInfo();
+		animate();
+	</script>
 </body>
 </html>

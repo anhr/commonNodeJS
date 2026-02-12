@@ -14,11 +14,7 @@
 */
 
 import RandomVertice from './randomVertice.js';
-import anglesRange from '../anglesRange.js'
 import * as utils from '../utilsSphere.js'
-import Position from '../position.js'
-import three from '../../three.js'
-//import getHyperSphere from './getHyperSphere.js'
 import HyperSphere from '../sphere.js';
 
 
@@ -34,8 +30,6 @@ export const anglesIdMax = 50;//Количество точек на окруж�
  */
 export class RandomVerticeSphere extends RandomVertice {
 
-	// * @param {boolean} [boCloud=false] true - generates a random vertice cloud.
-
 	/**
 	 * Generates a random vertice near the opposite vertice in 2D hypersphere.
 	 * @param {object} [params={}] See the <b>params</b> of the <a href="./module-RandomVertice-RandomVertice.html" target="_blank"><b>RandomVertice</b></a> constructor for details.
@@ -45,56 +39,6 @@ export class RandomVerticeSphere extends RandomVertice {
 	constructor(params={}, verticesCount) {
 
 		super(params, verticesCount);
-
-//		this.Euler(params);
-		
-//		const arrayCircles = boCloud ? undefined : [];
-
-/*		
-		if (!params.boArcIsdefined) {
-
-			params.boArcIsdefined = true;
-			let arc = params.arc;
-			Object.defineProperty(params, 'arc', {
-	
-				get: () => {
-
-					if (params.boAllocateMemory) return π;//Выделяется память для облака точек. arc нужно сделать максимально возможным то есть вершины расположены друг против друга. В этом случае выделяется максимальный объем памяти.
-					let θ;
-					if (arc === undefined) {
-						
-						const vertice = params.vertice, oppositeVertice = params.oppositeVertice;
-						
-						//DeepSeek. вычислить угол между двумя точками на поверхности шара
-						//векторы
-						//A=(R,ϕ1,λ1 ) - vertice
-						const ϕ1 = vertice[0], λ1 = vertice[1];
-						//B=(R,ϕ2,λ2 ) - oppositeVertice
-						const ϕ2 = oppositeVertice[0], λ2 = oppositeVertice[1];
-						//где
-						//ϕ — широта (от −90° до 90°),
-						//λ — долгота (от −180° до 180°),
-						const arccos = Math.acos, sin = Math.sin, cos = Math.cos;
-						θ = arccos(sin(ϕ1) * sin(ϕ2) + cos(ϕ1) * cos(ϕ2) * cos(λ1 - λ2));
-						if (isNaN(θ)) console.error(sRandomVerticesSphere + ': getArcAngle. Invalid θ = ' + θ);
-
-					} else θ = arc;
-					return θ;
-//					return this.arc(θ);
-				
-				},
-				set: (arcNew) => {
-		
-					if (arc === undefined) console.error(sRandomVerticesSphere + ': set params.arc. Invalid arc = ' + arc);
-					else arc = arcNew;
-					return true;
-		
-				},
-		
-			});
-
-		}
-*/		
 
 		/*
 Есть точка на поверхности сферы в полярной системе координат.
@@ -121,11 +65,6 @@ longitude - долгота в диапазоне от -π до π.
 				return {
 					lat: latA,
 					lon: lonA,
-/*						
-					x: R * Math.cos(latA) * Math.cos(lonA),
-					y: R * Math.cos(latA) * Math.sin(lonA),
-					z: R * Math.sin(latA)
-*/
 				};
 			}
 
@@ -142,11 +81,6 @@ longitude - долгота в диапазоне от -π до π.
 				return {
 					lat: latB,
 					lon: normalizedLon,
-/*						
-					x: R * Math.cos(latB) * Math.cos(normalizedLon),
-					y: R * Math.cos(latB) * Math.sin(normalizedLon),
-					z: R * Math.sin(latB)
-*/
 				};
 			}
 
@@ -159,59 +93,11 @@ longitude - долгота в диапазоне от -π до π.
 				
 				return {
 					
-//					lat: Math.sin(random() * π - π / 2) * π / 2,
 					lat: Math.asin(random() * 2 - 1),
 					lon: random() * π * 2,//lonB,
 
 				}
-/*				
-				// Для полюса направление "север" всегда к полюсу,
-				// поэтому движение происходит по меридиану с заданным азимутом
 
-				// Широта конечной точки
-				const latB = latA - Math.cos(azimuth) * gamma;
-
-				// Для северного полюса азимут равен конечной долготе
-				// Для южного полюса - противоположен
-				let lonB;
-				if (isNorthPole) {
-					lonB = azimuth;
-				} else { // isSouthPole
-					lonB = azimuth + Math.PI;
-				}
-
-				// Нормализация долготы
-				lonB = ((lonB + Math.PI) % (2 * Math.PI) - Math.PI);
-
-				// Корректировка широты для диапазона [-π/2, π/2]
-				const clampedLatB = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, latB));
-*/					
-/*
-				const res = utils.angles([
-						
-					R * Math.cos(clampedLatB) * Math.cos(lonB),
-					R * Math.cos(clampedLatB) * Math.sin(lonB),
-					R * Math.sin(clampedLatB)
-					
-				]);
-				return {
-					
-					lat: res.latitude,
-					lon: res.longitude,
-					
-				};
-*/
-/*				
-				return {
-					lat: clampedLatB,
-					lon: random() * 2 * π,//lonB,
-*/					
-/*
-					x: R * Math.cos(clampedLatB) * Math.cos(lonB),
-					y: R * Math.cos(clampedLatB) * Math.sin(lonB),
-					z: R * Math.sin(clampedLatB)
-*/					
-//				};
 			}
 
 			// Общий случай (не полюс)
@@ -279,11 +165,6 @@ longitude - долгота в диапазоне от -π до π.
 			return {
 				lat: latB,
 				lon: lonB,
-/*					
-					x: xB,
-					y: yB,
-					z: zB
-*/
 			};
 		}
 

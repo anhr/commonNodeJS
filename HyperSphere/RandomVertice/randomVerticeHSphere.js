@@ -14,11 +14,7 @@
 */
 
 import RandomVertice from './randomVertice.js';
-import { anglesIdMax } from './randomVerticeSphere.js';
-import anglesRange from '../anglesRange.js'
 import * as utils from '../utilsHSphere.js'
-//import RandomCloudSphere from './randomCloudSphere.js';
-//import getHyperSphere from './getHyperSphere.js'
 import HyperSphere from '../hyperSphere3D.js';
 
 const sRandomVerticesHyperSphere = 'RandomVerticesHSphere',
@@ -33,8 +29,6 @@ const sRandomVerticesHyperSphere = 'RandomVerticesHSphere',
  */
 class RandomVerticeHSphere extends RandomVertice {
 
-	// * @param {boolean} [boCloud=false] true - generates a random vertice cloud.
-	
 	/**
 	 * Generates a random vertice near the opposite vertice in 3D hypersphere.
 	 * @param {object} [params={}] See the <b>params</b> of the <a href="./module-RandomVertice-RandomVertice.html" target="_blank"><b>RandomVertice</b></a> constructor for details.
@@ -43,29 +37,6 @@ class RandomVerticeHSphere extends RandomVertice {
 	constructor(params, verticesCount/*, boRandomVertice = true*/) {
 
 		super(params, verticesCount);
-/*
-		this.altitude = (utils) => {
-
-			const rnd = (params.random === undefined ? random() : params.random),//rng range from 0 to 1
-				b = params.b ? params.b : utils.b(params),
-				angle = (
-						(
-							(atan((
-										(rnd === 0) &&//Первая точка сферы
-										(b === Infinity) ? //Противоположные вершины совпадают
-											1 ://Если сюда не поставить 1, то angle = NaN
-											rnd
-								   ) * b)) /
-							atan(b)//делим на tan(b), что бы при минимальном rnd = 0 и максимальном rnd = 1, p получалось -1 и 1
-						) * 2 - 1//центр графика арктангенса сдвигаю вниз на -1
-					) * π / 2 + π / 2//Умножаем на π/2 и плюс π / 2 что бы при минимальном rnd = 0 и максимальном rnd = 1  углы попадали на полюса гиперсферы т.е. радиус сферы равен 0 и высота получались от 0 до π.
-							//Тем самым точки почти равномерно распределяются по сфере когда arc = π, тоесть вершина и противоположная вершина расположены на противоположных сторонах гиперсферы
-			
-			if (isNaN(angle)) console.error(sRandomVerticesHyperSphere + '.anglesCircle: angle = ' + angle);
-			return angle;
-			
-		}
-*/		
 		
 		let randomAngles;
 
@@ -190,11 +161,6 @@ class RandomVerticeHSphere extends RandomVertice {
 
 				const oppositeVertice = params.oppositeVertice,
 					lat = oppositeVertice.latitude, lon = oppositeVertice.longitude, alt = oppositeVertice.altitude;
-/*				
-				if (alt === undefined) alt = anglesRange.altitude.range / 2;
-				if (lon === undefined) console.error('startingPointParams: under constraction');
-				if (lat === undefined) console.error('startingPointParams: under constraction');
-*/				
 
 				// Исходная точка
 				const P = this.anglesToCartesian(lat, lon, alt);

@@ -15,7 +15,6 @@
 
 import RandomVertice from './randomVertice.js';
 import * as utils from '../utilsCircle.js'
-//import Vertice from '../VerticeCircle.js'
 import HyperSphere from '../circle.js';
 
 //const sRandomVerticeCircle = 'RandomVerticeCircle';
@@ -39,51 +38,8 @@ class RandomVerticeCircle extends RandomVertice {
 
 		let randomAngles;
 
-/*		
-		this.anglesCircle = (utils) => {
-			
-			const random = (params.random === undefined ? Math.random() : params.random) - 0.5,
-				b = params.b ? params.b : utils.b(params),
-				p = (
-					tan(random * b) /
-					tan(0.5 * b)//делим на tan(0.5 * b), что бы при минимальном и максимальном random, p получалось -1 и 1
-				) *
-				π;//Умножаем на π что бы при минимальном и максимальном random углы получались на противоположной от params.oppositeVertice.longitude стороне окружности.
-					//Тем самым точки почти равномерно распределяются по окружности когда arc = π, тоесть вершина и противоположная вершина расположены на противоположных сторонах окружности
-			
-			let angle = p + params.oppositeVertice.longitude;
-			
-			angle = utils.normalizeAngle(angle);
-			return angle;
-			
-		}
-*/		
-
 		//overridden methods
 
-/*		
-		Object.defineProperty(this, 'angles', {
-			
-			get: () => { return randomAngles; },
-			set: (anglesNew) => { randomAngles = anglesNew; },
-			
-		});
-*/
-//		this.getAngles = () => { return randomAngles; }
-//		this.setAngles = (anglesNew) => { randomAngles = anglesNew; }
-/*		
-		Object.defineProperty(this, 'randomAngles', {
-			
-			get: () => {
-
-				randomAngles = [[this.anglesCircle(utils)]];
-				return randomAngles[0];
-				
-			},
-			set: (anglesNew) => {},
-			
-		});
-*/		
 		this.getRandomAngles = () => {
 
 			const R = 1, oppositeVertice = params.oppositeVertice;
@@ -93,23 +49,11 @@ class RandomVerticeCircle extends RandomVertice {
 			const angles = utils.angles([result.lon]);
 			this.paramsVerticesAngles(angles);
 			return this.angles;
-/*			
-			const longitude = this.anglesCircle(utils);
-			if (randomAngles) {
-				
-				randomAngles[0].longitude = longitude;
-				return randomAngles[0];
-				
-			}
-			randomAngles = [[longitude]];
-			return utils.angles(randomAngles[0]);
-*/			
 			
 		}
 		
 		/////////////////////////////overridden methods
 
-//		this.randomAngles;
 		params.pointsCount = 0;
 		this.verticesAngles(false);
 
@@ -118,12 +62,7 @@ class RandomVerticeCircle extends RandomVertice {
 	//overridden methods
 	
 	ZeroArray() { return [0]; }
-	Center(params) {
-
-//		utils.angles(params.vertice);
-		utils.angles(params.oppositeVertice);
-		
-	}
+	Center(params) { utils.angles(params.oppositeVertice); }
 	get HyperSphere() { return HyperSphere; }
 	
 	/////////////////////////////overridden methods

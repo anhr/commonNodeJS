@@ -14,8 +14,6 @@
 */
 
 import getHyperSphere from './getHyperSphere.js'
-//import anglesRange from '../anglesRange.js'
-//import * as utils from '../utilsHSphere.js'
 
 const sRandomVertice = 'RandomVertice',
 	sOver = ': Please, override %s method in your ' + sRandomVertice + ' child class.',
@@ -26,7 +24,6 @@ const sRandomVertice = 'RandomVertice',
  */
 class RandomVertice {
 
-	 //* @param {boolean} boCloud=false true - generates a random vertice cloud.
 	/**
 	 * Generates random angles between a vertice and its opposite vertice.
 	 * @param {object} [params={}] The following parameters are available.
@@ -38,7 +35,6 @@ class RandomVertice {
 	 */
 	constructor(params={}, verticesCount = 1) {
 
-//		params.vertice ||= this.ZeroArray();
 		if (params.arc === undefined) params.arc = 0;
 			
 		if (!params.boArcIsdefined) {
@@ -79,18 +75,6 @@ class RandomVertice {
 			}
 			
 		}
-/*		
-		params.vertice = new Proxy( params.vertice, {
-
-			set: (vertice, name, value) => {
-
-				setVertice(vertice, name, value);
-				return true;
-	
-			},
-			
-		});
-*/			
 		params.oppositeVertice = new Proxy( params.oppositeVertice, {
 
 			set: (oppositeVertice, name, value) => {
@@ -119,62 +103,9 @@ class RandomVertice {
 
 		});
 		this.paramsVerticeOnChange = () => { this.verticesAngles(true); }
-/*
-		this.getRandomAngles = (point, startingPointParams) => {
-
-			if (!this.navigator) createHyperSphereNavigator();
-
-			// Правильное распределение для равномерного покрытия:
-			// Вероятность попасть в сферическую шапочку радиуса d пропорциональна sin^3(d/R)
-			const distance = this.navigator.R * this.navigator.inverseCDF_S3(random()) / (1 + 100 * random()); // см. объяснение ниже
-
-			if (!startingPointParams) {
-
-				const oppositeVertice = params.oppositeVertice;
-				startingPointParams = this.navigator.startingPointParams(
-					oppositeVertice.latitude,
-					oppositeVertice.longitude,
-					oppositeVertice.altitude,
-				)
-
-			}
-			const result = this.navigator.calculateNewPoint(
-				startingPointParams,
-				distance,//distance максимальная дистанция находится на противоположной стороне гиперсферы
-				point ? point.iEta : acos(2 * random() - 1),//eta. первый угол направления (полярный угол). 0 ≤ eta ≤ π
-				(point ? point.iPsi : random()) * 2 * π//psi. второй угол направления (азимутальный угол). 0 ≤ psi < 2π или -π ≤ psi ≤ π
-			);
-//			const angles = this.resultAngles(result);
-			const angles = utils.angles([result.altitude, result.latitude, result.longitude]);
-			if (params.editAnglesId === undefined) {
-
-				params.verticesAngles.push(angles);
-				params.pointsCount++;
-
-			} else {
-
-				params.verticesAngles[params.editAnglesId] = angles;
-				params.verticesAngles.needsUpdate;
-
-			}
-			return this.angles;
-
-		}
-		const createHyperSphereNavigator = () => {
-
-			const classSettings = params.classSettings,
-				settings = classSettings.settings,
-				radius = classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : settings.options.player === false ? 0 : settings.options.player.getTimeId());
-			this.navigator = new HyperSphereNavigator(radius);
-
-		}
-*/
 		this.verticesAngles = (editAngles = false) => {
 
-//			createHyperSphereNavigator();
-
 			const startingPointParams = this.navigator.startingPointParams();
-//			for (let i = 0; i < (boCloud ? 750 : 1); i++)
 			for (let i = 0; i < verticesCount; i++) {
 
 				if (editAngles) params.editAnglesId = i;
@@ -186,7 +117,6 @@ class RandomVertice {
 		};
 		this.distance = (distance, R) => {
 			
-//			let arc = π - params.arc;
 			let arc = params.arc;
 			if (arc < 0) arc = 0;//Эта ошибка возникает потому что в GUI переменная arc округляется до 4 знаков
 			
@@ -196,7 +126,6 @@ class RandomVertice {
 			*/
 			//https://chat.deepseek.com/a/chat/s/0b71542a-46a2-47e2-9888-f95f26f0fa37
 			const y = 1 / arc - 1 / π;
-//if (y < 0) console.log(y)
 			
 			return distance / (1 + (y * R * random()));
 			
@@ -225,7 +154,6 @@ class RandomVertice {
 
 	}
 	circlesPointsCount;
-//	arc(arc) { return π - arc; }
 	
 	//overridden methods
 	
