@@ -13,9 +13,6 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 
-//import anglesRange from './anglesRange.js'
-//import Vertice from './VerticeSphere.js'
-
 //const range = anglesRange.longitude.range, latitudeMax = anglesRange.latitude.max, latitudeMin = anglesRange.latitude.min, π = Math.PI;
 
 /**
@@ -26,7 +23,6 @@
 export const angles = (vertice, altitude) => {
 
 	if (vertice.longitude != undefined) return vertice;
-	//	while (vertice.length < 3) vertice.push(0);
 	while (vertice.length < 3) vertice.unshift((vertice.length === 2) && (altitude != undefined) ? altitude : 0);
 	Object.defineProperty(vertice, 'altitude', {
 

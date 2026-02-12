@@ -14,56 +14,8 @@
 */
 
 import anglesRange from './anglesRange.js'
-//import Vertice from './VerticeSphere.js'
 
 const range = anglesRange.longitude.range, latitudeMax = anglesRange.latitude.max, latitudeMin = anglesRange.latitude.min, π = Math.PI;
-
-/**
- * normalize a circle angle to range between anglesRange.longitude.min and anglesRange.longitude.max.
- * @param {float} angle angle for normalization.
- * @returns normalized angle.
- */
-export const normalizeAngle = (angle) => {
-
-	if (angle > latitudeMax) {
-
-//console.error('angle > ' + latitudeMax);							
-		angle -= range;
-		if (angle > latitudeMax)
-			console.error('angle > ' + latitudeMax);
-
-	} else {
-
-		if (angle < latitudeMin) {
-			
-//console.error('angle < ' + latitudeMin);
-			angle += range;
-			if (angle < latitudeMin)
-				console.error('angle < ' + latitudeMin);
-
-		}
-
-	}
-	return angle;
-
-}
-//parameters for b = arc * a + c,
-//const a = (1 / π) - 1, c = π;
-
-/**
- * The multiplier for calculating the tangent, which is used to calculate randomAngles.
- * @param {object} [params={}] See the <b>params</b> of the <a href="./module-RandomVertice-RandomVertice.html" target="_blank"><b>RandomVertice</b></a> constructor for details.
- * @returns multiplier.
- */
-export const b = (params) => {
-
-	//for atan((random + 0.5) * b)
-	const latitudeMultiplier = (params.circleLatitudeMultiplier ?
-		params.circleLatitudeMultiplier(params.circlesCount)://Присоздании облака случайных точек гиперсферы широту каждой окружности текущей сферы надо умножить на некоторый коэфициент что бы облако случайных точек приоблело сферическую форму
-		1);
-	return π / (params.arc * latitudeMultiplier);
-		
-}
 
 /*https://gemini.google.com/app/fed6dc3ff178ba36
 Задана точка на сфере в полярной системе координат. Начало координат находится в центре сферы.
@@ -115,25 +67,6 @@ export function anglesToCartesian(angles, r = 1) {
 
 }
 
-/*
-// --- Примеры использования ---
-
-// 1. Точка на экваторе (широта 0), вдоль оси X (долгота 0)
-// Ожидаемый результат: { x: 10, y: 0, z: 0 }
-const point1 = anglesToCartesian({ latitude: 0, longitude: 0 }, 10);
-console.log("Point 1 (Equator, X-axis):", point1);
-
-// 2. Северный полюс (широта π/2)
-// Ожидаемый результат: { x: 0, y: 0, z: 5 } (приближенно)
-const point2 = anglesToCartesian({ latitude: Math.PI / 2, longitude: Math.PI / 4 }, 5);
-console.log("Point 2 (North Pole):", point2);
-
-// 3. Точка с широтой 45° (π/4) и долготой 90° (π/2)
-// Ожидаемый результат: { x: 0, y: ~7.07, z: ~7.07 }
-const point3 = anglesToCartesian({ latitude: Math.PI / 4, longitude: Math.PI / 2 }, 10);
-console.log("Point 3 (45° N, 90° E):", point3);
-*/
-
 /*https://gemini.google.com/app/0d61322aa801d5a5
 Задана точка vertice на сфере в декартовой системе координат. Начало координат находится в центре сферы.
 Положение точки обозначить как
@@ -155,11 +88,6 @@ latitude - широта в диапазоне от -π/2 на южном пол�
  */
 export function casterianToAngles(vertice) {
 
-	/*	
-		const x = vertice[0];
-		const y = vertice[1];
-		const z = vertice[2];
-	*/
 	const x = vertice.x;
 	const y = vertice.y;
 	const z = vertice.z;
@@ -184,25 +112,6 @@ export function casterianToAngles(vertice) {
 	return angles([latitude, longitude]);
 
 }
-
-/*
-// --- Примеры использования ---
-
-// Пример 1: Северный полюс (широта +90° или +PI/2)
-const vertice1 = [0, 0, 10];
-const polar1 = casterianToAngles(vertice1);
-console.log(`Декартовы: [${vertice1}] -> r=${polar1.r}, lat=${polar1.latitude.toFixed(4)} (90°), lon=${polar1.longitude.toFixed(4)} (0°)`);
-
-// Пример 2: Точка на экваторе (широта 0), долгота 45°
-const vertice2 = [1, 1, 0];
-const polar2 = casterianToAngles(vertice2);
-console.log(`Декартовы: [${vertice2}] -> r=${polar2.r.toFixed(4)}, lat=${polar2.latitude.toFixed(4)} (0°), lon=${polar2.longitude.toFixed(4)} (45°)`);
-
-// Пример 3: Южный полюс (широта -90° или -PI/2)
-const vertice3 = [0, 0, -5];
-const polar3 = casterianToAngles(vertice3);
-console.log(`Декартовы: [${vertice3}] -> r=${polar3.r}, lat=${polar3.latitude.toFixed(4)} (-90°), lon=${polar3.longitude.toFixed(4)} (0°)`);
-*/
 
 /**
  * Adds a longitude and latitude property to the vertice angles array for the sphere hypersphere.

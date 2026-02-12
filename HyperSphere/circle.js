@@ -18,8 +18,6 @@
 import HyperSphere from './hyperSphere.js';
 import three from '../three.js'
 import RandomVertice from './RandomVertice/randomVerticeCircle.js';
-//import RandomCloud from './RandomVertice/randomCloudCircle.js';
-//import Vertice from './VerticeCircle.js'
 import * as utils from './utilsCircle.js'
 
 const sCircle = 'Circle',
@@ -140,8 +138,6 @@ class Circle extends HyperSphere {
 
 		if (!this.params) this.params = {
 				
-//				oppositeVertice: middleVerticeAngles,
-//				arc: this.arc,
 				debug: classSettings.debug ? { notRandomVertices: true,} : false,
 				classSettings: classSettings,//используется для вычисления случайной точки в RandomVerticeHSphere HyperSphereNavigator.calculateNewPoint
 				
@@ -152,8 +148,7 @@ class Circle extends HyperSphere {
 		if (this.randomVertice && (boCloud === false) && (boCreateHypersphere === false)) this.randomVertice.params = this.params;//Делается очередной шаг проигрывателя и это уже не первая точка
 		else {
 			
-//			this.randomVertice = new this.RandomCloud(params);
-			if (this.randomVertice) this.randomVertice.paramsVerticeOnChange();//middleVerticeAngles);
+			if (this.randomVertice) this.randomVertice.paramsVerticeOnChange();
 			else this.randomVertice = new this.RandomVertice(this.params, 200);
 
 		}
@@ -187,10 +182,6 @@ class Circle extends HyperSphere {
 				return null;
 			}
 
-/*			
-			const settings = _this.classSettings.settings;
-			const radius = _this.classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : settings.options.player.getTimeId());
-*/				
 			const radius = _this.r;
 			
 			/*
@@ -230,7 +221,6 @@ class Circle extends HyperSphere {
 			// 4. Нормализуем вектор среднего направления к длине радиуса
 			const length = Math.sqrt(avgX * avgX + avgY * avgY);
 			_this.setArc(radius, radius - length);
-//			_this.arc = π * (radius - length);
 
 			let middleVertice, middleVerticeAngles;
 			
@@ -239,7 +229,6 @@ class Circle extends HyperSphere {
 				//Противоположные вершины расположены на противоположных краях окружности. В этом случае с равной вероятностью средняя вершина может распологаться с одной или с другой половины окружности.
 				middleVerticeAngles = utils.angles([((_this.vertice2angles(points[0])[0] + _this.vertice2angles(points[1])[0]) / 2) + (Math.random() > 0.5 ? 0 : π)])
 				middleVertice = _this.a2v(middleVerticeAngles, radius);
-//				return _this.a2v(_this.getRandomMiddleAngles(points), radius);
 				
 			} else {
 			
@@ -261,30 +250,7 @@ class Circle extends HyperSphere {
 
 			}
 
-//			_this.randomVertices(middleVerticeAngles);
 			_this.randomVertices(middleVerticeAngles, _this.object3D.parent, boCloud, boCreateHypersphere);
-/*			
-			const classSettings = _this.classSettings;
-			if (classSettings.randomArc) {
-
-				const params = {
-						
-						//vertice: angles,
-						oppositeVertice: middleVerticeAngles,
-						arc: _this.arc,
-						debug: classSettings.debug ? { notRandomVertices: true,} : false,
-						
-					}
-				if (_this.randomVertice) _this.randomVertice.params = params;
-				else {
-					
-					_this.randomVertice = new _this.RandomCloud(params);
-					_this.hsRandomVertice = _this.randomVertice.getHyperSphere(classSettings.settings.options, classSettings, _this.middleVerticeColor);
-
-				}
-				
-			}
-*/			
 			return middleVertice;
 			
 		}
@@ -315,116 +281,10 @@ class Circle extends HyperSphere {
 			return variance;
 		}
 		
-		/**
-		 * Альтернативный метод: решает задачу минимизации методом градиентного спуска
-		 */
-		/*
-		function findEquidistantPointGradient(points, learningRate = 0.01, iterations = 1000) {
-			if (!points || points.length === 0) {
-				return null;
-			}
-	
-			const radius = Math.sqrt(points[0].x * points[0].x + points[0].y * points[0].y);
-	
-			// Начинаем со случайной точки на окружности
-			let angle = Math.random() * 2 * Math.PI;
-			let point = {
-				x: radius * Math.cos(angle),
-				y: radius * Math.sin(angle)
-			};
-	
-			// Градиентный спуск
-			for (let i = 0; i < iterations; i++) {
-				// Вычисляем градиент функции стоимости
-				let gradX = 0;
-				let gradY = 0;
-		
-				// Вычисляем среднее расстояние
-				const distances = points.map(p => {
-					const dx = p.x - point.x;
-					const dy = p.y - point.y;
-					return Math.sqrt(dx * dx + dy * dy);
-				});
-		
-				const meanDistance = distances.reduce((sum, d) => sum + d, 0) / distances.length;
-		
-				// Вычисляем градиент
-				for (let j = 0; j < points.length; j++) {
-					const dx = point.x - points[j].x;
-					const dy = point.y - points[j].y;
-					const distance = distances[j];
-			
-					if (distance > 1e-10) {
-						const diff = distance - meanDistance;
-						gradX += diff * (dx / distance);
-						gradY += diff * (dy / distance);
-					}
-				}
-		
-				// Обновляем точку (двигаемся против градиента)
-				point.x -= learningRate * gradX;
-				point.y -= learningRate * gradY;
-		
-				// Проецируем обратно на окружность
-				const length = Math.sqrt(point.x * point.x + point.y * point.y);
-				point.x = point.x * radius / length;
-				point.y = point.y * radius / length;
-		
-				// Уменьшаем learning rate
-				learningRate *= 0.995;
-			}
-	
-			return point;
-		}
-		*/
-		/*
-		// Пример использования
-		function example() {
-			// Создаем тестовые точки на окружности радиуса 5
-			const radius = 5;
-			const points = [
-				{ x: 5, y: 0 },
-				{ x: 3, y: 4 },
-				{ x: -4, y: 3 },
-				{ x: -3, y: -4 }
-			];
-	
-			console.log('Исходные точки:', points);
-	
-			// Метод 1: через среднее направление
-			const result1 = findEquidistantPointOnCircle(points);
-			console.log('Метод среднего направления:', result1);
-	
-			// Метод 2: градиентный спуск
-			const result2 = findEquidistantPointGradient(points);
-			console.log('Градиентный спуск:', result2);
-	
-			// Проверяем расстояния
-			if (result1) {
-				console.log('\nПроверка для метода 1:');
-				points.forEach((p, i) => {
-					const dx = p.x - result1.x;
-					const dy = p.y - result1.y;
-					const distance = Math.sqrt(dx * dx + dy * dy);
-					console.log(`Расстояние до точки ${i}: ${distance.toFixed(4)}`);
-				});
-			}
-		}
-
-		// Запуск примера
-		example();
-		*/
 		return findEquidistantPointOnCircle(points);
 
 	}
 	ZeroArray() { return [0]; }
-/*	
-	Euler(params) {
-
-		return;//в одномерной гиперсфере углы Эйлена не используются потому что поворот вершины делается на угол params.oppositeVertice.longitude
-		
-	}
-*/	
 	Vertice(angles) { return utils.angles(angles); }
 	/**
 	 * Converts a vertice position to vertice angles.
@@ -433,10 +293,6 @@ class Circle extends HyperSphere {
 	 */
 	vertice2angles(vertice) {
 
-/*		
-		const x = [],//для разных размерностей гиперсферы координаты вершины расположены в разном порядке в соответствии с this.axes.indices
-		for (let index = 0; index < vertice.length; index++) x.push(vertice[this.axes.indices[index]]);
-*/
 		/*https://gemini.google.com/app/5f9589d755b1c43f
 		Задана точка на окружности в декартовой системе координат. Начало координат находится в центре окружности.
 		Положение точки обозначить как vertice.x и vertice.y
@@ -457,53 +313,15 @@ class Circle extends HyperSphere {
 
 			if (Array.isArray(vertice) && (vertice.x === undefined))
 				vertice = { x: vertice[0], y: vertice[1] }
-//				vertice = { x: vertice[circle.axes.indices[0]], y: vertice[circle.axes.indices[1]] }
 
 			// Вычисление угла (theta) в радианах
 			// Math.atan2(y, x) корректно обрабатывает все квадранты.
 			const theta = Math.atan2(vertice.y, vertice.x);
-//			const theta = Math.atan2(vertice.x, vertice.y);
 
 			return utils.angles([theta]);
 			
 		}
 
-		/*
-		// --- Пример использования ---
-
-		const vertice1 = {
-			x: 3,
-			y: 4
-		};
-
-		const polarCoordinates = cartesianToPolar(vertice1);
-
-		console.log(`Декартовы координаты: (${vertice1.x}, ${vertice1.y})`);
-		console.log(`Полярные координаты:`);
-		console.log(`  Радиус (r): ${polarCoordinates.r}`);
-		console.log(`  Угол (theta) в радианах: ${polarCoordinates.theta}`);
-
-		// Для справки: перевод радиан в градусы
-		const angleInDegrees = polarCoordinates.theta * (180 / Math.PI);
-		console.log(`  Угол (theta) в градусах: ${angleInDegrees}`);
-
-
-		// --- Дополнительный пример (второй квадрант) ---
-
-		const vertice2 = {
-			x: -2,
-			y: 2
-		};
-
-		const polarCoordinates2 = cartesianToPolar(vertice2);
-
-		console.log("\n-------------------------");
-		console.log(`Декартовы координаты: (${vertice2.x}, ${vertice2.y})`);
-		console.log(`Полярные координаты:`);
-		console.log(`  Радиус (r): ${polarCoordinates2.r}`);
-		console.log(`  Угол (theta) в радианах: ${polarCoordinates2.theta}`);
-		console.log(`  Угол (theta) в градусах: ${polarCoordinates2.theta * (180 / Math.PI)}`);	
-		*/
 		return cartesianToPolar(vertice, this);
 
 	}
@@ -536,72 +354,20 @@ class Circle extends HyperSphere {
 			if ((longitude === undefined) || isNaN(longitude)) console.error(sCircle + ': a2v. longitude = ' + longitude);
 
 			// Вычисление декартовых координат
-			// Math.cos() и Math.sin() корректно обрабатывают углы вне диапазона [-π, π]
 			const x = r * Math.cos(longitude);
 			const y = r * Math.sin(longitude);
 
-//			return { x: x, y: y };
-//			return [ y, x ];
 			return [ x, y ];
 			
 		}
 
-		/*
-		// --- Пример использования ---
-
-		const radius = 5;
-		const position1 = { longitude: Math.PI / 2 }; // Долгота: π/2 (90 градусов)
-		const position2 = { longitude: 3 * Math.PI };   // Долгота: 3π (то же, что π)
-		const position3 = { longitude: -0.5 };        // Долгота: -0.5 радиан
-
-		const coords1 = polarToCartesian(radius, position1);
-		const coords2 = polarToCartesian(radius, position2);
-		const coords3 = polarToCartesian(radius, position3);
-
-		console.log(`\n**Пример 1: r=${radius}, longitude=${position1.longitude} (90°)**`);
-		//console.log(`x: ${coords1.x.toFixed(4)}, y: ${coords1.y.toFixed(4)}`);
-		console.log(coords1);
-		// Ожидаемый результат: x ≈ 0, y = 5
-
-		console.log(`\n**Пример 2: r=${radius}, longitude=${position2.longitude} (540°)**`);
-		//console.log(`x: ${coords2.x.toFixed(4)}, y: ${coords2.y.toFixed(4)}`);
-		console.log(coords2);
-		// Ожидаемый результат: x = -5, y ≈ 0 (3π эквивалентно π)
-
-		console.log(`\n**Пример 3: r=${radius}, longitude=${position3.longitude}**`);
-		//console.log(`x: ${coords3.x.toFixed(4)}, y: ${coords3.y.toFixed(4)}`);
-		console.log(coords3);
-		// Ожидаемый результат: x ≈ 4.7766, y ≈ -2.3971
-		*/
-//		return polarToCartesian(r, utils.angles(angles));
 		return polarToCartesian(r, angles);
 		
 	}
-/*	
-	normalizeAngles(angles){
-
-		angles.forEach((verticeAngles) => {
-
-			verticeAngles.longitude = verticeAngles.longitude % (anglesRange.longitude.range);//(2 * Math.PI);
-			if (verticeAngles.longitude > anglesRange.longitude.max)
-				verticeAngles.longitude -= anglesRange.longitude.range;//2 * Math.PI;
-			else if (verticeAngles.longitude < anglesRange.longitude.min)
-				verticeAngles.longitude += anglesRange.longitude.range;//2 * Math.PI;
-			
-		});
-		
-	}
-*/	
 	get verticeEdgesLengthMax() { return 2; }//нельзя добавлть новое ребро если у вершины уже 2 ребра
 	get dimension() { return 2; }//space dimension
 	get verticesCountMin() { return 3; }
-/*
-	getRandomMiddleAngles(oppositeVertices) {
 
-		return utils.angles([((this.vertice2angles(oppositeVertices[0])[0] + this.vertice2angles(oppositeVertices[1])[0]) / 2) + (Math.random() > 0.5 ? 0 : π)]);
-		
-	}
-*/	
 	/**
 	 * @param {THREE.Scene} scene [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}
 	 * @param {Options} options See <a href="../../jsdoc/Options/Options.html" target="_blank">Options</a>.
@@ -613,12 +379,9 @@ class Circle extends HyperSphere {
 	//overridden methods
 	
 	get RandomVertice() { return RandomVertice; }
-//	get RandomCloud() { return RandomCloud; }
 	
 	/////////////////////////////overridden methods
 	
 }
-
-//let g_sign = 1;
 
 export default Circle;
