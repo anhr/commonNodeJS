@@ -2,9 +2,7 @@
 
 Examples:
 
-[Circle](https://raw.githack.com/anhr/commonNodeJS/master/HyperSphere/Examples/circle.html).
-[Sphere](https://raw.githack.com/anhr/commonNodeJS/master/HyperSphere/Examples/sphere.html).
-[HyperSphere](https://raw.githack.com/anhr/commonNodeJS/master/HyperSphere/Examples/hyperSphere.html).
+[Random Vertice 1D](https://raw.githack.com/anhr/commonNodeJS/master/HyperSphere/RandomVertice/Examples/randomVertice1D.html).
 
 See [HyperSphere API](https://raw.githack.com/anhr/commonNodeJS/master/HyperSphere/jsdoc/index.html) for details.
 
