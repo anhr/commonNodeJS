@@ -25,10 +25,14 @@ const sRandomVertice = 'RandomVertice',
 class RandomVertice {
 
 	/**
-	 * Generates random angles between a vertice and its opposite vertice.
+	 * Generates a cloud of random vertices around the opposite vertice.
 	 * @param {object} [params={}] The following parameters are available.
-	 * @param {Array} [params.vertice=[0, 0, 0]] First vertice of the arc between two vertices.
-	 * @param {Array} [params.oppositeVertice=[0, 0, 0]] Second vertice of the arc between two vertices.
+	 * @param {float} [params.arc=0] Density distribution of a cloud of random vertices on a hypersphere. arc range from 0 to π.
+	 * <pre>
+	 *	arc = 0 A cloud of random vertices degenerates into a single point equal to the opposite vertice.
+	 *	arc = π A cloud of random vertices is uniformly distributed over the entire surface of the hypersphere.
+	 * </pre>
+	 * @param {Array} [params.oppositeVertice=[altitude, latitude, longitude]] Opposite vertice position in polar coordinates.
 	 * @param {object} [params.debug] Debug mode.
 	 * @param {object} [params.debug.notRandomVertices] true - replacing random vertices with strictly defined vertices.
 	 * @param {number} [verticesCount=1] count of vertices in the random vertices cloud.

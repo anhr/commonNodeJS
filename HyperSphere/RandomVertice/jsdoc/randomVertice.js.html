@@ -42,8 +42,6 @@
 */
 
 import getHyperSphere from './getHyperSphere.js'
-//import anglesRange from '../anglesRange.js'
-//import * as utils from '../utilsHSphere.js'
 
 const sRandomVertice = 'RandomVertice',
 	sOver = ': Please, override %s method in your ' + sRandomVertice + ' child class.',
@@ -54,19 +52,21 @@ const sRandomVertice = 'RandomVertice',
  */
 class RandomVertice {
 
-	 //* @param {boolean} boCloud=false true - generates a random vertice cloud.
 	/**
-	 * Generates random angles between a vertice and its opposite vertice.
+	 * Generates a cloud of random vertices around the opposite vertice.
 	 * @param {object} [params={}] The following parameters are available.
-	 * @param {Array} [params.vertice=[0, 0, 0]] First vertice of the arc between two vertices.
-	 * @param {Array} [params.oppositeVertice=[0, 0, 0]] Second vertice of the arc between two vertices.
+	 * @param {float} [params.arc=0] Density distribution of a cloud of random vertices on a hypersphere. arc range from 0 to π.
+	 * &lt;pre>
+	 *	arc = 0 A cloud of random vertices degenerates into a single point equal to the opposite vertice.
+	 *	arc = π A cloud of random vertices is uniformly distributed over the entire surface of the hypersphere.
+	 * &lt;/pre>
+	 * @param {Array} [params.oppositeVertice=[altitude, latitude, longitude]] Opposite vertice position in polar coordinates.
 	 * @param {object} [params.debug] Debug mode.
 	 * @param {object} [params.debug.notRandomVertices] true - replacing random vertices with strictly defined vertices.
 	 * @param {number} [verticesCount=1] count of vertices in the random vertices cloud.
 	 */
 	constructor(params={}, verticesCount = 1) {
 
-//		params.vertice ||= this.ZeroArray();
 		if (params.arc === undefined) params.arc = 0;
 			
 		if (!params.boArcIsdefined) {
@@ -107,18 +107,6 @@ class RandomVertice {
 			}
 			
 		}
-/*		
-		params.vertice = new Proxy( params.vertice, {
-
-			set: (vertice, name, value) => {
-
-				setVertice(vertice, name, value);
-				return true;
-	
-			},
-			
-		});
-*/			
 		params.oppositeVertice = new Proxy( params.oppositeVertice, {
 
 			set: (oppositeVertice, name, value) => {
@@ -147,62 +135,9 @@ class RandomVertice {
 
 		});
 		this.paramsVerticeOnChange = () => { this.verticesAngles(true); }
-/*
-		this.getRandomAngles = (point, startingPointParams) => {
-
-			if (!this.navigator) createHyperSphereNavigator();
-
-			// Правильное распределение для равномерного покрытия:
-			// Вероятность попасть в сферическую шапочку радиуса d пропорциональна sin^3(d/R)
-			const distance = this.navigator.R * this.navigator.inverseCDF_S3(random()) / (1 + 100 * random()); // см. объяснение ниже
-
-			if (!startingPointParams) {
-
-				const oppositeVertice = params.oppositeVertice;
-				startingPointParams = this.navigator.startingPointParams(
-					oppositeVertice.latitude,
-					oppositeVertice.longitude,
-					oppositeVertice.altitude,
-				)
-
-			}
-			const result = this.navigator.calculateNewPoint(
-				startingPointParams,
-				distance,//distance максимальная дистанция находится на противоположной стороне гиперсферы
-				point ? point.iEta : acos(2 * random() - 1),//eta. первый угол направления (полярный угол). 0 ≤ eta ≤ π
-				(point ? point.iPsi : random()) * 2 * π//psi. второй угол направления (азимутальный угол). 0 ≤ psi &lt; 2π или -π ≤ psi ≤ π
-			);
-//			const angles = this.resultAngles(result);
-			const angles = utils.angles([result.altitude, result.latitude, result.longitude]);
-			if (params.editAnglesId === undefined) {
-
-				params.verticesAngles.push(angles);
-				params.pointsCount++;
-
-			} else {
-
-				params.verticesAngles[params.editAnglesId] = angles;
-				params.verticesAngles.needsUpdate;
-
-			}
-			return this.angles;
-
-		}
-		const createHyperSphereNavigator = () => {
-
-			const classSettings = params.classSettings,
-				settings = classSettings.settings,
-				radius = classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : settings.options.player === false ? 0 : settings.options.player.getTimeId());
-			this.navigator = new HyperSphereNavigator(radius);
-
-		}
-*/
 		this.verticesAngles = (editAngles = false) => {
 
-//			createHyperSphereNavigator();
-
 			const startingPointParams = this.navigator.startingPointParams();
-//			for (let i = 0; i &lt; (boCloud ? 750 : 1); i++)
 			for (let i = 0; i &lt; verticesCount; i++) {
 
 				if (editAngles) params.editAnglesId = i;
@@ -214,7 +149,6 @@ class RandomVertice {
 		};
 		this.distance = (distance, R) => {
 			
-//			let arc = π - params.arc;
 			let arc = params.arc;
 			if (arc &lt; 0) arc = 0;//Эта ошибка возникает потому что в GUI переменная arc округляется до 4 знаков
 			
@@ -224,7 +158,6 @@ class RandomVertice {
 			*/
 			//https://chat.deepseek.com/a/chat/s/0b71542a-46a2-47e2-9888-f95f26f0fa37
 			const y = 1 / arc - 1 / π;
-//if (y &lt; 0) console.log(y)
 			
 			return distance / (1 + (y * R * random()));
 			
@@ -253,7 +186,6 @@ class RandomVertice {
 
 	}
 	circlesPointsCount;
-//	arc(arc) { return π - arc; }
 	
 	//overridden methods
 	
@@ -305,7 +237,7 @@ export default RandomVertice;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Wed Feb 11 2026 10:36:05 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri Feb 13 2026 10:53:21 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
