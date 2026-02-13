@@ -1984,9 +1984,14 @@ this.object = () => {
 													const verticeAngles = _this.vertice2angles(vertice)
 													if (aAngleControls.arc) {
 
-														aAngleControls.arc.classSettings.settings.object.geometry.angles[verticeId] = verticeAngles;
-														aAngleControls.arc.object3D.geometry.drawRange.type = this.bufferGeometry.drawRange.types.edges;//строка выше портит drawRange.type
-														verticeId++;
+														const angles = aAngleControls.arc.classSettings.settings.object.geometry.angles;
+														if (angles.length > verticeId) {
+															
+															angles[verticeId] = verticeAngles;
+															aAngleControls.arc.object3D.geometry.drawRange.type = this.bufferGeometry.drawRange.types.edges;//строка выше портит drawRange.type
+															verticeId++;
+
+														} else console.error(sHyperSphere + ': Create arc. Invalid verticeId = ' + verticeId);
 
 													} else arcAngles.push(verticeAngles);
 
