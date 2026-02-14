@@ -2316,6 +2316,7 @@ this.object = () => {
 
 								});
 								dat.controllerNameAndTitle(aAngleControls.cMiddleVertice, lang.middleVertice, lang.middleVerticeTitle);
+								if (_this.randomVertice) _display(fMiddleVertice.domElement, false);//Выполнен шаг проигрывателя в ходе которго был создан _this.randomVertice с количеством вершин равным 1. В этом случае облако случайных вершин будет состоять из одной вершины. Пытался исправить но не получилось. Поэтому сейчас нельзя создавать облако случайных вершин после выполения шага проигрывателя.
 
 								//Planes of rotation of angles.
 

@@ -149,7 +149,7 @@ class Circle extends HyperSphere {
 		else {
 			
 			if (this.randomVertice) this.randomVertice.paramsVerticeOnChange();
-			else this.randomVertice = new this.RandomVertice(this.params, 200);
+			else this.randomVertice = new this.RandomVertice(this.params, boCloud ? 200 : 1);
 
 		}
 		if (boCreateHypersphere) {
