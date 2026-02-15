@@ -40,6 +40,7 @@
 		MyThree.three.THREE = THREE;
 
 		import Sphere from '../sphere.js';
+		import distanceOfVertices from '../distanceOfVertices/middleVertices.js';
 		
 		new MyThree( (scene, options) => {
 
@@ -52,6 +53,7 @@
 			new Sphere(options,
 			{
 
+				distanceOfVertices: distanceOfVertices,
 				/*
 				intersection: {
 
@@ -70,7 +72,7 @@
 						[0]//0 - Latitude, 1 - Longitude
 						= t / 10000000000000000;
 					*/
-					if (hyperSphere.middleVertices) return hyperSphere.middleVertices(timeId, t);
+					if (hyperSphere.distanceOfVertices) return hyperSphere.distanceOfVertices(timeId, t);
 					//if (hyperSphere.child) return hyperSphere.child.onSelectScene.copyAngles(timeId, t);
 		
 				},
@@ -82,7 +84,7 @@
 				},
 				//edges: false,
 				randomArc: true,
-				randomMiddleVertice: false,
+				//randomMiddleVertice: false,
 				projectParams:{
 					
 					scene: scene,
@@ -232,7 +234,7 @@
 								[0, Math.PI * 2 * 1 / 3],//2
 								[0, -Math.PI * 2 * 1 / 3],//3
 							],
-							angles: { count: 300, },
+							//angles: { count: 300, },
 							//angles: angles,
 							/*
 							colors: [

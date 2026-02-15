@@ -285,7 +285,7 @@ class HyperSphere extends MyObject {
 	constructor(options, classSettings = {}) {
 
 		if (classSettings.randomMiddleVertice === undefined) classSettings.randomMiddleVertice = true;
-		if (!classSettings.onSelectScene) classSettings.onSelectScene = (hyperSphere, timeId, t) => { if (this.middleVertices) return this.middleVertices(timeId, t); }
+		if (!classSettings.onSelectScene) classSettings.onSelectScene = (hyperSphere, timeId, t) => { if (this.distanceOfVertices) return this.distanceOfVertices(timeId, t); }
 		//for playing in http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/hyperSphere.html
 
 		//Eсли options.onSelectScene уже существует, значит на холсте уже есть гиперсфера. Это бывает, когда создается случайная дуга HyperSphere classSettings.randomArc = true
@@ -293,7 +293,7 @@ class HyperSphere extends MyObject {
 		if (!options.onSelectScene) options.onSelectScene = (index, t) => {
 
 			if (classSettings.onSelectScene) return classSettings.onSelectScene(this, index, t);
-			else if (this.middleVertices) return hyperSphere.middleVertices(index, t);
+			else if (this.distanceOfVertices) return hyperSphere.distanceOfVertices(index, t);
 			return true;//Сдедующий шаг проигрывателя выполняется только после посторения всех вершин без временной задержки
 		
 		}
@@ -916,6 +916,7 @@ class HyperSphere extends MyObject {
 
 									switch (name) {
 
+/*											
 										case 'middleVertice': return (oppositeVerticesId = vertice.oppositeVerticesId, timeId, boPushMiddleVertice = true, boCloud = false, boCreateHypersphere = true) => {
 
 											//find middle vertice between opposite vertices
@@ -923,9 +924,6 @@ class HyperSphere extends MyObject {
 											const oppositeVertices = [];
 											oppositeVerticesId.forEach(oppositeAngleId => {
 
-												//не работает в Universe. Непонятно почему применил эту строку
-//												const oppositeVertice = settings.bufferGeometry.userData.position[oppositeAngleId];
-												
 												const oppositeVertice = classSettings.overriddenProperties.oppositeVertice(oppositeAngleId, timeId);
 												oppositeVertices.push(oppositeVertice);
 
@@ -957,6 +955,7 @@ class HyperSphere extends MyObject {
 											return middleVertice;
 
 										}
+*/											
 										//идентификаторы всех вершин, которые связаны с текущей вершиной через ребра
 										case 'oppositeVerticesId': return new Proxy(angles.edges, {
 
@@ -984,7 +983,7 @@ class HyperSphere extends MyObject {
 								},
 
 							});
-							return vertice;
+							return classSettings.distanceOfVertices.verticeProxy(vertice, classSettings, this, verticeId, position);
 
 						},
 						set: (angles, name, value) => {
@@ -2555,9 +2554,19 @@ this.object = () => {
 			this.projectGeometry();
 
 			//шаг проигрывателя player
-			//Вычислем middle vertices
-			this.middleVertices = (timeId, t) => {
+			//Все вершины постепенно движутся в положение, при котором вершины окажутся на максимальном удалении друг от друга.
+			this.distanceOfVertices = (timeId, t) => {
 
+				classSettings.distanceOfVertices({
+
+					timeId: timeId,
+					classSettings: classSettings,
+					this: this,
+					options: options,
+					t: t,
+					
+				});
+/*
 				if (timeId === 0) return;//не вычисляется средняя точка когда проигрыватель в начале
 				const geometry = settings.object.geometry, position = geometry.position, edges = geometry.indices.edges;
 				if (edges.length === 0) {
@@ -2566,7 +2575,7 @@ this.object = () => {
 					this.onSelectScene = () => {
 
 						//Непонятно как сюда попадает
-						options.onSelectScene(/*index,*/ t);
+						options.onSelectScene(t);
 						delete this.onSelectScene;
 
 					}
@@ -2681,6 +2690,7 @@ this.object = () => {
 					max: position.length - 1,
 
 				});
+*/
 				return true;//player pause
 
 			}

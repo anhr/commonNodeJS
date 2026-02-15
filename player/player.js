@@ -178,7 +178,7 @@ class Player {
 		this.selectScene = function ( index ) {
 
 			//Пользователь передвинул slider проигрывателя, когда сцена вычисляется асинхронно.
-			//Смотри пример http://localhost/anhr/universe/main/hyperSphere/Examples/ когда выполняется hyperSphere.middleVertices
+			//Смотри пример http://localhost/anhr/universe/main/hyperSphere/Examples/ когда выполняется hyperSphere.distanceOfVertices
 			//В этом случает в aSelectSceneIndex добавляются новые идексы сцен. И дальше начинается путаница, в которой я не разобрался.
 			if ( aSelectSceneIndex.length != 0 ) return;
 

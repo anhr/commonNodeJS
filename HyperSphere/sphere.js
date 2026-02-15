@@ -233,9 +233,7 @@ class Sphere extends Circle {
 			return middleVertice;
 			
 		}
-
-		const result = findEquidistantPoint(points);
-		return result;
+		return findEquidistantPoint(points);
 
 	}
 	ZeroArray() { return [0, 0]; }
