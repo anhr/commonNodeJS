@@ -17,7 +17,7 @@
 
 import HyperSphere from './hyperSphere.js';
 import three from '../three.js'
-import RandomVertice from './RandomVertice/randomVerticeCircle.js';
+//import RandomVertice from './RandomVertice/randomVerticeCircle.js';
 import * as utils from './utilsCircle.js'
 
 const sCircle = 'Circle',
@@ -130,7 +130,7 @@ class Circle extends HyperSphere {
 		return mesh;
 		
 	}
-
+/*
 	randomVertices(middleVerticeAngles, scene, boCloud = false, boCreateHypersphere = true) {
 		
 		const classSettings = this.classSettings;
@@ -159,6 +159,7 @@ class Circle extends HyperSphere {
 		}
 		
 	}
+*/	
 
 	//Overridden methods from base class
 /*
@@ -350,7 +351,7 @@ class Circle extends HyperSphere {
 
 	//overridden methods
 	
-	get RandomVertice() { return RandomVertice; }
+//	get RandomVertice() { return RandomVertice; }
 	
 	/////////////////////////////overridden methods
 	

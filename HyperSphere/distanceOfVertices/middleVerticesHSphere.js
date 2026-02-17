@@ -14,8 +14,10 @@
 */
 
 import middleVertices from './middleVertices.js'
-//import three from '../../three.js'
+import RandomVertice from '../RandomVertice/randomVerticeHSphere.js';
+import Position from '../position.js'
 
+middleVertices.RandomVertice = RandomVertice;
 middleVertices.middlePosition = (points, boCloud, boCreateHypersphere, _this) => {
  
 	//https://chat.deepseek.com/a/chat/s/8024be13-9782-4432-b29b-7c318db972d0
@@ -322,7 +324,8 @@ middleVertices.middlePosition = (points, boCloud, boCreateHypersphere, _this) =>
 				middleVertice = centroid.map(coord => coord / norm);
 
 			}
-			_this.randomVertices(_this.vertice2angles(middleVertice), _this.object3D.parent, boCloud, boCreateHypersphere);
+			middleVertices.randomVertices(_this.vertice2angles(middleVertice), _this.object3D.parent, boCloud, boCreateHypersphere, _this, RandomVertice);
+//			_this.randomVertices(_this.vertice2angles(middleVertice), _this.object3D.parent, boCloud, boCreateHypersphere);
 			return middleVertice;
 
 		}

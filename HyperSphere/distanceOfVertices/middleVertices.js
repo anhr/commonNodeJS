@@ -171,13 +171,18 @@ middleVertices.verticeProxy = (vertice, classSettings, _this, verticeId, positio
 //					let middleVertice = _this.vertice2angles(_this.middlePosition(oppositeVertices, boCloud, boCreateHypersphere));
 					let middleVertice = _this.vertice2angles(classSettings.distanceOfVertices.middlePosition(oppositeVertices, boCloud, boCreateHypersphere, _this));
 					if (boPushMiddleVertice) classSettings.overriddenProperties.pushMiddleVertice(timeId, middleVertice);
-					if (classSettings.randomMiddleVertice) { middleVertice = new _this.RandomVertice({
+					if (classSettings.randomMiddleVertice) {
 						
-						arc: _this.arc,
-						oppositeVertice: middleVertice,
-						classSettings: classSettings,//используется для вычисления случайной точки в RandomVerticeHSphere HyperSphereNavigator.calculateNewPoint
+//						middleVertice = new _this.RandomVertice
+						middleVertice = new middleVertices.RandomVertice({
 						
-					}).angles[0]; }
+							arc: _this.arc,
+							oppositeVertice: middleVertice,
+							classSettings: classSettings,//используется для вычисления случайной точки в RandomVerticeHSphere HyperSphereNavigator.calculateNewPoint
+							
+						}).angles[0];
+						
+					}
 					
 					if (classSettings.debug && classSettings.debug.middleVertice) {
 
@@ -203,5 +208,34 @@ middleVertices.verticeProxy = (vertice, classSettings, _this, verticeId, positio
 
 	});
 
+}
+middleVertices.randomVertices = (middleVerticeAngles, scene, boCloud = false, boCreateHypersphere = true, _this, RandomVertice) => {
+	
+//	const classSettings = this.classSettings;
+	const classSettings = _this.classSettings;
+	if (!classSettings.randomArc) return;
+
+	if (!_this.params) _this.params = {
+			
+			debug: classSettings.debug ? { notRandomVertices: true,} : false,
+			classSettings: classSettings,//используется для вычисления случайной точки в RandomVerticeHSphere HyperSphereNavigator.calculateNewPoint
+			
+		}
+	_this.params.oppositeVertice = middleVerticeAngles;
+	_this.params.arc = _this.arc;
+	
+	if (_this.randomVertice && (boCloud === false) && (boCreateHypersphere === false)) _this.randomVertice.params = _this.params;//Делается очередной шаг проигрывателя и это уже не первая точка
+	else {
+		
+		if (_this.randomVertice) _this.randomVertice.paramsVerticeOnChange();
+		else _this.randomVertice = new RandomVertice(_this.params, boCloud ? 200 : 1);
+
+	}
+	if (boCreateHypersphere) {
+		
+		if (!_this.hsRandomVertice) _this.hsRandomVertice = _this.randomVertice.getHyperSphere(classSettings, scene, _this.middleVerticeColor);
+
+	}
+	
 }
 export default middleVertices;

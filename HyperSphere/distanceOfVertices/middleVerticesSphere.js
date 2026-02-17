@@ -15,7 +15,9 @@
 
 import middleVertices from './middleVertices.js'
 import three from '../../three.js'
+import { RandomVerticeSphere as RandomVertice } from '../RandomVertice/randomVerticeSphere.js';
 
+middleVertices.RandomVertice = RandomVertice;
 middleVertices.middlePosition = (points, boCloud, boCreateHypersphere, _this) => {
  
  //https://chat.deepseek.com/a/chat/s/24dea3aa-eccd-4e97-a3e3-3f3ff0631de6
@@ -100,7 +102,8 @@ middleVertices.middlePosition = (points, boCloud, boCreateHypersphere, _this) =>
  
 	} else middleVertice = [x / length, y / length, z / length];
  
-	_this.randomVertices(_this.vertice2angles(middleVertice), _this.object3D.parent, boCloud, boCreateHypersphere);
+	middleVertices.randomVertices(_this.vertice2angles(middleVertice), _this.object3D.parent, boCloud, boCreateHypersphere, _this, RandomVertice);
+//	_this.randomVertices(_this.vertice2angles(middleVertice), _this.object3D.parent, boCloud, boCreateHypersphere);
 	return middleVertice;
 	 
 	}

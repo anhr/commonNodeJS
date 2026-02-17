@@ -17,7 +17,7 @@
 
 import Circle from './circle.js';
 import three from '../three.js'
-import { RandomVerticeSphere as RandomVertice } from './RandomVertice/randomVerticeSphere.js';
+//import { RandomVerticeSphere as RandomVertice } from './RandomVertice/randomVerticeSphere.js';
 import * as utils from './utilsSphere.js'
 import Position from './position.js'
 
@@ -244,7 +244,7 @@ class Sphere extends Circle {
 	 * @returns new RandomVertices child class.
 	 */
 	newRandomVertices(scene, options, randomVerticesSettings) { return new RandomVertices(scene, options, randomVerticesSettings); }
-	get RandomVertice() { return RandomVertice; }
+//	get RandomVertice() { return RandomVertice; }
 
 	///////////////////////////////Overridden methods from base class
 
