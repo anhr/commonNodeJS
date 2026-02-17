@@ -197,24 +197,12 @@ class HyperSphere3D extends Sphere {
 
 	//Overridden methods from base class
 
+/*
 	middlePosition(points, boCloud = false, boCreateHypersphere = true) {
 
 		const _this = this;
 		
-		//https://chat.deepseek.com/a/chat/s/8024be13-9782-4432-b29b-7c318db972d0
-		/*
-		Заданы несколько точек на поверхности гиперсферы в декартовой системе координат. Начало координат в центре гиперсферы.
-		Найти точку на поверхности гиперсферы, равноудаленную от заданных точек.
-		Написать код на javascript.
-		*/
 		class HypersphereEquidistantPoint {
-			/**
-			 * Находит точку на гиперсфере, равноудаленную от заданных точек
-			 * @param {Array<Array<number>>} points - Массив точек на гиперсфере
-			 * @param {boolean} [boCloud=false] true - generates a random vertice cloud.
-			 * @param {boolean} [boCreateHypersphere=true] true - creates a random vertices hypersphere.
-			 * @returns {Array<number>} Точка на гиперсфере, равноудаленная от заданных
-			 */
 			static findEquidistantPoint(points, boCloud = false, boCreateHypersphere = true) {
 
 				const n = points[0].length; // Размерность пространства
@@ -260,16 +248,6 @@ class HyperSphere3D extends Sphere {
 
 					const oppositeVertices = points;
 
-					//https://chat.deepseek.com/a/chat/s/85a1d029-0033-437b-a750-c58f9590bd4c
-					/*
-					Дана сфера. На поверхности сферы заданы три точки в декартовой системе координат. Начало координат находится в центре сферы.
-			Построить плоскость, проходящую через заданные три точки.
-			Построить нормаль к этой плоскости такую, что бы она проходила через центр сферы.
-			Вычислить координаты двух точек, в которых норамль пересекается с данной сферой.
-					*/
-					/*
-					Сделать подобные вычисления для гиперсферы в 4-мерном пространстве (n=4). Теперь уже заданы не три, а черыте точки на гиперсфере. Написать код на javascript.
-					*/
 					// Функция вычисления определителя 3x3
 					// Функция вычисления определителя 3x3
 					function det3x3(m) {
@@ -510,12 +488,6 @@ class HyperSphere3D extends Sphere {
 				
 			}
 
-			/**
-			 * Вычисляет расстояние между двумя точками на гиперсфере (хордальное расстояние)
-			 * @param {Array<number>} point1 
-			 * @param {Array<number>} point2 
-			 * @returns {number} Расстояние
-			 */
 			static calculateDistance(point1, point2) {
 				let sum = 0;
 				for (let i = 0; i < point1.length; i++) {
@@ -525,12 +497,6 @@ class HyperSphere3D extends Sphere {
 				return Math.sqrt(sum);
 			}
 
-			/**
-			 * Вычисляет сферическое (угловое) расстояние между точками
-			 * @param {Array<number>} point1 
-			 * @param {Array<number>} point2 
-			 * @returns {number} Угол в радианах
-			 */
 			static calculateAngularDistance(point1, point2) {
 				let dot = 0;
 				for (let i = 0; i < point1.length; i++) {
@@ -541,12 +507,6 @@ class HyperSphere3D extends Sphere {
 				return Math.acos(dot);
 			}
 
-			/**
-			 * Альтернативный метод: через минимизацию суммы квадратов расстояний
-			 * @param {Array<Array<number>>} points 
-			 * @param {number} iterations - Количество итераций для градиентного спуска
-			 * @returns {Array<number>}
-			 */
 			static findEquidistantPointGradient(points, iterations = 1000) {
 				const n = points[0].length;
 
@@ -586,11 +546,6 @@ class HyperSphere3D extends Sphere {
 				return point;
 			}
 
-			/**
-			 * Генерирует случайную точку на гиперсфере
-			 * @param {number} dimension - Размерность
-			 * @returns {Array<number>}
-			 */
 			static randomPointOnHypersphere(dimension) {
 				const point = new Array(dimension);
 				let sum = 0;
@@ -610,6 +565,7 @@ class HyperSphere3D extends Sphere {
 		return HypersphereEquidistantPoint.findEquidistantPoint(points, boCloud, boCreateHypersphere);
 
 	}
+*/
 	ZeroArray() { return [0, 0, 0]; }
 	Vertice(angles) { return utils.angles(angles); }
 	/**

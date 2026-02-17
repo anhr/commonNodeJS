@@ -40,6 +40,7 @@
 		MyThree.three.THREE = THREE;
 
 		import Circle from '../circle.js';
+		import distanceOfVertices from '../distanceOfVertices/middleVerticesCircle.js';
 
 		new MyThree( (scene, options) => {
 
@@ -51,6 +52,7 @@
 			
 			new Circle(options, {
 				
+				distanceOfVertices: distanceOfVertices,
 				intersection: {
 
 					position: 0.5,
@@ -93,6 +95,7 @@
 					probabilityDensity: false,
 					//probabilityDensity: [],
 					//testVertice: false,
+					middleVertice: false,
 					log: false,
 					
 				},

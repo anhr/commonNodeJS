@@ -161,20 +161,10 @@ class Circle extends HyperSphere {
 	}
 
 	//Overridden methods from base class
-
+/*
 	middlePosition(points, boCloud, boCreateHypersphere) {
 	
 		const _this = this;
-		//https://chat.deepseek.com/a/chat/s/348ed591-765f-4ab2-8924-a3546b62ef24
-		/*
-		Заданы несколько точек на поверхности окружности в декартовой системе координат. Начало координат в центре окружности.
-		Найти точку на поверхности окружности, равноудаленную от заданных точек. Написать код на javascript.
-		*/
-		/**
-		 * Находит точку на окружности, равноудаленную от заданных точек
-		 * @param {Array} points - Массив точек вида [{x, y}, {x, y}, ...]
-		 * @returns {Object} Точка на окружности {x, y} или null, если решение не найдено
-		 */
 		function findEquidistantPointOnCircle(points) {
 
 			if (!points || points.length === 0) {
@@ -184,19 +174,6 @@ class Circle extends HyperSphere {
 
 			const radius = _this.r;
 			
-			/*
-			// 1. Проверяем, что все точки лежат на окружности
-			const radius = Math.sqrt(points[0].x * points[0].x + points[0].y * points[0].y);
-	
-			for (let i = 1; i < points.length; i++) {
-				const r = Math.sqrt(points[i].x * points[i].x + points[i].y * points[i].y);
-				if (Math.abs(r - radius) > 1e-10) {
-					console.warn('Не все точки лежат на окружности одного радиуса!');
-					return null;
-				}
-			}
-			*/
-	
 			// 2. Если только одна точка, возвращаем диаметрально противоположную
 			if (points.length === 1) {
 				console.error(sCircle + ': findEquidistantPointOnCircle. Если только одна точка, возвращаем диаметрально противоположную');
@@ -255,9 +232,6 @@ class Circle extends HyperSphere {
 			
 		}
 
-		/**
-		 * Выбирает точку с меньшей дисперсией расстояний до заданных точек
-		 */
 		function selectBetterPoint(point1, point2, points) {
 			const variance1 = calculateDistanceVariance(point1, points);
 			const variance2 = calculateDistanceVariance(point2, points);
@@ -265,9 +239,6 @@ class Circle extends HyperSphere {
 			return variance1 <= variance2 ? point1 : point2;
 		}
 
-		/**
-		 * Вычисляет дисперсию расстояний от точки до всех заданных точек
-		 */
 		function calculateDistanceVariance(point, points) {
 			const distances = points.map(p => {
 				const dx = p.x - point.x;
@@ -284,6 +255,7 @@ class Circle extends HyperSphere {
 		return findEquidistantPointOnCircle(points);
 
 	}
+*/
 	ZeroArray() { return [0]; }
 	Vertice(angles) { return utils.angles(angles); }
 	/**

@@ -40,6 +40,7 @@
 		MyThree.three.THREE = THREE;
 
 		import HyperSphere3D from '../hyperSphere3D.js';
+		import distanceOfVertices from '../distanceOfVertices/middleVerticesHSphere.js';
 
 		new MyThree( (scene, options) => {
 
@@ -52,6 +53,7 @@
 			new HyperSphere3D(options,
 			{
 
+				distanceOfVertices: distanceOfVertices,
 				/*
 				intersection: {
 					
@@ -63,7 +65,7 @@
 				//onSelectScene: (hyperSphere, timeId, t) => { if (hyperSphere.distanceOfVertices) return hyperSphere.distanceOfVertices(timeId, t); },
 				edges: {
 
-					project: false,//Doesn't project edges onto canvas
+					//project: false,//Doesn't project edges onto canvas
 					//creationMethod: HyperSphere3D.edgesCreationMethod.Random,
 					
 				},

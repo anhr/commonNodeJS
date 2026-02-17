@@ -168,7 +168,8 @@ middleVertices.verticeProxy = (vertice, classSettings, _this, verticeId, positio
 
 					});
 
-					let middleVertice = _this.vertice2angles(_this.middlePosition(oppositeVertices, boCloud, boCreateHypersphere));
+//					let middleVertice = _this.vertice2angles(_this.middlePosition(oppositeVertices, boCloud, boCreateHypersphere));
+					let middleVertice = _this.vertice2angles(classSettings.distanceOfVertices.middlePosition(oppositeVertices, boCloud, boCreateHypersphere, _this));
 					if (boPushMiddleVertice) classSettings.overriddenProperties.pushMiddleVertice(timeId, middleVertice);
 					if (classSettings.randomMiddleVertice) { middleVertice = new _this.RandomVertice({
 						

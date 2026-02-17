@@ -142,23 +142,11 @@ class Sphere extends Circle {
 	}
 
 	//Overridden methods from base class
-
+/*
 	middlePosition(points, boCloud, boCreateHypersphere) {
 
 		const _this = this;
 		
-		//https://chat.deepseek.com/a/chat/s/24dea3aa-eccd-4e97-a3e3-3f3ff0631de6
-		/*
-		Заданы несколько точек на поверхности сферы в декартовой системе координат. Начало координат в центре сферы.
-		Найти точку на поверхности сферы, равноудаленную от заданных точек.
-		Написать код на javascript.
-		*/
-		/**
-		 * Находит точку на поверхности сферы (с центром в начале координат),
-		 * которая приблизительно равноудалена от заданных точек.
-		 * @param {Array<Array<number>>} points - Массив точек [x, y, z]
-		 * @returns {Array<number>} Точка на сфере [x, y, z] или null, если точки не заданы
-		 */
 		function findEquidistantPoint(points) {
 			
 			if (!points || points.length === 0) {
@@ -236,6 +224,7 @@ class Sphere extends Circle {
 		return findEquidistantPoint(points);
 
 	}
+*/	
 	ZeroArray() { return [0, 0]; }
 	Vertice(angles) { return utils.angles(angles); }
 	/**
