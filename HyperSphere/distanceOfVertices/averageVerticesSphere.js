@@ -13,10 +13,12 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 
-import middleVertices from './middleVertices.js'
+import averageVertices from './averageVertices.js'
 import three from '../../three.js'
+import { RandomVerticeSphere as RandomVertice } from '../RandomVertice/randomVerticeSphere.js';
 
-middleVertices.middlePosition = (points, boCloud, boCreateHypersphere, _this) => {
+averageVertices.RandomVertice = RandomVertice;
+averageVertices.averageDistance = (points, boCloud, boCreateHypersphere, _this) => {
  
  //https://chat.deepseek.com/a/chat/s/24dea3aa-eccd-4e97-a3e3-3f3ff0631de6
  /*
@@ -100,11 +102,11 @@ middleVertices.middlePosition = (points, boCloud, boCreateHypersphere, _this) =>
  
 	} else middleVertice = [x / length, y / length, z / length];
  
-	_this.randomVertices(_this.vertice2angles(middleVertice), _this.object3D.parent, boCloud, boCreateHypersphere);
+	averageVertices.randomVertices(_this.vertice2angles(middleVertice), _this.object3D.parent, boCloud, boCreateHypersphere, _this, RandomVertice);
 	return middleVertice;
 	 
 	}
 	return findEquidistantPoint(points);
 
 }
-export default middleVertices;
+export default averageVertices;
