@@ -182,7 +182,8 @@ class RandomVertice {
 			{
 				
 				debug: debug,
-				r: classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : options.player ? options.player.getTimeId() : 0),
+//				r: classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : options.player ? options.player.getTimeId() : 0),
+				r: classSettings.overriddenProperties.rTime(),
 				name: 'Random Cloud'
 				
 			});

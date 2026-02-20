@@ -559,7 +559,7 @@ class HyperSphere extends MyObject {
 										//если тут обновлять вершину то каждая вершина будет обноляться несколько раз в зависимости от количества углов. Сейчас вершина обновляется после обновления всех углов вершины
 										if(_this.isSetPositionAttributeFromPoint != false) {
 
-											const position = verticeAnglesFromPosition ? this.a2v(verticeAnglesFromPosition, classSettings.overriddenProperties.r(classSettings.settings.guiPoints ? classSettings.settings.guiPoints.timeId : 0)) : undefined
+											const position = verticeAnglesFromPosition ? this.a2v(verticeAnglesFromPosition/*, classSettings.overriddenProperties.r(classSettings.settings.guiPoints ? classSettings.settings.guiPoints.timeId : 0)*/) : undefined
 											_this.setPositionAttributeFromPoint(verticeId, Position(position));//обновляем только одну ось в декартовой системе координат
 											_this.bufferGeometry.attributes.position.needsUpdate = true;
 	
@@ -991,7 +991,7 @@ class HyperSphere extends MyObject {
 							const verticeId = parseInt(name);
 							if (!isNaN(verticeId)) {
 
-								this.setPositionAttributeFromPoint(verticeId, this.a2v(value, classSettings.overriddenProperties.r(classSettings.settings.guiPoints ? classSettings.settings.guiPoints.timeId : 0)));
+								this.setPositionAttributeFromPoint(verticeId, this.a2v(value/*, classSettings.overriddenProperties.r(classSettings.settings.guiPoints ? classSettings.settings.guiPoints.timeId : 0)*/));
 								this.bufferGeometry.attributes.position.needsUpdate = true;
 
 							} else angles[name] = value;
@@ -1094,7 +1094,13 @@ class HyperSphere extends MyObject {
 			
 		}
 		if (!overriddenProperties.vertices) overriddenProperties.vertices = () => { return []; }
-		if (!overriddenProperties.r) overriddenProperties.r = (timeId) => { return classSettings.r; }
+		if (!overriddenProperties.r) overriddenProperties.r = () => { return classSettings.r; }
+		if (!overriddenProperties.rTime) overriddenProperties.rTime = () => {
+			
+			const settings = classSettings.settings;
+			return classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : settings.options.player === false ? 0 : settings.options.player.getTimeId());
+		
+		}
 		if (!overriddenProperties.pushMiddleVertice) overriddenProperties.pushMiddleVertice = () => {}
 		if (!overriddenProperties.angles) overriddenProperties.angles = (anglesId) => { return this.Vertice(classSettings.settings.object.geometry.angles[anglesId]); }
 		if (!overriddenProperties.verticeAngles) overriddenProperties.verticeAngles = (anglesCur, verticeId) => { return anglesCur[verticeId];}
@@ -1109,13 +1115,13 @@ class HyperSphere extends MyObject {
 		this.pointLength = () => { return this.dimension > 2 ? this.dimension : 3; }//itemSize of the buiffer.attributes.position должен быть больше 2. Иначе при копировании из буфера в THREE.Vector3 координата z = undefined
 		this.getPoint = (anglesId, timeId) => {
 
-			const r = classSettings.overriddenProperties.r(timeId),
-				angles = typeof anglesId === "number" ? classSettings.overriddenProperties.angles(anglesId, timeId) : anglesId;
-			const vertice = this.a2v(angles, r);
+//			const r = classSettings.overriddenProperties.r(timeId),
+			const angles = typeof anglesId === "number" ? classSettings.overriddenProperties.angles(anglesId, timeId) : anglesId;
+			const vertice = this.a2v(angles);//, r);
 			if (this.classSettings.debug && this.classSettings.debug.testVertice){
 	
 				const vertice2angles = this.vertice2angles(vertice),
-					angles2vertice = this.a2v(vertice2angles, r);
+					angles2vertice = this.a2v(vertice2angles);//, r);
 				const value = vertice;
 				if (angles2vertice.length != value.length) console.error(sHyperSphere + ': Set vertice failed. angles2vertice.length = ' + angles2vertice.length + ' is not equal value.length = ' + value.length);
 				const d = 4e-15;
@@ -1620,7 +1626,7 @@ this.object = () => {
 
 							} : settings.edges,
 							projectParams: { scene: classSettings.projectParams.scene, },
-							r: classSettings.overriddenProperties.r(classSettings.settings.guiPoints ? classSettings.settings.guiPoints.timeId : 0),
+							r: this.r,//classSettings.overriddenProperties.r(classSettings.settings.guiPoints ? classSettings.settings.guiPoints.timeId : 0),
 							debug: classSettings.debug,
 							settings: {
 
@@ -3060,8 +3066,11 @@ this.object = () => {
 	setArc(radius, length) { this.arc = π * (/*radius - */length); }
 	get r() {
 
+/*		
 		const settings = this.classSettings.settings;
 		return this.classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : settings.options.player === false ? 0 : settings.options.player.getTimeId());
+*/		
+		return this.classSettings.overriddenProperties.rTime();
 		
 	}
 	/**
