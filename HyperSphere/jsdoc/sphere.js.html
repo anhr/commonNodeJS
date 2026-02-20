@@ -45,8 +45,7 @@
 
 import Circle from './circle.js';
 import three from '../three.js'
-import { RandomVerticeSphere as RandomVertice } from './RandomVertice/randomVerticeSphere.js';
-//import RandomCloud from './RandomVertice/randomCloudSphere.js';
+//import { RandomVerticeSphere as RandomVertice } from './RandomVertice/randomVerticeSphere.js';
 import * as utils from './utilsSphere.js'
 import Position from './position.js'
 
@@ -86,7 +85,6 @@ class Sphere extends Circle {
 			//порядок размещения осей в декартовой системе координат
 			//нужно что бы широта двигалась по оси y а долгота вращалась вокруг y
 			indices: [1, 0, 2],//долгота вращается вокруг оси y. Широта двигается вдоль оси y. Вершины собираются по краям оси y
-//			indices: [0, 1, 2],
 			names: (getLanguageCode) => { return super.axes.names(getLanguageCode); }
 
 		}
@@ -172,23 +170,11 @@ class Sphere extends Circle {
 	}
 
 	//Overridden methods from base class
-
+/*
 	middlePosition(points, boCloud, boCreateHypersphere) {
 
 		const _this = this;
 		
-		//https://chat.deepseek.com/a/chat/s/24dea3aa-eccd-4e97-a3e3-3f3ff0631de6
-		/*
-		Заданы несколько точек на поверхности сферы в декартовой системе координат. Начало координат в центре сферы.
-		Найти точку на поверхности сферы, равноудаленную от заданных точек.
-		Написать код на javascript.
-		*/
-		/**
-		 * Находит точку на поверхности сферы (с центром в начале координат),
-		 * которая приблизительно равноудалена от заданных точек.
-		 * @param {Array&lt;Array&lt;number>>} points - Массив точек [x, y, z]
-		 * @returns {Array&lt;number>} Точка на сфере [x, y, z] или null, если точки не заданы
-		 */
 		function findEquidistantPoint(points) {
 			
 			if (!points || points.length === 0) {
@@ -256,7 +242,6 @@ class Sphere extends Circle {
 
 				// Вычисление точек пересечения нормали со сферой
 				middleVertice = findSphereNormalIntersections(normal, sphereRadius);
-//				middleVerticeAngles = _this.vertice2angles(middleVertice);
 
 			} else middleVertice = [x / length, y / length, z / length];
 
@@ -264,47 +249,10 @@ class Sphere extends Circle {
 			return middleVertice;
 			
 		}
-
-		/**
-		 * Вычисляет угловое расстояние (в радианах) между двумя точками на сфере.
-		 * @param {Array&lt;number>} p1 - Точка [x, y, z]
-		 * @param {Array&lt;number>} p2 - Точка [x, y, z]
-		 * @returns {number} Угловое расстояние в радианах
-		 */
-		/*
-		function angularDistance(p1, p2) {
-			const dot = p1[0] * p2[0] + p1[1] * p2[1] + p1[2] * p2[2];
-			// Избегаем ошибок округления
-			const clamped = Math.max(-1, Math.min(1, dot));
-			return Math.acos(clamped);
-		}
-		*/
-
-		// Пример использования
-		/*
-		const points = [
-			[1, 0, 0],
-			[0, 1, 0],
-			[0, 0, 1]
-		];
-		*/
-
-		const result = findEquidistantPoint(points);
-		/*
-		console.log("Приближенная равноудаленная точка:", result);
-
-		// Проверяем расстояния
-		if (result) {
-			console.log("Угловые расстояния до каждой точки:");
-			for (const point of points) {
-				const dist = angularDistance(result, point);
-				console.log(`Точка ${point}: ${dist.toFixed(6)} рад (${(dist * 180 / Math.PI).toFixed(2)}°)`);
-			}
-		}
-		*/
-		return result;
+		return findEquidistantPoint(points);
 
 	}
+*/	
 	ZeroArray() { return [0, 0]; }
 	Vertice(angles) { return utils.angles(angles); }
 	/**
@@ -313,256 +261,10 @@ class Sphere extends Circle {
 	 * @returns Vertice angles.
 	 */
 	vertice2angles(vertice) { return utils.casterianToAngles(Position(vertice)); }
-	a2v(angles, r = 1) { return utils.anglesToCartesian(angles, r); }
-//	normalizeAngles(angles){
-
-		/*https://chat.deepseek.com/a/chat/s/26327d17-c346-476d-9199-a0814f3a7a0a
-		Есть точка на поверхности сферы в полярной системе координат. Начало полярной системы координат находится в центре сферы.
-		Положение точки обозначить как
-		point.latitude - широта в диапазоне от -π/2 до π/2,
-		point.longitude - долгота в диапазоне от -π до π,
-		Пусть положение точки point задано за пределами допустимого диапазона углов.
-		Написать функцию на javascript с названием normalize, которая нормализует положение точки point в допустимый диапазон.
-
-		Как работает функция:
-
-		Долгота нормализуется в диапазон [-π, π] с помощью операции взятия по модулю
-
-		Широта сначала также нормализуется по модулю, но если она выходит за пределы [-π/2, π/2], то:
-
-		Широта отражается относительно полюсов
-
-		Долгота сдвигается на π (антиподальная точка)
-
-		Долгота снова нормализуется после сдвига
-
-		Это обеспечивает корректное отображение любой точки на поверхности сферы в допустимый диапазон координат.
-		*/
-/*
-		const normalize = (normalized) => {
-
-			// Нормализация долготы в диапазон [-π, π]
-			normalized.longitude = normalized.longitude % (2 * Math.PI);
-			if (normalized.longitude > Math.PI) {
-				normalized.longitude -= 2 * Math.PI;
-			} else if (normalized.longitude &lt; -Math.PI) {
-				normalized.longitude += 2 * Math.PI;
-			}
-
-			// Нормализация широты в диапазон [-π/2, π/2]
-			normalized.latitude = normalized.latitude % (2 * Math.PI);
-
-			// Если широта выходит за пределы [-π/2, π/2], отражаем ее
-			if (Math.abs(normalized.latitude) > Math.PI / 2) {
-				if (normalized.latitude > 0) {
-					normalized.latitude = Math.PI - normalized.latitude;
-				} else {
-					normalized.latitude = -Math.PI - normalized.latitude;
-				}
-
-				// После отражения, сдвигаем долготу на π
-				normalized.longitude += Math.PI;
-
-				// Снова нормализуем долготу после сдвига
-				normalized.longitude = normalized.longitude % (2 * Math.PI);
-				if (normalized.longitude > Math.PI) {
-					normalized.longitude -= 2 * Math.PI;
-				} else if (normalized.longitude &lt; -Math.PI) {
-					normalized.longitude += 2 * Math.PI;
-				}
-			}
-		}
-
-		// Тестовые случаи
-		const point1DeepSeek = { latitude: 3, longitude: 5 }
-		normalize(point1DeepSeek);
-		console.log(point1DeepSeek);
-		// {latitude: ~1.1416, longitude: ~-1.2832}
-
-		const point2DeepSeek = { latitude: -2, longitude: 4 }
-		normalize(point2DeepSeek);
-		console.log(normalize(point2DeepSeek));
-		// {latitude: ~-2, longitude: ~-2.2832}
-
-		const point3DeepSeek = { latitude: Math.PI, longitude: 2 * Math.PI }
-		normalize(point3DeepSeek);
-		console.log(normalize(point3DeepSeek));
-		// {latitude: ~0, longitude: ~0}
-
-		const point4DeepSeek = { latitude: -3 * Math.PI / 2, longitude: -3 * Math.PI }
-		normalize(point4DeepSeek);
-		console.log(normalize(point4DeepSeek));
-		// {latitude: ~0, longitude: ~0}
-
-		//https://gemini.google.com/app/64aa493066e3b07e
-*/
-		/**
-		 * Нормализует широту и долготу точки в допустимые диапазоны.
-		 * point.latitude: широта, от -π/2 до π/2
-		 * point.longitude: долгота, от -π до π
-		 * @param {object} point Объект с полями latitude и longitude.
-		 * @param {number} point.latitude Текущая широта.
-		 * @param {number} point.longitude Текущая долгота.
-		 * @returns {object} Новый объект с нормализованными latitude и longitude.
-		 */
-/*
-		function normalizeGemini(point) {
-			const PI = Math.PI;
-
-			// 1. Нормализация долготы (longitude) в диапазон (-π, π]
-			let normalizedLongitude = point.longitude % (2 * PI);
-			if (normalizedLongitude > PI) {
-				normalizedLongitude -= 2 * PI;
-			} else if (normalizedLongitude &lt;= -PI) {
-				normalizedLongitude += 2 * PI;
-			}
-			// Примечание: Если нужно строго (-π, π), то случай -π обрабатывается как π,
-			// но в геодезии обычно используют (-180, 180], что соответствует (-π, π].
-			// Для строгого (-π, π) нужно поменять &lt;= на &lt; в последнем условии,
-			// но при % (2 * PI) и последующих операциях крайние случаи обычно попадают в π или -π.
-			// Если point.longitude изначально кратно 2*PI, то % даст 0, что корректно.
-
-			// 2. Нормализация широты (latitude)
-			let normalizedLatitude = point.latitude;
-
-			// Сначала приводим широту к диапазону [-π/2, 3π/2] (или аналогичному),
-			// чтобы учесть "переход через полюса".
-			let revs = Math.floor((normalizedLatitude + PI / 2) / (2 * PI));
-			let adjustedLatitude = normalizedLatitude - revs * 2 * PI;
-
-			// Проверяем, в какой полуоборот попадает широта
-			if (adjustedLatitude > PI / 2 &amp;&amp; adjustedLatitude &lt;= 3 * PI / 2) {
-				// Переход через Северный полюс (π/2) или Южный полюс (-π/2 после приведения)
-
-				// Меняем полушарие
-				normalizedLatitude = PI - adjustedLatitude;
-
-				// Также нужно сдвинуть долготу на π (180 градусов), т.к. мы перешли на противоположную сторону
-				normalizedLongitude = normalizedLongitude + PI;
-
-				// Повторная нормализация долготы после сдвига
-				normalizedLongitude = normalizedLongitude % (2 * PI);
-				if (normalizedLongitude > PI) {
-					normalizedLongitude -= 2 * PI;
-				} else if (normalizedLongitude &lt;= -PI) { // Используем &lt;= для включения -π в случай сдвига, если исходная была π
-					normalizedLongitude += 2 * PI;
-				}
-
-			} else {
-				// Широта уже в диапазоне [-π/2, π/2]
-				normalizedLatitude = adjustedLatitude;
-			}
-
-			// Финальная проверка на крайние случаи (хотя должно быть уже корректно)
-			// Ограничение широты:
-			if (normalizedLatitude > PI / 2) {
-				normalizedLatitude = PI / 2;
-			} else if (normalizedLatitude &lt; -PI / 2) {
-				normalizedLatitude = -PI / 2;
-			}
-
-			return {
-				latitude: normalizedLatitude,
-				longitude: normalizedLongitude
-			};
-		}
-
-		// Пример использования:
-		const point1 = { latitude: 5 * Math.PI / 2 + 0.1, longitude: 3 * Math.PI }; // Широта больше π/2, Долгота больше π
-		const normalized1 = normalizeGemini(point1);
-		console.log(`Исходная: lat=${point1.latitude.toFixed(3)}, lon=${point1.longitude.toFixed(3)}`);
-		console.log(`Нормализованная: lat=${normalized1.latitude.toFixed(3)} (~${Math.PI / 2 - 0.1}), lon=${normalized1.longitude.toFixed(3)} (~0)`);
-		// Ожидаемый результат: lat: π/2 - 0.1 (полюс + обратный путь), lon: 0 (3π -> π -> -π -> 0)
-		// После 2*π оборота: lat: π/2 + 0.1, lon: π.
-		// Переход через полюс: new_lat = π - (π/2 + 0.1) = π/2 - 0.1. new_lon = π + π = 2π -> 0.
-
-		const point2 = { latitude: -Math.PI, longitude: -5 * Math.PI / 2 }; // Широта меньше -π/2, Долгота меньше -π
-		const normalized2 = normalizeGemini(point2);
-		console.log(`\nИсходная: lat=${point2.latitude.toFixed(3)}, lon=${point2.longitude.toFixed(3)}`);
-		console.log(`Нормализованная: lat=${normalized2.latitude.toFixed(3)} (~0), lon=${normalized2.longitude.toFixed(3)} (~-π/2)`);
-		// Ожидаемый результат: lat: 0, lon: -π/2
-		// После 2*π оборота: lat: -π, lon: -π/2.
-		// Переход через полюс: lat: -π, adjusted = -π. revs = -1. adjustedLatitude = -π - (-1 * 2π) = π.
-		// 0 &lt; π/2 &amp;&amp; π &lt;= 3π/2. new_lat = π - π = 0. new_lon = -π/2 + π = π/2.
-
-		const point3 = { latitude: 0, longitude: 2.5 * Math.PI };
-		const normalized3 = normalizeGemini(point3);
-		console.log(`\nИсходная: lat=${point3.latitude.toFixed(3)}, lon=${point3.longitude.toFixed(3)}`);
-		console.log(`Нормализованная: lat=${normalized3.latitude.toFixed(3)} (~0), lon=${normalized3.longitude.toFixed(3)} (~π/2)`);
-		// Ожидаемый результат: lat: 0, lon: 0.5π
-
-		const point4 = { latitude: Math.PI / 2 + 0.1, longitude: 0 };
-		const normalized4 = normalizeGemini(point4);
-		console.log(`\nИсходная: lat=${point4.latitude.toFixed(3)}, lon=${point4.longitude.toFixed(3)}`);
-		console.log(`Нормализованная: lat=${normalized4.latitude.toFixed(3)} (~π/2 - 0.1), lon=${normalized4.longitude.toFixed(3)} (~π)`);
-		// Ожидаемый результат: lat: π/2 - 0.1, lon: π. (Переход через Северный полюс)
-
-		const point5 = { latitude: -Math.PI / 2 - 0.1, longitude: Math.PI / 2 };
-		const normalized5 = normalizeGemini(point5);
-		console.log(`\nИсходная: lat=${point5.latitude.toFixed(3)}, lon=${point5.longitude.toFixed(3)}`);
-		console.log(`Нормализованная: lat=${normalized5.latitude.toFixed(3)} (~-π/2 + 0.1), lon=${normalized5.longitude.toFixed(3)} (~-π/2)`);
-		// Ожидаемый результат: lat: -π/2 + 0.1, lon: -π/2. (Переход через Южный полюс)
-
-		angles.forEach((verticeAngles) => {
-
-			
-		});
-		
-	}
-*/
+	a2v(angles, r = this.r) { return utils.anglesToCartesian(angles, r); }
 	get verticeEdgesLengthMax() { return 3/*6*/; }//нельзя добавлть новое ребро если у вершины уже 6 ребра
 	get dimension() { return 3; }//space dimension
 	get verticesCountMin() { return 4; }
-/*
-	getRandomMiddleAngles(oppositeVertices) {
-
-		const THREE = three.THREE;
-		
-		//http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/NormalSphere.html
-		
-		// Радиус сферы
-		const settings = this.classSettings.settings;
-		const sphereRadius = this.classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : settings.options.player.getTimeId());//this.classSettings.r;
-
-		// Заданные три точки на сфере (в декартовых координатах)
-		if (oppositeVertices.length != 3) console.error(sSphere + ': getRandomMiddleAngles. Invalid oppositeVertices.length = ' + oppositeVertices.length);
-		const oppositeVerticeA = oppositeVertices[0];
-		const pointA = new THREE.Vector3(oppositeVerticeA.x, oppositeVerticeA.y, oppositeVerticeA.z);//(3, 4, 0);
-		const oppositeVerticeB = oppositeVertices[1];
-		const pointB = new THREE.Vector3(oppositeVerticeB.x, oppositeVerticeB.y, oppositeVerticeB.z);//(0, 3, -4);
-		const oppositeVerticeC = oppositeVertices[2];
-		const pointC = new THREE.Vector3(oppositeVerticeC.x, oppositeVerticeC.y, oppositeVerticeC.z);//(-3, -4, 0);
-
-		//// Нормализуем точки, чтобы они точно лежали на сфере
-		//pointA.normalize().multiplyScalar(sphereRadius);
-		//pointB.normalize().multiplyScalar(sphereRadius);
-		//pointC.normalize().multiplyScalar(sphereRadius);
-
-		// Функция для построения плоскости по трем точкам
-		function createPlaneFromPoints(p1, p2, p3) {
-			// Вычисляем нормаль плоскости через векторное произведение
-			const v1 = new THREE.Vector3().subVectors(p2, p1);
-			const v2 = new THREE.Vector3().subVectors(p3, p1);
-			const normal = new THREE.Vector3().crossVectors(v1, v2).normalize();
-			return normal;
-		}
-
-		// Функция для вычисления точек пересечения нормали со сферой
-		function findSphereNormalIntersections(normal, radius) {
-			// Нормаль уже проходит через центр сферы (начало координат)
-			// Уравнение пересечения: |t * normal| = radius
-			// t = ±radius (так как normal - единичный вектор)
-
-			return normal.clone().multiplyScalar(Math.random() > 0.5 ? radius: -radius);
-		}
-		const normal = createPlaneFromPoints(pointA, pointB, pointC);
-
-		// Вычисление точек пересечения нормали со сферой
-		const point = findSphereNormalIntersections(normal, sphereRadius);
-		return this.vertice2angles(Position([point.x, point.y, point.z]));
-		
-	}
-*/
 	/**
 	 * @param {THREE.Scene} scene [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}
 	 * @param {Options} options See &lt;a href="../../jsdoc/Options/Options.html" target="_blank">Options&lt;/a>.
@@ -570,279 +272,11 @@ class Sphere extends Circle {
 	 * @returns new RandomVertices child class.
 	 */
 	newRandomVertices(scene, options, randomVerticesSettings) { return new RandomVertices(scene, options, randomVerticesSettings); }
-	get RandomVertice() { return RandomVertice; }
-//	get RandomCloud() { return RandomCloud; }
+//	get RandomVertice() { return RandomVertice; }
 
 	///////////////////////////////Overridden methods from base class
 
 }
-
-class RandomVertices extends Circle.RandomVertices {
-
-	constructor(scene, options, randomVerticesSettings){
-
-		if (randomVerticesSettings.np === undefined) randomVerticesSettings.np = 36;
-		super(scene, options, randomVerticesSettings);
-		this.class = Sphere;
-		
-	}
-
-	//overridden methods
-
-	getHyperSphere(options, classSettings) {
-
-		let circlesSphere;
-		circlesSphere = new Sphere(options, classSettings);
-		return circlesSphere;
-
-	}
-	getArcAngle(vertice, oppositeVertice)
-	{
-		
-		//DeepSeek. вычислить угол между двумя точками на поверхности шара
-		//векторы
-		//A=(R,ϕ1,λ1 ) - vertice
-		const ϕ1 = vertice[0], λ1 = vertice[1];
-		//B=(R,ϕ2,λ2 ) - oppositeVertice
-		const ϕ2 = oppositeVertice[0], λ2 = oppositeVertice[1];
-		//где
-		//ϕ — широта (от −90° до 90°),
-		//λ — долгота (от −180° до 180°),
-		const arccos = Math.acos, sin = Math.sin, cos = Math.cos;
-		const θ = arccos(sin(ϕ1) * sin(ϕ2) + cos(ϕ1) * cos(ϕ2) * cos(λ1 - λ2));
-		if (isNaN(θ)) console.error(sSphere + ': getArcAngle. Invalid θ = ' + θ);
-		return θ;
-		
-	}
-	oppositeVertice0(params, inaccurateLatitude) {
-
-		let latitude = params.oppositeVertice.latitude;
-		Object.defineProperty(params.oppositeVertice, '0', {
-
-			get: () => { return latitude; },
-			set: (latitudeNew) => {
-	
-				latitude = inaccurateLatitude(latitudeNew);
-				return true;
-	
-			},
-	
-		});
-		
-	}
-//	antipodeCenter(params, antipodeLatitude) { return [antipodeLatitude(params.oppositeVertice.latitude), params.oppositeVertice.longitude - π]; }
-	zeroArray() { return utils.angles([0, 0]); }
-	onePointArea(d, np) {
-		
-		//Площадь сферы на которой в среднем будет находиться одна случайная точка.
-		//Площадь сферы вычисляем из площади боковой поверхности цилиндра, поделенной на количество точек на окружности np
-		//Цилиндр расположен на экваторе сферы так, чтобы его середина касалась экватора
-		//Высота цилиндра в радианах равна d.
-		const h = 2 * Math.tan(d / 2),//Высота цилиндра радиусом 1. См. https://en.wikipedia.org/wiki/Trigonometric_functions
-			S = 2 * π * h;//Площадь боковой поверхности цилиндра радиусом 1
-		return S / np;//Площадь сферы на которой в среднем будет находиться одна случайная точка.
-		
-	}
-	numPoints(d, s, circleId, x) {
-		
-		//Для вычисления количества случайных точек numPoints около окружности, расположенной на расстоянии circleDistance радиан
-		//я вычисляю площадь шарового пояса между параллелями S и делю ее на s площадь сферы на которой в среднем будет находиться одна случайная точка.
-		const cos = Math.cos,
-			h1 = cos(x),//расстояние от текущей окружности до центра шара
-			hprev = cos((circleId - 1) * d),//расстояние от предыдущей окружности до центра шара
-			h = h1 - hprev,//высота шарового пояса
-			S = Math.abs(2 * π * h);//DeepSeek. площадь шарового пояса между параллелями
-		return Math.round(S / s);//количество случайных точек около окружности, расположенной на расстоянии circleDistance радиан
-		
-	}
-/*	
-	center(params) {
-		
-		//center is antipode of the opposite vertice
-		//Центр окружностей случайных точек center находится с противоположной от params.oppositeVertice стороны гиперсферы
-		const antipodeLatitude = (latitude) => { return -latitude; },
-//			center = params.randomVertices.antipodeCenter(params, antipodeLatitude);
-			center = [antipodeLatitude(params.oppositeVertice.latitude), params.oppositeVertice.longitude - π];
-		
-		Object.defineProperty(center, 'lat', {
-			
-			get: () => { return center[0]; },
-			set: (lat) => {
-	
-				params.oppositeVertice.latitude = antipodeLatitude(lat);
-				return true;
-	
-			},
-		
-		});
-		Object.defineProperty(center, 'lng', { get: () => { return center[1]; }, });
-		return center;
-		
-	}
-*/	
-	getCirclePoint2D(circleDistance, params, options) {
-		
-		let newLat, newLng;
-		const center = params.center, angle = 2 * π * (params.random ? Math.random() : options.i / options.numPoints), // Текущий угол в радианах
-			lat = center.lat, lng = center.lng;
-			
-		if (circleDistance === 0) {
-
-			//длинна дуги равна нулю. Координаты точки окружности противоположны координатам центра окружности
-			newLat = - lat;
-			newLng = lng + π;
-
-		} else {
-
-			// Формулы сферической тригонометрии
-			newLat = Math.asin(
-				Math.sin(lat) * Math.cos(circleDistance) +
-				Math.cos(lat) * Math.sin(circleDistance) * Math.cos(angle)
-			);
-
-			newLng = lng + Math.atan2(
-				Math.sin(angle) * Math.sin(circleDistance) * Math.cos(lat),
-				Math.cos(circleDistance) - Math.sin(lat) * Math.sin(newLat)
-			);
-
-		}
-
-		//Normalise angles
-		if (newLng > π) newLng -= 2 * π;
-		else if (newLng &lt; -π) newLng += 2 * π;
-
-		return [newLat, newLng];
-	
-	}
-	getCirclePoint(circleDistance, params, options) { return utils.angles(this.getCirclePoint2D(circleDistance, params, options)); }
-	circlesCount(np) { return np; }//если количество окружностей равно количеству точек на окружности, то точки будут равномерно располагаться на гиперсфере
-	getNumPoints(circleDistance, R, dCircleDistance) {
-		
-		return parseInt(
-			2 * π * Math.sin(circleDistance / R)//длинна окружности для гиперсферы радиусом 1
-			/ dCircleDistance
-		);
-		
-	}
-	
-	/////////////////////////////overridden methods
-	
-}
-/*
-RandomVertices.Vertice = (vertice) => {
-
-	if (vertice.longitude != undefined) return;
-	Object.defineProperty(vertice, 'latitude', {
-		
-		get: () => { return vertice[0]; },
-		set: (latitude) => {
-
-			vertice[0] = latitude;
-			return true;
-
-		},
-	
-	});
-	Object.defineProperty(vertice, 'longitude', { get: () => { return vertice[1]; }, });
-
-}
-*/
-RandomVertices.ZeroArray = () => { return [0, 0]; }
-RandomVertices.getCenter = (params) => {
-	
-	//center is antipode of the opposite vertice
-	//Центр окружностей случайных точек center находится с противоположной от params.oppositeVertice стороны гиперсферы
-	const antipodeLatitude = (latitude) => { return -latitude; },
-//			center = params.randomVertices.antipodeCenter(params, antipodeLatitude);
-		center = [antipodeLatitude(params.oppositeVertice.latitude), params.oppositeVertice.longitude - π];
-	
-	Object.defineProperty(center, 'lat', {
-		
-		get: () => { return center[0]; },
-		set: (lat) => {
-
-			params.oppositeVertice.latitude = antipodeLatitude(lat);
-			return true;
-
-		},
-	
-	});
-	Object.defineProperty(center, 'lng', { get: () => { return center[1]; }, });
-	return center;
-	
-}
-RandomVertices.Center = (params, inaccurateLatitude) => {
-
-	const center = params.center;
-	if (center.length &lt; 1) center.push(0);
-	if (center.length &lt; 2) center.push(0);
-//	params.randomVertices.defineCenterCoordinates(params);
-	if (center.lat === undefined)
-		Object.defineProperty(center, 'lat', {
-	
-			get: () => { return center[0]; },
-			set: (lat) => {
-
-				if (center[0] === lat) return true;
-				center[0] = lat;
-				if (params.randomVertices) params.randomVertices.changeCirclesPoints();
-				return true;
-	
-			},
-	
-		});
-	if (center.lng === undefined)
-		Object.defineProperty(center, 'lng', {
-	
-			get: () => { return center[1]; },
-			set: (lng) => {
-	
-				if (center[1] === lng) return true;
-				center[1] = lng;
-				if (params.randomVertices) params.randomVertices.changeCirclesPoints();
-				return true;
-	
-			},
-
-		});
-	center.lat = inaccurateLatitude(center.lat);
-	
-	const Vertice = (vertice) => {
-	
-		if (vertice.longitude != undefined) return;
-		Object.defineProperty(vertice, 'latitude', {
-			
-			get: () => { return vertice[0]; },
-			set: (latitude) => {
-	
-				if (vertice[0] === latitude) return true;
-				vertice[0] = latitude;
-				if (params.randomVertices) params.randomVertices.changeCirclesPoints();
-				return true;
-	
-			},
-		
-		});
-		Object.defineProperty(vertice, 'longitude', {
-			
-			get: () => { return vertice[1]; },
-			set: (longitude) => {
-	
-				if (vertice[1] === longitude) return true;
-				vertice[1] = longitude;
-				if (params.randomVertices) params.randomVertices.changeCirclesPoints();
-				return true;
-	
-			},
-		
-		});
-	
-	}
-	utils.angles(params.vertice);
-	utils.angles(params.oppositeVertice);
-	
-}
-Sphere.RandomVertices = RandomVertices;
 
 export default Sphere;
 </code></pre>
@@ -855,13 +289,13 @@ export default Sphere;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Circle.html">Circle</a></li><li><a href="module-HyperSphere.html">HyperSphere</a></li><li><a href="module-HyperSphere3D.html">HyperSphere3D</a></li><li><a href="module-Sphere.html">Sphere</a></li></ul><h3>Classes</h3><ul><li><a href="module-Circle-Circle.html">Circle</a></li><li><a href="module-HyperSphere3D-HyperSphere3D.html">HyperSphere3D</a></li><li><a href="module-HyperSphere-HyperSphere.html">HyperSphere</a></li><li><a href="module-HyperSphere-RandomVertices.html">RandomVertices</a></li><li><a href="module-Sphere-Sphere.html">Sphere</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Circle.html">Circle</a></li><li><a href="module-HyperSphere.html">HyperSphere</a></li><li><a href="module-HyperSphere3D.html">HyperSphere3D</a></li><li><a href="module-Sphere.html">Sphere</a></li><li><a href="module-utilsCircle.html">utilsCircle</a></li><li><a href="module-utilsHSphere.html">utilsHSphere</a></li><li><a href="module-utilsSphere.html">utilsSphere</a></li></ul><h3>Classes</h3><ul><li><a href="module-Circle-Circle.html">Circle</a></li><li><a href="module-HyperSphere3D-HyperSphere3D.html">HyperSphere3D</a></li><li><a href="module-HyperSphere-HyperSphere.html">HyperSphere</a></li><li><a href="module-Sphere-Sphere.html">Sphere</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Wed Feb 11 2026 10:28:20 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri Feb 20 2026 11:52:09 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

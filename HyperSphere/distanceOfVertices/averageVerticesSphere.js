@@ -1,6 +1,6 @@
 /**
  * @module middleVerticesSphere
- * @description Moves vertices to the middle position of the opposite vertices of the vertice edges for sphere
+ * @description An iterative process in which, at each step, all vertices gradually move toward a position in which the vertices are at the maximum distance from each other.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *

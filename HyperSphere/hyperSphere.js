@@ -58,7 +58,25 @@ class HyperSphere extends MyObject {
 	/**
 	 * Base class for n dimensional [hypersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
 	 * @param {Options} options See <a href="../../../master/jsdoc/Options/Options.html" target="_blank">Options</a>.
-	 * @param {object} [classSettings] <b>HyperSphere</b> class settings.
+	 * @param {object} classSettings <b>HyperSphere</b> class settings.
+	 * @param {function} classSettings.distanceOfVertices Function, that was imported from:
+	 * <pre>
+	 *	For Circle:
+	 *		<a href="../../../master/HyperSphere/distanceOfVertices/middleVerticesCircle.js" target="_blank">middleVerticesCircle.js</a> Moves vertices to the middle position of the opposite vertices of the vertice edges for circle.
+	 *		or
+	 *		<a href="../../../master/HyperSphere/distanceOfVertices/averageVerticesCircle.js" target="_blank">averageVerticesCircle.js</a> An iterative process in which, at each step, all vertices gradually move toward a position
+	 *			in which the vertices are at the maximum distance from each other.
+	 *	For Sphere:
+	 *		<a href="../../../master/HyperSphere/distanceOfVertices/middleVerticesSphere.js" target="_blank">middleVerticesSphere.js</a> Moves vertices to the middle position of the opposite vertices of the vertice edges for sphere.
+	 *		or
+	 *		<a href="../../../master/HyperSphere/distanceOfVertices/averageVerticesSphere.js" target="_blank">averageVerticesSphere.js</a> An iterative process in which, at each step, all vertices gradually move toward a position
+	 *			in which the vertices are at the maximum distance from each other.
+	 *	For HyperSphere:
+	 *		<a href="../../../master/HyperSphere/distanceOfVertices/middleVerticesHSphere.js" target="_blank">middleVerticesHSphere.js</a> Moves vertices to the middle position of the opposite vertices of the vertice edges for hupersphere.
+	 *		or
+	 *		<a href="../../../master/HyperSphere/distanceOfVertices/averageVerticesHSphere.js" target="_blank">averageVerticesHSphere.js</a> An iterative process in which, at each step, all vertices gradually move toward a position
+	 *			in which the vertices are at the maximum distance from each other.
+	 * </pre>
 	 * @param {object} [classSettings.intersection] HyperSphere intersection.
 	 * <pre>
 	 *	For Circle intersector is line.

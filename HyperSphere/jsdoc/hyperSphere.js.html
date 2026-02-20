@@ -86,7 +86,25 @@ class HyperSphere extends MyObject {
 	/**
 	 * Base class for n dimensional [hypersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
 	 * @param {Options} options See &lt;a href="../../../master/jsdoc/Options/Options.html" target="_blank">Options&lt;/a>.
-	 * @param {object} [classSettings] &lt;b>HyperSphere&lt;/b> class settings.
+	 * @param {object} classSettings &lt;b>HyperSphere&lt;/b> class settings.
+	 * @param {function} classSettings.distanceOfVertices Function, that was imported from:
+	 * &lt;pre>
+	 *	For Circle:
+	 *		&lt;a href="../../../master/HyperSphere/distanceOfVertices/middleVerticesCircle.js" target="_blank">middleVerticesCircle.js&lt;/a> Moves vertices to the middle position of the opposite vertices of the vertice edges for circle.
+	 *		or
+	 *		&lt;a href="../../../master/HyperSphere/distanceOfVertices/averageVerticesCircle.js" target="_blank">averageVerticesCircle.js&lt;/a> An iterative process in which, at each step, all vertices gradually move toward a position
+	 *			in which the vertices are at the maximum distance from each other.
+	 *	For Sphere:
+	 *		&lt;a href="../../../master/HyperSphere/distanceOfVertices/middleVerticesSphere.js" target="_blank">middleVerticesSphere.js&lt;/a> Moves vertices to the middle position of the opposite vertices of the vertice edges for sphere.
+	 *		or
+	 *		&lt;a href="../../../master/HyperSphere/distanceOfVertices/averageVerticesSphere.js" target="_blank">averageVerticesSphere.js&lt;/a> An iterative process in which, at each step, all vertices gradually move toward a position
+	 *			in which the vertices are at the maximum distance from each other.
+	 *	For HyperSphere:
+	 *		&lt;a href="../../../master/HyperSphere/distanceOfVertices/middleVerticesHSphere.js" target="_blank">middleVerticesHSphere.js&lt;/a> Moves vertices to the middle position of the opposite vertices of the vertice edges for hupersphere.
+	 *		or
+	 *		&lt;a href="../../../master/HyperSphere/distanceOfVertices/averageVerticesHSphere.js" target="_blank">averageVerticesHSphere.js&lt;/a> An iterative process in which, at each step, all vertices gradually move toward a position
+	 *			in which the vertices are at the maximum distance from each other.
+	 * &lt;/pre>
 	 * @param {object} [classSettings.intersection] HyperSphere intersection.
 	 * &lt;pre>
 	 *	For Circle intersector is line.
@@ -313,7 +331,7 @@ class HyperSphere extends MyObject {
 	constructor(options, classSettings = {}) {
 
 		if (classSettings.randomMiddleVertice === undefined) classSettings.randomMiddleVertice = true;
-		if (!classSettings.onSelectScene) classSettings.onSelectScene = (hyperSphere, timeId, t) => { if (this.middleVertices) return this.middleVertices(timeId, t); }
+		if (!classSettings.onSelectScene) classSettings.onSelectScene = (hyperSphere, timeId, t) => { if (this.distanceOfVertices) return this.distanceOfVertices(timeId, t); }
 		//for playing in http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/hyperSphere.html
 
 		//Eсли options.onSelectScene уже существует, значит на холсте уже есть гиперсфера. Это бывает, когда создается случайная дуга HyperSphere classSettings.randomArc = true
@@ -321,7 +339,7 @@ class HyperSphere extends MyObject {
 		if (!options.onSelectScene) options.onSelectScene = (index, t) => {
 
 			if (classSettings.onSelectScene) return classSettings.onSelectScene(this, index, t);
-			else if (this.middleVertices) return hyperSphere.middleVertices(index, t);
+			else if (this.distanceOfVertices) return hyperSphere.distanceOfVertices(index, t);
 			return true;//Сдедующий шаг проигрывателя выполняется только после посторения всех вершин без временной задержки
 		
 		}
@@ -343,7 +361,6 @@ class HyperSphere extends MyObject {
 			get: () => { return classSettings.settings.object.geometry.angles.length; },
 
 		});
-//		this.rotateLatitude = - π / 2;//Поворачиваем широту на 90 градусов что бы начало координат широты находилось на экваторе;
 		const _this = this, THREE = three.THREE;
 		if (classSettings.debug === undefined) classSettings.debug = true;
 		if (classSettings.debug === true) classSettings.debug = {};
@@ -383,15 +400,6 @@ class HyperSphere extends MyObject {
 		let edgesOld;
 		if (classSettings.edges != false) {//Если в настройках запрещены ребра, то не брать настройки ребер из cookie
 			
-/*Не помню зачем это		
-			const cookieOptions = {};
-			if (options.dat) options.dat.cookie.getObject(this.cookieName, cookieOptions);
-			
-			edgesOld = cookieOptions.edgesOld || { project: true, };
-			if (classSettings.overriddenProperties &amp;&amp; !classSettings.overriddenProperties.edges) classSettings.overriddenProperties.edges = () => { return false; };
-			classSettings.edges = ((cookieOptions.edges === false) &amp;&amp; classSettings.overriddenProperties) ? classSettings.overriddenProperties.edges() : cookieOptions.edges || classSettings.edges;
-			if (classSettings.edges != false) classSettings.edges = classSettings.edges || {};
-*/		
 			classSettings.edges = classSettings.edges || {};
 			if ((classSettings.edges != false) &amp;&amp; (classSettings.edges.project === undefined)) classSettings.edges.project = true;
 
@@ -454,9 +462,7 @@ class HyperSphere extends MyObject {
 
 			if (settings.object.geometry.angles) console.error(sHyperSphere + ': "settings.object.geometry.angles" has not effect if "settings.object.geometry.params" is exists');
 			const params = settings.object.geometry.params;
-//			params.vertice ||= this.ZeroArray();
 			params.oppositeVertice ||= this.ZeroArray();
-//			settings.object.geometry.angles = [params.vertice, params.oppositeVertice];
 			const vertice = [];
 			for (let i = 0; i &lt; params.oppositeVertice.length; i++) vertice.push(0);
 			settings.object.geometry.angles = [vertice, params.oppositeVertice];
@@ -576,12 +582,12 @@ class HyperSphere extends MyObject {
 								if (!isNaN(angleId)) {
 	
 									const angle = value;
-	//								if (angleId >= verticeAngles.length)
 									if (angleId >= length)
 									{
 	
 										console.error(sHyperSphere + ': set vertice angles failed! angleId = ' + angleId + ' is great of verticeAngles.length = ' + verticeAngles.length);
 										return false;
+
 									}
 									let angleOld = verticeAngles[angleId];
 									const verticeAnglesFromPosition = isNaN(angleOld) ?
@@ -599,7 +605,7 @@ class HyperSphere extends MyObject {
 										//если тут обновлять вершину то каждая вершина будет обноляться несколько раз в зависимости от количества углов. Сейчас вершина обновляется после обновления всех углов вершины
 										if(_this.isSetPositionAttributeFromPoint != false) {
 
-											const position = verticeAnglesFromPosition ? this.a2v(verticeAnglesFromPosition, classSettings.overriddenProperties.r(classSettings.settings.guiPoints ? classSettings.settings.guiPoints.timeId : 0)) : undefined
+											const position = verticeAnglesFromPosition ? this.a2v(verticeAnglesFromPosition/*, classSettings.overriddenProperties.r(classSettings.settings.guiPoints ? classSettings.settings.guiPoints.timeId : 0)*/) : undefined
 											_this.setPositionAttributeFromPoint(verticeId, Position(position));//обновляем только одну ось в декартовой системе координат
 											_this.bufferGeometry.attributes.position.needsUpdate = true;
 	
@@ -701,7 +707,6 @@ class HyperSphere extends MyObject {
 							else _this.project();
 							return true;
 						case 'length':
-	//						console.warn(sHyperSphere + ': set geometry.angles.length. Use guiLength instead')
 							aAngles.length = value;
 							return true;
 	
@@ -737,7 +742,6 @@ class HyperSphere extends MyObject {
 			if (settings.object.geometry.params) {
 
 				const params = settings.object.geometry.params, angles = settings.object.geometry.angles;
-//				params.vertice = angles[0];
 				params.oppositeVertice = angles[1];
 				
 			}
@@ -777,27 +781,12 @@ class HyperSphere extends MyObject {
 	
 					case 0:
 						range = anglesRange.longitude;
-/*						
-						range.angleName = 'Longitude';
-						range.min = - π;
-						range.max = π;
-*/						
 						break;
 					case 1:
 						range = anglesRange.latitude;
-/*						
-						range.angleName = 'Latitude';
-						range.min = 0 + this.rotateLatitude;//- π / 2;
-						range.max = π + this.rotateLatitude;//π / 2;
-*/						
 						break;
 					case 2:
 						range = this.altitudeRange;
-/*						
-						range.angleName = this.altitudeRange.angleName;//'Altitude';
-						range.min = this.altitudeRange.min;//0;
-						range.max = this.altitudeRange.max;//π / 2;
-*/						
 						break;
 					default: console.error(sHyperSphere + ': vertice angles ranges. Invalid angleId = ' + angleId);
 	
@@ -827,10 +816,7 @@ class HyperSphere extends MyObject {
 
 					}
 					const _vertice = _position[i],
-						//anglesPlayer = settings.object.geometry.angles.player,
-						//timeId = anglesPlayer.id,
 						timeId = _position.player.id,
-						// r = anglesPlayer.r;
 						angle2Vertice = () => {
 
 							const vertice = _this.angles2Vertice(i, timeId);
@@ -850,19 +836,6 @@ class HyperSphere extends MyObject {
 
 							switch (name) {
 
-/*									
-								//дуга между вершинами
-								case 'arcTo': return (verticeTo) => {
-
-									//Calculate the arc length between two points over a hyper-sphere
-									//Reference: https://www.physicsforums.com/threads/calculate-the-arc-length-between-two-points-over-a-hyper-sphere.658661/post-4196208
-									const a = vertice, b = verticeTo, R = 1, acos = Math.acos;
-									let ab = 0;//dot product
-									for (let i = 0; i &lt; a.length; i++) ab += a[i] * b[i];
-									return R * acos(ab / (R * R))
-
-								}
-*/								
 								//расстояние между вершинами по прямой в декартовой системе координат
 								//Если надо получить расстояние между вершинами по дуге в полярной системе координат, то надо вызвать 
 								//classSettings.settings.object.geometry.position.angles[verticeId].distanceTo
@@ -989,71 +962,23 @@ class HyperSphere extends MyObject {
 
 									switch (name) {
 
+/*											
 										case 'middleVertice': return (oppositeVerticesId = vertice.oppositeVerticesId, timeId, boPushMiddleVertice = true, boCloud = false, boCreateHypersphere = true) => {
 
 											//find middle vertice between opposite vertices
-/*
-											//Среднее значение углов
-											//ссылка не работает https://wiki5.ru/wiki/Mean_of_circular_quantities#Mean_of_angles
-											//https://en.wikipedia.org/wiki/Circular_mean
-
-											//массив для хранения сумм декартовых координат противоположных вершин
-											//для 1D гиперсферы это: aSum[0] = x, aSum[1] = y.
-											//для 2D гиперсферы это: aSum[0] = x, aSum[1] = y, aSum[2] = z.
-											//для 3D гиперсферы это: aSum[0] = x, aSum[1] = y, aSum[2] = z, aSum[3] = w.
-											const aSum = [];
-*/											
 
 											const oppositeVertices = [];
 											oppositeVerticesId.forEach(oppositeAngleId => {
 
-												//не работает в Universe. Непонятно почему применил эту строку
-//												const oppositeVertice = settings.bufferGeometry.userData.position[oppositeAngleId];
-												
 												const oppositeVertice = classSettings.overriddenProperties.oppositeVertice(oppositeAngleId, timeId);
-												//console.log('oppositeAngleId = ' + oppositeAngleId + ' oppositeVertice = [' + oppositeVertice.x + ', ' + oppositeVertice.y + ', ' + oppositeVertice.z + ']')
-/*												
-												oppositeVertice.forEach((axis, i) => {
-
-													if (aSum[i] === undefined) aSum[i] = 0;
-													aSum[i] += axis
-												
-												});
-*/												
 												oppositeVertices.push(oppositeVertice);
 
 											});
-/*											
-											let isZero = true;
-											for (let i = 0; i &lt; _this.dimension; i ++) {
-												
-												if(aSum[i] != 0) {
-
-													isZero = false;
-													break;
-													
-												};
-
-											}
-											
-											//if (isZero === 0) {
-
-												//В этом случае средняя вершина не определена
-												//для 1D гиперсферы. Противополжные вершины находятся ровно на противоположных сторонах окружности.
-													//Средняя вершина, находится посередине одной из двух дуг, соеденяющих проитвоположные вершины.
-												//для 2D гиперсферы это .
-												//для 3D гиперсферы это .
-												//Думаю тут надо применить вероятностный метод определения средней вершины
-											//}
-											let middleVertice = isZero ? _this.getRandomMiddleAngles(oppositeVertices) : _this.vertice2angles(aSum);
-*/											
 
 											let middleVertice = _this.vertice2angles(this.middlePosition(oppositeVertices, boCloud, boCreateHypersphere));
-//											const geometry = settings.object.geometry;
 											if (boPushMiddleVertice) classSettings.overriddenProperties.pushMiddleVertice(timeId, middleVertice);
 											if (classSettings.randomMiddleVertice) { middleVertice = new this.RandomVertice({
 												
-//												vertice: vertice,
 												arc: _this.arc,
 												oppositeVertice: middleVertice,
 												classSettings: classSettings,//используется для вычисления случайной точки в RandomVerticeHSphere HyperSphereNavigator.calculateNewPoint
@@ -1076,6 +1001,7 @@ class HyperSphere extends MyObject {
 											return middleVertice;
 
 										}
+*/											
 										//идентификаторы всех вершин, которые связаны с текущей вершиной через ребра
 										case 'oppositeVerticesId': return new Proxy(angles.edges, {
 
@@ -1103,7 +1029,7 @@ class HyperSphere extends MyObject {
 								},
 
 							});
-							return vertice;
+							return classSettings.distanceOfVertices.verticeProxy(vertice, classSettings, this, verticeId, position);
 
 						},
 						set: (angles, name, value) => {
@@ -1111,15 +1037,7 @@ class HyperSphere extends MyObject {
 							const verticeId = parseInt(name);
 							if (!isNaN(verticeId)) {
 
-/*Не помню зачем так написал
-								const verticeAngles = angles[verticeId];
-								if (classSettings.debug &amp;&amp; ((verticeAngles.length != (_this.dimension - 1)) || (value.length != (_this.dimension - 1)))) console.error(sHyperSphere + ': Set vertice[' + verticeId + '] angles failed. Invalid angles count.')
-								this.isSetPositionAttributeFromPoint = false;
-								for (let j = 0; j &lt; value.length; j++) verticeAngles[j] = value[j];
-								delete this.isSetPositionAttributeFromPoint;
-								this.setPositionAttributeFromPoint(verticeId);//обновляем geometry.attributes
-*/								
-								this.setPositionAttributeFromPoint(verticeId, this.a2v(value, classSettings.overriddenProperties.r(classSettings.settings.guiPoints ? classSettings.settings.guiPoints.timeId : 0)));
+								this.setPositionAttributeFromPoint(verticeId, this.a2v(value/*, classSettings.overriddenProperties.r(classSettings.settings.guiPoints ? classSettings.settings.guiPoints.timeId : 0)*/));
 								this.bufferGeometry.attributes.position.needsUpdate = true;
 
 							} else angles[name] = value;
@@ -1154,20 +1072,6 @@ class HyperSphere extends MyObject {
 							console.log(sLog + ']');
 							*/
 
-/*сейчас использую _this.normalizeAngles переопределенную для гиперсферы разной размерности и которая работает не только в отладочной версии
-							for (let angleId = 0; angleId &lt; verticeAngles.length; angleId++) {
-
-								const angle = verticeAngles[angleId];
-								const range = settings.object.geometry.angles.ranges[angleId];
-								if ((angle &lt; range.min) || (angle > range.max)) {
-									
-									console.error(sHyperSphere + ': ' + range.angleName + ' angle[' + angleId + '] = ' + angle + ' of the vertice ' + verticeId + ' is out of range from ' + range.min + ' to ' + range.max);
-									_position[verticeId] = _this.normalizeVerticeAngles(verticeAngles);
-
-								}
-
-							}
-*/							
 							
 							const vertice = settings.object.geometry.position[verticeId], strVerticeId = 'geometry.position[' + verticeId + ']'
 							_this.TestVertice(vertice, strVerticeId);
@@ -1236,7 +1140,13 @@ class HyperSphere extends MyObject {
 			
 		}
 		if (!overriddenProperties.vertices) overriddenProperties.vertices = () => { return []; }
-		if (!overriddenProperties.r) overriddenProperties.r = (timeId) => { return classSettings.r; }
+		if (!overriddenProperties.r) overriddenProperties.r = () => { return classSettings.r; }
+		if (!overriddenProperties.rTime) overriddenProperties.rTime = () => {
+			
+			const settings = classSettings.settings;
+			return classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : settings.options.player === false ? 0 : settings.options.player.getTimeId());
+		
+		}
 		if (!overriddenProperties.pushMiddleVertice) overriddenProperties.pushMiddleVertice = () => {}
 		if (!overriddenProperties.angles) overriddenProperties.angles = (anglesId) => { return this.Vertice(classSettings.settings.object.geometry.angles[anglesId]); }
 		if (!overriddenProperties.verticeAngles) overriddenProperties.verticeAngles = (anglesCur, verticeId) => { return anglesCur[verticeId];}
@@ -1251,13 +1161,13 @@ class HyperSphere extends MyObject {
 		this.pointLength = () => { return this.dimension > 2 ? this.dimension : 3; }//itemSize of the buiffer.attributes.position должен быть больше 2. Иначе при копировании из буфера в THREE.Vector3 координата z = undefined
 		this.getPoint = (anglesId, timeId) => {
 
-			const r = classSettings.overriddenProperties.r(timeId),
-				angles = typeof anglesId === "number" ? classSettings.overriddenProperties.angles(anglesId, timeId) : anglesId;
-			const vertice = this.a2v(angles, r);
+//			const r = classSettings.overriddenProperties.r(timeId),
+			const angles = typeof anglesId === "number" ? classSettings.overriddenProperties.angles(anglesId, timeId) : anglesId;
+			const vertice = this.a2v(angles);//, r);
 			if (this.classSettings.debug &amp;&amp; this.classSettings.debug.testVertice){
 	
 				const vertice2angles = this.vertice2angles(vertice),
-					angles2vertice = this.a2v(vertice2angles, r);
+					angles2vertice = this.a2v(vertice2angles);//, r);
 				const value = vertice;
 				if (angles2vertice.length != value.length) console.error(sHyperSphere + ': Set vertice failed. angles2vertice.length = ' + angles2vertice.length + ' is not equal value.length = ' + value.length);
 				const d = 4e-15;
@@ -1317,7 +1227,6 @@ class HyperSphere extends MyObject {
 			return intersection.nearestEdgeVerticeId;
 
 		}
-//		this.getRotateLatitude = (i) => i === (this.dimension - 3) ? this.rotateLatitude : 0;
 		this.getRotateLatitude = (i) => i === (this.dimension - 3) ? anglesRange.rotateLatitude : 0;
 		this.onSetPositionAttributeFromPoint = (verticeId) => {
 
@@ -1328,9 +1237,6 @@ class HyperSphere extends MyObject {
 		}
 		this.setPositionAttributeFromPoints(settings.object.geometry.angles);//itemSize of the buiffer.attributes.position должен быть больше 2. Иначе при копировании из буфера в THREE.Vector3 координата z = undefined
 		delete this.onSetPositionAttributeFromPoint;
-//		this.Euler(settings.object.geometry.params);
-//		settings.object.geometry.angles.deleteAngles();
-//const angles0 = settings.object.geometry.angles[0];
 
 		settings.object.geometry.indices = settings.object.geometry.indices || [];
 		if (!(settings.object.geometry.indices instanceof Array)) {
@@ -1658,7 +1564,6 @@ this.object = () => {
 			this.remove(scene);
 			this.removeHyperSphere = () => {
 
-//				const object = _this.object();
 				const object = _this.object3D;
 				if (nd) nd = undefined;
 				if (myPoints) myPoints = undefined;
@@ -1676,8 +1581,6 @@ this.object = () => {
 
 			this.Test();
 
-//			this.normalizeAngles(classSettings.settings.object.geometry.angles);
-
 			this.color();
 
 			if (this.setW) this.setW();
@@ -1685,10 +1588,6 @@ this.object = () => {
 			this.update = (verticeId, changedAngleId, timeId) => {
 
 				const points = nd &amp;&amp; (nd.object3D.visible === true) ? nd.object3D : myPoints;
-				/*
-				const vertice = settings.object.geometry.position[verticeId];
-				this.setPositionAttributeFromPoint(verticeId, vertice, timeId);
-				*/
 				this.bufferGeometry.attributes.position.needsUpdate = true;
 				this.bufferGeometry.attributes.color.needsUpdate = true;
 				if (settings.options.axesHelper)
@@ -1773,8 +1672,7 @@ this.object = () => {
 
 							} : settings.edges,
 							projectParams: { scene: classSettings.projectParams.scene, },
-//							r: r * classSettings.r,
-							r: classSettings.overriddenProperties.r(classSettings.settings.guiPoints ? classSettings.settings.guiPoints.timeId : 0),
+							r: this.r,//classSettings.overriddenProperties.r(classSettings.settings.guiPoints ? classSettings.settings.guiPoints.timeId : 0),
 							debug: classSettings.debug,
 							settings: {
 
@@ -1806,7 +1704,6 @@ this.object = () => {
 
 					{//hide userData
 						
-//						const userData = this.object().userData;
 						const userData = this.object3D.userData;
 						userData.player = userData.player || {};//for ND
 						userData.player.boArrayFuncs = false;//не создавать массив userData.player.arrayFuncs потому что точки объекта буду получать из this.object3D.geometry.attributes.position
@@ -1817,7 +1714,6 @@ this.object = () => {
 								const verticeId = parseInt(name);
 								if (!isNaN(verticeId)) {
 
-//									const position = this.object().geometry.attributes.position;
 									const position = this.object3D.geometry.attributes.position;
 									return (
 										position.itemSize === 4 ?
@@ -1875,12 +1771,6 @@ this.object = () => {
 
 								//пользователь выбрал вершину
 
-/*бесконечный цикл
-								const guiPoints = settings.guiPoints;
-								guiPoints.verticeId = 0;
-								guiPoints.getVerticeId(parseInt(verticeId));
-								verticeId = guiPoints.verticeId;
-*/								
 								verticeId = parseInt(verticeId);
 
 								let boPushDefaultAngles = true;
@@ -1974,7 +1864,6 @@ this.object = () => {
 											replace('%min', min).
 											replace('%max', max);
 										console.error(sError);
-										//alert(sError);
 
 									}
 									if (boPushDefaultAngles) anglesDefault.push(angle);
@@ -2068,15 +1957,6 @@ this.object = () => {
 								});
 								dat.controllerNameAndTitle(aAngleControls.cRadius, lang.radius, lang.radiusTitle);
 								readOnly.readOnlyEl(aAngleControls.cRadius, true);
-								const randomVertices = !classSettings.randomArc ? undefined : this.newRandomVertices(this.object3D, options, {
-					
-									//np: 360,
-									R: this.classSettings.r,
-									color: arcColor,
-									name: lang.arc,
-									debug: true,
-								
-								});
 									
 								//Edges
 
@@ -2094,7 +1974,6 @@ this.object = () => {
 
 										if (aAngleControls.cross) classSettings.projectParams.scene.remove(aAngleControls.cross);
 										aAngleControls.cross = undefined;
-//										if (randomVertices) randomVertices.removeOnePointArray();
 
 									}
 									let boTransparent;
@@ -2148,29 +2027,6 @@ this.object = () => {
 
 											const arcAngles = [],//массив вершин в полярной системе координат, которые образуют дугу
 												vertice = position[aAngleControls.verticeId];
-/*не помню зачем делаю дугу между вершинами ребра как набор случайных точек											
-											if (classSettings.randomArc) {
-
-												const params = {
-
-													vertice: vertice.angles,
-													oppositeVertice: oppositeVerticeAngles,
-													R: classSettings.overriddenProperties.r(options.player.getTimeId()),
-													HyperSphere: randomVertices.class,
-//													cSpheres: cSpheres,
-
-													//for debug
-													random: false,
-													onePoint: false,
-													onePointArray: false,
-													
-												}
-												if (aAngleControls.arc) randomVertices.changeCirclesPoints(params);
-												else aAngleControls.arc = params.random === false ? randomVertices.determinedVertices(params) : randomVertices.createOnePointArray(params);
-												return;
-												
-											}
-*/											
 											
 											let verticeId = 0;
 											//если не копировать каждый угол в отделности, то в новой вершине останутся старые ребра
@@ -2179,9 +2035,14 @@ this.object = () => {
 													const verticeAngles = _this.vertice2angles(vertice)
 													if (aAngleControls.arc) {
 
-														aAngleControls.arc.classSettings.settings.object.geometry.angles[verticeId] = verticeAngles;
-														aAngleControls.arc.object3D.geometry.drawRange.type = this.bufferGeometry.drawRange.types.edges;//строка выше портит drawRange.type
-														verticeId++;
+														const angles = aAngleControls.arc.classSettings.settings.object.geometry.angles;
+														if (angles.length > verticeId) {
+															
+															angles[verticeId] = verticeAngles;
+															aAngleControls.arc.object3D.geometry.drawRange.type = this.bufferGeometry.drawRange.types.edges;//строка выше портит drawRange.type
+															verticeId++;
+
+														} else console.error(sHyperSphere + ': Create arc. Invalid verticeId = ' + verticeId);
 
 													} else arcAngles.push(verticeAngles);
 
@@ -2197,14 +2058,8 @@ this.object = () => {
 													const a = vertice, b = verticeTo, R = 1, acos = Math.acos;
 													let ab = 0;//dot product
 													for (let i = 0; i &lt; a.length; i++) ab += a[i] * b[i];
-//													return R * acos(ab / (R * R));
 													const arcValue = R * acos(ab / (R * R));
 													return arcValue;
-/*													
-													if (!classSettings.randomArc) return arcValue;
-													let randomArcValue = randomAngle(arcValue);
-													return randomArcValue;
-*/													
 				
 												},
 												distance = arcTo(oppositeVertice, vertice),
@@ -2225,15 +2080,6 @@ this.object = () => {
 												maxLevel++;
 
 											}
-/*											
-											const verticeAngles = this.vertice2angles(vertice);
-											if (this.dimension === 2) {
-
-												oppositeVertice = this.angles2Vertice([verticeAngles[0] + distance]);
-												
-											}
-											else console.error(sHyperSphere + ': aAngleControls.createArc. this.dimension = ' + this.dimension + ' Under constraction')
-*/											
 											let level = 1;//текущий уровень деления дуги
 											copyVertice(vertice);
 											let i = 0;
@@ -2295,12 +2141,10 @@ this.object = () => {
 
 																const arc = aAngleControls.arc, geometry = arc.object3D.geometry;
 																if (geometry.attributes.position.count &lt; verticeId) console.error(sHyperSphere + '.aAngleControls.createArc: Invalid geometry.attributes.position.count = ' + geometry.attributes.position.count);
-//																this.setEdgesRange();
 																if (arc.isDisplayEdges()) geometry.setDrawRange(0, verticeId * 2 - 1);//Кличество ребер
 																else {
 
 																	geometry.setDrawRange(0, verticeId);
-//																	arc.setVerticesRange(0, verticeId);
 
 																}
 																//if (classSettings.debug) console.log(' maxLevel = ' + maxLevel + ' position.count = ' + aAngleControls.arc.object3D.geometry.attributes.position.count + ' drawRange.count = ' + arc.object3D.geometry.drawRange.count + ' Vertices count = ' + verticeId);
@@ -2312,7 +2156,6 @@ this.object = () => {
 																if (this.child) this.child.arc(aAngleControls, lang, arcAngles);
 																else {
 																	
-//																	console.error(sHyperSphere + ': Непонятно когда сюда попадает')
 																	const arcEdges = [];
 																	for (let i = 0; i &lt; (aAngleControls.MAX_POINTS - 1); i++) arcEdges.push([i, i + 1]);
 																	const palette = classSettings.settings.options.palette;
@@ -2346,25 +2189,6 @@ this.object = () => {
 																}
 
 															}
-															/*
-															if (classSettings.debug) {
-																
-																console.log(sHyperSphere + ': createArc. maxLevel = ' + maxLevel + ' position.count = ' + aAngleControls.arc.object3D.geometry.attributes.position.count + ' drawRange.count = ' + aAngleControls.arc.object3D.geometry.drawRange.count + ' Vertices count = ' + verticeId);
-//																const distance = arcTo(position[aAngleControls.oppositeVerticeId], position[aAngleControls.verticeId]);
-																let vertice, distanceDebug = 0;
-																const position = aAngleControls.arc.classSettings.settings.object.geometry.position;
-																for (let i = 0; i &lt; (verticeId === 0 ? position.length : verticeId); i++) {
-
-																	const verticeCur = position[i];
-																	if (vertice)
-																		distanceDebug += vertice.distanceTo(verticeCur);
-																	vertice = verticeCur;
-
-																}
-																console.log(sHyperSphere + ': createArc. distance = ' + distance + ' distanceDebug = ' + distanceDebug + ' error = ' + (distanceDebug - distance) + ' arcAngles.length = ' + arcAngles.length);
-
-															}
-															*/
 															progressBar.remove();
 															aAngleControls.progressBar = undefined;
 
@@ -2380,7 +2204,7 @@ this.object = () => {
 											});
 
 										}
-										aAngleControls.createArc();//cSpheres);
+										aAngleControls.createArc();
 										boTransparent = true;
 
 									}
@@ -2394,8 +2218,6 @@ this.object = () => {
 								aAngleControls.fOppositeVertice = fAdvansed.addFolder(lang.oppositeVertice);
 								_display(aAngleControls.fOppositeVertice.domElement, false);
 								createAnglesControls(aAngleControls.fOppositeVertice, aEdgeAngleControls, edgeAnglesDefault);
-
-								if (randomVertices) randomVertices.gui(aAngleControls.fOppositeVertice, options.getLanguageCode, dat);
 
 								const itemSize = this.bufferGeometry.attributes.position.itemSize,
 									vertices = [],
@@ -2451,7 +2273,6 @@ this.object = () => {
 
 								const fMiddleVertice = fAdvansed.addFolder(lang.middleVertice)
 
-//								if (classSettings.randomMiddleVertice === undefined) classSettings.randomMiddleVertice = true;
 								{
 
 									let randomMiddleVertice = classSettings.randomMiddleVertice;
@@ -2507,18 +2328,6 @@ this.object = () => {
 
 										}
 
-/*										
-										if (classSettings.randomArc) {
-
-											const randomVertice = new this.RandomCloud({ vertice: angles, oppositeVertice: middleVerticeAngles, debug: classSettings.debug ? {
-
-													notRandomVertices: true,
-													
-												} : false });
-											angles.hsRandomVertice = randomVertice.getHyperSphere(options, classSettings, middleVerticeColor);
-											
-										}
-*/											
 											
 										const userData = settings.bufferGeometry.userData;
 										
@@ -2553,20 +2362,12 @@ this.object = () => {
 											delete _this.randomVertice;
 
 										}
-/*
-										if (angles) {
-
-											const hsRandomVertice = angles.hsRandomVertice;
-											if (hsRandomVertice) hsRandomVertice.removeHyperSphere();
-											angles.hsRandomVertice = undefined;
-
-										}
-*/										
 										
 									}
 
 								});
 								dat.controllerNameAndTitle(aAngleControls.cMiddleVertice, lang.middleVertice, lang.middleVerticeTitle);
+								if (_this.randomVertice) _display(fMiddleVertice.domElement, false);//Выполнен шаг проигрывателя в ходе которго был создан _this.randomVertice с количеством вершин равным 1. В этом случае облако случайных вершин будет состоять из одной вершины. Пытался исправить но не получилось. Поэтому сейчас нельзя создавать облако случайных вершин после выполения шага проигрывателя.
 
 								//Planes of rotation of angles.
 
@@ -2774,7 +2575,7 @@ this.object = () => {
 							pointsOptions: {
 
 								name: settings.object.name,
-								color: this.color(),//settings.object.color,
+								color: this.color(),
 								colors: settings.object.geometry.colors,
 								opacity: settings.object.geometry.opacity,
 								onReady: (points) => {
@@ -2786,7 +2587,6 @@ this.object = () => {
 
 								},
 								guiPoints: settings.guiPoints,
-								//shaderMaterial: false,
 
 							},
 							options: settings.options,
@@ -2806,9 +2606,19 @@ this.object = () => {
 			this.projectGeometry();
 
 			//шаг проигрывателя player
-			//Вычислем middle vertices
-			this.middleVertices = (timeId, t) => {
+			//Все вершины постепенно движутся в положение, при котором вершины окажутся на максимальном удалении друг от друга.
+			this.distanceOfVertices = (timeId, t) => {
 
+				classSettings.distanceOfVertices({
+
+					timeId: timeId,
+//					classSettings: classSettings,
+					this: this,
+					options: options,
+					t: t,
+					
+				});
+/*
 				if (timeId === 0) return;//не вычисляется средняя точка когда проигрыватель в начале
 				const geometry = settings.object.geometry, position = geometry.position, edges = geometry.indices.edges;
 				if (edges.length === 0) {
@@ -2817,7 +2627,7 @@ this.object = () => {
 					this.onSelectScene = () => {
 
 						//Непонятно как сюда попадает
-						options.onSelectScene(/*index,*/ t);
+						options.onSelectScene(t);
 						delete this.onSelectScene;
 
 					}
@@ -2911,7 +2721,6 @@ this.object = () => {
 								return true;
 
 							}
-							//options.player.continue();
 
 						}
 						if (!stepItem()) progressBar.step();
@@ -2933,6 +2742,7 @@ this.object = () => {
 					max: position.length - 1,
 
 				});
+*/
 				return true;//player pause
 
 			}
@@ -3302,8 +3112,11 @@ this.object = () => {
 	setArc(radius, length) { this.arc = π * (/*radius - */length); }
 	get r() {
 
+/*		
 		const settings = this.classSettings.settings;
 		return this.classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : settings.options.player === false ? 0 : settings.options.player.getTimeId());
+*/		
+		return this.classSettings.overriddenProperties.rTime();
 		
 	}
 	/**
@@ -3341,15 +3154,6 @@ this.object = () => {
 	}
 
 	get verticeEdgesLength() { return this._verticeEdgesLength; }
-/*
-	set verticeEdgesLength(length) {
-
-		this._verticeEdgesLength = length;
-		if (this.removeMesh) this.removeMesh();
-		this.pushEdges();
-
-	}
-*/
 
 	//base methods
 
@@ -3616,17 +3420,6 @@ this.object = () => {
 		return φ;
 
 	}
-	/* *
-	 * Normalizes a vertices angles to available range, if out of the angles range is occures.
-	 * @param {array} verticeAngles vertice angles
-	 * @returns Normalized a vertices angles.
-	 */
-	//нет необходимости нормализовать углы потому что сейчас они вычисляются из позиции вершины и нормализуются автоматически
-//	normalizeVerticeAngles(verticeAngles) { return this.vertice2angles(this.angles2Vertice(verticeAngles)); }
-
-//	sOver = ': Please, override %s method in your ' + sHyperSphere + ' child class.';
-	
-//	get RandomVertice() { console.error(sHyperSphere + this.sOver.replace('%s', 'get RandomVertice')); }
 
 }
 
@@ -3651,959 +3444,6 @@ HyperSphere.edgesCreationMethod = edgesCreationMethod;
  * */
 HyperSphere.ND = ND;
 
-class RandomArc {
-
-	constructor() {
-
-/*		
-		const PI = Math.PI;
-		const angles = [], anglesCount = 100, d = 2 * PI / (anglesCount - 1);
-		for (let i = 0; i &lt; anglesCount; i++) {
-
-			const x = i * d;
-			angles.push([x, Math.sin(x) + x]);
-			
-		}
-*/
-/*		
-		//Normal distribution https://en.wikipedia.org/wiki/Normal_distribution
-		//(Math.PI/0.7978845608028654)*(1/(0.5*Math.sqrt(2*Math.PI)))*Math.exp(-Math.pow(2*Math.PI*t - Math.PI,2)/(2*Math.pow(0.5,2)))
-		const angles = [], anglesCount = 101, d = 2 * π / (anglesCount - 1),
-			μ = π, σ = 0.5;
-		for (let i = 0; i &lt; anglesCount; i++) {
-
-			const x = i * d;
-			angles.push([(π/0.7978845608028654)*(1/(σ*Math.sqrt(2*π)))*Math.exp(-Math.pow(x - μ,2)/(2*σ*σ)), x]);
-			
-		}
-*/		
-		//Normal distribution https://en.wikipedia.org/wiki/Normal_distribution
-		//1 - (1/(0.5*Math.sqrt(2*Math.PI)))*Math.exp(-Math.pow(2*Math.PI*t - Math.PI,2)/(2*Math.pow(0.5,2)))
-/*		
-0.5*Math.sqrt(2*Math.PI)*Math.exp(-Math.pow(2*Math.PI*t-Math.PI+Math.PI/32,2)/(2*Math.pow(0.5,2)))-
-0.5*Math.sqrt(2*Math.PI)*Math.exp(-Math.pow(2*Math.PI*t-Math.PI-Math.PI/32,2)/(2*Math.pow(0.5,2)))+
-2*Math.PI*t-Math.PI
-*/
-/*		
-		const angles = [], anglesCount = 101, d = 2 * π / (anglesCount - 1),
-			μ = π, σ = 0.5;
-		for (let i = 0; i &lt; anglesCount; i++) {
-
-//			const x = i * d;
-//			angles.push([1-(1/(σ*Math.sqrt(2*π)))*Math.exp(-Math.pow(x - μ,2)/(2*σ*σ)), x]);
-			
-			const t = i * d - π;
-//			angles.push([t, t]);
-			angles.push([
-				0.5*Math.sqrt(2*π)*Math.exp(-Math.pow(t+π/32,2)/(2*Math.pow(0.5,2)))-
-				0.5*Math.sqrt(2*π)*Math.exp(-Math.pow(t-π/32,2)/(2*Math.pow(0.5,2)))+
-				t,
-				t]);
-			
-		}
-*/		
-		/*
-		const angles = [
-				[-4*π/4, -4*π/4],
-				[-3*π/4, -3*π/4],
-				[-(2/1)*π/4, -2*π/4],
-				[-(1/1)*π/4, -1*π/4],
-				
-				[0*π/4, 0*π/4],
-				
-				[(1/1)*π/4, 1*π/4],
-				[(2/1)*π/4, 2*π/4],
-				[3*π/4, 3*π/4],
-				[4*π/4, 4*π/4],
-			];
-		*/
-		
-		// Интервал [0, 2π]
-		const start = -π,
-			end = π;
-/*		
-		// Количество строк
-		const numRows = 100,
-		
-		// Шаг между значениями x
-			step = (end - start) / (numRows - 1); // Учитываем включение конечной точки
-		
-		// Вычисляем и выводим значения
-		for (let i = 0; i &lt; numRows; i++) {
-			
-		    const x = start + i * step; // Вычисляем x
-		    const y = Math.sin(x) + x;    // Вычисляем y
-			//angles.push([x, y]);
-			
-		}
-*/		
-		this.randomAngle = (arcValue) => {
-
-			if ((arcValue &lt; start) || (arcValue > end)) console.error(sHyperSphere + ': randomAngle. Invalid arcValue = ' + arcValue + ' range from ' + start + ' to ' + end);
-			/*
-			for (let i = 0; i &lt; angles.length; i ++) {
-
-				const angle = angles[i];
-				if (angle[1] >= arcValue) {
-
-//					arcValue = angle[0];
-//					arcValue = (angle[0] + angles[i + 1][0]) / 2;
-					if (i === 0) {
-						
-						arcValue = angle[0];
-						
-					} else {
-
-						const angleDelta = angles[i - 1],
-							a = (angle[0] - angleDelta[0]) / (angle[1] - angleDelta[1]),
-							b = angleDelta[0] - a * angleDelta[1],
-							x = arcValue,
-							y = a * x + b;
-						arcValue = y;
-//						arcValue = (c1 + c2) / 2;
-//						arcValue = (angle[0] + angles[i - 1][0]) / 2;
-
-					}
-					break;
-					
-				}
-				
-			}
-			*/
-/*			
-			//Normal distribution https://en.wikipedia.org/wiki/Normal_distribution https://skillbox.ru/media/code/o-normalnom-raspredelenii-prostymi-slovami/
-			const //x = arcValue / 2.3,//При коэффициенте 3.35 случайный разброс дуги равен половине окружности когда дуга arcValue = π / 2
-				//Надеюсь при таком коэфициенте раздрос дуги будет занимать всю окружность при arcValue = π
-				//Для проверки открыть http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/circle.html с четырьмя вершинами
-				//Выбрать вершину 0
-				//Выбрать 'Point local position'/'Advansed'/'Edges' = 0(0.1)
-				//Точки случайного разброса дуги розового цвета будут распеделены от вершины 0 = π / 4 = 0.7853981633974483 до вершины 2 = 5 * π / 4 = (5 * π / 4) - 2 * π = -2.3561944901923453
-				//
-				//При коэффициенте 2.3 случайный разброс дуги равен всей окружности когда дуга arcValue = π
-				
-				μ = 0.1,
-				σ = 0.2,//При σ = 0.4 сто процентов случайных дуг будет совпадать с дугой arcValue при arcValue = 0
-				sqrt = Math.sqrt, exp = Math.exp, pow = Math.pow, pi = Math.PI,
-				x = Math.random() - 0.5;
-			return arcValue + 1/(  σ*sqrt(2*pi))*exp((-1/2)*pow((x-μ)/  σ,2) )-1/(0.5*sqrt(2*pi))*exp((-1/2)*pow((x+μ)/σ,   2));
-			//                1/(0.5*sqrt(2*pi))*exp((-1/2)*   ((x-1)/0.5)^2))-1/(0.5*sqrt(2*pi))*exp((-1/2)*   ((x+1)/0.5)^2)
-//			return arcValue + 2*π*(Math.random() - 0.5)*(1-(1/(  σ*Math.sqrt(2*π      )))*Math.exp(-Math.pow(                 x +μ,2)/(2*Math.pow(  σ,2))))
-			//                                           1-(1/(0.4*Math.sqrt(2*Math.PI)))*Math.exp(-Math.pow(2*Math.PI*t-Math.PI+0,2)/(2*Math.pow(0.4,2)))
-*/
-//			return 20*π*Math.pow(0.5*(Math.random() - 0.5),3)
-//			return arcValue + 2 * arcValue * (Math.random() - 0.5);
-			return arcValue + (2/π) * arcValue * arcValue * (Math.random() - 0.5);
-//			return arcValue + Math.abs(arcValue * (0.01 - 0.1)/π + 0.1) * Math.sin(arcValue / 2)/(Math.random() - 0.5);
-//			return arcValue + 0.1 * Math.sin(arcValue / 2)/(Math.random() - 0.5);
-//			return arcValue + 0.01 * Math.cos(arcValue / 2)/(Math.random() - 0.5) + 2 * π * Math.sin(arcValue / 2) * (Math.random() - 0.5);
-//			return 1/(Math.random() - 0.5);
-//			return 2 * π * Math.cos(arcValue / 2);
-//			return 2 * π * Math.sin(arcValue * (Math.random() - 0.5) * π / 2);
-//			return arcValue + 2 * π * (Math.random() - 0.5) * Math.sin(arcValue / 2);
-//			return arcValue + 2 * π * (1/(Math.random() - 0.5)) * Math.sin(arcValue / 2);
-			//(2*Math.PI*t-Math.PI)+2 * Math.PI * (Math.random() - 0.5) * Math.sin((2*Math.PI*t-Math.PI) / 2)
-//			return π * Math.sin(arcValue / 2) * Math.random() * 2;
-		
-		};
-		
-	}
-		
-}
-const randomArc = new RandomArc();
-HyperSphere.randomAngle = randomArc.randomAngle;
-
-const sRandomVertices = 'RandomVertices';
-/**
- * Random vertices
- * @class
- */
-class RandomVertices {
-/*
-	 * @param {float} [randomVerticesSettings.params.arc=0.5] длинна дуги, соединяющей две вершины гиперсферы в радианах.
-	 * @param {array} [randomVerticesSettings.params.center=[]] центр окружности, пересекающей сферу или вершина гиперсферы, вокруг которой будет облако вероятностей.
-	 * @param {float} [randomVerticesSettings.params.center[0]=0] Altitude.
-	 * @param {float} [randomVerticesSettings.params.center[1]=0] Latitude.
-	 * @param {float} [randomVerticesSettings.params.center[2]=0] Longitude.
-*/
-
-	/**
-	 * Random vertices
-	 * @param {THREE.Group} scene [group]{@link https://threejs.org/docs/index.html?q=Gro#api/en/objects/Group} of objects to which a new &lt;b>random vertices&lt;/b> object will be added.
-	 * @param {Options} options See &lt;a href="../../jsdoc/Options/index.html" target="_blank">Options&lt;/a>.
-	 * @param {object} [randomVerticesSettings={}] The following settings are available.
-	 * @param {number} [randomVerticesSettings.R=1] Hypersphere radius.
-	 * @param {number} [randomVerticesSettings.np=36] numPoints. Number of vertices on a circle.
-	 * @param {number} [randomVerticesSettings.name=''] Name of random vertices.
-	 * @param {object} [randomVerticesSettings.params={}] The following parameters are available.
-	 * @param {Array} [randomVerticesSettings.params.vertice=[0, 0, 0]] First vertice of the arc between two vertices.
-	 * @param {Array} [randomVerticesSettings.params.oppositeVertice=[0, 0, 0]] Second vertice of the arc between two vertices.
-	 * @param {boolean} [randomVerticesSettings.params.random=true] random arrangement of circles vertices.
-	 * @param {Function} [randomVerticesSettings.params.onChangeRandom] Callback function is called when the &lt;b>randomVerticesSettings.params.random&lt;/b> has changed.
-	 * &lt;pre>
-	 * parameter &lt;b>random&lt;/b>: new value of the &lt;b>randomVerticesSettings.params.random&lt;/b>.
-	 * &lt;/pre>
-	 * @param {boolean} [randomVerticesSettings.params.onePoint=false] true - получить одну случайную точку не вычисляя остальные случайные точки.
-	 * @param {Function} [randomVerticesSettings.params.onChangeOnePoint] Callback function is called when the &lt;b>randomVerticesSettings.params.onePoint&lt;/b> has changed.
-	 * &lt;pre>
-	 * parameter &lt;b>onePoint&lt;/b>: new value of the &lt;b>randomVerticesSettings.params.onePoint&lt;/b>.
-	 * &lt;/pre>
-	 * @param {boolean} [randomVerticesSettings.params.onePointArray=false] true - array of the one points.
-	 * @param {Function} [randomVerticesSettings.params.onChangeOnePointArray] Callback function is called when the &lt;b>randomVerticesSettings.params.onePointArray&lt;/b> has changed.
-	 * &lt;pre>
-	 * parameter &lt;b>onePointArray&lt;/b>: new value of the &lt;b>randomVerticesSettings.params.onePointArray&lt;/b>.
-	 * &lt;/pre>
-	 * @param {boolean|object} [randomVerticesSettings.debug=false] Debug mode.
-	 * &lt;pre>
-	 *	false - No debug mode.
-	 *	true or object- Diagnoses your code and display detected errors to console.
-	 * &lt;/pre>
-	 * @param {object} [randomVerticesSettings.debug.oneCircles] View circles only around the opposite vertice. We skip the circles inside and outside the opposite vertice. This is necessary so that we can see the circles better.
-	 * NOTE! Have effect for 3D hypersperes only.
-	 * @param {float} [randomVerticesSettings.debug.oneCircles.altitudeShift] Shift of the altitude of the points of the circle with the maximum diameter. The shift of the altitude of the points of the circle with the smaller diameter gradually decreases to zero for the circle located at the opposite vertice.
-	 */
-	constructor(scene, options, randomVerticesSettings = {}){
-
-		const _this = this;
-
-		randomVerticesSettings.name ||= 'Random Vertices';
-		
-		//Во вселенной радиус гиперсферы может меняться
-		let R = randomVerticesSettings.R === undefined ? 1 : randomVerticesSettings.R, np = randomVerticesSettings.np === undefined ? 36 : randomVerticesSettings.np;
-
-		let circlesPointsCount;
-		const getCirclePoint = (options) => {
-
-			circleDistancePrev = options.circleDistancePrev != undefined ? options.circleDistancePrev : circleDistancePrev;
-			const circleDistance = (params.random ? (options.circleDistance - circleDistancePrev) * Math.random() + circleDistancePrev : options.circleDistance) / R; // Расстояние до окружности по дуге в радианах
-
-			return this.getCirclePoint(circleDistance, params, options);
-
-		}
-		const editPoints = (points, point, options) => {
-
-			options ||= {};
-			point ||= this.zeroArray();
-			if (randomVerticesSettings.debug) point.forEach((axis) => { if (isNaN(axis)) console.error(sHyperSphere + ': editPoints. Invalid point = ' + point) })
-			if ((options.pointId === undefined) || this.boCreateCirclesPoints){
-
-				points.push(point);
-				if (this.circlesCountDelta != undefined) points.push(point);//сейчас добавляются окружности внутри и снаружи противоположной вершины. Поэтому место в this.circlesPoints удваивается
-
-				return;
-
-			}
-			if (points.length > options.pointId) {
-
-				points[options.pointId] = point;
-				options.pointId++;
-
-			} else console.error(sRandomVertices + ': getCirclePointsRadians. Invalid options.pointId = ' + options.pointId);
-
-		}
-
-		/**
-		 * DeepSeek: Окружность на сфере (расчеты в радианах) — JavaScript
-		 * Генерирует точки окружности на сфере (в радианах)
-		 * @param {object} [options] options.
-		 * @param {number} [options.circleDistance=0.5] - Расстояние до окружности по дуге в радианах для гиперсферы радиусом 1
-		 * @param {number} [options.numPoints=36] - Количество точек
-		 * @param {number} [options.points=[]] - points array
-		 * @param {number} [options.circlesPointsCount] - For 2D hypersphere. Если равно нулю, то обновить this.aCirclesRadiusRadians. Это нужно делать всякий раз, когда изменяется дуга между вершинами. Например когда пользователь изменил коодинату вершины 
-		 * @param {number} [options.circleId] - circle id
-		 * @returns {Array} Массив точек [ 0 широта (рад), 1 долгота (рад) ]
-		 */
-		const getCirclePointsRadians = (options = {}) => {
-
-			if (options.circleDistance === undefined) options.circleDistance = 0.5;
-			if (options.numPoints === undefined) options.numPoints = np;
-			let numPoints = options.numPoints;
-			if (isNaN(numPoints)) numPoints = 1;//numPoints = NaN при длинне дуги между вершинами гиперсферы params.arc = 0. Диамерт окружности, пересекающей гиперсферу равен нулю. Создаем одну точку.
-			options.points ||= [];
-			const points = options.points;
-			let altitudeShift = this.getAltitudeShift(debug, abc.circlesCount - 1, options, params);
-/*
-			if (options.sphereId != undefined) {
-				
-				const aSphere = this.aSpheres[options.sphereId];
-				aSphere.altitudeShift = altitudeShift;
-				Object.defineProperty(aSphere, 'altitudeShift', {
-			
-					get: () => { return altitudeShift; },
-					set: (altitudeShiftNew) => {
-			
-						if (altitudeShift === altitudeShiftNew) return true;
-						altitudeShift = altitudeShiftNew;
-						params.randomVertices.changeCirclesPoints();
-						return true;
-			
-					},
-			
-				});
-
-			}
-*/			
-			for (let i = 0; i &lt; numPoints; i++) {
-
-				let point;
-				if (!this.boCreateCirclesPoints) point = getCirclePoint({ i: i, numPoints: numPoints, circleDistance: options.circleDistance, altitude: options.altitude + altitudeShift });
-				else {
-
-					point = this.zeroArray();//создается пустой массив максимального размера
-					if (edges) {
-
-						const pointsLength = points.length;
-						if (pointsLength > 1) edges.push([pointsLength - 2, pointsLength - 1]);
-
-					}
-
-				}
-				this.pushCirclesRadiusRadians(options, i, abc, R, getCirclePoint, numPoints, params)
-				editPoints(points, point, options);
-				circlesPointsCount++;
-
-			}
-
-			return points;
-		}
-		let params;//Параметры, которые может менять пользователь
-		const changeCirclesPoints = (paramsNew) => {
-
-			if (paramsNew) {
-				
-				params = paramsNew;
-				params.randomVertices ||= this;
-				RandomVertices.params(params);
-
-			}
-			if (!params.onePoint) {
-
-				this.setCirclesCloud(randomVerticesSettings, params);
-				return;
-
-			}
-
-			if (this.boCreateCirclesPoints) {
-
-				this.setCirclesCloudOnePoint(randomVerticesSettings);
-				return;
-
-			}
-
-			const editPointsOptions = { pointId: 0, }
-//			const abc = setAbc();
-			const aNumPoints = [];//массив с количеством точек numPoints для каждой окружности. Нужен для того, что бы случайно выбрать окружность при вычислении одиночной случайной точки
-			//заполнить aNumPoints
-			circlesPointsCount = 0;
-
-//			const onePointArea = OnePointArea();
-			const b = abc.b, a = abc.a, c = abc.c, d = abc.d, s = abc.s;
-			for (let circleId = 1; circleId &lt; abc.circlesCount; circleId++) {
-
-				const x = circleId * d,
-					circleDistance = (b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
-						a / (x + b) + c) * R;
-				const numPoints = this.numPoints(d, s, circleId, x);
-				
-				circlesPointsCount += numPoints;
-				aNumPoints.push({ circlesPointsCount: circlesPointsCount, circleDistance: circleDistance });
-
-			}
-			
-			//вычислить одну случайную точку без необходимости вычисления всех остальных случайных точек
-			//Нужно для сокращения времени вычислений, когда надо всего одну случайную точку
-			const getOnePoint = (/*onePointArea*/) => {
-
-				circleDistancePrev = 0;//Положение предыдущего кольца
-
-				if (circlesSphere) this.circlesPoints = circlesSphere.angles;
-
-				const randomPointId = Math.round(Math.random() * circlesPointsCount);//Идентификатор случайной точки
-				//Найти окружность, в которую попадает случайная точка randomPointId
-				for (let circleId = 0; circleId &lt; abc.circlesCount; circleId++) {
-
-					const circleParams = aNumPoints.length > 0 ? aNumPoints[circleId] :
-
-						//params.arc = 0. Все окружности стянуты в одну точку params.center и имеют диаметр равный нулю
-						//Так же получается, что randomPointId = 0 потому что circlesPointsCount = 0
-						//Поэтому circleParams делаем таким, что бы случайная точка point оказалась равной params.center
-						{ circlesPointsCount: 1, circleDistance: 0 };
-					if (circleParams.circlesPointsCount >= randomPointId) {
-
-						const point = getCirclePoint({
-							
-							circleDistance: circleParams.circleDistance,
-							circleDistancePrev: circleId === 0 ? circleParams.circleDistance : aNumPoints[circleId - 1].circleDistance,
-						
-						});
-						editPoints(this.circlesPoints, point, editPointsOptions);
-						if (!params.onePointArray) circlesPointsCount = editPointsOptions.pointId;
-						break;
-
-					}
-
-				}
-
-			}
-			for (let i = 0; i &lt; this.circlesPoints.length; i++) getOnePoint();//onePointArea);
-
-		}
-		const abc = {
-
-			//Deepseek Вычислить a, d, c в уравнении y=a/(x+b)+c точностью до 8 знаков при условии:
-			//Эта формула нужна для вычисления радиуса окружности radius
-	
-			//найти элементарную функцию для массива точек (0.1,0.0033995189605183543),(0.5,0.11673555173106497),(1,0.8759691969420544),(1.5,15.890654938344866)
-			//(0.027*exp(3*x)+2.718*(x^4))*0.8
-			
-			//коэфициенты для формулы circleDistance = a / (x + b) + c, уголовое расстояние для окружности для гиперсферы радиусом 1
-			get b() {
-				
-				const exp = Math.exp, pow = Math.pow,
-					k = 15.890654938344866 / 16.163337545114086,//Умножить b на этот множитель что бы b = 15.890654938344866 при arc = 1.5
-		
-		//			arc = params.arc / 2,//В этом случае точки не совсем равномерно распределяются по гиперсфере когда вершины расположены на противоположных концах гиперсферы
-					arc = _this.boCreateCirclesPoints ?
-						π ://надо установить максимальную длинну дуги во время создания массива точек окружностей, что бы массив поучился максимальной длинный
-						params.arc,
-					
-					//коэфициенты для формулы circleDistance = a / (x + b) + c, уголовое расстояние для окружности для гиперсферы радиусом 1
-					b = (0.027 * (exp(3 * arc)
-						- 1//отнимаю единицу что бы график выходил из нуля
-						) + 2.718 * pow(arc, 4)) * k;//Так b зависит от длинны дуги, что бы плотность вероятностей распределялась от равномерной при arc = π/2 до сводящейся в точку при arc = 0
-				return b;
-				
-			},
-			get a() {
-
-				const b = this.b;
-				return -b * (pi + b);
-				
-			},
-			get c() { return -this.a / this.b; },
-			
-			get circlesCount() { return (!this.boCreateCirclesPoints) &amp;&amp; (this.b === 0) ? 2 : _this.circlesCount(np); },
-			get d() { return pi / (this.circlesCount - 1); },//расстояние между окружностями в радианах при условии, что окружности равномерно расположены на сфере
-			get s() { return _this.onePointArea(this.d, np); },//Площадь сферы на которой в среднем будет находиться одна случайная точка.
-			
-		}
-
-		//есть три точки (0,0), (0,75,2.4), (π,π)
-		//y≈ -1.17280918/(x+0.33708757)+3.47926296
-		//const b = 0.33708757, a = -1.17280918, c = 3.47926296;
-
-		//есть три точки (0,0), (0,π), (π,π)
-		//для заданных точек решение не существует.
-
-		//есть три точки (0,0), (0.1,π-0.1), (π,π)
-		//const b = 0.01/(pi-0.2), a = -b*(pi+b), c = -a/b;
-		//const a = -0.010691460521266596, b = 0.0033995189605183543, c = 3.1449921725503116;
-
-		//есть три точки (0,0), (0.5,π-0.5), (π,π)
-		//const b = 1/(4*pi-4), a = -b*(pi+b), c = -a/b;
-		//const a = -0.3803627407690211, b = 0.11673555173106497, c = 3.258328205320858;
-
-		//есть три точки (0,0), (1,π-1), (π,π)
-		//const b = 1/(pi-2), a = -b*(pi+b), c = -a/b;
-		//const a = -3.5192604278754165, b = 0.8759691969420544, c = 4.017561850531847;
-
-		//есть три точки (0,0), (1.5,π-1.5), (π,π)
-		//Почти равномерное распределение
-		//const b = 2.25/(pi-3), a = -b*(pi+b), c = -a/b;
-		//const a = -302.4348791845787, b = 15.890654938344866, c = 19.03224759193466;
-
-		//есть три точки (0,0), (π/2,π/2), (π,π)
-		//Равномерное распределение
-		//Не существует функции вида y = a/(x+b)+c, которая проходила бы через все три заданные точки одновременно.
-
-		//////////////////////////////////////////Deepseek
-
-		this.createCirclesSphere = () => {
-
-//			circlesPointsOptions.pointId = this.pointIdErase(circlesPointsOptions.pointId);
-//			circlesPointsOptions.pointId = 0;
-			if (!circlesSphere &amp;&amp; !this.boCreateCirclesPoints &amp;&amp; (this.circlesPoints.length != 0)) {
-
-				circlesSphere = this.getHyperSphere(options, {
-
-						r: R,
-						edges: false,
-						randomArc: true,
-						projectParams: {
-
-							scene: scene,
-
-						},
-						//r: 0.5,
-						debug: debug,
-/*					
-						debug: debug ? {
-
-							probabilityDensity: false,
-							middleVertice: false,
-							log: false,
-
-						} : false,
-						//debug: false,
-*/						
-						settings: {
-
-							object: {
-
-								name: randomVerticesSettings.name || '',
-								color: randomVerticesSettings.color,
-								geometry: {
-
-									angles: this.circlesPoints,
-									indices: { edges: edges },
-
-								},
-
-							},
-							overriddenProperties: {
-								setDrawRange: (start, count) => {
-
-									if (circlesSphere) circlesSphere.bufferGeometry.setDrawRange(start, count);
-
-								}
-
-							},
-
-						},
-
-					});
-
-			}
-
-			if (circlesSphere) circlesSphere.setVerticesRange(0, circlesPointsCount);
-			
-		}
-		let circlesSphere;
-		this.boCreateCirclesPoints;
-		const circlesPointsOptions = {};
-		Object.defineProperties(this, {
-			circlesSphere: {
-				get: () => { return circlesSphere; },
-				set: (circlesSphereNew) => {
-
-					circlesSphere = circlesSphereNew;
-					return true;
-
-				}
-			}
-		});
-		let circleDistancePrev;//Положение предыдущего кольца
-		this.circlesPoints = [];//точки всех окружностей
-		const debug = randomVerticesSettings.debug || false, edges = debug ? [] : undefined;
-		if (typeof debug === "object") {
-
-			debug.probabilityDensity = debug.probabilityDensity != undefined ? debug.probabilityDensity : false;
-			debug.middleVertice = debug.middleVertice != undefined ? debug.middleVertice : false;
-			debug.log = debug.log != undefined ? debug.log : false;
-			
-		}
-		
-		this.aSpheres = [];//массив сфер в трехмерной гиперсфере. Каждый элемент массива это массив окружностей в текущей сфере. каждый елемент массива окружностей содержит параметры окружности
-							//Для двумерной и одномерной гиперсферы когда sphereId = undefined, массив сфер содержит один элемент с массивом окружностей.
-		this.circlesId = 0;//идентификатор сферы в this.aSpheres. В одномерной и двухмерной гиперсфере в this.aSpheres всего одна сфера и идентификатор сферы равен нулю.
-
-		//Вызывается из hyperSphere3D.js. Вычисляем количество точек для окружностей на сферах, расположенных внутри и снаружи противоположной вершины
-		this.setCircles = (circlesPointsCountNew, circlesIdNew, altitude, sphereId) => {
-
-/*			
-			circlesPointsOptions.altitudeShiftMax = debug.oneCircles &amp;&amp; debug.oneCircles.altitudeShift ?
-				debug.oneCircles.altitudeShift :
-				sphereId != undefined ?
-					this.aCirclesRadiusRadians[sphereId - 1] * inCircles :
-					0;
-*/					
-			circleDistancePrev = 0;//Положение предыдущего кольца
-			if (circlesPointsCountNew != undefined) circlesPointsCount = circlesPointsCountNew;
-			const cos = Math.cos,
-				a = abc.a, b = abc.b, c = abc.c;
-				//d = abc.d;//расстояние между окружностями в радианах при условии, что окружности равномерно расположены на сфере
-			this.circlesId = circlesIdNew === undefined ? 0 : circlesIdNew;
-			if (this.boCreateCirclesPoints &amp;&amp; (this.aSpheres.length &lt;= this.circlesId)) {
-
-				this.aSpheres.push([]);
-//				this.cSpheresAppendChild();
-
-			}
-			const aCircles = this.aSpheres[this.circlesId];
-			circlesPointsOptions.altitude = altitude;//this.altitudeDifference(sphereId, params);
-			this.circlesCountDelta = circlesIdNew;//Для hyperSphere3D индекс окружностей внутри и снаружи противоположной вершины. Количество окружностей уменьшается когда строятся окружности внутри и снаружи противоположной вершины
-			for (let circleId = 1; circleId &lt; abc.circlesCount; circleId++) {
-
-				const d = abc.d,//расстояние между окружностями в радианах при условии, что окружности равномерно расположены на сфере
-					x = circleId * d,
-					circleDistance = /*getCircleDistance(x),*/(b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
-						a / (x + b) + c) * R,
-					xPrev = (circleId - 1) * d;//prev point
-				circleDistancePrev = (b === 0 ? 0 ://дуга между вершинами гиперсферы равна нулю. Значит радиус окружности вокруг вершины тоже равен нулю
-					a / (xPrev + b) + c) * R;
-				if (circlesSphere) circlesPointsOptions.points = circlesSphere.angles;
-				else circlesPointsOptions.points = this.circlesPoints;
-				circlesPointsOptions.circleDistance = circleDistance;
-				const dCircleDistance = (circleDistance - circleDistancePrev) / R;
-				if (this.boCreateCirclesPoints) {
-					
-					circlesPointsOptions.numPoints = this.getNumPoints(circleDistance, R, dCircleDistance, np);
-					aCircles.push({ numPoints: circlesPointsOptions.numPoints, });//for 3D hypersphere only
-
-				} else circlesPointsOptions.numPoints = aCircles[circleId - 1].numPoints;
-				//console.log('circleId = ' + circleId + ', circleDistance1 = ' + circleDistance1 + ', numPoints = ' + circlesPointsOptions.numPoints)
-				this.circlesRadiusRadiansSetX(x);
-				circlesPointsOptions.circlesPointsCount = circlesPointsCountNew;
-				circlesPointsOptions.circleId = circleId;
-				circlesPointsOptions.sphereId = sphereId;
-				getCirclePointsRadians(circlesPointsOptions);
-
-			}
-			this.circlesCountDelta = undefined;
-			//console.log('circlesPointsCount = ' + circlesPointsCount);
-
-		}
-		this.setCirclesOnePoint = (sphereId) => {
-
-			//размер circlesPoints массива всех точек окружностей
-			const pointsCount = params.onePointArray ? abc.circlesCount * np ://если надо содать массив из единично создаваемых точек
-					1,//массив состоит из одной точки
-				
-				options = pointsCount === 1 ? { pointId: 0, pointsCount: pointsCount } : undefined;
-			for (let i = 0; i &lt; pointsCount; i++) editPoints(this.circlesPoints, undefined, options);
-
-		}
-		const setCirclesPoints = (/*arc*/) => {
-
-			//заполнить circlesPoints максимально возможный массив точек всех окружностей 
-			this.boCreateCirclesPoints = true;
-//			params.arc = pi;
-			changeCirclesPoints();
-
-			//создать окружности
-			this.boCreateCirclesPoints = false;
-//			params.arc = arc;
-			circlesPointsOptions.pointId = 0;
-			changeCirclesPoints();
-
-			this.cSpheresAppendChild();
-
-		}
-		this.setCirclesPoints = () => { setCirclesPoints(); }
-		const setCirclesOnePoints = () => {
-
-			//заполнить circlesPoints максимально возможный массив точек всех окружностей 
-			this.boCreateCirclesPoints = true;
-			changeCirclesPoints();
-
-			//создать окружности
-			this.boCreateCirclesPoints = false;
-			changeCirclesPoints();
-
-		}
-		this.determinedVertices = (paramsNew) => { 
-
-			params ||= paramsNew;
-			if (params.onePoint) {
-
-				console.warn(sRandomVertices + ': Please, define params.onePoint = false');
-				params.onePoint = false;
-				
-			}
-			params.randomVertices = this;
-			RandomVertices.params(params);
-			setCirclesPoints();//params.arc);
-			return circlesSphere;
-//			return circlesPoints;
-			
-		}
-		this.randomVertice = (paramsNew) => { this.determinedVertices(paramsNew); }
-		const removeCirclesSphere = () => {
-			
-			this.circlesPoints = [];
-			if (!circlesSphere) return;
-			if (circlesSphere.object3D) circlesSphere.object3D.parent.remove(circlesSphere.object3D);
-			circlesSphere = undefined;
-			
-		}
-		/**
-		 * Сall this method for the &lt;b>randomVerticesSettings.params.random&lt;/b> change to take effect.
-		 */
-		this.onChangeRandom = (paramsNew) => {
-			
-			params ||= paramsNew;
-			removeCirclesSphere();
-			setCirclesPoints();// params.arc);
-			_this.createCirclesSphere();
-		
-		}
-		/**
-		 * Сall this method for the &lt;b>randomVerticesSettings.params.onePoint&lt;/b> change to take effect
-		 * or if &lt;b>randomVerticesSettings.params.onePointArray&lt;/b> was changed to false.
-		 * @param {Object} paramsNew See &lt;b>randomVerticesSettings.params&lt;/b> of the constructor for details.
-		 */
-		this.onChangeOnePoint = (paramsNew) => {
-			
-			params ||= paramsNew;
-			this.onChangeRandom();
-		
-		}
-		this.removeOnePointArray = () => { removeCirclesSphere(); }
-		/**
-		 * Creates an array of the random points from one random point.
-		 * @param {Object} paramsNew See &lt;b>randomVerticesSettings.params&lt;/b> of the constructor for details.
-		 * You can set &lt;b>vertice&lt;/b> and &lt;b>oppositeVertice&lt;/b> parameters instead &lt;b>arc&lt;/b> and &lt;b>center&lt;/b>. See below:
-		 * @param {Array} [paramsNew.vertice] First vertice of the &lt;b>arc&lt;/b>.
-		 * @param {Array} [paramsNew.oppositeVertice] Second vertice of the &lt;b>arc&lt;/b>.
-		 * @returns &lt;a href="../jsdoc/module-HyperSphere-HyperSphere.html" target="_blank">HyperSphere&lt;/a>, what contains created points array.
-		 */
-		this.createOnePointArray = (paramsNew) => {
-			
-			params ||= paramsNew;
-			if (params.R != undefined) R = params.R;
-			params.randomVertices = this;
-			RandomVertices.params(params);
-//			params.randomVertices = this;
-			removeCirclesSphere();
-			if (params.onePointArray) {
-
-				if (!params.onePoint) {
-
-					console.warn(sRandomVertices + ': Please, define params.onePoint = true');
-					params.onePoint = true;
-					
-				}
-				setCirclesOnePoints();
-
-			}
-			else if (params.onePoint) this.randomVertice();
-			_this.createCirclesSphere();
-			return circlesSphere;
-		
-		}
-		/**
-		 * Сall this method for the &lt;b>randomVerticesSettings.params.arc&lt;/b> change to take effect.
-		 * @param {Object} paramsNew See &lt;b>paramsNew&lt;/b> of the &lt;b>createOnePointArray&lt;/b> method for details.
-		 */
-		this.changeCirclesPoints = (params) => {
-			
-			circlesPointsOptions.pointId = 0;
-			this.updateCirclesRadiusRadians(changeCirclesPoints, params);
-		
-		}
-
-	}
-	//overridden methods
-
-	updateCirclesRadiusRadians(changeCirclesPoints, params){ changeCirclesPoints(params); }
-	getHyperSphere() { console.error(sRandomVertices + sOver.replace('%s', 'getHyperSphere')); }
-	getArcAngle() { console.error(sRandomVertices + sOver.replace('%s', 'getArcAngle')); }
-	oppositeVertice0() { console.error(sRandomVertices + sOver.replace('%s', 'oppositeVertice0')); }
-//	antipodeCenter() { console.error(sRandomVertices + sOver.replace('%s', 'antipodeCenter')); }
-//	defineCenterCoordinates() { console.error(sRandomVertices + sOver.replace('%s', 'defineCenterCoordinates')); }
-	zeroArray() { console.error(sRandomVertices + sOver.replace('%s', 'zeroArray')); }
-	onePointArea() { console.error(sRandomVertices + sOver.replace('%s', 'onePointArea')); }
-	numPoints() { console.error(sRandomVertices + sOver.replace('%s', 'numPoints')); }
-//	center() { console.error(sRandomVertices + sOver.replace('%s', 'center')); }
-	getCirclePoint() { console.error(sRandomVertices + sOver.replace('%s', 'getCirclePoint')); }
-	setCenterLength() { console.error(sRandomVertices + sOver.replace('%s', 'setCenterLength')); }
-	circlesCount() { console.error(sRandomVertices + sOver.replace('%s', 'circlesCount')); }
-	getNumPoints() { console.error(sRandomVertices + sOver.replace('%s', 'getNumPoints')); }
-	setCirclesCloud() { console.error(sRandomVertices + sOver.replace('%s', 'setCirclesCloud')); }
-	setCirclesCloudOnePoint() { console.error(sRandomVertices + sOver.replace('%s', 'setCirclesCloudOnePoint')); }
-//	pointIdErase() { console.error(sRandomVertices + sOver.replace('%s', 'pointIdErase')); }
-	pushCirclesRadiusRadians() {}
-	circlesRadiusRadiansSetX(x) {}
-	getAltitudeShift() { return 0; }
-	gui() {}
-	cSpheresAppendChild() { }
-
-	////////////////////////////////////////overridden methods
-	
-}
-const sOver = ': Please, override %s method in your ' + sRandomVertices + ' child class.';
-/**
- * Sets a &lt;b>RandomVertices&lt;/b> parameters.
- * @param {object} params See &lt;b>RandomVertices&lt;/b> constructor &lt;b>randomVerticesSettings.params&lt;/b> parameter for details.
- */
-RandomVertices.params = (params) => {
-
-	if (params.random === undefined) params.random = true;
-	{//hide random
-
-		let random = params.random;
-		Object.defineProperty(params, 'random', {
-	
-			get: () => { return random; },
-			set: (randomNew) => {
-	
-				if (random === randomNew) return true;
-				random = randomNew;
-				if (!random) {
-
-//					if (params.onePointArray) params.onePointArray = false;
-					if (params.onePoint) params.onePoint = false;
-					
-				}
-				params.randomVertices.onChangeRandom();
-//				if (!(!random &amp;&amp; params.onePoint))params.randomVertices.onChangeRandom();
-				if (params.onChangeRandom) params.onChangeRandom(random);
-				return true;
-	
-			},
-	
-		});
-
-	}
-	if (params.onePoint === undefined) params.onePoint = true;
-	{//hide onePoint
-
-		let onePoint = params.onePoint;
-		Object.defineProperty(params, 'onePoint', {
-	
-			get: () => { return onePoint; },
-			set: (onePointNew) => {
-	
-				if (onePoint === onePointNew) return true;
-				onePoint = onePointNew;
-//				if (!params.random &amp;&amp; onePoint) params.random = true;
-				if (onePoint) { if (!params.random) params.random = true; }
-				else if (params.onePointArray) params.onePointArray = false;
-				if (params.onChangeOnePoint) params.onChangeOnePoint(onePoint);
-				params.randomVertices.onChangeOnePoint(params);
-				return true;
-	
-			},
-	
-		});
-
-	}
-	if (params.onePointArray === undefined) params.onePointArray = true;
-	{//hide onePointArray
-
-		let onePointArray = params.onePointArray;
-		Object.defineProperty(params, 'onePointArray', {
-	
-			get: () => { return onePointArray; },
-			set: (onePointArrayNew) => {
-	
-				if (onePointArray === onePointArrayNew) return true;
-				onePointArray = onePointArrayNew;
-				if (onePointArray) {
-					
-					if (!params.onePoint) params.onePoint = true;
-					params.randomVertices.createOnePointArray(params);
-
-				}
-				else params.randomVertices.onChangeOnePoint(params);
-/*				
-				if (onePointArray &amp;&amp; !params.onePoint) params.randomVertices.createOnePointArray(params);
-				else params.randomVertices.onChangeOnePoint(params);
-*/				
-				if (params.onChangeOnePointArray) params.onChangeOnePointArray(onePointArray);
-				return true;
-	
-			},
-	
-		});
-
-	}
-	const RandomVertices = params.HyperSphere.RandomVertices;
-	params.vertice ||= RandomVertices.ZeroArray();
-//	RandomVertices.Vertice(params.vertice);
-	params.oppositeVertice ||= RandomVertices.ZeroArray();
-//	RandomVertices.Vertice(params.oppositeVertice);
-
-	//если вершина находится на полюсах, то случайное распределение вершин получается не случайным непонятно по какой причине
-	//Для этого немного отклоняю вершину от полюса
-	const inaccurateLatitude = (lat) => {
-	
-		const precision = 1e-14;
-		if (lat > 0) {
-			
-			if ((pi / 2 - lat) &lt;= precision) lat -= precision;
-	
-		} else if ((pi / 2 + lat) &lt;= precision) lat += precision;
-		return lat;
-	
-	}
-	
-	if (params.randomVertices) params.randomVertices.oppositeVertice0(params, inaccurateLatitude);
-
-	if (params.arc === undefined)
-		Object.defineProperty(params, 'arc', {
-	
-			get: () => {
-				
-				const vertice = params.vertice, oppositeVertice = params.oppositeVertice;
-				return params.randomVertices.getArcAngle(vertice, oppositeVertice);
-			
-			},
-	
-		});
-	if (params.center === undefined)
-		Object.defineProperty(params, 'center', { get: () => { return params.HyperSphere.RandomVertices.getCenter(params); }, });
-	
-	params.center ||= [];
-	params.HyperSphere.RandomVertices.Center(params, inaccurateLatitude);
-	
-}
-RandomVertices.Center = () => { console.error(sRandomVertices + ': Please, override RandomVertices.Center method.'); }
-HyperSphere.RandomVertices = RandomVertices;
-/*
-const Position = (position) => {
-
-	Object.defineProperty(position, 'x', {
-
-		get: () => { return position[0]; },
-		set: (x) => {
-
-			if (position[0] === x) return true;
-			position[0] = x;
-			return true;
-
-		},
-
-	});
-	Object.defineProperty(position, 'y', {
-
-		get: () => { return position[1]; },
-		set: (y) => {
-
-			if (position[1] === y) return true;
-			position[1] = y;
-			return true;
-
-		},
-
-	});
-	Object.defineProperty(position, 'z', {
-
-		get: () => { return position[2]; },
-		set: (z) => {
-
-			if (position[2] === z) return true;
-			position[2] = z;
-			return true;
-
-		},
-
-	});
-	Object.defineProperty(position, 'w', {
-
-		get: () => { return position[3]; },
-		set: (w) => {
-
-			if (position[3] === w) return true;
-			position[3] = w;
-			return true;
-
-		},
-
-	});
-	return position;
-	
-}
-*/
 export default HyperSphere;
 
 const _display = (element, boDisplay) => { element.style.display = boDisplay === false ? 'none' : 'block'; }
@@ -4617,13 +3457,13 @@ const _display = (element, boDisplay) => { element.style.display = boDisplay ===
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Circle.html">Circle</a></li><li><a href="module-HyperSphere.html">HyperSphere</a></li><li><a href="module-HyperSphere3D.html">HyperSphere3D</a></li><li><a href="module-Sphere.html">Sphere</a></li></ul><h3>Classes</h3><ul><li><a href="module-Circle-Circle.html">Circle</a></li><li><a href="module-HyperSphere3D-HyperSphere3D.html">HyperSphere3D</a></li><li><a href="module-HyperSphere-HyperSphere.html">HyperSphere</a></li><li><a href="module-HyperSphere-RandomVertices.html">RandomVertices</a></li><li><a href="module-Sphere-Sphere.html">Sphere</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Circle.html">Circle</a></li><li><a href="module-HyperSphere.html">HyperSphere</a></li><li><a href="module-HyperSphere3D.html">HyperSphere3D</a></li><li><a href="module-Sphere.html">Sphere</a></li><li><a href="module-utilsCircle.html">utilsCircle</a></li><li><a href="module-utilsHSphere.html">utilsHSphere</a></li><li><a href="module-utilsSphere.html">utilsSphere</a></li></ul><h3>Classes</h3><ul><li><a href="module-Circle-Circle.html">Circle</a></li><li><a href="module-HyperSphere3D-HyperSphere3D.html">HyperSphere3D</a></li><li><a href="module-HyperSphere-HyperSphere.html">HyperSphere</a></li><li><a href="module-Sphere-Sphere.html">Sphere</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Wed Feb 11 2026 10:28:20 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri Feb 20 2026 11:52:09 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
