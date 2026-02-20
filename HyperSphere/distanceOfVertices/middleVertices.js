@@ -18,9 +18,9 @@ import ProgressBar from '../../ProgressBar/ProgressBar.js'
 const middleVertices = (data) => {
 
 	const timeId = data.timeId,
-		classSettings = data.classSettings,
-		settings = classSettings.settings,
 		_this = data.this,
+		classSettings = _this.classSettings,
+		settings = classSettings.settings,
 		options = data.options,
 		t = data.t;
 	if (timeId === 0) return;//не вычисляется средняя точка когда проигрыватель в начале

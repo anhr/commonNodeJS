@@ -2560,7 +2560,7 @@ this.object = () => {
 				classSettings.distanceOfVertices({
 
 					timeId: timeId,
-					classSettings: classSettings,
+//					classSettings: classSettings,
 					this: this,
 					options: options,
 					t: t,
