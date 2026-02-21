@@ -299,7 +299,7 @@ class Circle extends HyperSphere {
 
 	}
 		
-	a2v(angles, r){
+	a2v(angles, r = this.r){
 
 		if(r === undefined) console.error(sCircle + ': a2v. r = ' + r);
 		/*https://gemini.google.com/app/1d5ef1a7e3d3d45f

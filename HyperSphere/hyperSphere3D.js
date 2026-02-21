@@ -638,7 +638,7 @@ class HyperSphere3D extends Sphere {
 		return cartesianToPolar4D(Position(vertice));
 
 	}
-	a2v(angles, r) {
+	a2v(angles, r = this.r) {
 
 		/*https://chat.deepseek.com/a/chat/s/831d9a90-2396-4b09-b548-288415124814
 		Задана точка на 3D гиперсфере в полярной системе координат. Начало координат находится в центре 3D гиперсферы.

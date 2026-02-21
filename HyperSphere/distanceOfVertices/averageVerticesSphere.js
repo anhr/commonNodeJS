@@ -12,16 +12,20 @@
  *
  * http://www.apache.org/licenses/LICENSE-2.0
 */
+import * as utils from '../utilsSphere.js'
+
 const averageVertices = (data) => {
 
-	const classSettings = data.this.classSettings,
+	const _this = data.this,
+		classSettings = _this.classSettings,
 		overriddenProperties = classSettings.overriddenProperties,
-		vertices = classSettings.settings.object.geometry.position,
+		vertices = overriddenProperties.vertices(),
+		angles = classSettings.settings.object.geometry.angles,
 		position = classSettings.settings.bufferGeometry.userData.position;
 //		vertices = overriddenProperties.position0.angles;
 	/*
 Написать функцию на языке javascript.
-Задан массив : const vertices = [].
+Задан массив : const angles = [].
 В этот массив добавить несколько  точек, случайно расположенных на поверхности сферы в полярной системе координат. Начало координат находится в центре сферы.
 Каждая точка имеет вид: const angles = {
    latitude: latitude,//широта в диапазоне от -π/2 до π/2
@@ -42,7 +46,7 @@ const averageVertices = (data) => {
 	let velocities = [];
 	
 	// Инициализируем скорости
-	velocities = new Array(vertices.length).fill(null).map(() => ({ x: 0, y: 0, z: 0 }));
+	velocities = new Array(angles.length).fill(null).map(() => ({ x: 0, y: 0, z: 0 }));
 
 	// Нормализация точки на сфере
 	function normalizeToSphere(x, y, z) {
@@ -60,22 +64,22 @@ const averageVertices = (data) => {
 //		if (!isAnimating) return;
 
 		// Вычисляем силы отталкивания для каждой точки
-		const forces = new Array(vertices.length).fill(null).map(() => ({ x: 0, y: 0, z: 0 }));
+		const forces = new Array(angles.length).fill(null).map(() => ({ x: 0, y: 0, z: 0 }));
 
 		// Для каждой пары точек
-		for (let i = 0; i < vertices.length; i++) {
+		for (let i = 0; i < angles.length; i++) {
 
-//			const pos1 = polarToCartesian(vertices[i].latitude, vertices[i].longitude);
-//			const pos1 = vertices[i];
+//			const pos1 = polarToCartesian(angles[i].latitude, angles[i].longitude);
+//			const pos1 = angles[i];
 			
 //			if (timeId === undefined) timeId = playerIndexCur;
 //			userData.timeId = timeId;
 			const pos1 = position[i];
 //			userData.timeId = playerIndexCur;
 
-			for (let j = i + 1; j < vertices.length; j++) {
+			for (let j = i + 1; j < angles.length; j++) {
 				
-//				const pos2 = polarToCartesian(vertices[j].latitude, vertices[j].longitude);
+//				const pos2 = polarToCartesian(angles[j].latitude, angles[j].longitude);
 				const pos2 = position[j];
 
 				// Вектор от i к j
@@ -107,9 +111,9 @@ const averageVertices = (data) => {
 		}
 
 		// Применяем силы к точкам
-		for (let i = 0; i < vertices.length; i++) {
+		for (let i = 0; i < angles.length; i++) {
 			
-//			const pos = polarToCartesian(vertices[i].latitude, vertices[i].longitude);
+//			const pos = polarToCartesian(angles[i].latitude, angles[i].longitude);
 			const pos = position[i];
 
 			// Обновляем скорость с учетом силы и демпфирования
@@ -125,17 +129,40 @@ const averageVertices = (data) => {
 			// Нормализуем на сферу
 			const normalized = normalizeToSphere(newX, newY, newZ);
 
-			// Преобразуем обратно в полярные координаты
-			const polar = cartesianToPolar(normalized.x, normalized.y, normalized.z);
-			vertices[i].latitude = polar.latitude;
-			vertices[i].longitude = polar.longitude;
+/*
+// Преобразование декартовых координат в полярные
+function cartesianToPolar(x, y, z) {
+	const r = Math.sqrt(x*x + y*y + z*z);
+	const latitude = Math.asin(y / r);
+	const longitude = Math.atan2(z, x);
+	return {
+		latitude: latitude,
+		longitude: longitude
+	};
+}
+			
+// Преобразуем обратно в полярные координаты
+const polarOld = cartesianToPolar(normalized.x, normalized.y, normalized.z);
+*/			
+			const polar = utils.casterianToAngles(normalized);
+			vertices.push(polar);
+/*			
+			angles[i].latitude = polar.latitude;
+			angles[i].longitude = polar.longitude;
+*/
+			
 		}
 
+		overriddenProperties.updateVertices(vertices);
+		_this.onSelectSceneEnd(data.timeId);
+/*		
 		// Обновляем визуализацию
 		updateVisualization();
 
 		iteration++;
 		document.getElementById('iteration').innerHTML = `Итерация: ${iteration}`;
+*/
+		
 	}
 	iterationStep();
 	

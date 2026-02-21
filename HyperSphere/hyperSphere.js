@@ -2726,11 +2726,12 @@ this.object = () => {
 		this.onSelectSceneEnd = (timeId) => {
 
 			classSettings.overriddenProperties.onSelectSceneEndSetDrawRange(timeId);
+			const player = options.player;
 			
 			//Если не установить это значение, то будет неверно устанавливаться значение w в 
-			options.player.endSelect();
+			player.endSelect();
 			
-			options.player.continue();
+			player.continue();
 			
 		}
 		if (classSettings.mode === undefined) classSettings.mode = 0;//решил оставить режим, в котором сначала добавляются ребра а потом уже создаются вершины для них
