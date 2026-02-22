@@ -13,6 +13,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 import * as utils from '../utilsSphere.js'
+import ProgressBar from '../../ProgressBar/ProgressBar.js'
 
 const averageVertices = (data) => {
 
@@ -21,8 +22,10 @@ const averageVertices = (data) => {
 		overriddenProperties = classSettings.overriddenProperties,
 		vertices = overriddenProperties.vertices(),
 		angles = classSettings.settings.object.geometry.angles,
-		position = classSettings.settings.bufferGeometry.userData.position;
+		position = classSettings.settings.bufferGeometry.userData.position,
 //		vertices = overriddenProperties.position0.angles;
+		options = data.options,
+		t = data.t;
 	/*
 Написать функцию на языке javascript.
 Задан массив : const angles = [].
@@ -57,6 +60,29 @@ const averageVertices = (data) => {
 			z: (z / r) * RADIUS
 		};
 	}
+/*	
+// Преобразование полярных координат в декартовы
+function polarToCartesian(latitude, longitude) {
+	return {
+		x: RADIUS * Math.cos(latitude) * Math.cos(longitude),
+		y: RADIUS * Math.sin(latitude),
+		z: RADIUS * Math.cos(latitude) * Math.sin(longitude)
+	};
+}
+
+// Преобразование декартовых координат в полярные
+function cartesianToPolar(x, y, z) {
+	const r = Math.sqrt(x*x + y*y + z*z);
+	const latitude = Math.asin(y / r);
+	const longitude = Math.atan2(z, x);
+	return {
+		latitude: latitude,
+		longitude: longitude
+	};
+}
+*/	
+	//В полярной системе координат перепутаны оси y и z.
+	const swapAxes = (pos) => { return { x: pos.x, y: pos.z, z: pos.y,} }
 	
 	// --- Итерационный процесс движения точек ---
 	function iterationStep() {
@@ -69,18 +95,18 @@ const averageVertices = (data) => {
 		// Для каждой пары точек
 		for (let i = 0; i < angles.length; i++) {
 
-//			const pos1 = polarToCartesian(angles[i].latitude, angles[i].longitude);
+//const pos2 = polarToCartesian(angles[i].latitude, angles[i].longitude);
 //			const pos1 = angles[i];
 			
 //			if (timeId === undefined) timeId = playerIndexCur;
 //			userData.timeId = timeId;
-			const pos1 = position[i];
+			const pos1 = swapAxes(position[i]);
 //			userData.timeId = playerIndexCur;
 
 			for (let j = i + 1; j < angles.length; j++) {
 				
-//				const pos2 = polarToCartesian(angles[j].latitude, angles[j].longitude);
-				const pos2 = position[j];
+//const pos2 = polarToCartesian(angles[j].latitude, angles[j].longitude);
+				const pos2 = swapAxes(position[j]);
 
 				// Вектор от i к j
 				let dx = pos1.x - pos2.x;
@@ -113,8 +139,8 @@ const averageVertices = (data) => {
 		// Применяем силы к точкам
 		for (let i = 0; i < angles.length; i++) {
 			
-//			const pos = polarToCartesian(angles[i].latitude, angles[i].longitude);
-			const pos = position[i];
+//const pos = polarToCartesian(angles[i].latitude, angles[i].longitude);
+			const pos = swapAxes(position[i]);
 
 			// Обновляем скорость с учетом силы и демпфирования
 			velocities[i].x = velocities[i].x * DAMPING + forces[i].x;
@@ -128,43 +154,63 @@ const averageVertices = (data) => {
 
 			// Нормализуем на сферу
 			const normalized = normalizeToSphere(newX, newY, newZ);
-
-/*
-// Преобразование декартовых координат в полярные
-function cartesianToPolar(x, y, z) {
-	const r = Math.sqrt(x*x + y*y + z*z);
-	const latitude = Math.asin(y / r);
-	const longitude = Math.atan2(z, x);
-	return {
-		latitude: latitude,
-		longitude: longitude
-	};
-}
 			
 // Преобразуем обратно в полярные координаты
-const polarOld = cartesianToPolar(normalized.x, normalized.y, normalized.z);
-*/			
-			const polar = utils.casterianToAngles(normalized);
-			vertices.push(polar);
+//const polar = cartesianToPolar(normalized.x, normalized.y, normalized.z);
+			const polar = utils.casterianToAngles(swapAxes(normalized));
+//			vertices.push(polar);
+			angles[i] = polar;
 /*			
 			angles[i].latitude = polar.latitude;
 			angles[i].longitude = polar.longitude;
-*/
+*/			
+console.log('qqqqq')
 			
 		}
-
-		overriddenProperties.updateVertices(vertices);
-		_this.onSelectSceneEnd(data.timeId);
-/*		
-		// Обновляем визуализацию
-		updateVisualization();
-
-		iteration++;
-		document.getElementById('iteration').innerHTML = `Итерация: ${iteration}`;
-*/
+		classSettings.settings.object.geometry.angles.needsUpdate;
 		
 	}
-	iterationStep();
+	let progressBar, verticeId = 0;
+	const timestamp = classSettings.debug ? window.performance.now() : undefined,
+		step = () => {
+
+		progressBar.value = verticeId;
+		const stepItem = () => {
+
+			iterationStep();
+			verticeId += 1;
+			if (verticeId >= 0) {
+
+				progressBar.remove();
+
+				if (classSettings.debug) classSettings.debug.logTimestamp('Play step. ', timestamp);
+
+				//Обновление текущей вершины без обновления холста для экономии времени
+//				overriddenProperties.updateVertices(vertices);
+
+				if (classSettings.debug) {
+
+					classSettings.debug.logTimestamp('Copy vertices. ', timestamp);
+					_this.logHyperSphere();
+
+				}
+				else _this.oldR = undefined;
+				_this.onSelectSceneEnd(data.timeId);
+				return true;
+
+			}
+
+		}
+		if (!stepItem()) progressBar.step();
+
+	};
+	progressBar = new ProgressBar(options.renderer.domElement.parentElement, step, {
+
+		sTitle: 't = ' + t + '<br> Average vertices',
+		max: position.length - 1,
+
+	});
 	
 }
+averageVertices.verticeProxy = (vertice) => { return vertice; }
 export default averageVertices;

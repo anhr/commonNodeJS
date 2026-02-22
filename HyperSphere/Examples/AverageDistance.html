@@ -145,7 +145,7 @@
 
 		// Параметры
 		const RADIUS = 5; // Радиус сферы
-		let VERTICES_COUNT = 20; // Начальное количество точек
+		let VERTICES_COUNT = 1000; // Начальное количество точек
 		const REPULSION_STRENGTH = 0.05; // Сила отталкивания
 		const DAMPING = 0.95; // Демпфирование движения
 
@@ -171,7 +171,7 @@
 			controls = new OrbitControls(camera, renderer.domElement);
 			controls.enableDamping = true;
 			controls.dampingFactor = 0.05;
-			controls.autoRotate = true;
+			controls.autoRotate = false;//true;
 			controls.autoRotateSpeed = 0.5;
 			controls.enableZoom = true;
 			controls.enablePan = true;
@@ -301,7 +301,7 @@
 				const { x, y, z } = polarToCartesian(point.latitude, point.longitude);
 
 				// Создаем светящуюся сферу
-				const geometry = new THREE.SphereGeometry(0.25, 32, 16);
+				const geometry = new THREE.SphereGeometry(0.01, 32, 16);
 
 				// Разные цвета для разных точек
 				const hue = (index / vertices.length) * 0.8 + 0.2;

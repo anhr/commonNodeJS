@@ -454,6 +454,10 @@ class HyperSphere extends MyObject {
 
 		if (!classSettings.settings.object.geometry.angles.isAnglesProxy) {
 			
+			const length = _this.dimension - 1;
+			const sLongitude = 'longitude', longitudeShift = 1,
+				sLatitude = 'latitude', latitudeShift = 2,
+				sAltitude = 'altitude', altitudeShift = 3;
 			settings.object.geometry.angles = new Proxy(settings.object.geometry.angles || this.defaultAngles(), {
 	
 				get: (angles, name) => {
@@ -467,10 +471,6 @@ class HyperSphere extends MyObject {
 							return;
 							
 						}
-						const length = _this.dimension - 1;
-						const sLongitude = 'longitude', longitudeShift = 1,
-							sLatitude = 'latitude', latitudeShift = 2,
-							sAltitude = 'altitude', altitudeShift = 3;
 						return new Proxy(angles[verticeId], {
 	
 							get: (verticeAngles, name) => {
