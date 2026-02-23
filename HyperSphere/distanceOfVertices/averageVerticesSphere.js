@@ -38,10 +38,23 @@ const averageVertices = (data) => {
 Разработать итерационный процесс, на каждом шаге которого все точки постепенно движутся в положение, при котором точки окажутся на максимальном удалении друг от друга.
 Создать веб страницу, на которой будет визуально отображаться движение точек в процессе итерации.
 На веб странице использовать библиотеку three.js для визуализации движения точек.
+В полярной системе координат latitude - широта  меняется в диапазоне от -π/2 до π/2 и longitude - долгота в диапазоне от -π до π.
+В декартовой системе координат ось z проходит через северный и южный полюс.
+Не вращать сцену во время рендеринга.
+Переименовать массив точек в полярных координатах из vertices в angles
 	*/
 	//https://chat.deepseek.com/a/chat/s/e808c17c-8258-4029-b70c-d65be630df03
-	
-	const REPULSION_STRENGTH = 0.05; // Сила отталкивания
+
+/*	
+	//angles.length REPULSION_STRENGTH
+	//3             0.05
+	//1000          0.0001
+//	const a = (0.05 + 0.0001) / (3 + 1000), b = a * 1000 - 0.0001, REPULSION_STRENGTH = a * angles.length + b;//0.0001;//0.05; // Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
+*/
+	//angles.length REPULSION_STRENGTH
+	//0             0.05
+	//1000          0.0001
+	const a = (0.0001 - 0.05) / 1000, b = 0.05, REPULSION_STRENGTH = a * angles.length + b;//0.0001;//0.05; // Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
 	const DAMPING = 0.95; // Демпфирование движения
 	const RADIUS = data.this.r; // Радиус сферы
 
@@ -51,38 +64,36 @@ const averageVertices = (data) => {
 	// Инициализируем скорости
 	velocities = new Array(angles.length).fill(null).map(() => ({ x: 0, y: 0, z: 0 }));
 
+	// Преобразование полярных координат в декартовы
+	// Ось Z направлена через полюса, широта от -π/2 до π/2, долгота от -π до π
+	function polarToCartesian(latitude, longitude) {
+		return {
+			x: RADIUS * Math.cos(latitude) * Math.cos(longitude),
+			y: RADIUS * Math.cos(latitude) * Math.sin(longitude),
+			z: RADIUS * Math.sin(latitude)
+		};
+	}
+
+	// Преобразование декартовых координат в полярные
+	function cartesianToPolar(x, y, z) {
+		const r = Math.sqrt(x * x + y * y + z * z);
+		const latitude = Math.asin(z / r); // z - высота (ось через полюса)
+		const longitude = Math.atan2(y, x); // y/x для долготы
+		return {
+			latitude: latitude,
+			longitude: longitude
+		};
+	}
+
 	// Нормализация точки на сфере
 	function normalizeToSphere(x, y, z) {
-		const r = Math.sqrt(x*x + y*y + z*z);
+		const r = Math.sqrt(x * x + y * y + z * z);
 		return {
 			x: (x / r) * RADIUS,
 			y: (y / r) * RADIUS,
 			z: (z / r) * RADIUS
 		};
 	}
-/*	
-// Преобразование полярных координат в декартовы
-function polarToCartesian(latitude, longitude) {
-	return {
-		x: RADIUS * Math.cos(latitude) * Math.cos(longitude),
-		y: RADIUS * Math.sin(latitude),
-		z: RADIUS * Math.cos(latitude) * Math.sin(longitude)
-	};
-}
-
-// Преобразование декартовых координат в полярные
-function cartesianToPolar(x, y, z) {
-	const r = Math.sqrt(x*x + y*y + z*z);
-	const latitude = Math.asin(y / r);
-	const longitude = Math.atan2(z, x);
-	return {
-		latitude: latitude,
-		longitude: longitude
-	};
-}
-*/	
-	//В полярной системе координат перепутаны оси y и z.
-	const swapAxes = (pos) => { return { x: pos.x, y: pos.z, z: pos.y,} }
 	
 	// --- Итерационный процесс движения точек ---
 	function iterationStep() {
@@ -94,26 +105,17 @@ function cartesianToPolar(x, y, z) {
 
 		// Для каждой пары точек
 		for (let i = 0; i < angles.length; i++) {
-
-//const pos2 = polarToCartesian(angles[i].latitude, angles[i].longitude);
-//			const pos1 = angles[i];
-			
-//			if (timeId === undefined) timeId = playerIndexCur;
-//			userData.timeId = timeId;
-			const pos1 = swapAxes(position[i]);
-//			userData.timeId = playerIndexCur;
+			const pos1 = polarToCartesian(angles[i].latitude, angles[i].longitude);
 
 			for (let j = i + 1; j < angles.length; j++) {
-				
-//const pos2 = polarToCartesian(angles[j].latitude, angles[j].longitude);
-				const pos2 = swapAxes(position[j]);
+				const pos2 = polarToCartesian(angles[j].latitude, angles[j].longitude);
 
 				// Вектор от i к j
 				let dx = pos1.x - pos2.x;
 				let dy = pos1.y - pos2.y;
 				let dz = pos1.z - pos2.z;
 
-				const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
+				const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
 				if (dist < 0.001) continue;
 
@@ -138,9 +140,7 @@ function cartesianToPolar(x, y, z) {
 
 		// Применяем силы к точкам
 		for (let i = 0; i < angles.length; i++) {
-			
-//const pos = polarToCartesian(angles[i].latitude, angles[i].longitude);
-			const pos = swapAxes(position[i]);
+			const pos = polarToCartesian(angles[i].latitude, angles[i].longitude);
 
 			// Обновляем скорость с учетом силы и демпфирования
 			velocities[i].x = velocities[i].x * DAMPING + forces[i].x;
@@ -154,22 +154,27 @@ function cartesianToPolar(x, y, z) {
 
 			// Нормализуем на сферу
 			const normalized = normalizeToSphere(newX, newY, newZ);
-			
-// Преобразуем обратно в полярные координаты
-//const polar = cartesianToPolar(normalized.x, normalized.y, normalized.z);
-			const polar = utils.casterianToAngles(swapAxes(normalized));
-//			vertices.push(polar);
+
+			// Преобразуем обратно в полярные координаты
+			const polar = cartesianToPolar(normalized.x, normalized.y, normalized.z);
 			angles[i] = polar;
 /*			
 			angles[i].latitude = polar.latitude;
 			angles[i].longitude = polar.longitude;
 */			
-console.log('qqqqq')
-			
+			console.log('qqq')
 		}
+/*
+		// Обновляем визуализацию
+		updateVisualization();
+
+		iteration++;
+		document.getElementById('iteration').innerHTML = `Итерация: ${iteration}`;
+*/
 		classSettings.settings.object.geometry.angles.needsUpdate;
-		
+
 	}
+
 	let progressBar, verticeId = 0;
 	const timestamp = classSettings.debug ? window.performance.now() : undefined,
 		step = () => {
