@@ -19,10 +19,10 @@ const averageVertices = (data) => {
 
 	const _this = data.this,
 		classSettings = _this.classSettings,
-		overriddenProperties = classSettings.overriddenProperties,
-		vertices = overriddenProperties.vertices(),
+//		overriddenProperties = classSettings.overriddenProperties,
 		angles = classSettings.settings.object.geometry.angles,
 		position = classSettings.settings.bufferGeometry.userData.position,
+//		vertices = overriddenProperties.vertices(),
 //		vertices = overriddenProperties.position0.angles;
 		options = data.options,
 		t = data.t;
@@ -56,7 +56,7 @@ const averageVertices = (data) => {
 	//1000          0.0001
 	const a = (0.0001 - 0.05) / 1000, b = 0.05, REPULSION_STRENGTH = a * angles.length + b;//0.0001;//0.05; // Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
 	const DAMPING = 0.95; // Демпфирование движения
-	const RADIUS = data.this.r; // Радиус сферы
+//	const RADIUS = data.this.r; // Радиус сферы
 
 	// Скорости точек (для инерции)
 	let velocities = [];
@@ -107,8 +107,11 @@ const averageVertices = (data) => {
 		let timestamp = classSettings.debug ? window.performance.now() : undefined;
 
 		// Для каждой пары точек
-		for (let i = 0; i < angles.length; i++) {
+//		for (let i = 0; i < angles.length; i++)
+		let progressBar, i = 0;// verticeId = 0;
+		const step = () => {
 			
+			progressBar.value = i;
 //			const pos1 = polarToCartesian(angles[i].latitude, angles[i].longitude);
 			const pos1 = position[i];
 
@@ -142,55 +145,65 @@ const averageVertices = (data) => {
 				forces[j].x -= dx * forceMagnitude;
 				forces[j].y -= dy * forceMagnitude;
 				forces[j].z -= dz * forceMagnitude;
+
 			}
+			i += 1;
+			if (i >= angles.length) {
+
+				progressBar.remove();
+
+//				if (classSettings.debug) classSettings.debug.logTimestamp('Play step. Average vertices.', timestamp);
+
+				if (classSettings.debug) classSettings.debug.logTimestamp('Для каждой пары точек. ', timestamp);
+				timestamp = classSettings.debug ? window.performance.now() : undefined;
+
+				// Применяем силы к точкам
+				for (let i = 0; i < angles.length; i++) {
+
+					//			const pos = polarToCartesian(angles[i].latitude, angles[i].longitude);
+					const pos = position[i];
+
+					// Обновляем скорость с учетом силы и демпфирования
+					velocities[i].x = velocities[i].x * DAMPING + forces[i].x;
+					velocities[i].y = velocities[i].y * DAMPING + forces[i].y;
+					velocities[i].z = velocities[i].z * DAMPING + forces[i].z;
+
+					angles[i] = utils.casterianToAngles({ x: pos.x + velocities[i].x, y: pos.y + velocities[i].y, z: pos.z + velocities[i].z });
+
+				}
+				angles.needsUpdate;
+
+				if (classSettings.debug) classSettings.debug.logTimestamp('Применяем силы к точкам. ', timestamp);
+
+				_this.onSelectSceneEnd(data.timeId);
+
+			} else progressBar.step();
+
 		}
-		if (classSettings.debug) classSettings.debug.logTimestamp('Для каждой пары точек. ', timestamp);
-		timestamp = classSettings.debug ? window.performance.now() : undefined;
+		progressBar = new ProgressBar(options.renderer.domElement.parentElement, step, {
 
-		// Применяем силы к точкам
-		for (let i = 0; i < angles.length; i++) {
+			sTitle: 't = ' + t + '<br> Average vertices',
+			max: position.length - 1,
 			
-//			const pos = polarToCartesian(angles[i].latitude, angles[i].longitude);
-			const pos = position[i];
-
-			// Обновляем скорость с учетом силы и демпфирования
-			velocities[i].x = velocities[i].x * DAMPING + forces[i].x;
-			velocities[i].y = velocities[i].y * DAMPING + forces[i].y;
-			velocities[i].z = velocities[i].z * DAMPING + forces[i].z;
-
-/*			
-			// Обновляем позицию
-			let newX = pos.x + velocities[i].x;
-			let newY = pos.y + velocities[i].y;
-			let newZ = pos.z + velocities[i].z;
+			//1000 vertices
+		
+			//time: Для каждой пары точек. 5.481899999976158 sec.
+			//hyperSphere.js:343 time: Применяем силы к точкам. 0.014400000035762786 sec.
 			
-			// Нормализуем на сферу
-			const normalized = normalizeToSphere(newX, newY, newZ);
+			//timeoutPeriod = 10
+			//time: Для каждой пары точек. 1.2975 sec.
+			//hyperSphere.js:343 time: Применяем силы к точкам. 0.009 sec.
+			
+			//timeoutPeriod = 10
+			//time: Для каждой пары точек. 0.9053000000119209 sec.
+			//hyperSphere.js:343 time: Применяем силы к точкам. 0.007900000035762788 sec.
 
-			// Преобразуем обратно в полярные координаты
-			const polar = cartesianToPolar(normalized.x, normalized.y, normalized.z);
-			angles[i] = polar;
-*/			
-			angles[i] = utils.casterianToAngles({ x: pos.x + velocities[i].x, y: pos.y + velocities[i].y, z: pos.z + velocities[i].z });
-/*			
-			angles[i].latitude = polar.latitude;
-			angles[i].longitude = polar.longitude;
-*/			
-		}
-		if (classSettings.debug) classSettings.debug.logTimestamp('Применяем силы к точкам. ', timestamp);
-/*
-		// Обновляем визуализацию
-		updateVisualization();
+			timeoutPeriod: 100,
 
-		iteration++;
-		document.getElementById('iteration').innerHTML = `Итерация: ${iteration}`;
-*/
-		classSettings.settings.object.geometry.angles.needsUpdate;
+		});
 
 	}
-
-	let progressBar, verticeId = 0;
-	const timestamp = classSettings.debug ? window.performance.now() : undefined,
+/*
 		step = () => {
 
 		progressBar.value = verticeId;
@@ -203,19 +216,6 @@ const averageVertices = (data) => {
 				progressBar.remove();
 
 				if (classSettings.debug) classSettings.debug.logTimestamp('Play step. Average vertices.', timestamp);
-
-				//Обновление текущей вершины без обновления холста для экономии времени
-//				overriddenProperties.updateVertices(vertices);
-
-/*				
-				if (classSettings.debug) {
-
-					classSettings.debug.logTimestamp('Average vertices. ', timestamp);
-					_this.logHyperSphere();
-
-				}
-				else _this.oldR = undefined;
-*/
 				_this.onSelectSceneEnd(data.timeId);
 				return true;
 
@@ -225,12 +225,8 @@ const averageVertices = (data) => {
 		if (!stepItem()) progressBar.step();
 
 	};
-	progressBar = new ProgressBar(options.renderer.domElement.parentElement, step, {
-
-		sTitle: 't = ' + t + '<br> Average vertices',
-		max: position.length - 1,
-
-	});
+*/
+	iterationStep();
 	
 }
 averageVertices.verticeProxy = (vertice) => { return vertice; }
