@@ -104,6 +104,7 @@ const averageVertices = (data) => {
 
 		// Вычисляем силы отталкивания для каждой точки
 		const forces = new Array(angles.length).fill(null).map(() => ({ x: 0, y: 0, z: 0 }));
+		let timestamp = classSettings.debug ? window.performance.now() : undefined;
 
 		// Для каждой пары точек
 		for (let i = 0; i < angles.length; i++) {
@@ -143,6 +144,8 @@ const averageVertices = (data) => {
 				forces[j].z -= dz * forceMagnitude;
 			}
 		}
+		if (classSettings.debug) classSettings.debug.logTimestamp('Для каждой пары точек. ', timestamp);
+		timestamp = classSettings.debug ? window.performance.now() : undefined;
 
 		// Применяем силы к точкам
 		for (let i = 0; i < angles.length; i++) {
@@ -173,8 +176,8 @@ const averageVertices = (data) => {
 			angles[i].latitude = polar.latitude;
 			angles[i].longitude = polar.longitude;
 */			
-			console.log('qqq')
 		}
+		if (classSettings.debug) classSettings.debug.logTimestamp('Применяем силы к точкам. ', timestamp);
 /*
 		// Обновляем визуализацию
 		updateVisualization();
@@ -199,18 +202,20 @@ const averageVertices = (data) => {
 
 				progressBar.remove();
 
-				if (classSettings.debug) classSettings.debug.logTimestamp('Play step. ', timestamp);
+				if (classSettings.debug) classSettings.debug.logTimestamp('Play step. Average vertices.', timestamp);
 
 				//Обновление текущей вершины без обновления холста для экономии времени
 //				overriddenProperties.updateVertices(vertices);
 
+/*				
 				if (classSettings.debug) {
 
-					classSettings.debug.logTimestamp('Copy vertices. ', timestamp);
+					classSettings.debug.logTimestamp('Average vertices. ', timestamp);
 					_this.logHyperSphere();
 
 				}
 				else _this.oldR = undefined;
+*/
 				_this.onSelectSceneEnd(data.timeId);
 				return true;
 

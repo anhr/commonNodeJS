@@ -119,6 +119,7 @@ class Circle extends HyperSphere {
 			vectors = settings.object.geometry.position;
 		mesh.position.copy(new THREE.Vector3(0, ip * r, 0));
 
+/*непонятно зачем этот код		
 		//длинна дуги
 		const angle = (leg) => Math.asin(leg / r),
 			ai = angle(ip);//угол наклона точки пересечения окружности с линией сечения
@@ -127,6 +128,7 @@ class Circle extends HyperSphere {
 			const a = angle(vector.y) - ai;//угол между векторами текущей вершины и точки пересечения
 			console.log(a);
 		})
+*/		
 		return mesh;
 		
 	}
