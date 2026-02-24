@@ -155,7 +155,7 @@
 
 		// Параметры
 		const RADIUS = 1; // Радиус сферы
-		let ANGLES_COUNT = angles.length;//1000; // Начальное количество точек
+		let ANGLES_COUNT = 100;//angles.length; // Начальное количество точек
 		let REPULSION_STRENGTH = 0.05; // Сила отталкивания
 		const DAMPING = 0.95; // Демпфирование движения
 
@@ -316,7 +316,11 @@
 		// --- Обновление визуализации точек ---
 		function updateVisualization() {
 			// Удаляем старые точки
-			spheres.forEach(sphere => scene.remove(sphere));
+			spheres.forEach(sphere => {
+				
+				scene.remove(sphere);
+
+			});
 			spheres = [];
 
 			// Создаем новые точки
@@ -349,7 +353,7 @@
 */				
 
 				// Добавляем маленькую точку-индикатор
-				const pointGeometry = new THREE.SphereGeometry((0.08 / 5) * RADIUS, 8, 8);
+				const pointGeometry = new THREE.SphereGeometry((0.03 / 5) * RADIUS, 8, 8);
 				const pointMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
 				const pointLight = new THREE.Mesh(pointGeometry, pointMaterial);
 				pointLight.position.set(x, y, z);

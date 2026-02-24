@@ -152,10 +152,10 @@ const averageVertices = (data) => {
 
 				progressBar.remove();
 
-//				if (classSettings.debug) classSettings.debug.logTimestamp('Play step. Average vertices.', timestamp);
+				if (classSettings.debug) classSettings.debug.logTimestamp('Play step. Average vertices. ', timestamp);
 
-				if (classSettings.debug) classSettings.debug.logTimestamp('Для каждой пары точек. ', timestamp);
-				timestamp = classSettings.debug ? window.performance.now() : undefined;
+//				if (classSettings.debug) classSettings.debug.logTimestamp('Для каждой пары точек. ', timestamp);
+//				timestamp = classSettings.debug ? window.performance.now() : undefined;
 
 				// Применяем силы к точкам
 				for (let i = 0; i < angles.length; i++) {
@@ -173,7 +173,7 @@ const averageVertices = (data) => {
 				}
 				angles.needsUpdate;
 
-				if (classSettings.debug) classSettings.debug.logTimestamp('Применяем силы к точкам. ', timestamp);
+//				if (classSettings.debug) classSettings.debug.logTimestamp('Применяем силы к точкам. ', timestamp);
 
 				_this.onSelectSceneEnd(data.timeId);
 
@@ -185,20 +185,10 @@ const averageVertices = (data) => {
 			sTitle: 't = ' + t + '<br> Average vertices',
 			max: position.length - 1,
 			
-			//1000 vertices
-		
-			//time: Для каждой пары точек. 5.481899999976158 sec.
-			//hyperSphere.js:343 time: Применяем силы к точкам. 0.014400000035762786 sec.
-			
-			//timeoutPeriod = 10
-			//time: Для каждой пары точек. 1.2975 sec.
-			//hyperSphere.js:343 time: Применяем силы к точкам. 0.009 sec.
-			
-			//timeoutPeriod = 10
-			//time: Для каждой пары точек. 0.9053000000119209 sec.
-			//hyperSphere.js:343 time: Применяем силы к точкам. 0.007900000035762788 sec.
-
-			timeoutPeriod: 100,
+			//for 1000 vertices:
+			//timeoutPeriod: 0,//time: Play step. Average vertices. 5.481899999976158 sec.
+			timeoutPeriod: 10,//time: Play step. Average vertices. 1.2975 sec.
+			//timeoutPeriod: 100,//time: Play step. Average vertices. 0.9053000000119209 sec.
 
 		});
 
