@@ -103,6 +103,7 @@ export function casterianToAngles(vertice) {
 	// 2. Вычисление широты (latitude)
 	// Используем Math.asin(z/r). Результат в радианах [-PI/2, PI/2].
 	const latitude = Math.asin(z / r);
+	if (isNaN(latitude)) console.error('casterianToAngles: invalid latitude = ' + latitude);
 
 	// 3. Вычисление долготы (longitude)
 	// Используем Math.atan2(y, x). Результат в радианах (-PI, PI].

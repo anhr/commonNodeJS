@@ -64,6 +64,7 @@ const averageVertices = (data) => {
 	// Инициализируем скорости
 	velocities = new Array(angles.length).fill(null).map(() => ({ x: 0, y: 0, z: 0 }));
 
+/*	
 	// Преобразование полярных координат в декартовы
 	// Ось Z направлена через полюса, широта от -π/2 до π/2, долгота от -π до π
 	function polarToCartesian(latitude, longitude) {
@@ -94,6 +95,7 @@ const averageVertices = (data) => {
 			z: (z / r) * RADIUS
 		};
 	}
+*/
 	
 	// --- Итерационный процесс движения точек ---
 	function iterationStep() {
@@ -105,10 +107,14 @@ const averageVertices = (data) => {
 
 		// Для каждой пары точек
 		for (let i = 0; i < angles.length; i++) {
-			const pos1 = polarToCartesian(angles[i].latitude, angles[i].longitude);
+			
+//			const pos1 = polarToCartesian(angles[i].latitude, angles[i].longitude);
+			const pos1 = position[i];
 
 			for (let j = i + 1; j < angles.length; j++) {
-				const pos2 = polarToCartesian(angles[j].latitude, angles[j].longitude);
+				
+//				const pos2 = polarToCartesian(angles[j].latitude, angles[j].longitude);
+				const pos2 = position[j];
 
 				// Вектор от i к j
 				let dx = pos1.x - pos2.x;
@@ -140,24 +146,29 @@ const averageVertices = (data) => {
 
 		// Применяем силы к точкам
 		for (let i = 0; i < angles.length; i++) {
-			const pos = polarToCartesian(angles[i].latitude, angles[i].longitude);
+			
+//			const pos = polarToCartesian(angles[i].latitude, angles[i].longitude);
+			const pos = position[i];
 
 			// Обновляем скорость с учетом силы и демпфирования
 			velocities[i].x = velocities[i].x * DAMPING + forces[i].x;
 			velocities[i].y = velocities[i].y * DAMPING + forces[i].y;
 			velocities[i].z = velocities[i].z * DAMPING + forces[i].z;
 
+/*			
 			// Обновляем позицию
 			let newX = pos.x + velocities[i].x;
 			let newY = pos.y + velocities[i].y;
 			let newZ = pos.z + velocities[i].z;
-
+			
 			// Нормализуем на сферу
 			const normalized = normalizeToSphere(newX, newY, newZ);
 
 			// Преобразуем обратно в полярные координаты
 			const polar = cartesianToPolar(normalized.x, normalized.y, normalized.z);
 			angles[i] = polar;
+*/			
+			angles[i] = utils.casterianToAngles({ x: pos.x + velocities[i].x, y: pos.y + velocities[i].y, z: pos.z + velocities[i].z });
 /*			
 			angles[i].latitude = polar.latitude;
 			angles[i].longitude = polar.longitude;
