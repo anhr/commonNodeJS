@@ -155,7 +155,7 @@
 
 		// Параметры
 		const RADIUS = 1; // Радиус сферы
-		let ANGLES_COUNT = 100;//angles.length; // Начальное количество точек
+		let ANGLES_COUNT = 1000;//angles.length; // Начальное количество точек
 		let REPULSION_STRENGTH = 0.05; // Сила отталкивания
 		const DAMPING = 0.95; // Демпфирование движения
 
@@ -298,12 +298,10 @@
 		// --- Инициализация массива точек ---
 		function initAngles(count) {
 
-			/*
 			angles.length = 0;
 			for (let i = 0; i < count; i++) {
 				angles.push(generateRandomPoint());
 			}
-			*/
 
 			// Инициализируем скорости
 			velocities = new Array(count).fill(null).map(() => ({ x: 0, y: 0, z: 0 }));

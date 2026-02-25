@@ -52,9 +52,17 @@ const averageVertices = (data) => {
 //	const a = (0.05 + 0.0001) / (3 + 1000), b = a * 1000 - 0.0001, REPULSION_STRENGTH = a * angles.length + b;//0.0001;//0.05; // Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
 */
 	//angles.length REPULSION_STRENGTH
-	//0             0.05
+	//20             0.05
 	//1000          0.0001
-	const a = (0.0001 - 0.05) / 1000, b = 0.05, REPULSION_STRENGTH = a * angles.length + b;//0.0001;//0.05; // Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
+	//5000          0.00001
+	const a = 0.00001 * 5000;
+	const REPULSION_STRENGTH = a / angles.length;//0.05; // Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
+/*	
+//	const a = (0.0001 - 0.05) / 1000, b = 0.05;
+	const a = (0.00001 - 0.05) / 5000, b = 0.05;
+	const REPULSION_STRENGTH = a * angles.length + b;//0.0001;//0.05; // Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
+*/	
+//	const REPULSION_STRENGTH = 0.00001;//0.05; // Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
 	const DAMPING = 0.95; // Демпфирование движения
 //	const RADIUS = data.this.r; // Радиус сферы
 
@@ -137,14 +145,16 @@ const averageVertices = (data) => {
 				dy /= dist;
 				dz /= dist;
 
-				// Применяем силу: отталкивание
-				forces[i].x += dx * forceMagnitude;
-				forces[i].y += dy * forceMagnitude;
-				forces[i].z += dz * forceMagnitude;
+				const forcei = forces[i], forcesj = forces[j];
 
-				forces[j].x -= dx * forceMagnitude;
-				forces[j].y -= dy * forceMagnitude;
-				forces[j].z -= dz * forceMagnitude;
+				// Применяем силу: отталкивание
+				forcei.x += dx * forceMagnitude;
+				forcei.y += dy * forceMagnitude;
+				forcei.z += dz * forceMagnitude;
+
+				forcesj.x -= dx * forceMagnitude;
+				forcesj.y -= dy * forceMagnitude;
+				forcesj.z -= dz * forceMagnitude;
 
 			}
 			i += 1;
@@ -161,14 +171,22 @@ const averageVertices = (data) => {
 				for (let i = 0; i < angles.length; i++) {
 
 					//			const pos = polarToCartesian(angles[i].latitude, angles[i].longitude);
-					const pos = position[i];
+					const pos = position[i],
+						velocitie = velocities[i],
+						force = forces[i];
 
 					// Обновляем скорость с учетом силы и демпфирования
+					velocitie.x = velocitie.x * DAMPING + force.x;
+					velocitie.y = velocitie.y * DAMPING + force.y;
+					velocitie.z = velocitie.z * DAMPING + force.z;
+/*					
 					velocities[i].x = velocities[i].x * DAMPING + forces[i].x;
 					velocities[i].y = velocities[i].y * DAMPING + forces[i].y;
 					velocities[i].z = velocities[i].z * DAMPING + forces[i].z;
+*/					
 
-					angles[i] = utils.casterianToAngles({ x: pos.x + velocities[i].x, y: pos.y + velocities[i].y, z: pos.z + velocities[i].z });
+					angles[i] = utils.casterianToAngles({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z });
+//					angles[i] = utils.casterianToAngles({ x: pos.x + velocities[i].x, y: pos.y + velocities[i].y, z: pos.z + velocities[i].z });
 
 				}
 				angles.needsUpdate;
