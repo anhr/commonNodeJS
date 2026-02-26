@@ -19,10 +19,10 @@ const averageVertices = (data) => {
 
 	const _this = data.this,
 		classSettings = _this.classSettings,
-//		overriddenProperties = classSettings.overriddenProperties,
+		overriddenProperties = classSettings.overriddenProperties,
 		angles = classSettings.settings.object.geometry.angles,
 		position = classSettings.settings.bufferGeometry.userData.position,
-//		vertices = overriddenProperties.vertices(),
+		vertices = overriddenProperties.vertices(),
 //		vertices = overriddenProperties.position0.angles;
 		options = data.options,
 		t = data.t;
@@ -179,20 +179,17 @@ const averageVertices = (data) => {
 					velocitie.x = velocitie.x * DAMPING + force.x;
 					velocitie.y = velocitie.y * DAMPING + force.y;
 					velocitie.z = velocitie.z * DAMPING + force.z;
-/*					
-					velocities[i].x = velocities[i].x * DAMPING + forces[i].x;
-					velocities[i].y = velocities[i].y * DAMPING + forces[i].y;
-					velocities[i].z = velocities[i].z * DAMPING + forces[i].z;
-*/					
 
-					angles[i] = utils.casterianToAngles({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z });
-//					angles[i] = utils.casterianToAngles({ x: pos.x + velocities[i].x, y: pos.y + velocities[i].y, z: pos.z + velocities[i].z });
+					vertices.push(utils.casterianToAngles({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z }));
+//					angles[i] = utils.casterianToAngles({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z });
 
 				}
-				angles.needsUpdate;
+//				angles.needsUpdate;
 
 //				if (classSettings.debug) classSettings.debug.logTimestamp('Применяем силы к точкам. ', timestamp);
 
+				overriddenProperties.updateVertices(vertices);
+				
 				_this.onSelectSceneEnd(data.timeId);
 
 			} else progressBar.step();
