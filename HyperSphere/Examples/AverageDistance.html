@@ -155,8 +155,12 @@
 
 		// Параметры
 		const RADIUS = 1; // Радиус сферы
-		let ANGLES_COUNT = 1000;//angles.length; // Начальное количество точек
-		let REPULSION_STRENGTH = 0.05; // Сила отталкивания
+		
+		const k = 250;
+		let ANGLES_COUNT = 20 * k;//angles.length; // Начальное количество точек
+		let REPULSION_STRENGTH = 0.02 / (k * 8);//0.05; // Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
+//		let REPULSION_STRENGTH = 0.02 / k;//0.05; // Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
+		
 		const DAMPING = 0.95; // Демпфирование движения
 
 		// Скорости точек (для инерции)
@@ -298,9 +302,30 @@
 		// --- Инициализация массива точек ---
 		function initAngles(count) {
 
+			// Удаляем старые точки
+			spheres.forEach(sphere => {
+				
+				scene.remove(sphere);
+
+			});
+			spheres = [];
+			
 			angles.length = 0;
 			for (let i = 0; i < count; i++) {
-				angles.push(generateRandomPoint());
+
+				const point = generateRandomPoint()
+angles.push(point);
+				
+				const { x, y, z } = polarToCartesian(point.latitude, point.longitude);
+				
+				// Добавляем маленькую точку-индикатор
+				const pointGeometry = new THREE.SphereGeometry((0.03 / 5) * RADIUS, 8, 8);
+				const pointMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+				const pointLight = new THREE.Mesh(pointGeometry, pointMaterial);
+				pointLight.position.set(x, y, z);
+				scene.add(pointLight);
+				spheres.push(pointLight);
+				
 			}
 
 			// Инициализируем скорости
@@ -313,6 +338,7 @@
 
 		// --- Обновление визуализации точек ---
 		function updateVisualization() {
+/*			
 			// Удаляем старые точки
 			spheres.forEach(sphere => {
 				
@@ -320,6 +346,7 @@
 
 			});
 			spheres = [];
+*/
 
 			// Создаем новые точки
 			angles.forEach((point, index) => {
@@ -349,7 +376,7 @@
 				scene.add(sphere);
 				spheres.push(sphere);
 */				
-
+/*
 				// Добавляем маленькую точку-индикатор
 				const pointGeometry = new THREE.SphereGeometry((0.03 / 5) * RADIUS, 8, 8);
 				const pointMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
@@ -357,6 +384,7 @@
 				pointLight.position.set(x, y, z);
 				scene.add(pointLight);
 				spheres.push(pointLight);
+*/				
 			});
 
 			// Обновляем статистику
@@ -448,7 +476,7 @@
 
 				// Нормализуем на сферу
 				const normalized = normalizeToSphere(newX, newY, newZ);
-
+				spheres[i].position.copy(normalized);
 				// Преобразуем обратно в полярные координаты
 				const polar = cartesianToPolar(normalized.x, normalized.y, normalized.z);
 				angles[i].latitude = polar.latitude;
