@@ -1116,7 +1116,15 @@ class HyperSphere extends MyObject {
 		if (!overriddenProperties.rTime) overriddenProperties.rTime = () => {
 			
 			const settings = classSettings.settings;
-			return classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : settings.options.player === false ? 0 : settings.options.player.getTimeId());
+//			return classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : settings.options.player === false ? 0 : settings.options.player.getTimeId());
+			return classSettings.overriddenProperties.r(
+				settings.guiPoints ?
+					settings.guiPoints.timeId === undefined ?
+						settings.options.player.getTimeId():
+						settings.guiPoints.timeId :
+					settings.options.player === false ?
+						0 :
+						settings.options.player.getTimeId());
 		
 		}
 		if (!overriddenProperties.pushMiddleVertice) overriddenProperties.pushMiddleVertice = () => {}

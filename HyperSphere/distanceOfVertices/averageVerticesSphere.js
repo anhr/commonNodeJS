@@ -19,13 +19,21 @@ const averageVertices = (data) => {
 
 	const _this = data.this,
 		classSettings = _this.classSettings,
+		settings = classSettings.settings,
 		overriddenProperties = classSettings.overriddenProperties,
-		angles = classSettings.settings.object.geometry.angles,
+		angles = settings.object.geometry.angles,
+		userData = settings.bufferGeometry.userData,
 		position = classSettings.settings.bufferGeometry.userData.position,
-		vertices = overriddenProperties.vertices(),
-//		vertices = overriddenProperties.position0.angles;
+/*		
+		timeId = userData.timeId;
+	if (timeId != 0) userData.timeId -= 1;
+	const position = overriddenProperties.position,
+*/	
+//		vertices = [],//overriddenProperties.vertices(),
+		//vertices = overriddenProperties.position0.angles;
 		options = data.options,
 		t = data.t;
+//	userData.timeId = timeId;
 	/*
 Написать функцию на языке javascript.
 Задан массив : const angles = [].
@@ -120,13 +128,18 @@ const averageVertices = (data) => {
 		const step = () => {
 			
 			progressBar.value = i;
+//			const pos1 = _this.a2v(angles[i].latitude, angles[i].longitude);
 //			const pos1 = polarToCartesian(angles[i].latitude, angles[i].longitude);
+			settings.bufferGeometry.userData.timeId--;
 			const pos1 = position[i];
+			settings.bufferGeometry.userData.timeId++;
 
 			for (let j = i + 1; j < angles.length; j++) {
 				
 //				const pos2 = polarToCartesian(angles[j].latitude, angles[j].longitude);
+				settings.bufferGeometry.userData.timeId--;
 				const pos2 = position[j];
+				settings.bufferGeometry.userData.timeId++;
 
 				// Вектор от i к j
 				let dx = pos1.x - pos2.x;
@@ -180,15 +193,19 @@ const averageVertices = (data) => {
 					velocitie.y = velocitie.y * DAMPING + force.y;
 					velocitie.z = velocitie.z * DAMPING + force.z;
 
-					vertices.push(utils.casterianToAngles({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z }));
+//					vertices.push(utils.casterianToAngles({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z }));
+					classSettings.overriddenProperties.pushMiddleVertice(data.timeId, utils.casterianToAngles({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z }));
+//					position[i] = { x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z };
+//					classSettings.settings.guiPoints.timeId = data.timeId;
 //					angles[i] = utils.casterianToAngles({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z });
 
 				}
 //				angles.needsUpdate;
 
-//				if (classSettings.debug) classSettings.debug.logTimestamp('Применяем силы к точкам. ', timestamp);
+//				if (classSettings.debug) classSettings.debug.logTimest
 
-				overriddenProperties.updateVertices(vertices);
+//				_this.bufferGeometry.attributes.position.needsUpdate = true
+				overriddenProperties.updateVertices();//vertices);
 				
 				_this.onSelectSceneEnd(data.timeId);
 
