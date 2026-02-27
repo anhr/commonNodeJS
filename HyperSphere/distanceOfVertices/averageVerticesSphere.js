@@ -184,8 +184,10 @@ const averageVertices = (data) => {
 				for (let i = 0; i < angles.length; i++) {
 
 					//			const pos = polarToCartesian(angles[i].latitude, angles[i].longitude);
-					const pos = position[i],
-						velocitie = velocities[i],
+					settings.bufferGeometry.userData.timeId--;
+					const pos = position[i];
+					settings.bufferGeometry.userData.timeId++;
+					const velocitie = velocities[i],
 						force = forces[i];
 
 					// Обновляем скорость с учетом силы и демпфирования
@@ -194,18 +196,18 @@ const averageVertices = (data) => {
 					velocitie.z = velocitie.z * DAMPING + force.z;
 
 //					vertices.push(utils.casterianToAngles({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z }));
-					classSettings.overriddenProperties.pushMiddleVertice(data.timeId, utils.casterianToAngles({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z }));
+//					classSettings.overriddenProperties.pushMiddleVertice(data.timeId, utils.casterianToAngles({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z }));
 //					position[i] = { x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z };
 //					classSettings.settings.guiPoints.timeId = data.timeId;
-//					angles[i] = utils.casterianToAngles({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z });
+					angles[i] = utils.casterianToAngles({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z });
 
 				}
 //				angles.needsUpdate;
 
 //				if (classSettings.debug) classSettings.debug.logTimest
 
-//				_this.bufferGeometry.attributes.position.needsUpdate = true
-				overriddenProperties.updateVertices();//vertices);
+				_this.bufferGeometry.attributes.position.needsUpdate = true
+//				overriddenProperties.updateVertices();//vertices);
 				
 				_this.onSelectSceneEnd(data.timeId);
 

@@ -699,7 +699,12 @@ class HyperSphere extends MyObject {
 
 						} else {
 							
-							const timeId = classSettings.settings.guiPoints ? classSettings.settings.guiPoints.timeId : 0, vertice = this.a2v(value, classSettings.overriddenProperties.r(timeId));
+							const timeId = settings.guiPoints ?
+									settings.guiPoints.timeId === undefined ?
+										settings.options.player.getTimeId() :
+										settings.guiPoints.timeId :
+									0,
+								vertice = this.a2v(value, classSettings.overriddenProperties.r(timeId));
 							this.setPositionAttributeFromPoint(i, Position(vertice), timeId);
 							
 						}
