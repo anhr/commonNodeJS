@@ -73,6 +73,7 @@ const averageVertices = (data) => {
 //	const REPULSION_STRENGTH = 0.00001;//0.05; // Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
 	const DAMPING = 0.95; // Демпфирование движения
 //	const RADIUS = data.this.r; // Радиус сферы
+	data.this.r; // Радиус сферы. Нужно что бы во вселенной в classSettings.settings.object.geometry.times был добавлен новый time. Это нужно что бы пользователь мышкой мог выбрать вершину в вселенной
 
 	// Скорости точек (для инерции)
 	let velocities = [];
@@ -199,7 +200,10 @@ const averageVertices = (data) => {
 //					classSettings.overriddenProperties.pushMiddleVertice(data.timeId, utils.casterianToAngles({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z }));
 //					position[i] = { x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z };
 //					classSettings.settings.guiPoints.timeId = data.timeId;
-					angles[i] = utils.casterianToAngles({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z });
+					const vertice = utils.casterianToAngles({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z });
+					classSettings.overriddenProperties.pushMiddleVertice(data.timeId, vertice);//добавляем новы item в classSettings.settings.object.geometry.times[data.timeId]. Это нужно что бы пользователь мышкой мог выбрать вершину во вселенной
+
+					angles[i] = vertice;
 
 				}
 //				angles.needsUpdate;
