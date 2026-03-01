@@ -129,18 +129,25 @@ const averageVertices = (data) => {
 		const step = () => {
 			
 			progressBar.value = i;
+			const userData = settings.bufferGeometry.userData;
 //			const pos1 = _this.a2v(angles[i].latitude, angles[i].longitude);
 //			const pos1 = polarToCartesian(angles[i].latitude, angles[i].longitude);
+			const pos1 = settings.overriddenProperties.position(position, i, userData);
+/*			
 			settings.bufferGeometry.userData.timeId--;
 			const pos1 = position[i];
 			settings.bufferGeometry.userData.timeId++;
+*/			
 
 			for (let j = i + 1; j < angles.length; j++) {
 				
 //				const pos2 = polarToCartesian(angles[j].latitude, angles[j].longitude);
+				const pos2 = settings.overriddenProperties.position(position, j, userData);
+/*				
 				settings.bufferGeometry.userData.timeId--;
 				const pos2 = position[j];
 				settings.bufferGeometry.userData.timeId++;
+*/				
 
 				// Вектор от i к j
 				let dx = pos1.x - pos2.x;
@@ -185,9 +192,12 @@ const averageVertices = (data) => {
 				for (let i = 0; i < angles.length; i++) {
 
 					//			const pos = polarToCartesian(angles[i].latitude, angles[i].longitude);
+					const pos = settings.overriddenProperties.position(position, i, userData);
+/*					
 					settings.bufferGeometry.userData.timeId--;
 					const pos = position[i];
 					settings.bufferGeometry.userData.timeId++;
+*/					
 					const velocitie = velocities[i],
 						force = forces[i];
 

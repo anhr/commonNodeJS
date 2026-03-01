@@ -46,6 +46,7 @@ class MyObject {
 		if (!settings.overriddenProperties.setDrawRange) settings.overriddenProperties.setDrawRange = (start, count) => { }
 		settings.overriddenProperties.getPlayerTimesLength = () => { return 1; }
 		if (!settings.overriddenProperties.positionOffsetId) settings.overriddenProperties.positionOffsetId = (positionId) => { return positionId; }
+		settings.overriddenProperties.position = (position, i) => { return position[i]; }
 		
 		if (settings.guiPoints) this.guiPoints = settings.guiPoints;
 
