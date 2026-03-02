@@ -74,9 +74,46 @@
 			border-right: 5px solid #00aaff;
 		}
 
+		#special-controls {
+			position: absolute;
+			top: 50%;
+			right: 30px;
+			transform: translateY(-50%);
+			background: rgba(0, 0, 0, 0.8);
+			color: white;
+			padding: 20px;
+			border-radius: 8px;
+			pointer-events: auto;
+			z-index: 100;
+			backdrop-filter: blur(5px);
+			border: 1px solid rgba(255,255,255,0.2);
+			width: 250px;
+		}
+
 		h3 {
 			margin-top: 0;
 			color: #ffaa00;
+		}
+
+		.slider-container {
+			margin: 15px 0;
+		}
+
+			.slider-container label {
+				display: block;
+				margin-bottom: 5px;
+				color: #ccc;
+			}
+
+		.slider-value {
+			float: right;
+			color: #ffaa00;
+			font-weight: bold;
+		}
+
+		.coord-value {
+			color: #00aaff;
+			font-weight: bold;
 		}
 	</style>
 </head>
@@ -92,6 +129,53 @@
 		<p id="pointCount">Количество точек: 20</p>
 		<p id="iteration">Итерация: 0</p>
 		<p id="avgDistance">Ср. расстояние: 0</p>
+		<p id="minDistance">Мин. расстояние: 0</p>
+	</div>
+
+	<div id="special-controls">
+		<h3>🎯 Специальные режимы</h3>
+
+		<div style="margin-bottom: 20px;">
+			<button id="randomBtn" style="width: 100%; background: #4CAF50;">🔄 Случайное распределение</button>
+		</div>
+
+		<div style="margin-bottom: 15px; border-bottom: 1px solid #444; padding-bottom: 15px;">
+			<button id="samePointBtn" style="width: 100%; background: #ff5722;">⚠️ Все точки в одно положение</button>
+			<p style="font-size: 12px; color: #aaa; margin-top: 8px;">Точки начнут отталкиваться из одной точки</p>
+		</div>
+
+		<h4>Положение для одинаковых точек:</h4>
+
+		<div class="slider-container">
+			<label>Широта (latitude): <span id="latValue" class="slider-value">0.00</span></label>
+			<input type="range" id="latSlider" min="-1.57" max="1.57" step="0.01" value="0">
+			<div style="display: flex; justify-content: space-between;">
+				<span>-π/2</span>
+				<span>0</span>
+				<span>π/2</span>
+			</div>
+		</div>
+
+		<div class="slider-container">
+			<label>Долгота (longitude): <span id="lonValue" class="slider-value">0.00</span></label>
+			<input type="range" id="lonSlider" min="-3.14" max="3.14" step="0.01" value="0">
+			<div style="display: flex; justify-content: space-between;">
+				<span>-π</span>
+				<span>0</span>
+				<span>π</span>
+			</div>
+		</div>
+
+		<div style="margin-top: 15px; background: #1a1a2e; padding: 10px; border-radius: 5px;">
+			<p style="margin: 5px 0;">Декартовы координаты:</p>
+			<p style="margin: 5px 0; color: #ff6b6b;">X: <span id="coordX" class="coord-value">5.00</span></p>
+			<p style="margin: 5px 0; color: #4ecdc4;">Y: <span id="coordY" class="coord-value">0.00</span></p>
+			<p style="margin: 5px 0; color: #45b7d1;">Z: <span id="coordZ" class="coord-value">0.00</span></p>
+		</div>
+
+		<div style="margin-top: 20px;">
+			<button id="applySamePointBtn" style="width: 100%; background: #9c27b0;">📌 Применить положение</button>
+		</div>
 	</div>
 
 	<div id="controls">
@@ -123,30 +207,7 @@
 		import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 		// --- Глобальные переменные ---
-
-		 // Массив точек в полярных координатах
-		const angles = [
-			{
-				latitude: Math.PI / 2,//
-				longitude: 1//Longitude положение точки не завист от долготы когда точка расположна на полюсе: Latitude = Math.PI / 2
-			},//0
-//			[0, Math.PI * 2 * 0 / 3],//1
-			{
-				latitude: 0,
-				longitude: Math.PI * 2 * 0 / 3
-			},//1
-			//[0, Math.PI * 2 * 1 / 3],//2
-			{
-				latitude: 0,
-				longitude: Math.PI * 2 * 1 / 3
-			},//2
-			//[0, -Math.PI * 2 * 1 / 3],//3
-			{
-				latitude: 0,
-				longitude: -Math.PI * 2 * 1 / 3
-			},//3
-			
-		];
+		const angles = []; // Массив точек в полярных координатах
 		let spheres = []; // Массив сфер Three.js для визуализации
 		let scene, camera, renderer, controls;
 		let animationId = null;
@@ -154,13 +215,9 @@
 		let iteration = 0;
 
 		// Параметры
-		const RADIUS = 1; // Радиус сферы
-		
-		const k = 250;
-		let ANGLES_COUNT = 20 * k;//angles.length; // Начальное количество точек
-		let REPULSION_STRENGTH = 0.02 / (k * 8);//0.05; // Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
-//		let REPULSION_STRENGTH = 0.02 / k;//0.05; // Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
-		
+		const RADIUS = 5; // Радиус сферы
+		let ANGLES_COUNT = 20; // Начальное количество точек
+		let REPULSION_STRENGTH = 0.05; // Сила отталкивания
 		const DAMPING = 0.95; // Демпфирование движения
 
 		// Скорости точек (для инерции)
@@ -170,7 +227,6 @@
 		function initThree() {
 			scene = new THREE.Scene();
 			scene.background = new THREE.Color(0x050510);
-			scene.scale.copy(new THREE.Vector3(5 / RADIUS, 5 / RADIUS, 5 / RADIUS));
 
 			camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
 			camera.position.set(12, 6, 15);
@@ -186,10 +242,9 @@
 			controls = new OrbitControls(camera, renderer.domElement);
 			controls.enableDamping = true;
 			controls.dampingFactor = 0.05;
-			controls.autoRotate = false; // Отключаем автоматическое вращение
+			controls.autoRotate = false;
 			controls.enableZoom = true;
 			controls.enablePan = true;
-			controls.enableShadow = true;
 
 			// Освещение
 			const ambientLight = new THREE.AmbientLight(0x404060);
@@ -207,7 +262,6 @@
 			backLight.position.set(-10, 0, -10);
 			scene.add(backLight);
 
-/*			
 			// Добавляем звезды для фона
 			const starsGeometry = new THREE.BufferGeometry();
 			const starsCount = 2000;
@@ -221,7 +275,6 @@
 			const starsMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.3, transparent: true });
 			const stars = new THREE.Points(starsGeometry, starsMaterial);
 			scene.add(stars);
-*/			
 
 			// Создаем прозрачную сферу для визуализации
 			const sphereGeometry = new THREE.SphereGeometry(RADIUS, 64, 32);
@@ -249,7 +302,6 @@
 		// --- Функции для работы с координатами ---
 
 		// Преобразование полярных координат в декартовы
-		// Ось Z направлена через полюса, широта от -π/2 до π/2, долгота от -π до π
 		function polarToCartesian(latitude, longitude) {
 			return {
 				x: RADIUS * Math.cos(latitude) * Math.cos(longitude),
@@ -261,8 +313,8 @@
 		// Преобразование декартовых координат в полярные
 		function cartesianToPolar(x, y, z) {
 			const r = Math.sqrt(x * x + y * y + z * z);
-			const latitude = Math.asin(z / r); // z - высота (ось через полюса)
-			const longitude = Math.atan2(y, x); // y/x для долготы
+			const latitude = Math.asin(z / r);
+			const longitude = Math.atan2(y, x);
 			return {
 				latitude: latitude,
 				longitude: longitude
@@ -281,16 +333,9 @@
 
 		// --- Генерация случайной точки на сфере ---
 		function generateRandomPoint() {
-			// Равномерное распределение на сфере
-			const theta = 2 * Math.PI * Math.random(); // долгота от 0 до 2π
-			const phi = Math.acos(2 * Math.random() - 1); // угол от оси Z (0 до π)
-
-			// Преобразуем в широту: latitude = π/2 - phi
-			// При phi=0 (северный полюс) latitude = π/2
-			// При phi=π (южный полюс) latitude = -π/2
+			const theta = 2 * Math.PI * Math.random();
+			const phi = Math.acos(2 * Math.random() - 1);
 			const latitude = Math.PI / 2 - phi;
-
-			// Долгота в диапазоне от -π до π
 			const longitude = theta - Math.PI;
 
 			return {
@@ -299,64 +344,54 @@
 			};
 		}
 
-		// --- Инициализация массива точек ---
-		function initAngles(count) {
-
-			// Удаляем старые точки
-			spheres.forEach(sphere => {
-				
-				scene.remove(sphere);
-
-			});
-			spheres = [];
-			
+		// --- Установка всех точек в одинаковое положение ---
+		function setAllPointsSame(latitude, longitude) {
 			angles.length = 0;
-			for (let i = 0; i < count; i++) {
-
-				const point = generateRandomPoint()
-angles.push(point);
-				
-				const { x, y, z } = polarToCartesian(point.latitude, point.longitude);
-				
-				// Добавляем маленькую точку-индикатор
-				const pointGeometry = new THREE.SphereGeometry((0.03 / 5) * RADIUS, 8, 8);
-				const pointMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
-				const pointLight = new THREE.Mesh(pointGeometry, pointMaterial);
-				pointLight.position.set(x, y, z);
-				scene.add(pointLight);
-				spheres.push(pointLight);
-				
+			for (let i = 0; i < ANGLES_COUNT; i++) {
+				angles.push({
+					latitude: latitude,
+					longitude: longitude
+				});
 			}
 
-			// Инициализируем скорости
+			// Обнуляем скорости
+			velocities = new Array(ANGLES_COUNT).fill(null).map(() => ({ x: 0, y: 0, z: 0 }));
+
+			iteration = 0;
+			document.getElementById('iteration').innerHTML = `Итерация: ${iteration}`;
+			updateVisualization();
+
+			// Останавливаем анимацию
+			isAnimating = false;
+			document.getElementById('startBtn').disabled = false;
+			document.getElementById('stopBtn').disabled = true;
+		}
+
+		// --- Инициализация массива точек ---
+		function initAngles(count) {
+			angles.length = 0;
+			for (let i = 0; i < count; i++) {
+				angles.push(generateRandomPoint());
+			}
+
 			velocities = new Array(count).fill(null).map(() => ({ x: 0, y: 0, z: 0 }));
 
 			iteration = 0;
 			document.getElementById('iteration').innerHTML = `Итерация: ${iteration}`;
-			
 		}
 
 		// --- Обновление визуализации точек ---
 		function updateVisualization() {
-/*			
 			// Удаляем старые точки
-			spheres.forEach(sphere => {
-				
-				scene.remove(sphere);
-
-			});
+			spheres.forEach(sphere => scene.remove(sphere));
 			spheres = [];
-*/
 
 			// Создаем новые точки
 			angles.forEach((point, index) => {
 				const { x, y, z } = polarToCartesian(point.latitude, point.longitude);
 
-/*				
-				// Создаем светящуюся сферу
-				const geometry = new THREE.SphereGeometry((0.01 / 5) * RADIUS, 32, 16);
+				const geometry = new THREE.SphereGeometry(0.25, 32, 16);
 
-				// Разные цвета для разных точек
 				const hue = (index / angles.length) * 0.8 + 0.2;
 				const color = new THREE.Color().setHSL(hue, 0.9, 0.6);
 
@@ -375,31 +410,29 @@ angles.push(point);
 
 				scene.add(sphere);
 				spheres.push(sphere);
-*/				
-/*
-				// Добавляем маленькую точку-индикатор
-				const pointGeometry = new THREE.SphereGeometry((0.03 / 5) * RADIUS, 8, 8);
+
+				const pointGeometry = new THREE.SphereGeometry(0.08, 8, 8);
 				const pointMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
 				const pointLight = new THREE.Mesh(pointGeometry, pointMaterial);
 				pointLight.position.set(x, y, z);
 				scene.add(pointLight);
 				spheres.push(pointLight);
-*/				
 			});
 
-			// Обновляем статистику
 			document.getElementById('pointCount').innerHTML = `Количество точек: ${angles.length}`;
-			updateAverageDistance();
+			updateDistanceStats();
 		}
 
-		// --- Вычисление среднего расстояния между точками ---
-		function updateAverageDistance() {
+		// --- Вычисление статистики расстояний ---
+		function updateDistanceStats() {
 			if (angles.length < 2) {
 				document.getElementById('avgDistance').innerHTML = `Ср. расстояние: 0`;
+				document.getElementById('minDistance').innerHTML = `Мин. расстояние: 0`;
 				return;
 			}
 
 			let totalDist = 0;
+			let minDist = Infinity;
 			let pairs = 0;
 
 			for (let i = 0; i < angles.length; i++) {
@@ -409,47 +442,75 @@ angles.push(point);
 					const dx = pos1.x - pos2.x;
 					const dy = pos1.y - pos2.y;
 					const dz = pos1.z - pos2.z;
-					totalDist += Math.sqrt(dx * dx + dy * dy + dz * dz);
+					const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+					totalDist += dist;
+					minDist = Math.min(minDist, dist);
 					pairs++;
 				}
 			}
 
 			const avgDist = pairs > 0 ? (totalDist / pairs).toFixed(3) : 0;
+			const minDistFixed = minDist < Infinity ? minDist.toFixed(3) : 0;
+
 			document.getElementById('avgDistance').innerHTML = `Ср. расстояние: ${avgDist}`;
+			document.getElementById('minDistance').innerHTML = `Мин. расстояние: ${minDistFixed}`;
 		}
 
 		// --- Итерационный процесс движения точек ---
 		function iterationStep() {
 			if (!isAnimating) return;
 
-			// Вычисляем силы отталкивания для каждой точки
 			const forces = new Array(angles.length).fill(null).map(() => ({ x: 0, y: 0, z: 0 }));
 
-			// Для каждой пары точек
+			// Вычисляем силы отталкивания
 			for (let i = 0; i < angles.length; i++) {
 				const pos1 = polarToCartesian(angles[i].latitude, angles[i].longitude);
 
 				for (let j = i + 1; j < angles.length; j++) {
 					const pos2 = polarToCartesian(angles[j].latitude, angles[j].longitude);
 
-					// Вектор от i к j
 					let dx = pos1.x - pos2.x;
 					let dy = pos1.y - pos2.y;
 					let dz = pos1.z - pos2.z;
 
 					const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-					if (dist < 0.001) continue;
+					if (dist < 0.001) {
 
-					// Сила обратно пропорциональна расстоянию
+						// Добавляем небольшой шум к позициям точек, чтобы развести их
+                
+		                // Случайное направление для точки i
+		                const noise1 = {
+		                    x: (Math.random() - 0.5) * 0.1,
+		                    y: (Math.random() - 0.5) * 0.1,
+		                    z: (Math.random() - 0.5) * 0.1
+		                };
+		                
+		                // Случайное направление для точки j (может быть противоположным для лучшего разведения)
+		                const noise2 = {
+		                    x: (Math.random() - 0.5) * 0.1,
+		                    y: (Math.random() - 0.5) * 0.1,
+		                    z: (Math.random() - 0.5) * 0.1
+		                };
+		                
+		                // Применяем шум к позициям через скорости
+		                velocities[i].x += noise1.x;
+		                velocities[i].y += noise1.y;
+		                velocities[i].z += noise1.z;
+		                
+		                velocities[j].x += noise2.x;
+		                velocities[j].y += noise2.y;
+		                velocities[j].z += noise2.z;
+						continue;
+
+					}
+
 					const forceMagnitude = REPULSION_STRENGTH / (dist * dist);
 
-					// Нормализуем вектор
 					dx /= dist;
 					dy /= dist;
 					dz /= dist;
 
-					// Применяем силу: отталкивание
 					forces[i].x += dx * forceMagnitude;
 					forces[i].y += dy * forceMagnitude;
 					forces[i].z += dz * forceMagnitude;
@@ -460,34 +521,40 @@ angles.push(point);
 				}
 			}
 
-			// Применяем силы к точкам
+			// Применяем силы
 			for (let i = 0; i < angles.length; i++) {
 				const pos = polarToCartesian(angles[i].latitude, angles[i].longitude);
 
-				// Обновляем скорость с учетом силы и демпфирования
 				velocities[i].x = velocities[i].x * DAMPING + forces[i].x;
 				velocities[i].y = velocities[i].y * DAMPING + forces[i].y;
 				velocities[i].z = velocities[i].z * DAMPING + forces[i].z;
 
-				// Обновляем позицию
 				let newX = pos.x + velocities[i].x;
 				let newY = pos.y + velocities[i].y;
 				let newZ = pos.z + velocities[i].z;
 
-				// Нормализуем на сферу
 				const normalized = normalizeToSphere(newX, newY, newZ);
-				spheres[i].position.copy(normalized);
-				// Преобразуем обратно в полярные координаты
+
 				const polar = cartesianToPolar(normalized.x, normalized.y, normalized.z);
 				angles[i].latitude = polar.latitude;
 				angles[i].longitude = polar.longitude;
 			}
 
-			// Обновляем визуализацию
 			updateVisualization();
 
 			iteration++;
 			document.getElementById('iteration').innerHTML = `Итерация: ${iteration}`;
+		}
+
+		// --- Обновление отображения координат ---
+		function updateCoordDisplay(latitude, longitude) {
+			document.getElementById('latValue').textContent = latitude.toFixed(2);
+			document.getElementById('lonValue').textContent = longitude.toFixed(2);
+
+			const { x, y, z } = polarToCartesian(latitude, longitude);
+			document.getElementById('coordX').textContent = x.toFixed(2);
+			document.getElementById('coordY').textContent = y.toFixed(2);
+			document.getElementById('coordZ').textContent = z.toFixed(2);
 		}
 
 		// --- Анимационный цикл ---
@@ -495,7 +562,6 @@ angles.push(point);
 			requestAnimationFrame(animate);
 
 			if (isAnimating) {
-				// Выполняем несколько итераций за кадр для более быстрой сходимости
 				for (let i = 0; i < 3; i++) {
 					iterationStep();
 				}
@@ -519,14 +585,47 @@ angles.push(point);
 				document.getElementById('stopBtn').disabled = true;
 			});
 
+			document.getElementById('randomBtn').addEventListener('click', () => {
+				isAnimating = false;
+				document.getElementById('startBtn').disabled = false;
+				document.getElementById('stopBtn').disabled = true;
+
+				initAngles(angles.length);
+				updateVisualization();
+			});
+
 			document.getElementById('resetBtn').addEventListener('click', () => {
 				isAnimating = false;
 				document.getElementById('startBtn').disabled = false;
 				document.getElementById('stopBtn').disabled = true;
 
 				initAngles(angles.length);
-				velocities = new Array(angles.length).fill(null).map(() => ({ x: 0, y: 0, z: 0 }));
 				updateVisualization();
+			});
+
+			document.getElementById('samePointBtn').addEventListener('click', () => {
+				const lat = parseFloat(document.getElementById('latSlider').value);
+				const lon = parseFloat(document.getElementById('lonSlider').value);
+				setAllPointsSame(lat, lon);
+			});
+
+			document.getElementById('applySamePointBtn').addEventListener('click', () => {
+				const lat = parseFloat(document.getElementById('latSlider').value);
+				const lon = parseFloat(document.getElementById('lonSlider').value);
+				setAllPointsSame(lat, lon);
+			});
+
+			// Слайдеры для координат
+			document.getElementById('latSlider').addEventListener('input', (e) => {
+				const lat = parseFloat(e.target.value);
+				const lon = parseFloat(document.getElementById('lonSlider').value);
+				updateCoordDisplay(lat, lon);
+			});
+
+			document.getElementById('lonSlider').addEventListener('input', (e) => {
+				const lat = parseFloat(document.getElementById('latSlider').value);
+				const lon = parseFloat(e.target.value);
+				updateCoordDisplay(lat, lon);
 			});
 
 			document.getElementById('addPointsBtn').addEventListener('click', () => {
@@ -534,6 +633,7 @@ angles.push(point);
 					angles.push(generateRandomPoint());
 				}
 				velocities = velocities.concat(new Array(5).fill(null).map(() => ({ x: 0, y: 0, z: 0 })));
+				ANGLES_COUNT = angles.length;
 				updateVisualization();
 			});
 
@@ -542,6 +642,7 @@ angles.push(point);
 					const removeCount = Math.min(5, angles.length - 1);
 					angles.splice(-removeCount);
 					velocities.splice(-removeCount);
+					ANGLES_COUNT = angles.length;
 					updateVisualization();
 				}
 			});
@@ -550,11 +651,13 @@ angles.push(point);
 			const speedValue = document.getElementById('speedValue');
 			speedRange.addEventListener('input', () => {
 				speedValue.textContent = speedRange.value;
-				// Изменяем силу отталкивания в зависимости от скорости
 				REPULSION_STRENGTH = 0.05 * parseFloat(speedRange.value);
 			});
 
 			window.addEventListener('resize', onWindowResize, false);
+
+			// Инициализация отображения координат
+			updateCoordDisplay(0, 0);
 		}
 
 		function onWindowResize() {
