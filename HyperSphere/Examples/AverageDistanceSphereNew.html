@@ -478,29 +478,29 @@
 					if (dist < 0.001) {
 
 						// Добавляем небольшой шум к позициям точек, чтобы развести их
-                
-		                // Случайное направление для точки i
-		                const noise1 = {
-		                    x: (Math.random() - 0.5) * 0.1,
-		                    y: (Math.random() - 0.5) * 0.1,
-		                    z: (Math.random() - 0.5) * 0.1
-		                };
-		                
-		                // Случайное направление для точки j (может быть противоположным для лучшего разведения)
-		                const noise2 = {
-		                    x: (Math.random() - 0.5) * 0.1,
-		                    y: (Math.random() - 0.5) * 0.1,
-		                    z: (Math.random() - 0.5) * 0.1
-		                };
-		                
-		                // Применяем шум к позициям через скорости
-		                velocities[i].x += noise1.x;
-		                velocities[i].y += noise1.y;
-		                velocities[i].z += noise1.z;
-		                
-		                velocities[j].x += noise2.x;
-		                velocities[j].y += noise2.y;
-		                velocities[j].z += noise2.z;
+				
+						// Случайное направление для точки i
+						const noise1 = {
+							x: (Math.random() - 0.5) * 0.1,
+							y: (Math.random() - 0.5) * 0.1,
+							z: (Math.random() - 0.5) * 0.1
+						};
+						
+						// Случайное направление для точки j (может быть противоположным для лучшего разведения)
+						const noise2 = {
+							x: (Math.random() - 0.5) * 0.1,
+							y: (Math.random() - 0.5) * 0.1,
+							z: (Math.random() - 0.5) * 0.1
+						};
+						
+						// Применяем шум к позициям через скорости
+						velocities[i].x += noise1.x;
+						velocities[i].y += noise1.y;
+						velocities[i].z += noise1.z;
+						
+						velocities[j].x += noise2.x;
+						velocities[j].y += noise2.y;
+						velocities[j].z += noise2.z;
 						continue;
 
 					}

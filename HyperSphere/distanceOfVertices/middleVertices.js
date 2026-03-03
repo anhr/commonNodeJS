@@ -172,8 +172,9 @@ middleVertices.verticeProxy = (vertice, classSettings, _this, verticeId, positio
 					let middleVertice = _this.vertice2angles(classSettings.distanceOfVertices.middlePosition(oppositeVertices, boCloud, boCreateHypersphere, _this));
 					if (boPushMiddleVertice) classSettings.overriddenProperties.pushMiddleVertice(timeId, middleVertice);
 					if (classSettings.randomMiddleVertice) {
-						
-//						middleVertice = new _this.RandomVertice
+
+						middleVertice = middleVertices.RandomVertice.get(_this.arc, middleVertice, classSettings, middleVertices.RandomVertice);
+/*						
 						middleVertice = new middleVertices.RandomVertice({
 						
 							arc: _this.arc,
@@ -181,6 +182,7 @@ middleVertices.verticeProxy = (vertice, classSettings, _this, verticeId, positio
 							classSettings: classSettings,//используется для вычисления случайной точки в RandomVerticeHSphere HyperSphereNavigator.calculateNewPoint
 							
 						}).angles[0];
+*/
 						
 					}
 					

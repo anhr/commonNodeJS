@@ -14,6 +14,10 @@
 */
 import * as utils from '../utilsSphere.js'
 import ProgressBar from '../../ProgressBar/ProgressBar.js'
+import { RandomVerticeSphere as RandomVertice } from '../RandomVertice/randomVerticeSphere.js';
+//import Position from '../position.js'
+
+const sAverageVertices = 'averageVertices', π = Math.PI;
 
 const averageVertices = (data) => {
 
@@ -139,10 +143,11 @@ const averageVertices = (data) => {
 			settings.bufferGeometry.userData.timeId++;
 */			
 
+			let boRandomVertice = false;
 			for (let j = i + 1; j < angles.length; j++) {
 				
 //				const pos2 = polarToCartesian(angles[j].latitude, angles[j].longitude);
-				const pos2 = settings.overriddenProperties.position(position, j, userData);
+				let pos2 = settings.overriddenProperties.position(position, j, userData);
 /*				
 				settings.bufferGeometry.userData.timeId--;
 				const pos2 = position[j];
@@ -156,7 +161,30 @@ const averageVertices = (data) => {
 
 				const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-				if (dist < 0.001) continue;
+				if (dist < 0.001) {
+
+					if (boRandomVertice) {
+
+						boRandomVertice = false;
+						console.error(sAverageVertices + ': iterationStep.step. Invalid RandomVertice');
+						break;
+						
+					}
+//					pos2 = Position(_this.a2v(RandomVertice.get(0, angles[j], classSettings, RandomVertice)));
+					userData.timeId--;
+					const angles2 = angles[j], oppositeVertice = utils.angles([angles2[0], angles2[1]]);
+					userData.timeId++;//Во вселенной углы берутся из предыдушего шага проигрывателя
+					const randomVerticeAngles = RandomVertice.get(π, oppositeVertice, classSettings, RandomVertice),
+						timeIdOld = settings.guiPoints ? settings.guiPoints.timeId : 0, timeId = settings.options.player.getTimeId() - 1;
+					if (settings.guiPoints && (timeId >= 0)) settings.guiPoints.timeId =  timeId;//во вселенной сдучайную вершину нужно сохранять в передыдущем шаге проигрывателя
+					angles[j] = randomVerticeAngles;
+					if (settings.guiPoints) settings.guiPoints.timeId = timeIdOld;
+					j--;
+					boRandomVertice = true;
+					continue;
+
+				}
+				boRandomVertice = false;
 
 				// Сила обратно пропорциональна расстоянию
 				const forceMagnitude = REPULSION_STRENGTH / (dist * dist);

@@ -193,4 +193,15 @@ class RandomVertice {
 	/////////////////////////////overridden methods
 
 }
+RandomVertice.get = (arc, oppositeVertice, classSettings, RandomVertice) => {
+	
+	return new RandomVertice({
+	
+		arc: arc,
+		oppositeVertice: oppositeVertice,
+		classSettings: classSettings,//используется для вычисления случайной точки в RandomVerticeHSphere HyperSphereNavigator.calculateNewPoint
+		
+	}).angles[0];
+	
+}
 export default RandomVertice;
