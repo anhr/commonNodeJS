@@ -15,7 +15,7 @@
 import * as utils from '../utilsSphere.js'
 import ProgressBar from '../../ProgressBar/ProgressBar.js'
 import { RandomVerticeSphere as RandomVertice } from '../RandomVertice/randomVerticeSphere.js';
-//import Position from '../position.js'
+import Position from '../position.js'
 
 const sAverageVertices = 'averageVertices', π = Math.PI;
 
@@ -144,10 +144,11 @@ const averageVertices = (data) => {
 */			
 
 			let boRandomVertice = true;
+			let pos2;
 			for (let j = i + 1; j < angles.length; j++) {
 				
 //				const pos2 = polarToCartesian(angles[j].latitude, angles[j].longitude);
-				let pos2 = settings.overriddenProperties.position(position, j, userData);
+				if (!pos2) pos2 = settings.overriddenProperties.position(position, j, userData);
 /*				
 				settings.bufferGeometry.userData.timeId--;
 				const pos2 = position[j];
@@ -169,7 +170,8 @@ const averageVertices = (data) => {
 					const angles2 = angles[j];
 					const timeIdOld = settings.guiPoints ? settings.guiPoints.timeId : undefined;
 					if (settings.guiPoints) settings.guiPoints.timeId = userData.timeId;
-					angles[j] = RandomVertice.get(arc, utils.angles([angles2[0], angles2[1]]), classSettings, RandomVertice);
+					pos2 = Position(utils.anglesToCartesian(RandomVertice.get(arc, utils.angles([angles2[0], angles2[1]]), classSettings, RandomVertice), classSettings.overriddenProperties.rTime()));
+//					angles[j] = RandomVertice.get(arc, utils.angles([angles2[0], angles2[1]]), classSettings, RandomVertice);
 					if (settings.guiPoints) settings.guiPoints.timeId = timeIdOld;
 					userData.timeId++;
 					j--;
@@ -196,6 +198,7 @@ const averageVertices = (data) => {
 				}
 */				
 				boRandomVertice = true;
+				pos2 = undefined;
 
 				// Сила обратно пропорциональна расстоянию
 				const forceMagnitude = REPULSION_STRENGTH / (dist * dist);
@@ -251,8 +254,7 @@ const averageVertices = (data) => {
 //					classSettings.settings.guiPoints.timeId = data.timeId;
 					const vertice = utils.casterianToAngles({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z });
 					classSettings.overriddenProperties.pushMiddleVertice(data.timeId, vertice);//добавляем новы item в classSettings.settings.object.geometry.times[data.timeId]. Это нужно что бы пользователь мышкой мог выбрать вершину во вселенной
-
-					angles[i] = vertice;
+//					angles[i] = vertice;
 
 				}
 //				angles.needsUpdate;
