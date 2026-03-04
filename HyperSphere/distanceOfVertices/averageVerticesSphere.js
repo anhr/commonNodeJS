@@ -143,7 +143,7 @@ const averageVertices = (data) => {
 			settings.bufferGeometry.userData.timeId++;
 */			
 
-			let boRandomVertice = false;
+			let boRandomVertice = true;
 			for (let j = i + 1; j < angles.length; j++) {
 				
 //				const pos2 = polarToCartesian(angles[j].latitude, angles[j].longitude);
@@ -159,32 +159,43 @@ const averageVertices = (data) => {
 				let dy = pos1.y - pos2.y;
 				let dz = pos1.z - pos2.z;
 
-				const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+				const dist = Math.sqrt(dx * dx + dy * dy + dz * dz), arc = π - (dist / classSettings.overriddenProperties.r(settings.bufferGeometry.userData.timeId - 1) / 2) * π;
 
-				if (dist < 0.001) {
+//				if (dist < 0.001) {
 
-					if (boRandomVertice) {
+				if (boRandomVertice) {
 
-						boRandomVertice = false;
-						console.error(sAverageVertices + ': iterationStep.step. Invalid RandomVertice');
-						break;
-						
-					}
-//					pos2 = Position(_this.a2v(RandomVertice.get(0, angles[j], classSettings, RandomVertice)));
-					userData.timeId--;
-					const angles2 = angles[j], oppositeVertice = utils.angles([angles2[0], angles2[1]]);
-					userData.timeId++;//Во вселенной углы берутся из предыдушего шага проигрывателя
-					const randomVerticeAngles = RandomVertice.get(π, oppositeVertice, classSettings, RandomVertice),
+					userData.timeId--;//Во вселенной углы берутся из предыдушего шага проигрывателя
+					const angles2 = angles[j];
+					const timeIdOld = settings.guiPoints ? settings.guiPoints.timeId : undefined;
+					if (settings.guiPoints) settings.guiPoints.timeId = userData.timeId;
+					angles[j] = RandomVertice.get(arc, utils.angles([angles2[0], angles2[1]]), classSettings, RandomVertice);
+					if (settings.guiPoints) settings.guiPoints.timeId = timeIdOld;
+					userData.timeId++;
+					j--;
+					boRandomVertice = false;
+					continue;
+/*					
 						timeIdOld = settings.guiPoints ? settings.guiPoints.timeId : 0, timeId = settings.options.player.getTimeId() - 1;
 					if (settings.guiPoints && (timeId >= 0)) settings.guiPoints.timeId =  timeId;//во вселенной сдучайную вершину нужно сохранять в передыдущем шаге проигрывателя
 					angles[j] = randomVerticeAngles;
 					if (settings.guiPoints) settings.guiPoints.timeId = timeIdOld;
-					j--;
-					boRandomVertice = true;
-					continue;
+*/					
+/*					
+					console.error(sAverageVertices + ': iterationStep.step. Invalid RandomVertice');
+					break;
+*/					
+					
+				}
+//					pos2 = Position(_this.a2v(RandomVertice.get(0, angles[j], classSettings, RandomVertice)));
+/*				
+				j--;
+				boRandomVertice = true;
+				continue;
 
 				}
-				boRandomVertice = false;
+*/				
+				boRandomVertice = true;
 
 				// Сила обратно пропорциональна расстоянию
 				const forceMagnitude = REPULSION_STRENGTH / (dist * dist);
