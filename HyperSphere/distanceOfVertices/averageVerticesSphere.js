@@ -272,7 +272,8 @@ const averageVertices = (data) => {
 		progressBar = new ProgressBar(options.renderer.domElement.parentElement, step, {
 
 			sTitle: 't = ' + t + '<br> Average vertices',
-			max: position.length - 1,
+//			max: position.length - 1,
+			max: settings.object.geometry.angles.length - 1,
 			
 			//for 1000 vertices:
 			//timeoutPeriod: 0,//time: Play step. Average vertices. 5.481899999976158 sec.
