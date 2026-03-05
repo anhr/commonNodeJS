@@ -160,7 +160,7 @@ const averageVertices = (data) => {
 				let dy = pos1.y - pos2.y;
 				let dz = pos1.z - pos2.z;
 
-				const dist = Math.sqrt(dx * dx + dy * dy + dz * dz), arc = π - (dist / classSettings.overriddenProperties.r(settings.bufferGeometry.userData.timeId - 1) / 2) * π;
+				const dist = Math.sqrt(dx * dx + dy * dy + dz * dz), arc = π - hyperbola((dist / classSettings.overriddenProperties.r(settings.bufferGeometry.userData.timeId - 1) / 2) * π);
 
 //				if (dist < 0.001) {
 
@@ -170,7 +170,7 @@ const averageVertices = (data) => {
 					const angles2 = angles[j];
 					const timeIdOld = settings.guiPoints ? settings.guiPoints.timeId : undefined;
 					if (settings.guiPoints) settings.guiPoints.timeId = userData.timeId;
-					pos2 = Position(utils.anglesToCartesian(RandomVertice.get(hyperbola(arc), utils.angles([angles2[0], angles2[1]]), classSettings, RandomVertice), classSettings.overriddenProperties.rTime()));
+					pos2 = Position(utils.anglesToCartesian(RandomVertice.get(arc, utils.angles([angles2[0], angles2[1]]), classSettings, RandomVertice), classSettings.overriddenProperties.rTime()));
 //					angles[j] = RandomVertice.get(arc, utils.angles([angles2[0], angles2[1]]), classSettings, RandomVertice);
 					if (settings.guiPoints) settings.guiPoints.timeId = timeIdOld;
 					userData.timeId++;
@@ -253,8 +253,9 @@ const averageVertices = (data) => {
 //					position[i] = { x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z };
 //					classSettings.settings.guiPoints.timeId = data.timeId;
 					const vertice = utils.casterianToAngles({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z });
-					classSettings.overriddenProperties.pushMiddleVertice(data.timeId, vertice);//добавляем новы item в classSettings.settings.object.geometry.times[data.timeId]. Это нужно что бы пользователь мышкой мог выбрать вершину во вселенной
-					angles[i] = vertice;
+					settings.overriddenProperties.editVertice(data.timeId, vertice, angles, i);
+//					classSettings.overriddenProperties.pushMiddleVertice(data.timeId, vertice);//добавляем новый item в classSettings.settings.object.geometry.times[data.timeId]. Это нужно что бы после выполнения шага проигрывателя при наедении мыши на вершину отображалась полная информачия о вершине
+//					angles[i] = vertice;
 
 				}
 //				angles.needsUpdate;
