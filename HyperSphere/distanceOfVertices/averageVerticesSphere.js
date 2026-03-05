@@ -170,7 +170,7 @@ const averageVertices = (data) => {
 					const angles2 = angles[j];
 					const timeIdOld = settings.guiPoints ? settings.guiPoints.timeId : undefined;
 					if (settings.guiPoints) settings.guiPoints.timeId = userData.timeId;
-					pos2 = Position(utils.anglesToCartesian(RandomVertice.get(arc, utils.angles([angles2[0], angles2[1]]), classSettings, RandomVertice), classSettings.overriddenProperties.rTime()));
+					pos2 = Position(utils.anglesToCartesian(RandomVertice.get(hyperbola(arc), utils.angles([angles2[0], angles2[1]]), classSettings, RandomVertice), classSettings.overriddenProperties.rTime()));
 //					angles[j] = RandomVertice.get(arc, utils.angles([angles2[0], angles2[1]]), classSettings, RandomVertice);
 					if (settings.guiPoints) settings.guiPoints.timeId = timeIdOld;
 					userData.timeId++;
@@ -309,5 +309,6 @@ const averageVertices = (data) => {
 	iterationStep();
 	
 }
+const hyperbola = () => {}
 averageVertices.verticeProxy = (vertice) => { return vertice; }
 export default averageVertices;

@@ -204,4 +204,7 @@ RandomVertice.get = (arc, oppositeVertice, classSettings, RandomVertice) => {
 	}).angles[0];
 	
 }
+RandomVertice.calculateHyperbola = (p) => {
+	
+}
 export default RandomVertice;

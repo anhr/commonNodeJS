@@ -1,0 +1,501 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Гипербола с параметром p</title>
+	<style>
+		body {
+			margin: 0;
+			overflow: hidden;
+			font-family: Arial, sans-serif;
+		}
+
+		#info {
+			position: absolute;
+			top: 20px;
+			left: 20px;
+			background: rgba(0, 0, 0, 0.8);
+			color: white;
+			padding: 15px 25px;
+			border-radius: 8px;
+			pointer-events: none;
+			z-index: 100;
+			box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+			border-left: 4px solid #ff3366;
+		}
+
+		#controls {
+			position: absolute;
+			bottom: 30px;
+			left: 50%;
+			transform: translateX(-50%);
+			background: rgba(30, 30, 30, 0.95);
+			color: white;
+			padding: 20px 40px;
+			border-radius: 12px;
+			z-index: 100;
+			box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+			backdrop-filter: blur(5px);
+			border: 1px solid #444;
+			min-width: 400px;
+			text-align: center;
+		}
+
+			#controls label {
+				display: block;
+				margin-bottom: 15px;
+				font-size: 18px;
+				color: #ff9933;
+				font-weight: bold;
+				letter-spacing: 1px;
+			}
+
+			#controls input {
+				width: 100%;
+				margin: 15px 0;
+				cursor: pointer;
+				height: 8px;
+				border-radius: 4px;
+				background: #444;
+				accent-color: #ff3366;
+			}
+
+				#controls input:hover {
+					opacity: 0.9;
+				}
+
+		#p-value {
+			font-size: 24px;
+			font-weight: bold;
+			color: #ff3366;
+			text-shadow: 0 0 10px rgba(255,51,102,0.5);
+		}
+
+		#equation {
+			font-size: 16px;
+			color: #88ccff;
+			margin-top: 10px;
+			font-family: monospace;
+			background: #222;
+			padding: 8px;
+			border-radius: 4px;
+		}
+
+		.note {
+			font-size: 14px;
+			color: #aaa;
+			margin-top: 15px;
+			border-top: 1px solid #444;
+			padding-top: 10px;
+		}
+
+		.point-label {
+			color: #ff9933;
+		}
+	</style>
+</head>
+<body>
+	<div id="info">
+		<h2>Гипербола с параметром p</h2>
+		<p>Красные точки: фиксированные точки (0,0) и (π,π)</p>
+		<p>Синяя кривая: гипербола при текущем p</p>
+		<p>Зеленая прямая: вырожденный случай (p=0)</p>
+		<p>Оранжевые отрезки: вырожденный случай (p=1)</p>
+	</div>
+
+	<div id="controls">
+		<label>
+			Параметр p = <span id="p-value">0.50</span>
+		</label>
+		<input type="range" id="p-slider" min="0" max="1" step="0.001" value="0.5">
+		<div id="equation">y = ?</div>
+		<div class="note">
+			<span class="point-label">p=0</span> - прямая линия<br>
+			<span class="point-label">p=1</span> - два отрезка: вертикальный и горизонтальный
+		</div>
+	</div>
+
+	<!-- Подключаем Three.js и дополнительные модули -->
+	<script type="importmap">
+		{
+			"imports": {
+				"three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+				"three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
+			}
+		}
+	</script>
+
+	<script type="module">
+		import * as THREE from 'three';
+		import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+		import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+
+		// --- Инициализация сцены ---
+		const scene = new THREE.Scene();
+		scene.background = new THREE.Color(0x111122);
+
+		// --- Камера ---
+		const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+		camera.position.set(5, 4, 8);
+		camera.lookAt(1.5, 1.5, 0);
+
+		// --- Рендереры ---
+		const renderer = new THREE.WebGLRenderer({ antialias: true });
+		renderer.setSize(window.innerWidth, window.innerHeight);
+		renderer.shadowMap.enabled = false;
+		renderer.setPixelRatio(window.devicePixelRatio);
+		document.body.appendChild(renderer.domElement);
+
+		const labelRenderer = new CSS2DRenderer();
+		labelRenderer.setSize(window.innerWidth, window.innerHeight);
+		labelRenderer.domElement.style.position = 'absolute';
+		labelRenderer.domElement.style.top = '0px';
+		labelRenderer.domElement.style.left = '0px';
+		labelRenderer.domElement.style.pointerEvents = 'none'; // чтобы не мешать слайдеру
+		document.body.appendChild(labelRenderer.domElement);
+
+		// --- Освещение ---
+		const ambientLight = new THREE.AmbientLight(0x404060);
+		scene.add(ambientLight);
+
+		const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+		dirLight.position.set(1, 2, 1);
+		scene.add(dirLight);
+
+		// --- Сетка и оси ---
+		const gridHelper = new THREE.GridHelper(10, 20, 0x88ccff, 0x335588);
+		gridHelper.position.z = -0.01;
+		scene.add(gridHelper);
+
+		// Оси координат
+		const axesHelper = new THREE.AxesHelper(5);
+		scene.add(axesHelper);
+
+		// Добавим стрелки для осей
+		const arrowX = new THREE.ArrowHelper(new THREE.Vector3(1, 0, 0), new THREE.Vector3(0, 0, 0), 1, 0xff3333);
+		const arrowY = new THREE.ArrowHelper(new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0, 0), 1, 0x33ff33);
+		scene.add(arrowX);
+		scene.add(arrowY);
+
+		// Подписи осей
+		const xLabelDiv = document.createElement('div');
+		xLabelDiv.textContent = 'arc';
+		xLabelDiv.style.color = '#ff6666';
+		xLabelDiv.style.fontSize = '20px';
+		xLabelDiv.style.fontWeight = 'bold';
+		const xLabel = new CSS2DObject(xLabelDiv);
+		xLabel.position.set(3.5, -0.2, 0);
+		scene.add(xLabel);
+
+		const yLabelDiv = document.createElement('div');
+		yLabelDiv.textContent = 'y';
+		yLabelDiv.style.color = '#66ff66';
+		yLabelDiv.style.fontSize = '20px';
+		yLabelDiv.style.fontWeight = 'bold';
+		const yLabel = new CSS2DObject(yLabelDiv);
+		yLabel.position.set(-0.2, 3.5, 0);
+		scene.add(yLabel);
+
+		// --- Константы ---
+		const PI = Math.PI;
+		const points = [
+			{ x: 0, y: 0 },
+			{ x: PI, y: PI }
+		];
+
+		// --- Функция для вычисления коэффициентов гиперболы по параметру p ---
+		function calculateHyperbola(p) {
+			// Крайние случаи
+			if (p === 0) {
+				// Прямая линия: y = x (через точки (0,0) и (π,π))
+				return {
+					type: 'line',
+					a: 1,
+					b: 0,
+					equation: 'y = x'
+				};
+			}
+
+			if (p === 1) {
+				// Два отрезка: вертикальный и горизонтальный
+				return {
+					type: 'segments',
+					segments: [
+						{ from: { x: 0, y: 0 }, to: { x: 0, y: PI } },  // вертикальный
+						{ from: { x: 0, y: PI }, to: { x: PI, y: PI } } // горизонтальный
+					],
+					equation: 'Вертикальный и горизонтальный отрезки'
+				};
+			}
+
+			// Общий случай: гипербола вида y = a/(x - h) + k
+			// У нас есть две точки: (0,0) и (π,π)
+			// и дополнительное условие: при x = 0, y = 0
+			// при x = π, y = π
+
+			// Из точки (0,0): 0 = a/(0 - h) + k => k = a/h
+
+			// Из точки (π,π): π = a/(π - h) + a/h
+
+			// Вводим параметр p для контроля кривизны
+			// Будем использовать p для определения положения асимптоты h
+			// При p -> 0: h -> -∞ (гипербола вырождается в прямую)
+			// При p -> 1: h -> 0 (гипербола вырождается в вертикальную линию)
+
+			// Свяжем h с p: h = - (1-p)/p * C, где C некоторая константа
+			// Чтобы при p=1, h=0; при p=0, h=-∞
+			// Возьмем C = π/2 для хорошей визуализации
+
+			const C = PI / 2;
+
+			// Избегаем деления на ноль при p=0 (уже обработано выше)
+			let h;
+			if (p < 0.001) {
+				// Для очень малых p используем линейную аппроксимацию
+				h = -C / p;
+			} else {
+				h = -C * (1 - p) / p;
+			}
+
+			// Вычисляем a из уравнения π = a/(π - h) + a/h
+			// a = π / (1/(π - h) + 1/h) = π / ((h + π - h)/(h(π - h))) = π * h(π - h) / π = h(π - h)
+			// Упростим: a = h * (PI - h)
+
+			const a = h * (PI - h);
+
+			// Вычисляем k
+			const k = a / h;
+
+			return {
+				type: 'hyperbola',
+				a: a,
+				h: h,
+				k: k,
+				equation: `y = ${a.toFixed(4)}/(x - ${h.toFixed(4)}) + ${k.toFixed(4)}`
+			};
+		}
+
+		// --- Функция для создания точек на кривой ---
+		function generateCurvePoints(hyperbola, numPoints = 200) {
+			const points = [];
+
+			if (hyperbola.type === 'line') {
+				// Прямая линия
+				for (let i = 0; i <= numPoints; i++) {
+					const x = (i / numPoints) * PI;
+					const y = x; // y = x
+					points.push(new THREE.Vector3(x, y, 0));
+				}
+			}
+			else if (hyperbola.type === 'segments') {
+				// Для отрезков вернем null, будем рисовать отдельно
+				return null;
+			}
+			else {
+				// Гипербола
+				const { a, h, k } = hyperbola;
+
+				// Генерируем точки слева от асимптоты (если асимптота слева от 0)
+				// В нашем случае h всегда отрицательное, так что асимптота слева от 0
+				for (let i = 0; i <= numPoints; i++) {
+					const x = (i / numPoints) * PI;
+					// Проверяем, что не попадаем в асимптоту
+					if (Math.abs(x - h) < 0.001) continue;
+
+					const y = a / (x - h) + k;
+					// Ограничиваем y для визуализации
+					if (isFinite(y) && y >= -1 && y <= PI + 1) {
+						points.push(new THREE.Vector3(x, y, 0));
+					}
+				}
+			}
+
+			return points;
+		}
+
+		// --- Создание фиксированных точек (красные) ---
+		function createFixedPoints() {
+			const group = new THREE.Group();
+			const sphereGeometry = new THREE.SphereGeometry(0.08, 32, 32);
+			const sphereMaterial = new THREE.MeshStandardMaterial({
+				color: 0xff3366,
+				emissive: 0x440000,
+				roughness: 0.3,
+				metalness: 0.1
+			});
+
+			points.forEach((point, index) => {
+				const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+				sphere.position.set(point.x, point.y, 0);
+				group.add(sphere);
+
+				// Добавляем подписи
+				const labelDiv = document.createElement('div');
+				labelDiv.textContent = `(${point.x.toFixed(2)}, ${point.y.toFixed(2)})`;
+				labelDiv.style.color = '#ff9999';
+				labelDiv.style.fontSize = '16px';
+				labelDiv.style.fontWeight = 'bold';
+				labelDiv.style.textShadow = '1px 1px 2px black';
+				labelDiv.style.backgroundColor = 'rgba(0,0,0,0.7)';
+				labelDiv.style.padding = '2px 6px';
+				labelDiv.style.borderRadius = '4px';
+				labelDiv.style.border = '1px solid #ff3366';
+
+				const label = new CSS2DObject(labelDiv);
+				label.position.set(point.x, point.y + 0.15, 0);
+				group.add(label);
+			});
+
+			return group;
+		}
+
+		// --- Создание опорных линий для p=0 и p=1 ---
+		function createReferenceLines() {
+			const group = new THREE.Group();
+
+			// Зеленая линия для p=0 (прямая y = x)
+			const linePoints = [
+				new THREE.Vector3(0, 0, 0),
+				new THREE.Vector3(PI, PI, 0)
+			];
+			const lineGeometry = new THREE.BufferGeometry().setFromPoints(linePoints);
+			const lineMaterial = new THREE.LineBasicMaterial({ color: 0x33ff33, opacity: 0.3, transparent: true });
+			const line = new THREE.Line(lineGeometry, lineMaterial);
+			group.add(line);
+
+			// Оранжевые отрезки для p=1
+			const segment1Points = [
+				new THREE.Vector3(0, 0, 0),
+				new THREE.Vector3(0, PI, 0)
+			];
+			const segment1Geometry = new THREE.BufferGeometry().setFromPoints(segment1Points);
+			const segment1Material = new THREE.LineBasicMaterial({ color: 0xff9933, opacity: 0.3, transparent: true });
+			const segment1 = new THREE.Line(segment1Geometry, segment1Material);
+			group.add(segment1);
+
+			const segment2Points = [
+				new THREE.Vector3(0, PI, 0),
+				new THREE.Vector3(PI, PI, 0)
+			];
+			const segment2Geometry = new THREE.BufferGeometry().setFromPoints(segment2Points);
+			const segment2Material = new THREE.LineBasicMaterial({ color: 0xff9933, opacity: 0.3, transparent: true });
+			const segment2 = new THREE.Line(segment2Geometry, segment2Material);
+			group.add(segment2);
+
+			return group;
+		}
+
+		// --- Создание динамической кривой (гиперболы) ---
+		function createDynamicCurve() {
+			const geometry = new THREE.BufferGeometry();
+			const material = new THREE.LineBasicMaterial({ color: 0x3399ff, linewidth: 2 }); // linewidth не поддерживается во всех браузерах
+			const line = new THREE.Line(geometry, material);
+			return line;
+		}
+
+		// --- Инициализация сцены с объектами ---
+		const fixedPoints = createFixedPoints();
+		scene.add(fixedPoints);
+
+		const referenceLines = createReferenceLines();
+		scene.add(referenceLines);
+
+		const dynamicCurve = createDynamicCurve();
+		scene.add(dynamicCurve);
+
+		// --- Элементы управления ---
+		const slider = document.getElementById('p-slider');
+		const pValueSpan = document.getElementById('p-value');
+		const equationDiv = document.getElementById('equation');
+
+		// --- Функция обновления кривой ---
+		function updateCurve(p) {
+			p = parseFloat(p);
+			pValueSpan.textContent = p.toFixed(3);
+
+			const hyperbola = calculateHyperbola(p);
+			equationDiv.textContent = hyperbola.equation;
+
+			const points = generateCurvePoints(hyperbola, 300);
+
+			if (points && points.length > 0) {
+				const positions = [];
+				points.forEach(vec => {
+					positions.push(vec.x, vec.y, vec.z);
+				});
+
+				dynamicCurve.geometry.dispose();
+				dynamicCurve.geometry = new THREE.BufferGeometry();
+				dynamicCurve.geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+			} else {
+				// Очищаем геометрию для случаев с отрезками
+				dynamicCurve.geometry.dispose();
+				dynamicCurve.geometry = new THREE.BufferGeometry();
+			}
+
+			// Для p=1 добавим специальную визуализацию отрезков
+			// (можно сделать более наглядной, но пока оставим так)
+		}
+
+		// --- Обработчик слайдера ---
+		slider.addEventListener('input', (e) => {
+			updateCurve(e.target.value);
+		});
+
+		// --- Начальное обновление ---
+		updateCurve(0.5);
+
+		// --- Контроллер камеры ---
+		const controls = new OrbitControls(camera, renderer.domElement);
+		controls.enableDamping = true;
+		controls.dampingFactor = 0.05;
+		controls.autoRotate = false;
+		controls.enableZoom = true;
+		controls.target.set(PI/2, PI/2, 0);
+		controls.maxPolarAngle = Math.PI / 2; // ограничиваем вращение
+
+		// --- Обработка ресайза ---
+		window.addEventListener('resize', onWindowResize, false);
+		function onWindowResize() {
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			labelRenderer.setSize(window.innerWidth, window.innerHeight);
+		}
+
+		// --- Анимация ---
+		function animate() {
+			requestAnimationFrame(animate);
+
+			controls.update();
+
+			renderer.render(scene, camera);
+			labelRenderer.render(scene, camera);
+		}
+
+		animate();
+
+		// --- Добавим немного звезд для красоты (необязательно) ---
+		function addStars() {
+			const starsGeometry = new THREE.BufferGeometry();
+			const starsCount = 500;
+			const starsPositions = new Float32Array(starsCount * 3);
+
+			for (let i = 0; i < starsCount * 3; i += 3) {
+				starsPositions[i] = (Math.random() - 0.5) * 200;
+				starsPositions[i+1] = (Math.random() - 0.5) * 200;
+				starsPositions[i+2] = (Math.random() - 0.5) * 200 - 50; // позади сцены
+			}
+
+			starsGeometry.setAttribute('position', new THREE.BufferAttribute(starsPositions, 3));
+			const starsMaterial = new THREE.PointsMaterial({ color: 0x888888, size: 0.2 });
+			const stars = new THREE.Points(starsGeometry, starsMaterial);
+			scene.add(stars);
+		}
+
+		addStars();
+
+	</script>
+</body>
+</html>
