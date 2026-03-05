@@ -254,7 +254,7 @@ const averageVertices = (data) => {
 //					classSettings.settings.guiPoints.timeId = data.timeId;
 					const vertice = utils.casterianToAngles({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z });
 					classSettings.overriddenProperties.pushMiddleVertice(data.timeId, vertice);//добавляем новы item в classSettings.settings.object.geometry.times[data.timeId]. Это нужно что бы пользователь мышкой мог выбрать вершину во вселенной
-//					angles[i] = vertice;
+					angles[i] = vertice;
 
 				}
 //				angles.needsUpdate;
@@ -309,6 +309,6 @@ const averageVertices = (data) => {
 	iterationStep();
 	
 }
-const hyperbola = () => {}
+const hyperbola = RandomVertice.calculateHyperbola(1);//0.99);
 averageVertices.verticeProxy = (vertice) => { return vertice; }
 export default averageVertices;
