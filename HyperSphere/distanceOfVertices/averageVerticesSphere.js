@@ -160,12 +160,13 @@ const averageVertices = (data) => {
 				let dy = pos1.y - pos2.y;
 				let dz = pos1.z - pos2.z;
 
-				const dist = Math.sqrt(dx * dx + dy * dy + dz * dz), arc = π - hyperbola((dist / classSettings.overriddenProperties.r(settings.bufferGeometry.userData.timeId - 1) / 2) * π);
+				const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
 //				if (dist < 0.001) {
 
 				if (boRandomVertice) {
 
+					const arc = π - hyperbola((dist / classSettings.overriddenProperties.r(settings.bufferGeometry.userData.timeId - 1) / 2) * π);
 					userData.timeId--;//Во вселенной углы берутся из предыдушего шага проигрывателя
 					const angles2 = angles[j];
 					const timeIdOld = settings.guiPoints ? settings.guiPoints.timeId : undefined;
