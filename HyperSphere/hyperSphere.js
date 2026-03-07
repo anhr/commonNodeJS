@@ -1006,7 +1006,7 @@ class HyperSphere extends MyObject {
 								},
 
 							});
-							return classSettings.distanceOfVertices.verticeProxy(vertice, classSettings, this, verticeId, position);
+							return classSettings.distanceOfVertices ? classSettings.distanceOfVertices.verticeProxy(vertice, classSettings, this, verticeId, position) : vertice;
 
 						},
 						set: (angles, name, value) => {

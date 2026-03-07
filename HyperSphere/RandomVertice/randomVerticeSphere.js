@@ -19,8 +19,10 @@ import HyperSphere from '../sphere.js';
 
 
 const sRandomVerticesSphere = 'RandomVerticesSphere',
-	π = Math.PI, round = Math.round, random = Math.random,// abs = Math.abs,
-	cos = Math.cos;//, atan = Math.atan, sin = Math.sin, asin = Math.asin, tan = Math.tan, atan2 = Math.atan2;
+	π = Math.PI, round = Math.round,
+	random = Math.random,
+//random = () => { return 0.5 },
+	cos = Math.cos;
 export const anglesIdMax = 50;//Количество точек на окружности, расположенной на экваторе
 
 /**
