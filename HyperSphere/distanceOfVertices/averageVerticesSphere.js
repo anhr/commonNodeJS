@@ -165,14 +165,16 @@ const averageVertices = (data) => {
 				let dy = pos1.y - pos2.y;
 				let dz = pos1.z - pos2.z;
 
-				const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+				let dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
 //				if (dist < 0.001) {
 
-				if (boRandomVertice) {
+//				if (boRandomVertice)
+				{
 
 					const arc = π - hyperbola((dist / classSettings.overriddenProperties.r(settings.bufferGeometry.userData.timeId - 1) / 2) * π);
 					userData.timeId--;//Во вселенной углы берутся из предыдушего шага проигрывателя
+					const angles1 = angles[i];
 					const angles2 = angles[j];
 					const timeIdOld = settings.guiPoints ? settings.guiPoints.timeId : undefined;
 					if (settings.guiPoints) settings.guiPoints.timeId = userData.timeId;
@@ -180,36 +182,48 @@ const averageVertices = (data) => {
 					const randomAngles = RandomVertice.get(arc, utils.angles([angles2[0], angles2[1]]), classSettings, RandomVertice);
 					pos2 = Position(polarToCartesian(randomAngles.latitude, randomAngles.longitude));
 */					
-					pos2 = Position(utils.anglesToCartesian(RandomVertice.get(arc, utils.angles([angles2[0], angles2[1]]), classSettings, RandomVertice), classSettings.overriddenProperties.rTime()));
+					const r = classSettings.overriddenProperties.rTime();
+					
+					// Случайное направление для точки i
+					const noise1 = Position(utils.anglesToCartesian(RandomVertice.get(arc, utils.angles([angles1[0], angles1[1]]), classSettings, RandomVertice), r));
+						
+//					pos2 = 
+					// Случайное направление для точки j (может быть противоположным для лучшего разведения)
+					const noise2 =
+						Position(utils.anglesToCartesian(RandomVertice.get(arc, utils.angles([angles2[0], angles2[1]]), classSettings, RandomVertice), r));
 //					angles[j] = RandomVertice.get(arc, utils.angles([angles2[0], angles2[1]]), classSettings, RandomVertice);
 					if (settings.guiPoints) settings.guiPoints.timeId = timeIdOld;
 					userData.timeId++;
+					
+					// Применяем шум к позициям через скорости
+					velocities[i].x += noise1.x;
+					velocities[i].y += noise1.y;
+					velocities[i].z += noise1.z;
+					
+					velocities[j].x += noise2.x;
+					velocities[j].y += noise2.y;
+					velocities[j].z += noise2.z;
+/*					
+					continue;
+					
 					j--;
 					boRandomVertice = false;
 					continue;
-/*					
-						timeIdOld = settings.guiPoints ? settings.guiPoints.timeId : 0, timeId = settings.options.player.getTimeId() - 1;
-					if (settings.guiPoints && (timeId >= 0)) settings.guiPoints.timeId =  timeId;//во вселенной сдучайную вершину нужно сохранять в передыдущем шаге проигрывателя
-					angles[j] = randomVerticeAngles;
-					if (settings.guiPoints) settings.guiPoints.timeId = timeIdOld;
 */					
-/*					
-					console.error(sAverageVertices + ': iterationStep.step. Invalid RandomVertice');
-					break;
-*/					
+
+					// Вектор от i к j
+					dx = noise1.x - noise2.x;
+					dy = noise1.y - noise2.y;
+					dz = noise1.z - noise2.z;
+	
+					dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
 					
 				}
-//					pos2 = Position(_this.a2v(RandomVertice.get(0, angles[j], classSettings, RandomVertice)));
 /*				
-				j--;
-				boRandomVertice = true;
-				continue;
-
-				}
-*/				
 				boRandomVertice = true;
 				pos2 = undefined;
-
+*/
+				
 				// Сила обратно пропорциональна расстоянию
 				const forceMagnitude = REPULSION_STRENGTH / (dist * dist);
 
