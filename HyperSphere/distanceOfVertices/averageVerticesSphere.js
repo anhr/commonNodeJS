@@ -172,16 +172,13 @@ const averageVertices = (data) => {
 //				if (boRandomVertice)
 				{
 
+					/*
 					const arc = π - hyperbola((dist / classSettings.overriddenProperties.r(settings.bufferGeometry.userData.timeId - 1) / 2) * π);
 					userData.timeId--;//Во вселенной углы берутся из предыдушего шага проигрывателя
 					const angles1 = angles[i];
 					const angles2 = angles[j];
 					const timeIdOld = settings.guiPoints ? settings.guiPoints.timeId : undefined;
 					if (settings.guiPoints) settings.guiPoints.timeId = userData.timeId;
-/*					
-					const randomAngles = RandomVertice.get(arc, utils.angles([angles2[0], angles2[1]]), classSettings, RandomVertice);
-					pos2 = Position(polarToCartesian(randomAngles.latitude, randomAngles.longitude));
-*/					
 					const r = classSettings.overriddenProperties.rTime();
 					
 					// Случайное направление для точки i
@@ -203,13 +200,6 @@ const averageVertices = (data) => {
 					velocities[j].x += noise2.x;
 					velocities[j].y += noise2.y;
 					velocities[j].z += noise2.z;
-/*					
-					continue;
-					
-					j--;
-					boRandomVertice = false;
-					continue;
-*/					
 
 					// Вектор от i к j
 					dx = noise1.x - noise2.x;
@@ -217,6 +207,7 @@ const averageVertices = (data) => {
 					dz = noise1.z - noise2.z;
 	
 					dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+					*/
 					
 				}
 /*				
