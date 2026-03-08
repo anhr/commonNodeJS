@@ -19,6 +19,9 @@ import Position from '../position.js'
 
 const sAverageVertices = 'averageVertices', π = Math.PI;
 
+// Скорости точек (для инерции)
+let velocities = [];
+
 const averageVertices = (data) => {
 
 	const _this = data.this,
@@ -67,7 +70,8 @@ const averageVertices = (data) => {
 	//20             0.05
 	//1000          0.0001
 	//5000          0.00001
-	const a = 0.00001 * 5000;
+//	const a = 0.00001 * 5000;
+	const a = 0.5;
 	const REPULSION_STRENGTH = a / angles.length;//0.05; // Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
 /*	
 //	const a = (0.0001 - 0.05) / 1000, b = 0.05;
@@ -79,11 +83,12 @@ const averageVertices = (data) => {
 //	const RADIUS = data.this.r; // Радиус сферы
 	data.this.r; // Радиус сферы. Нужно что бы во вселенной в classSettings.settings.object.geometry.times был добавлен новый time. Это нужно что бы пользователь мышкой мог выбрать вершину в вселенной
 
+/*	
 	// Скорости точек (для инерции)
 	let velocities = [];
-	
+*/	
 	// Инициализируем скорости
-	velocities = new Array(angles.length).fill(null).map(() => ({ x: 0, y: 0, z: 0 }));
+	if (velocities.length === 0) velocities = new Array(angles.length).fill(null).map(() => ({ x: 0, y: 0, z: 0 }));
 
 /*	
 	// Преобразование полярных координат в декартовы

@@ -155,8 +155,8 @@
 
 		// Параметры
 		const RADIUS = 1; // Радиус сферы
-		
-		const k = 250;
+
+		const k = 22.2;//250;
 		let ANGLES_COUNT = 20 * k;//angles.length; // Начальное количество точек
 		let REPULSION_STRENGTH = 0.02 / (k * 8);//0.05; // Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
 //		let REPULSION_STRENGTH = 0.02 / k;//0.05; // Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
@@ -281,6 +281,11 @@
 
 		// --- Генерация случайной точки на сфере ---
 		function generateRandomPoint() {
+			return {
+				latitude: Math.PI / 4,
+				longitude: 1
+			};
+			/*			
 			// Равномерное распределение на сфере
 			const theta = 2 * Math.PI * Math.random(); // долгота от 0 до 2π
 			const phi = Math.acos(2 * Math.random() - 1); // угол от оси Z (0 до π)
@@ -297,6 +302,7 @@
 				latitude: latitude,
 				longitude: longitude
 			};
+			*/
 		}
 
 		// --- Инициализация массива точек ---
@@ -439,7 +445,35 @@ angles.push(point);
 
 					const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-					if (dist < 0.001) continue;
+					if (dist < 0.001) {
+
+						// Добавляем небольшой шум к позициям точек, чтобы развести их
+				
+						// Случайное направление для точки i
+						const noise1 = {
+							x: (Math.random() - 0.5) * 0.1,
+							y: (Math.random() - 0.5) * 0.1,
+							z: (Math.random() - 0.5) * 0.1
+						};
+						
+						// Случайное направление для точки j (может быть противоположным для лучшего разведения)
+						const noise2 = {
+							x: (Math.random() - 0.5) * 0.1,
+							y: (Math.random() - 0.5) * 0.1,
+							z: (Math.random() - 0.5) * 0.1
+						};
+						
+						// Применяем шум к позициям через скорости
+						velocities[i].x += noise1.x;
+						velocities[i].y += noise1.y;
+						velocities[i].z += noise1.z;
+						
+						velocities[j].x += noise2.x;
+						velocities[j].y += noise2.y;
+						velocities[j].z += noise2.z;
+						continue;
+
+					}
 
 					// Сила обратно пропорциональна расстоянию
 					const forceMagnitude = REPULSION_STRENGTH / (dist * dist);
@@ -495,10 +529,13 @@ angles.push(point);
 			requestAnimationFrame(animate);
 
 			if (isAnimating) {
+				iterationStep();
+				/*
 				// Выполняем несколько итераций за кадр для более быстрой сходимости
 				for (let i = 0; i < 3; i++) {
 					iterationStep();
 				}
+				*/
 			}
 
 			controls.update();
