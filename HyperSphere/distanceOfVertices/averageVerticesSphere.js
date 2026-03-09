@@ -172,7 +172,6 @@ const averageVertices = (data) => {
 //				if (boRandomVertice)
 				{
 
-					/*
 					const arc = π - hyperbola((dist / classSettings.overriddenProperties.r(settings.bufferGeometry.userData.timeId - 1) / 2) * π);
 					userData.timeId--;//Во вселенной углы берутся из предыдушего шага проигрывателя
 					const angles1 = angles[i];
@@ -207,7 +206,6 @@ const averageVertices = (data) => {
 					dz = noise1.z - noise2.z;
 	
 					dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-					*/
 					
 				}
 /*				
