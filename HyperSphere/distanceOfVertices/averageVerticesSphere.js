@@ -190,7 +190,7 @@ const averageVertices = (data) => {
 //					angles[j] = RandomVertice.get(arc, utils.angles([angles2[0], angles2[1]]), classSettings, RandomVertice);
 					if (settings.guiPoints) settings.guiPoints.timeId = timeIdOld;
 					userData.timeId++;
-					
+/*					
 					// Применяем шум к позициям через скорости
 					velocities[i].x += noise1.x;
 					velocities[i].y += noise1.y;
@@ -206,12 +206,11 @@ const averageVertices = (data) => {
 					dz = noise1.z - noise2.z;
 	
 					dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+					*/
 					
 				}
-/*				
 				boRandomVertice = true;
 				pos2 = undefined;
-*/
 				
 				// Сила обратно пропорциональна расстоянию
 				const forceMagnitude = REPULSION_STRENGTH / (dist * dist);
