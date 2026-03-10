@@ -190,15 +190,19 @@ const averageVertices = (data) => {
 //					angles[j] = RandomVertice.get(arc, utils.angles([angles2[0], angles2[1]]), classSettings, RandomVertice);
 					if (settings.guiPoints) settings.guiPoints.timeId = timeIdOld;
 					userData.timeId++;
-/*					
-					// Применяем шум к позициям через скорости
-					velocities[i].x += noise1.x;
-					velocities[i].y += noise1.y;
-					velocities[i].z += noise1.z;
-					
-					velocities[j].x += noise2.x;
-					velocities[j].y += noise2.y;
-					velocities[j].z += noise2.z;
+
+					if (dist === 0) {
+						
+						// Применяем шум к позициям через скорости
+						velocities[i].x += noise1.x;
+						velocities[i].y += noise1.y;
+						velocities[i].z += noise1.z;
+						
+						velocities[j].x += noise2.x;
+						velocities[j].y += noise2.y;
+						velocities[j].z += noise2.z;
+
+					}
 
 					// Вектор от i к j
 					dx = noise1.x - noise2.x;
@@ -206,7 +210,6 @@ const averageVertices = (data) => {
 					dz = noise1.z - noise2.z;
 	
 					dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-					*/
 					
 				}
 				boRandomVertice = true;
