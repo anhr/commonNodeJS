@@ -191,6 +191,7 @@ const averageVertices = (data) => {
 					if (settings.guiPoints) settings.guiPoints.timeId = timeIdOld;
 					userData.timeId++;
 
+/*					
 					if (dist === 0) {
 						
 						// Применяем шум к позициям через скорости
@@ -203,6 +204,16 @@ const averageVertices = (data) => {
 						velocities[j].z += noise2.z;
 
 					}
+*/					
+					// Применяем шум к позициям через скорости
+					const antiDist = r - dist;
+					velocities[i].x += noise1.x * antiDist;
+					velocities[i].y += noise1.y * antiDist;
+					velocities[i].z += noise1.z * antiDist;
+					
+					velocities[j].x += noise2.x * antiDist;
+					velocities[j].y += noise2.y * antiDist;
+					velocities[j].z += noise2.z * antiDist;
 
 					// Вектор от i к j
 					dx = noise1.x - noise2.x;
