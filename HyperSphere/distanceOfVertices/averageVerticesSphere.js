@@ -206,7 +206,9 @@ const averageVertices = (data) => {
 					}
 */					
 					// Применяем шум к позициям через скорости
-					const antiDist = r - dist;
+//					const antiDist = r - dist / π;
+					const antiDist = arc / π;
+					if(antiDist < 0) console.error(sAverageVertices + ': iterationStep. Invalid antiDist = ' + antiDist);
 					velocities[i].x += noise1.x * antiDist;
 					velocities[i].y += noise1.y * antiDist;
 					velocities[i].z += noise1.z * antiDist;
