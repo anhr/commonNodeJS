@@ -338,6 +338,6 @@ const averageVertices = (data) => {
 	iterationStep();
 	
 }
-const hyperbola = RandomVertice.calculateHyperbola(1);//0.99);
+const hyperbola = RandomVertice.calculateHyperbola(0.99);
 averageVertices.verticeProxy = (vertice) => { return vertice; }
 export default averageVertices;
