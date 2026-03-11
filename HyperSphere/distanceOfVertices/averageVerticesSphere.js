@@ -149,7 +149,7 @@ const averageVertices = (data) => {
 */			
 			const angles1 = utils.casterianToAngles(pos1);
 
-			let boRandomVertice = true;
+//			let boRandomVertice = true;
 			let pos2, angles2;
 			for (let j = i + 1; j < angles.length; j++) {
 				
@@ -175,63 +175,58 @@ const averageVertices = (data) => {
 
 //				if (dist < 0.001) {
 
-//				if (boRandomVertice)
-				{
-
-					const arc = π - hyperbola((dist / classSettings.overriddenProperties.r(settings.bufferGeometry.userData.timeId - 1) / 2) * π);
-					userData.timeId--;//Во вселенной углы берутся из предыдушего шага проигрывателя
+				const arc = π - hyperbola((dist / classSettings.overriddenProperties.r(settings.bufferGeometry.userData.timeId - 1) / 2) * π);
+				userData.timeId--;//Во вселенной углы берутся из предыдушего шага проигрывателя
 //					const angles1 = angles[i];
 //					const angles2 = angles[j];
-					const timeIdOld = settings.guiPoints ? settings.guiPoints.timeId : undefined;
-					if (settings.guiPoints) settings.guiPoints.timeId = userData.timeId;
-					const r = classSettings.overriddenProperties.rTime();
+				const timeIdOld = settings.guiPoints ? settings.guiPoints.timeId : undefined;
+				if (settings.guiPoints) settings.guiPoints.timeId = userData.timeId;
+				const r = classSettings.overriddenProperties.rTime();
+				
+				// Случайное направление для точки i
+				const noise1 = Position(utils.anglesToCartesian(RandomVertice.get(arc, utils.angles([angles1[0], angles1[1]]), classSettings, RandomVertice), r));
 					
-					// Случайное направление для точки i
-					const noise1 = Position(utils.anglesToCartesian(RandomVertice.get(arc, utils.angles([angles1[0], angles1[1]]), classSettings, RandomVertice), r));
-						
 //					pos2 = 
-					// Случайное направление для точки j (может быть противоположным для лучшего разведения)
-					const noise2 =
-						Position(utils.anglesToCartesian(RandomVertice.get(arc, utils.angles([angles2[0], angles2[1]]), classSettings, RandomVertice), r));
+				// Случайное направление для точки j (может быть противоположным для лучшего разведения)
+				const noise2 =
+					Position(utils.anglesToCartesian(RandomVertice.get(arc, utils.angles([angles2[0], angles2[1]]), classSettings, RandomVertice), r));
 //					angles[j] = RandomVertice.get(arc, utils.angles([angles2[0], angles2[1]]), classSettings, RandomVertice);
-					if (settings.guiPoints) settings.guiPoints.timeId = timeIdOld;
-					userData.timeId++;
+				if (settings.guiPoints) settings.guiPoints.timeId = timeIdOld;
+				userData.timeId++;
 
 /*					
-					if (dist === 0) {
-						
-						// Применяем шум к позициям через скорости
-						velocities[i].x += noise1.x;
-						velocities[i].y += noise1.y;
-						velocities[i].z += noise1.z;
-						
-						velocities[j].x += noise2.x;
-						velocities[j].y += noise2.y;
-						velocities[j].z += noise2.z;
-
-					}
-*/					
+				if (dist === 0) {
+					
 					// Применяем шум к позициям через скорости
-//					const antiDist = r - dist / π;
-					const antiDist = arc / π;
-					if(antiDist < 0) console.error(sAverageVertices + ': iterationStep. Invalid antiDist = ' + antiDist);
-					velocities[i].x += noise1.x * antiDist;
-					velocities[i].y += noise1.y * antiDist;
-					velocities[i].z += noise1.z * antiDist;
+					velocities[i].x += noise1.x;
+					velocities[i].y += noise1.y;
+					velocities[i].z += noise1.z;
 					
-					velocities[j].x += noise2.x * antiDist;
-					velocities[j].y += noise2.y * antiDist;
-					velocities[j].z += noise2.z * antiDist;
+					velocities[j].x += noise2.x;
+					velocities[j].y += noise2.y;
+					velocities[j].z += noise2.z;
 
-					// Вектор от i к j
-					dx = noise1.x - noise2.x;
-					dy = noise1.y - noise2.y;
-					dz = noise1.z - noise2.z;
-	
-					dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-					
 				}
-				boRandomVertice = true;
+*/					
+				// Применяем шум к позициям через скорости
+//					const antiDist = r - dist / π;
+				const antiDist = arc / π;
+				if(antiDist < 0) console.error(sAverageVertices + ': iterationStep. Invalid antiDist = ' + antiDist);
+				velocities[i].x += noise1.x * antiDist;
+				velocities[i].y += noise1.y * antiDist;
+				velocities[i].z += noise1.z * antiDist;
+				
+				velocities[j].x += noise2.x * antiDist;
+				velocities[j].y += noise2.y * antiDist;
+				velocities[j].z += noise2.z * antiDist;
+
+				// Вектор от i к j
+				dx = noise1.x - noise2.x;
+				dy = noise1.y - noise2.y;
+				dz = noise1.z - noise2.z;
+
+				dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+//				boRandomVertice = true;
 				pos2 = undefined;
 				
 				// Сила обратно пропорциональна расстоянию
