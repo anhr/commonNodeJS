@@ -147,13 +147,19 @@ const averageVertices = (data) => {
 			const pos1 = position[i];
 			settings.bufferGeometry.userData.timeId++;
 */			
+			const angles1 = utils.casterianToAngles(pos1);
 
 			let boRandomVertice = true;
-			let pos2;
+			let pos2, angles2;
 			for (let j = i + 1; j < angles.length; j++) {
 				
 //				const pos2 = polarToCartesian(angles[j].latitude, angles[j].longitude);
-				if (!pos2) pos2 = settings.overriddenProperties.position(position, j, userData);
+				if (!pos2) {
+					
+					pos2 = settings.overriddenProperties.position(position, j, userData);
+					angles2 = utils.casterianToAngles(pos2);
+
+				}
 /*				
 				settings.bufferGeometry.userData.timeId--;
 				const pos2 = position[j];
@@ -174,8 +180,8 @@ const averageVertices = (data) => {
 
 					const arc = π - hyperbola((dist / classSettings.overriddenProperties.r(settings.bufferGeometry.userData.timeId - 1) / 2) * π);
 					userData.timeId--;//Во вселенной углы берутся из предыдушего шага проигрывателя
-					const angles1 = angles[i];
-					const angles2 = angles[j];
+//					const angles1 = angles[i];
+//					const angles2 = angles[j];
 					const timeIdOld = settings.guiPoints ? settings.guiPoints.timeId : undefined;
 					if (settings.guiPoints) settings.guiPoints.timeId = userData.timeId;
 					const r = classSettings.overriddenProperties.rTime();
