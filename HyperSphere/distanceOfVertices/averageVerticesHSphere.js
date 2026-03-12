@@ -12,9 +12,9 @@
  *
  * http://www.apache.org/licenses/LICENSE-2.0
 */
-import * as utils from '../utilsSphere.js'
+import * as utils from '../utilsHSphere.js'
+import RandomVertice from '../RandomVertice/randomVerticeHSphere.js';
 import ProgressBar from '../../ProgressBar/ProgressBar.js'
-import { RandomVerticeSphere as RandomVertice } from '../RandomVertice/randomVerticeSphere.js';
 import Position from '../position.js'
 
 const sAverageVertices = 'averageVertices', π = Math.PI;

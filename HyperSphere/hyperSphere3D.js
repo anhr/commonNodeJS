@@ -667,7 +667,7 @@ class HyperSphere3D extends Sphere {
 		 * @returns {array} Массив с декартовыми координатами [x, y, z].
 		 */
 		// Альтернативная версия с более простой нормализацией
-		function polarToCartesian(angles, r) {
+		function polarToCartesian(angles, r, debug) {
 
 			const lon = angles.longitude;
 			const lat = angles.latitude;
@@ -679,9 +679,11 @@ class HyperSphere3D extends Sphere {
 			const z = r * Math.sin(alt) * Math.sin(lat);
 			const w = r * Math.cos(alt);
 
+			if(debug && (isNaN(x) || isNaN(y) || isNaN(z) || isNaN(w))) console.error(sHyperSphere3D + ': a2v. Invalid Cartesian: x = ' + x + ', y = ' + y + ', z = ' + z + ', w = ' + w);
+
 			return [ x, y, z, w ];
 		}
-		return polarToCartesian(angles, r);
+		return polarToCartesian(angles, r, this.classSettings.debug);
 
 	}
 	get verticeEdgesLengthMax() { return 4/*6*/; }//нельзя добавлть новое ребро если у вершины уже 6 ребра

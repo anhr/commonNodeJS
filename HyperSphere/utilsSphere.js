@@ -84,10 +84,11 @@ latitude - широта в диапазоне от -π/2 на южном пол�
  * (r, latitude, longitude).
  *
  * @param {number[]} vertice - Массив [x, y, z] декартовых координат.
- * @returns {{r: number, latitude: number, longitude: number}} Объект с полярными координатами в радианах.
+ * @returns {{latitude: number, longitude: number}} Объект с полярными координатами в радианах.
  */
-export function casterianToAngles(vertice) {
+export function cartesianToAngles(vertice) {
 
+	const sSartesianToAngles = 'cartesianToAngles';
 	const x = vertice.x;
 	const y = vertice.y;
 	const z = vertice.z;
@@ -97,19 +98,21 @@ export function casterianToAngles(vertice) {
 
 	// Обработка случая, когда точка находится в центре сферы (r = 0)
 	if (r === 0) {
-		return { r: 0, latitude: 0, longitude: 0 };
+		console.error(sSartesianToAngles + ': Under constraction');
+//		return { r: 0, latitude: 0, longitude: 0 };
+		return angles([0, 0]);
 	}
 
 	// 2. Вычисление широты (latitude)
 	// Используем Math.asin(z/r). Результат в радианах [-PI/2, PI/2].
 	const latitude = Math.asin(z / r);
-	if (isNaN(latitude)) console.error('casterianToAngles: invalid latitude = ' + latitude);
+	if (isNaN(latitude)) console.error('cartesianToAngles: invalid latitude = ' + latitude);
 
 	// 3. Вычисление долготы (longitude)
 	// Используем Math.atan2(y, x). Результат в радианах (-PI, PI].
 	const longitude = Math.atan2(y, x);
 
-	//			return { r, latitude, longitude };
+//	return { r, latitude, longitude };
 	return angles([latitude, longitude]);
 
 }
