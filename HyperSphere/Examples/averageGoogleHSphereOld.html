@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<title>4D Hypersphere Repulsion - Control</title>
+	<style>
+		body {
+			margin: 0;
+			overflow: hidden;
+			background: #050505;
+			font-family: sans-serif;
+		}
+
+		#controls {
+			position: absolute;
+			top: 15px;
+			left: 15px;
+			color: white;
+			z-index: 10;
+			background: rgba(0,0,0,0.6);
+			padding: 15px;
+			border-radius: 8px;
+		}
+
+		button {
+			cursor: pointer;
+			padding: 8px 12px;
+			margin: 5px 0;
+			width: 100%;
+			border: none;
+			border-radius: 4px;
+			font-weight: bold;
+		}
+
+		#toggleBtn {
+			background: #4CAF50;
+			color: white;
+		}
+
+			#toggleBtn.stop {
+				background: #f44336;
+			}
+	</style>
+</head>
+<body>
+	<div id="controls">
+		<b style="display:block; margin-bottom:10px;">Управление 4D точками</b>
+		<button id="toggleBtn" onclick="toggleSimulation()">СТАРТ</button>
+		<hr style="opacity:0.3">
+		<button onclick="resetPoints(false)">Случайные</button>
+		<button onclick="resetPoints(true)">В одну точку</button>
+	</div>
+	<!--<script type="importmap">
+			{ "imports": { "three": "https://unpkg.com" } }
+		</script>-->
+		<script type="module">
+//			import * as THREE from 'three';
+			import * as THREE from 'https://unpkg.com/three@0.128.0/build/three.module.js';
+
+			const k = 250;
+			const NUM_POINTS = 20 * k;
+			const STEP_SIZE = 0.02/k; // Скорость движения
+			let points4D = [];
+			let meshes = [];
+			let isRunning = false; // Состояние процесса
+
+			const scene = new THREE.Scene();
+			const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+			const renderer = new THREE.WebGLRenderer({ antialias: true });
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			document.body.appendChild(renderer.domElement);
+
+			const viewSphere = new THREE.Mesh(
+				new THREE.SphereGeometry(1, 24, 24),
+				new THREE.MeshBasicMaterial({ color: 0x222222, wireframe: true, transparent: true, opacity: 0.1 })
+			);
+			scene.add(viewSphere);
+			camera.position.z = 3;
+
+			class Vector4 {
+				constructor(x, y, z, w) { this.x = x; this.y = y; this.z = z; this.w = w; }
+				static fromPolar(lat, lon, alt) {
+					return new Vector4(
+						Math.cos(lat) * Math.cos(lon) * Math.sin(alt),
+						Math.sin(lat) * Math.sin(alt),
+						Math.cos(lat) * Math.sin(lon) * Math.sin(alt),
+						Math.cos(alt)
+					);
+				}
+				normalize() {
+					let d = Math.sqrt(this.x ** 2 + this.y ** 2 + this.z ** 2 + this.w ** 2);
+					this.x /= d; this.y /= d; this.z /= d; this.w /= d;
+					return this;
+				}
+				projectTo3D() {
+					const factor = 1 / (1.2 - this.w);
+					return new THREE.Vector3(this.x * factor, this.y * factor, this.z * factor);
+				}
+			}
+
+			function cartesian4DToPolar(v) {
+				const alt = Math.acos(Math.max(-1, Math.min(1, v.w)));
+				const sinAlt = Math.sin(alt);
+				if (Math.abs(sinAlt) < 0.0001) return { latitude: 0, longitude: 0, altitude: alt };
+				const lat = Math.asin(Math.max(-1, Math.min(1, v.y / sinAlt)));
+				const lon = Math.atan2(v.z / sinAlt, v.x / sinAlt);
+				return { latitude: lat, longitude: lon, altitude: alt };
+			}
+
+			window.toggleSimulation = function () {
+				isRunning = !isRunning;
+				const btn = document.getElementById('toggleBtn');
+				btn.textContent = isRunning ? 'СТОП' : 'СТАРТ';
+				btn.className = isRunning ? 'stop' : '';
+			};
+
+			window.resetPoints = function (allInOne) {
+				meshes.forEach(m => scene.remove(m));
+				meshes = []; points4D = [];
+				for (let i = 0; i < NUM_POINTS; i++) {
+					const p = allInOne ?
+						{ latitude: 0.01, longitude: 0.01, altitude: 0.01 } :
+						{
+							latitude: (Math.random() - 0.5) * Math.PI,
+							longitude: (Math.random() - 0.5) * 2 * Math.PI,
+							altitude: Math.random() * Math.PI
+						};
+					points4D.push(p);
+					const m = new THREE.Mesh(new THREE.SphereGeometry(0.04/5/*0.04*/, 12, 12), new THREE.MeshPhongMaterial({ color: 0x00ffff }));
+					scene.add(m);
+					meshes.push(m);
+					// Начальное позиционирование
+					const v = Vector4.fromPolar(p.latitude, p.longitude, p.altitude);
+					m.position.copy(v.projectTo3D());
+				}
+			};
+
+			const light = new THREE.PointLight(0xffffff, 15);
+			light.position.set(5, 5, 5);
+			scene.add(light, new THREE.AmbientLight(0x404040));
+
+			function updatePhysics() {
+				if (!isRunning) return; // Пропуск итерации, если стоп
+
+				let vecs = points4D.map(p => Vector4.fromPolar(p.latitude, p.longitude, p.altitude));
+				let forces = vecs.map(() => ({ x: 0, y: 0, z: 0, w: 0 }));
+
+				for (let i = 0; i < vecs.length; i++) {
+					for (let j = i + 1; j < vecs.length; j++) {
+						let dx = vecs[i].x - vecs[j].x;
+						let dy = vecs[i].y - vecs[j].y;
+						let dz = vecs[i].z - vecs[j].z;
+						let dw = vecs[i].w - vecs[j].w;
+						let distSq = dx * dx + dy * dy + dz * dz + dw * dw;
+
+						if (distSq < 0.0001) {
+							dx = (Math.random() - 0.5) * 0.1; dy = (Math.random() - 0.5) * 0.1;
+							dz = (Math.random() - 0.5) * 0.1; dw = (Math.random() - 0.5) * 0.1;
+							distSq = 0.01;
+						}
+
+						let f = STEP_SIZE / (distSq + 0.01);
+						forces[i].x += dx * f; forces[i].y += dy * f; forces[i].z += dz * f; forces[i].w += dw * f;
+						forces[j].x -= dx * f; forces[j].y -= dy * f; forces[j].z -= dz * f; forces[j].w -= dw * f;
+					}
+				}
+
+				for (let i = 0; i < vecs.length; i++) {
+					let v = new Vector4(
+						vecs[i].x + forces[i].x,
+						vecs[i].y + forces[i].y,
+						vecs[i].z + forces[i].z,
+						vecs[i].w + forces[i].w
+					).normalize();
+					points4D[i] = cartesian4DToPolar(v);
+					meshes[i].position.copy(v.projectTo3D());
+					meshes[i].material.color.setHSL(0.5 + v.w * 0.4, 0.8, 0.5);
+				}
+			}
+
+			function animate() {
+				requestAnimationFrame(animate);
+				updatePhysics();
+				renderer.render(scene, camera);
+			}
+
+			resetPoints(false);
+			animate();
+
+			window.addEventListener('resize', () => {
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+				renderer.setSize(window.innerWidth, window.innerHeight);
+			});
+		</script>
+	</body>
+	</html>

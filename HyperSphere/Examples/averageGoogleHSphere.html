@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<title>4D Hypersphere - 5000 Points</title>
+	<style>
+		body {
+			margin: 0;
+			overflow: hidden;
+			background: #000;
+			font-family: sans-serif;
+		}
+
+		#controls {
+			position: absolute;
+			top: 15px;
+			left: 15px;
+			color: white;
+			z-index: 10;
+			background: rgba(0,0,0,0.7);
+			padding: 15px;
+			border-radius: 8px;
+			pointer-events: auto;
+		}
+
+		button {
+			cursor: pointer;
+			padding: 8px 12px;
+			margin: 5px 0;
+			width: 100%;
+			border: none;
+			border-radius: 4px;
+			font-weight: bold;
+		}
+
+		#toggleBtn {
+			background: #4CAF50;
+			color: white;
+		}
+
+			#toggleBtn.stop {
+				background: #f44336;
+			}
+	</style>
+</head>
+<body>
+	<div id="controls">
+		<b>4D Гиперсфера (5000 точек)</b><br>
+		<small>Используйте мышь для вращения</small>
+		<button id="toggleBtn" onclick="toggleSimulation()">СТАРТ</button>
+		<button onclick="resetPoints(false)">Случайные</button>
+		<button onclick="resetPoints(true)">В одну точку</button>
+	</div>
+
+	<!--<script type="importmap">
+		{
+			"imports": {
+				"three": "https://unpkg.com",
+				"three/addons/": "https://unpkg.com"
+			}
+		}
+	</script>-->
+	<!-- Подключение Three.js и OrbitControls -->
+	<script type="importmap">
+		{
+			"imports": {
+				"three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+				"three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
+			}
+		}
+	</script>
+
+	<script type="module">
+/*
+		import * as THREE from 'three';
+		import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+*/
+		import * as THREE from 'three';
+		import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+		const k = 250;
+		const NUM_POINTS = 20 * k;
+		const STEP_SIZE = 0.02 / k; // Скорость движения
+		let points4D = [];
+		let instancedMesh;
+		let isRunning = false;
+
+		const scene = new THREE.Scene();
+		const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+		const renderer = new THREE.WebGLRenderer({ antialias: true });
+		renderer.setSize(window.innerWidth, window.innerHeight);
+		document.body.appendChild(renderer.domElement);
+
+		// OrbitControls
+		const controls = new OrbitControls(camera, renderer.domElement);
+		camera.position.set(0, 0, 4);
+		controls.update();
+
+		// Освещение
+		const light = new THREE.PointLight(0xffffff, 20);
+		light.position.set(5, 5, 5);
+		scene.add(light, new THREE.AmbientLight(0x444444));
+
+		class Vector4 {
+			constructor(x, y, z, w) { this.x = x; this.y = y; this.z = z; this.w = w; }
+			static fromPolar(lat, lon, alt) {
+				const sA = Math.sin(alt), cA = Math.cos(alt);
+				const sLat = Math.sin(lat), cLat = Math.cos(lat);
+				const sLon = Math.sin(lon), cLon = Math.cos(lon);
+				return new Vector4(cLat * cLon * sA, sLat * sA, cLat * sLon * sA, cA);
+			}
+			normalize() {
+				let d = Math.sqrt(this.x ** 2 + this.y ** 2 + this.z ** 2 + this.w ** 2);
+				this.x /= d; this.y /= d; this.z /= d; this.w /= d; return this;
+			}
+			projectTo3D() {
+				const factor = 1 / (1.3 - this.w);
+				return new THREE.Vector3(this.x * factor, this.y * factor, this.z * factor);
+			}
+		}
+
+		window.toggleSimulation = function () {
+			isRunning = !isRunning;
+			const btn = document.getElementById('toggleBtn');
+			btn.textContent = isRunning ? 'СТОП' : 'СТАРТ';
+			btn.className = isRunning ? 'stop' : '';
+		};
+
+		window.resetPoints = function (allInOne) {
+			if (instancedMesh) scene.remove(instancedMesh);
+
+			points4D = [];
+			const geometry = new THREE.SphereGeometry(0.008, 8, 8); // Диаметр уменьшен
+			const material = new THREE.MeshPhongMaterial();
+			instancedMesh = new THREE.InstancedMesh(geometry, material, NUM_POINTS);
+
+			const dummy = new THREE.Object3D();
+			const color = new THREE.Color();
+
+			for (let i = 0; i < NUM_POINTS; i++) {
+				const p = allInOne ?
+					{ latitude: 0.001 * i, longitude: 0, altitude: 0.001 } :
+					{
+						latitude: (Math.random() - 0.5) * Math.PI,
+						longitude: (Math.random() - 0.5) * 2 * Math.PI,
+						altitude: Math.random() * Math.PI
+					};
+				points4D.push(p);
+
+				const v = Vector4.fromPolar(p.latitude, p.longitude, p.altitude);
+				dummy.position.copy(v.projectTo3D());
+				dummy.updateMatrix();
+				instancedMesh.setMatrixAt(i, dummy.matrix);
+
+				color.setHSL(0.5 + v.w * 0.4, 0.8, 0.5);
+				instancedMesh.setColorAt(i, color);
+			}
+			scene.add(instancedMesh);
+		};
+
+		function updatePhysics() {
+			if (!isRunning) return;
+
+			const dummy = new THREE.Object3D();
+			const color = new THREE.Color();
+			let vecs = points4D.map(p => Vector4.fromPolar(p.latitude, p.longitude, p.altitude));
+
+			// ВНИМАНИЕ: Для 5000 точек полный расчет N^2 очень тяжелый.
+			// Используем упрощенную итерацию (проверка только части соседей для скорости)
+			for (let i = 0; i < vecs.length; i++) {
+				let force = { x: 0, y: 0, z: 0, w: 0 };
+				// Проверяем 100 случайных точек вместо всех 5000 для FPS
+				for (let k = 0; k < 100; k++) {
+					let j = Math.floor(Math.random() * NUM_POINTS);
+					if (i === j) continue;
+
+					let dx = vecs[i].x - vecs[j].x;
+					let dy = vecs[i].y - vecs[j].y;
+					let dz = vecs[i].z - vecs[j].z;
+					let dw = vecs[i].w - vecs[j].w;
+					let d2 = dx * dx + dy * dy + dz * dz + dw * dw + 0.001;
+
+					let f = STEP_SIZE / d2;
+					force.x += dx * f; force.y += dy * f; force.z += dz * f; force.w += dw * f;
+				}
+
+				let v = new Vector4(vecs[i].x + force.x, vecs[i].y + force.y, vecs[i].z + force.z, vecs[i].w + force.w).normalize();
+
+				// Обратный перевод в углы (упрощенно)
+				const alt = Math.acos(Math.max(-1, Math.min(1, v.w)));
+				const sA = Math.sin(alt);
+				points4D[i] = {
+					altitude: alt,
+					latitude: sA < 0.001 ? 0 : Math.asin(Math.max(-1, Math.min(1, v.y / sA))),
+					longitude: sA < 0.001 ? 0 : Math.atan2(v.z, v.x)
+				};
+
+				dummy.position.copy(v.projectTo3D());
+				dummy.updateMatrix();
+				instancedMesh.setMatrixAt(i, dummy.matrix);
+
+				color.setHSL(0.5 + v.w * 0.4, 0.8, 0.5);
+				instancedMesh.setColorAt(i, color);
+			}
+			instancedMesh.instanceMatrix.needsUpdate = true;
+			if (instancedMesh.instanceColor) instancedMesh.instanceColor.needsUpdate = true;
+		}
+
+		function animate() {
+			requestAnimationFrame(animate);
+			updatePhysics();
+			controls.update();
+			renderer.render(scene, camera);
+		}
+
+		resetPoints(false);
+		animate();
+
+		window.addEventListener('resize', () => {
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+			renderer.setSize(window.innerWidth, window.innerHeight);
+		});
+	</script>
+</body>
+</html>
