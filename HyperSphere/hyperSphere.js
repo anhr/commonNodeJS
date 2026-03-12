@@ -2594,6 +2594,7 @@ this.object = () => {
 			//Все вершины постепенно движутся в положение, при котором вершины окажутся на максимальном удалении друг от друга.
 			this.distanceOfVertices = (timeId, t) => {
 
+				if (timeId === 0) return;//не вычисляется средняя точка когда проигрыватель в начале
 				classSettings.distanceOfVertices({
 
 					timeId: timeId,
@@ -2604,7 +2605,6 @@ this.object = () => {
 					
 				});
 /*
-				if (timeId === 0) return;//не вычисляется средняя точка когда проигрыватель в начале
 				const geometry = settings.object.geometry, position = geometry.position, edges = geometry.indices.edges;
 				if (edges.length === 0) {
 
