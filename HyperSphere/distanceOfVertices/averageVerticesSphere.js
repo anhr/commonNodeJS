@@ -184,12 +184,10 @@ const averageVertices = (data) => {
 				const r = classSettings.overriddenProperties.rTime();
 				
 				// Случайное направление для точки i
-				const noise1 = Position(utils.anglesToCartesian(RandomVertice.get(arc, utils.angles([angles1[0], angles1[1]]), classSettings, RandomVertice), r));
+				const noise1 = utils.anglesToCartesian(RandomVertice.get(arc, utils.angles([angles1[0], angles1[1]]), classSettings, RandomVertice), r);
 					
-//					pos2 = 
 				// Случайное направление для точки j (может быть противоположным для лучшего разведения)
-				const noise2 =
-					Position(utils.anglesToCartesian(RandomVertice.get(arc, utils.angles([angles2[0], angles2[1]]), classSettings, RandomVertice), r));
+				const noise2 = utils.anglesToCartesian(RandomVertice.get(arc, utils.angles([angles2[0], angles2[1]]), classSettings, RandomVertice), r);
 //					angles[j] = RandomVertice.get(arc, utils.angles([angles2[0], angles2[1]]), classSettings, RandomVertice);
 				if (settings.guiPoints) settings.guiPoints.timeId = timeIdOld;
 				userData.timeId++;

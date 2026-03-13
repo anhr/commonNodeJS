@@ -78,7 +78,7 @@
 		import * as THREE from 'three';
 		import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-		const k = 250;
+		const k = 10;//250;
 		const NUM_POINTS = 20 * k;
 		const STEP_SIZE = 0.02 / k; // Скорость движения
 		let points4D = [];
@@ -170,7 +170,7 @@
 			for (let i = 0; i < vecs.length; i++) {
 				let force = { x: 0, y: 0, z: 0, w: 0 };
 				// Проверяем 100 случайных точек вместо всех 5000 для FPS
-				for (let k = 0; k < 100; k++) {
+				for (let k = 0; k < NUM_POINTS/*100*/; k++) {
 					let j = Math.floor(Math.random() * NUM_POINTS);
 					if (i === j) continue;
 

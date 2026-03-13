@@ -13,9 +13,10 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 
-import anglesRange from './anglesRange.js'
+//import anglesRange from './anglesRange.js'
+import Position from './position.js'
 
-const range = anglesRange.longitude.range, latitudeMax = anglesRange.latitude.max, latitudeMin = anglesRange.latitude.min, π = Math.PI;
+//const range = anglesRange.longitude.range, latitudeMax = anglesRange.latitude.max, latitudeMin = anglesRange.latitude.min, π = Math.PI;
 
 /*https://gemini.google.com/app/fed6dc3ff178ba36
 Задана точка на сфере в полярной системе координат. Начало координат находится в центре сферы.
@@ -27,6 +28,7 @@ angles.latitude - широта в диапазоне от -π/2 на южном 
 Вычислить координаты точки в декартовой системе координат.
 Написать код на javascript
 */
+const sAnglesToCartesian = 'anglesToCartesian';
 /**
  * Вычисляет декартовы координаты (x, y, z) точки на сфере,
  * заданной в полярной системе координат (r, широта, долгота).
@@ -37,16 +39,16 @@ angles.latitude - широта в диапазоне от -π/2 на южном 
  * - Углы заданы в радианах.
  *
  * @param {object} angles - Объект с углами.
- * @param {number} angles.latitude - Широта (от -π/2 до π/2).
- * @param {number} angles.longitude - Долгота (от -π до π).
- * @param {number} [r=1] - Радиус сферы.
+ * @param {float} angles.latitude - Широта (от -π/2 до π/2).
+ * @param {float} angles.longitude - Долгота (от -π до π).
+ * @param {float} [r=1] - Радиус сферы.
  * @returns {array} Массив с декартовыми координатами [x, y, z].
  */
 export function anglesToCartesian(angles, r = 1) {
 
 	const lat = angles.latitude;
 	const lon = angles.longitude;
-	if (lon === undefined) console.error(sSphere + ': a2v. longitude = ' + lon);
+	if (lon === undefined) console.error(sAnglesToCartesian + ': Invalid longitude = ' + lon);
 
 	// Сначала рассчитываем проекцию радиус-вектора на плоскость XY (r_xy)
 	// r_xy = r * cos(latitude)
@@ -62,8 +64,8 @@ export function anglesToCartesian(angles, r = 1) {
 	// z = r * sin(latitude)
 	const z = r * Math.sin(lat);
 
-	//			return { x, y, z };
-	return [x, y, z];
+//	return { x, y, z };
+	return Position([x, y, z]);
 
 }
 
@@ -79,16 +81,16 @@ longitude - долгота в диапазоне от -π до π.
 latitude - широта в диапазоне от -π/2 на южном полюсе до π/2 на северном полюсе.
 Написать код на javascript
 */
+const sSartesianToAngles = 'cartesianToAngles';
 /**
  * Преобразует декартовы координаты (x, y, z) в географические полярные координаты
  * (r, latitude, longitude).
  *
- * @param {number[]} vertice - Массив [x, y, z] декартовых координат.
- * @returns {{latitude: number, longitude: number}} Объект с полярными координатами в радианах.
+ * @param {object} vertice - объект x, y, z декартовых координат.
+ * @returns {{latitude: float, longitude: float}} Объект с полярными координатами в радианах.
  */
 export function cartesianToAngles(vertice) {
 
-	const sSartesianToAngles = 'cartesianToAngles';
 	const x = vertice.x;
 	const y = vertice.y;
 	const z = vertice.z;

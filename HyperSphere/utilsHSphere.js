@@ -13,7 +13,75 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 
+import Position from './position.js'
+
 //const range = anglesRange.longitude.range, latitudeMax = anglesRange.latitude.max, latitudeMin = anglesRange.latitude.min, π = Math.PI;
+/*https://gemini.google.com/app/fed6dc3ff178ba36
+Задана точка на сфере в полярной системе координат. Начало координат находится в центре сферы.
+Положение точки обозначить как
+angles.longitude - долгота в диапазоне от -π до π.
+angles.latitude - широта в диапазоне от -π/2 на южном полюсе до π/2 на северном полюсе.
+Радиус сферы обозначить как r.
+Долгота и широта может выходить за пределы заданного диапазона.
+Вычислить координаты точки в декартовой системе координат.
+Написать код на javascript
+
+Заменить сферу на гиперсферу.
+Тогда в положении точки появится новый угол altitude в диапазоне от 0 до π.
+Также появится новая координата точки w = vertice[3] в декартовой системе координат.
+*/
+const sAnglesToCartesian = 'anglesToCartesian';
+/**
+ * Вычисляет 4D декартовы координаты (x, y, z, w) точки на гиперсфере.
+ * @param {object} angles - Объект с углами в радианах.
+ * @param {float} angles.latitude - Широта (от -π/2 до π/2).
+ * @param {float} angles.longitude - Долгота (от -π до π).
+ * @param {float} angles.altitude - Угол в 4-е измерение (от 0 до π).
+ * @param {float} [r=1] - Радиус гиперсферы.
+ * @param {object|boolean} [debug] - debug = object Выводит на консоль сообщение об ошибке если координаты вычислились не корректно.
+ * @returns {array} Массив с декартовыми координатами [x, y, z, w].
+ */
+export function anglesToCartesian(angles, r=1, debug) {
+	const lat = angles.latitude;
+	const lon = angles.longitude;
+	const alt = angles.altitude;
+
+	// Вычисляем компоненту, которая проецируется на 3D-подпространство (x, y, z)
+	const r_xyz = r * Math.sin(alt);
+
+	// Координата в четвертом измерении
+	const w = r * Math.cos(alt);
+
+	// Стандартные сферические координаты, но масштабированные r_xyz
+	const x = r_xyz * Math.cos(lat) * Math.cos(lon);
+	const y = r_xyz * Math.cos(lat) * Math.sin(lon);
+	const z = r_xyz * Math.sin(lat);
+	
+	if(debug && (isNaN(x) || isNaN(y) || isNaN(z) || isNaN(w))) console.error(sAnglesToCartesian + ': Invalid cartesian: x = ' + x + ', y = ' + y + ', z = ' + z + ', w = ' + w);
+
+//	return { x, y, z, w };
+	return Position([x, y, z, w]);
+}
+/*
+// --- Пример ---
+const params = {
+	latitude: Math.PI / 6,   // 30 градусов
+	longitude: Math.PI / 4,  // 45 градусов
+	altitude: Math.PI / 3    // 60 градусов
+};
+
+const coords4D = hypersphereToCartesian(100, params);
+console.log("4D Coordinates:", coords4D);
+*/
+/*
+Результат будет примерно:
+{
+  x: 61.23,
+  y: 61.23,
+  z: 43.30,
+  w: 50.00
+}
+*/
 /*https://gemini.google.com/app/0d61322aa801d5a5
 Задана точка vertice на сфере в декартовой системе координат. Начало координат находится в центре сферы.
 Положение точки обозначить как
@@ -30,23 +98,31 @@ latitude - широта в диапазоне от -π/2 на южном пол�
 Тогда в положении точки появится новая координата w = vertice[3].
 Также появится новый угол в полярной системе координат altitude в диапазоне от 0 до π.
 */
+const sCartesianToAngles = 'cartesianToAngles';
 /**
  * Преобразует декартовы координаты 4D (x, y, z, w) в гиперсферические.
- * * @param {number[]} vertice - Массив [x, y, z, w]
+ * @param {object} vertice - объект x, y, z, w декартовых координат.
+ * @param {object|boolean} [debug] - debug = object Выводит на консоль сообщение об ошибке если углы вычислились не корректно.
  * @returns {{altitude: number, latitude: number, longitude: number}} Объект с полярными координатами в радианах.
  */
-export function cartesianToAngles(vertice) {
-	const sSartesianToAngles = 'cartesianToAngles';
+export function cartesianToAngles(vertice, debug) {
+
+/*	
 	const x = vertice[0];
 	const y = vertice[1];
 	const z = vertice[2];
 	const w = vertice[3];
+*/	
+	const x = vertice.x;
+	const y = vertice.y;
+	const z = vertice.z;
+	const w = vertice.w;
 
 	// 1. Полный радиус гиперсферы
 	const R = Math.sqrt(x * x + y * y + z * z + w * w);
 
 	if (R === 0) {
-		console.error(sSartesianToAngles + ': Under constraction');
+		console.error(sCartesianToAngles + ': Under constraction');
 //		return { r: 0, altitude: 0, latitude: 0, longitude: 0 };
 		return angles([0, 0, 0]);
 	}
@@ -61,7 +137,7 @@ export function cartesianToAngles(vertice) {
 	// Если rXYZ близок к 0, значит точка лежит на оси W, 
 	// и широта с долготой не определены (принимаем за 0)
 	if (rXYZ < 1e-10) {
-		console.error(sSartesianToAngles + ': Under constraction');
+		console.error(sCartesianToAngles + ': Under constraction');
 //		return { r: R, altitude, latitude: 0, longitude: 0 };
 		return angles([altitude, 0, 0]);
 	}
@@ -73,6 +149,8 @@ export function cartesianToAngles(vertice) {
 	// 4. Вычисление Longitude
 	// Диапазон (-PI, PI]
 	const longitude = Math.atan2(y, x);
+	
+	if(debug && (isNaN(altitude) || isNaN(latitude) || isNaN(longitude))) console.error(sCartesianToAngles + ': Invalid angles: altitude = ' + altitude + ', latitude = ' + latitude + ', longitude = ' + longitude);
 /*
 	return {
 		r: R,

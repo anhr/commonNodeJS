@@ -705,7 +705,7 @@ class HyperSphere extends MyObject {
 										settings.guiPoints.timeId :
 									0,
 								vertice = this.a2v(value, classSettings.overriddenProperties.r(timeId));
-							this.setPositionAttributeFromPoint(i, Position(vertice), timeId);
+							this.setPositionAttributeFromPoint(i, vertice, timeId);
 							
 						}
 	

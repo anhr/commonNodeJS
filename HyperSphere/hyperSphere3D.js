@@ -640,6 +640,7 @@ class HyperSphere3D extends Sphere {
 	}
 	a2v(angles, r = this.r) {
 
+		return utils.anglesToCartesian(angles, r, this.classSettings.debug);
 		/*https://chat.deepseek.com/a/chat/s/831d9a90-2396-4b09-b548-288415124814
 		Задана точка на 3D гиперсфере в полярной системе координат. Начало координат находится в центре 3D гиперсферы.
 		Положение точки обозначить как
@@ -666,6 +667,7 @@ class HyperSphere3D extends Sphere {
 		 * @param {number} angles.longitude - Долгота (от -π до π).
 		 * @returns {array} Массив с декартовыми координатами [x, y, z].
 		 */
+/*		
 		// Альтернативная версия с более простой нормализацией
 		function polarToCartesian(angles, r, debug) {
 
@@ -684,6 +686,7 @@ class HyperSphere3D extends Sphere {
 			return [ x, y, z, w ];
 		}
 		return polarToCartesian(angles, r, this.classSettings.debug);
+*/		
 
 	}
 	get verticeEdgesLengthMax() { return 4/*6*/; }//нельзя добавлть новое ребро если у вершины уже 6 ребра

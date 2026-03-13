@@ -278,7 +278,8 @@
 								[Math.PI / 2, 0, Math.PI / 2],//3. Position = [0, 1, 0, 0]
 								[Math.PI / 2, 0, - Math.PI / 2],//4. Position = [0, 1, 0, 0]
 							],
-							angles: { count: 1000, },
+							angles: new Array(200).fill(null).map(() => ([ Math.PI / 4, 1 , Math.PI / 8]))
+							//angles: { count: 1000, },
 							//angles: angles,
 							/*
 							colors: [
