@@ -15,7 +15,7 @@
 import * as utils from '../utilsHSphere.js'
 import RandomVertice from '../RandomVertice/randomVerticeHSphere.js';
 import ProgressBar from '../../ProgressBar/ProgressBar.js'
-import Position from '../position.js'
+//import Position from '../position.js'
 
 const sAverageVertices = 'averageVertices', π = Math.PI;
 
@@ -71,7 +71,7 @@ const averageVertices = (data) => {
 	//1000          0.0001
 	//5000          0.00001
 //	const a = 0.00001 * 5000;
-	const a = 0.5;
+	const a = 50;//0.5;
 	const REPULSION_STRENGTH = a / angles.length;//0.05; // Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
 /*	
 //	const a = (0.0001 - 0.05) / 1000, b = 0.05;
@@ -88,7 +88,7 @@ const averageVertices = (data) => {
 	let velocities = [];
 */	
 	// Инициализируем скорости
-	if (velocities.length === 0) velocities = new Array(angles.length).fill(null).map(() => ({ x: 0, y: 0, z: 0 }));
+	if (velocities.length === 0) velocities = new Array(angles.length).fill(null).map(() => ({ x: 0, y: 0, z: 0, w: 0 }));
 
 /*	
 	// Преобразование полярных координат в декартовы
@@ -129,7 +129,7 @@ const averageVertices = (data) => {
 //		if (!isAnimating) return;
 
 		// Вычисляем силы отталкивания для каждой точки
-		const forces = new Array(angles.length).fill(null).map(() => ({ x: 0, y: 0, z: 0 }));
+		const forces = new Array(angles.length).fill(null).map(() => ({ x: 0, y: 0, z: 0, w: 0 }));
 		let timestamp = classSettings.debug ? window.performance.now() : undefined;
 
 		// Для каждой пары точек
@@ -170,8 +170,9 @@ const averageVertices = (data) => {
 				let dx = pos1.x - pos2.x;
 				let dy = pos1.y - pos2.y;
 				let dz = pos1.z - pos2.z;
+				let dw = pos1.w - pos2.w;
 
-				let dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+				let dist = Math.sqrt(dx * dx + dy * dy + dz * dz + dw * dw);
 
 //				if (dist < 0.001) {
 
@@ -184,12 +185,10 @@ const averageVertices = (data) => {
 				const r = classSettings.overriddenProperties.rTime();
 				
 				// Случайное направление для точки i
-				const noise1 = Position(utils.anglesToCartesian(RandomVertice.get(arc, utils.angles([angles1[0], angles1[1]]), classSettings, RandomVertice), r));
+				const noise1 = utils.anglesToCartesian(RandomVertice.get(arc, utils.angles([angles1[0], angles1[1], angles1[2]]), classSettings, RandomVertice), r);
 					
-//					pos2 = 
 				// Случайное направление для точки j (может быть противоположным для лучшего разведения)
-				const noise2 =
-					Position(utils.anglesToCartesian(RandomVertice.get(arc, utils.angles([angles2[0], angles2[1]]), classSettings, RandomVertice), r));
+				const noise2 = utils.anglesToCartesian(RandomVertice.get(arc, utils.angles([angles2[0], angles2[1], angles2[2]]), classSettings, RandomVertice), r);
 //					angles[j] = RandomVertice.get(arc, utils.angles([angles2[0], angles2[1]]), classSettings, RandomVertice);
 				if (settings.guiPoints) settings.guiPoints.timeId = timeIdOld;
 				userData.timeId++;
@@ -215,17 +214,20 @@ const averageVertices = (data) => {
 				velocities[i].x += noise1.x * antiDist;
 				velocities[i].y += noise1.y * antiDist;
 				velocities[i].z += noise1.z * antiDist;
+				velocities[i].w += noise1.w * antiDist;
 				
 				velocities[j].x += noise2.x * antiDist;
 				velocities[j].y += noise2.y * antiDist;
 				velocities[j].z += noise2.z * antiDist;
+				velocities[j].w += noise2.w * antiDist;
 
 				// Вектор от i к j
 				dx = noise1.x - noise2.x;
 				dy = noise1.y - noise2.y;
 				dz = noise1.z - noise2.z;
+				dw = noise1.w - noise2.w;
 
-				dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+				dist = Math.sqrt(dx * dx + dy * dy + dz * dz + dw * dw);
 //				boRandomVertice = true;
 				pos2 = undefined;
 				
@@ -236,6 +238,7 @@ const averageVertices = (data) => {
 				dx /= dist;
 				dy /= dist;
 				dz /= dist;
+				dw /= dist;
 
 				const forcei = forces[i], forcesj = forces[j];
 
@@ -243,10 +246,12 @@ const averageVertices = (data) => {
 				forcei.x += dx * forceMagnitude;
 				forcei.y += dy * forceMagnitude;
 				forcei.z += dz * forceMagnitude;
+				forcei.w += dw * forceMagnitude;
 
 				forcesj.x -= dx * forceMagnitude;
 				forcesj.y -= dy * forceMagnitude;
 				forcesj.z -= dz * forceMagnitude;
+				forcesj.w -= dw * forceMagnitude;
 
 			}
 			i += 1;
@@ -276,12 +281,13 @@ const averageVertices = (data) => {
 					velocitie.x = velocitie.x * DAMPING + force.x;
 					velocitie.y = velocitie.y * DAMPING + force.y;
 					velocitie.z = velocitie.z * DAMPING + force.z;
+					velocitie.w = velocitie.w * DAMPING + force.w;
 
 //					vertices.push(utils.cartesianToAngles({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z }));
 //					classSettings.overriddenProperties.pushMiddleVertice(data.timeId, utils.cartesianToAngles({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z }));
 //					position[i] = { x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z };
 //					classSettings.settings.guiPoints.timeId = data.timeId;
-					const vertice = utils.cartesianToAngles({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z });
+					const vertice = utils.cartesianToAngles({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z, w: pos.w + velocitie.w }, classSettings.debug);
 					settings.overriddenProperties.editVertice(data.timeId, vertice, angles, i);
 //					classSettings.overriddenProperties.pushMiddleVertice(data.timeId, vertice);//добавляем новый item в classSettings.settings.object.geometry.times[data.timeId]. Это нужно что бы после выполнения шага проигрывателя при наедении мыши на вершину отображалась полная информачия о вершине
 //					angles[i] = vertice;
@@ -339,6 +345,6 @@ const averageVertices = (data) => {
 	iterationStep();
 	
 }
-const hyperbola = RandomVertice.calculateHyperbola(0.99);
+const hyperbola = RandomVertice.calculateHyperbola(1);//0.99);
 averageVertices.verticeProxy = (vertice) => { return vertice; }
 export default averageVertices;
