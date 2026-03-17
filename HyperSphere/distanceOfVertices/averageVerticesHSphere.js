@@ -57,6 +57,14 @@ const averageVertices = (data) => {
 В декартовой системе координат ось z проходит через северный и южный полюс.
 Не вращать сцену во время рендеринга.
 Переименовать массив точек в полярных координатах из vertices в angles
+
+https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
+Заменить сферу на гиперсферу в 4D простанстве.
+Тогда каждая точка имеет вид: const angles = {
+   latitude: latitude,//широта в диапазоне от -π/2 до π/2
+   longitude: longitude//долгота в диапазоне от -π до π
+   altitude: altitude//в диапазоне от 0 до π
+}
 	*/
 	//https://chat.deepseek.com/a/chat/s/e808c17c-8258-4029-b70c-d65be630df03
 
