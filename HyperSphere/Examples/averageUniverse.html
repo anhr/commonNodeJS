@@ -82,21 +82,22 @@
         import * as THREE from 'three';
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-        // --- КОНФИГУРАЦИЯ ---
-        const count = 5000;
-        const totalSteps = 100;//10;
-        const baseRadius = 0.01;//0.1;
-        const radiusMax = 2;
+        // --- НОВАЯ КОНФИГУРАЦИЯ ---
+        const totalSteps = 100;
+        const pointsPerStep = 500;
+        const count = totalSteps * pointsPerStep; // Вычисляем общее количество
 
-        const pointsPerStep = Math.floor(count / totalSteps);
+        const baseRadius = 0.1;
+        const radiusMax = 2;
         const radiusStep = (radiusMax - baseRadius) / (totalSteps - 1);
 
         let currentStep = 1;
         let radiusPrev = baseRadius;
 
+        // Массив данных для углов
         const pointsData = new Array(count).fill(null).map(() => ({ lat: 0, lon: 0, alt: 0 }));
 
-        // --- СЦЕНА ---
+        // --- THREE.JS SETUP ---
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 1000);
         camera.position.set(3, 3, 3);
@@ -109,12 +110,11 @@
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
 
-        // --- ГЕОМЕТРИЯ И ОБЪЕКТ ---
+        // Подготовка геометрии
         const geometry = new THREE.BufferGeometry();
         const positions = new Float32Array(count * 3);
         const colors = new Float32Array(count * 3);
 
-        // Создаем атрибуты заранее
         geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
         geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
@@ -126,7 +126,6 @@
             sizeAttenuation: true
         });
 
-        // ВОТ ЭТА СТРОКА: Создаем объект Points и добавляем в сцену
         const pointsMesh = new THREE.Points(geometry, material);
         scene.add(pointsMesh);
 
@@ -147,7 +146,7 @@
         // --- ФУНКЦИИ УПРАВЛЕНИЯ ---
         function updateInfo() {
             document.getElementById('info').innerText =
-                `Шаг: ${currentStep}/${totalSteps} (R=${radiusPrev.toFixed(2)})`;
+                `Шаг: ${currentStep}/${totalSteps} (R=${radiusPrev.toFixed(2)}) | Всего точек: ${count}`;
         }
 
         function initFirstGroup() {
@@ -157,7 +156,7 @@
             for (let i = 0; i < count; i++) {
                 let p;
                 if (i < pointsPerStep) {
-                    // Генерация первой группы
+                    // Генерация случайных углов для первой группы (индексы 0 - 499)
                     const u1 = Math.random(), u2 = Math.random(), u3 = Math.random(), u4 = Math.random();
                     const r0 = Math.sqrt(-2.0 * Math.log(u1 || 0.0001)) * Math.cos(2.0 * Math.PI * u2);
                     const r1 = Math.sqrt(-2.0 * Math.log(u1 || 0.0001)) * Math.sin(2.0 * Math.PI * u2);
@@ -173,12 +172,13 @@
                     pointsData[i] = { lat, lon, alt };
                     p = polarToCartesian(lat, lon, alt, baseRadius);
                 } else {
-                    // Остальные в центре (радиус 0)
+                    // Все остальные точки инициализируются в центре с углами 0
                     p = { x: 0, y: 0, z: 0, w: 0 };
                 }
 
                 posAttr.setXYZ(i, p.x, p.y, p.z);
 
+                // Цветовая разметка (w нормализован относительно radiusMax)
                 const t = (p.w + radiusMax) / (2 * radiusMax);
                 colorTool.setHSL(0.7 * (1 - t), 1.0, 0.5);
                 colorAttr.setXYZ(i, colorTool.r, colorTool.g, colorTool.b);
@@ -195,24 +195,19 @@
             const currStepStart = currentStep * pointsPerStep;
             const newRadius = radiusPrev + radiusStep;
 
-            // Определяем реальный размер текущей группы (защита от нецелого деления)
-            let currentGroupSize = pointsPerStep;
-            if (currentStep === totalSteps - 1) {
-                currentGroupSize = count - currStepStart;
-            }
-
             const posAttr = geometry.getAttribute('position');
             const colorAttr = geometry.getAttribute('color');
 
-            for (let j = 0; j < currentGroupSize; j++) {
-                const prevIdx = prevStepStart + (j % pointsPerStep);
+            for (let j = 0; j < pointsPerStep; j++) {
+                const prevIdx = prevStepStart + j;
                 const currIdx = currStepStart + j;
 
-                // Наследование углов
+                // Копируем углы из предыдущей группы в текущую в массив данных
                 pointsData[currIdx].lat = pointsData[prevIdx].lat;
                 pointsData[currIdx].lon = pointsData[prevIdx].lon;
                 pointsData[currIdx].alt = pointsData[prevIdx].alt;
 
+                // Вычисляем координаты для новой группы
                 const p = polarToCartesian(
                     pointsData[currIdx].lat,
                     pointsData[currIdx].lon,
@@ -257,7 +252,6 @@
             renderer.render(scene, camera);
         }
 
-        // Запуск
         initFirstGroup();
         animate();
     </script>
