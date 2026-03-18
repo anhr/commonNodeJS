@@ -66,7 +66,7 @@
             <button id="stepBtn">Шаг</button>
             <button id="startBtn">Старт</button>
         </div>
-        <div id="info">Текущий шаг: 1 (R=0.1)</div>
+        <div id="info">Инициализация...</div>
     </div>
 
     <script type="importmap">
@@ -82,18 +82,24 @@
         import * as THREE from 'three';
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
+        // --- КОНФИГУРАЦИЯ ---
         const count = 5000;
-        const pointsPerStep = 500;
-        let currentStep = 1;
-        const baseRadius = 0.1;
+        const totalSteps = 100;//10;
+        const baseRadius = 0.01;//0.1;
+        const radiusMax = 2;
 
-        // Массив для хранения углов
+        const pointsPerStep = Math.floor(count / totalSteps);
+        const radiusStep = (radiusMax - baseRadius) / (totalSteps - 1);
+
+        let currentStep = 1;
+        let radiusPrev = baseRadius;
+
         const pointsData = new Array(count).fill(null).map(() => ({ lat: 0, lon: 0, alt: 0 }));
 
-        // Сцена
+        // --- СЦЕНА ---
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 1000);
-        camera.position.set(2, 2, 2);
+        camera.position.set(3, 3, 3);
 
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
@@ -103,18 +109,31 @@
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
 
+        // --- ГЕОМЕТРИЯ И ОБЪЕКТ ---
         const geometry = new THREE.BufferGeometry();
         const positions = new Float32Array(count * 3);
         const colors = new Float32Array(count * 3);
-        const colorTool = new THREE.Color();
 
-        // Защита от выхода за пределы диапазона [-1, 1] для функций acos
+        // Создаем атрибуты заранее
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+        const material = new THREE.PointsMaterial({
+            size: 0.015,
+            vertexColors: true,
+            transparent: true,
+            opacity: 0.8,
+            sizeAttenuation: true
+        });
+
+        // ВОТ ЭТА СТРОКА: Создаем объект Points и добавляем в сцену
+        const pointsMesh = new THREE.Points(geometry, material);
+        scene.add(pointsMesh);
+
+        // --- МАТЕМАТИКА ---
         const clamp = (val, min, max) => Math.max(min, Math.min(max, val));
 
         function polarToCartesian(lat, lon, alt, r) {
-            // Проверка на NaN перед расчетом (доп. защита)
-            if (isNaN(lat) || isNaN(lon) || isNaN(alt)) return { x: 0, y: 0, z: 0, w: r };
-
             return {
                 x: r * Math.sin(alt) * Math.sin(lat) * Math.cos(lon),
                 y: r * Math.sin(alt) * Math.sin(lat) * Math.sin(lon),
@@ -123,77 +142,73 @@
             };
         }
 
-        // Инициализация при создании страницы
-        for (let i = 0; i < count; i++) {
-            let p;
-            if (i < pointsPerStep) {
-                // Метод Бокса-Мюллера для нормального распределения
-                const u1 = Math.random(), u2 = Math.random(), u3 = Math.random(), u4 = Math.random();
-                const r0 = Math.sqrt(-2.0 * Math.log(u1 || 0.0001)) * Math.cos(2.0 * Math.PI * u2);
-                const r1 = Math.sqrt(-2.0 * Math.log(u1 || 0.0001)) * Math.sin(2.0 * Math.PI * u2);
-                const r2 = Math.sqrt(-2.0 * Math.log(u3 || 0.0001)) * Math.cos(2.0 * Math.PI * u4);
-                const r3 = Math.sqrt(-2.0 * Math.log(u3 || 0.0001)) * Math.sin(2.0 * Math.PI * u4);
-                const norm = Math.sqrt(r0 ** 2 + r1 ** 2 + r2 ** 2 + r3 ** 2) || 1;
+        const colorTool = new THREE.Color();
 
-                // БЕЗОПАСНЫЙ расчет углов
-                const alt = Math.acos(clamp(r3 / norm, -1, 1));
-                const sinAlt = Math.sin(alt);
-                // Если sin(alt) близок к 0, точка на полюсе, lat не имеет значения
-                const lat = (Math.abs(sinAlt) > 1e-10) ? Math.acos(clamp(r2 / (norm * sinAlt), -1, 1)) : 0;
-                const lon = Math.atan2(r1, r0);
-
-                pointsData[i] = { lat, lon, alt };
-                p = polarToCartesian(lat, lon, alt, baseRadius);
-            } else {
-                // Остальные в начале координат
-                p = { x: 0, y: 0, z: 0, w: baseRadius };
-            }
-
-            positions[i * 3] = p.x;
-            positions[i * 3 + 1] = p.y;
-            positions[i * 3 + 2] = p.z;
-
-            const t = (p.w + 1) / 2;
-            colorTool.setHSL(0.7 * (1 - t), 1.0, 0.5);
-            colors[i * 3] = colorTool.r;
-            colors[i * 3 + 1] = colorTool.g;
-            colors[i * 3 + 2] = colorTool.b;
+        // --- ФУНКЦИИ УПРАВЛЕНИЯ ---
+        function updateInfo() {
+            document.getElementById('info').innerText =
+                `Шаг: ${currentStep}/${totalSteps} (R=${radiusPrev.toFixed(2)})`;
         }
 
-        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+        function initFirstGroup() {
+            const posAttr = geometry.getAttribute('position');
+            const colorAttr = geometry.getAttribute('color');
 
-        const material = new THREE.PointsMaterial({
-            size: 0.012,
-            vertexColors: true,
-            transparent: true,
-            opacity: 0.8
-        });
+            for (let i = 0; i < count; i++) {
+                let p;
+                if (i < pointsPerStep) {
+                    // Генерация первой группы
+                    const u1 = Math.random(), u2 = Math.random(), u3 = Math.random(), u4 = Math.random();
+                    const r0 = Math.sqrt(-2.0 * Math.log(u1 || 0.0001)) * Math.cos(2.0 * Math.PI * u2);
+                    const r1 = Math.sqrt(-2.0 * Math.log(u1 || 0.0001)) * Math.sin(2.0 * Math.PI * u2);
+                    const r2 = Math.sqrt(-2.0 * Math.log(u3 || 0.0001)) * Math.cos(2.0 * Math.PI * u4);
+                    const r3 = Math.sqrt(-2.0 * Math.log(u3 || 0.0001)) * Math.sin(2.0 * Math.PI * u4);
+                    const norm = Math.sqrt(r0 ** 2 + r1 ** 2 + r2 ** 2 + r3 ** 2) || 1;
 
-        const points = new THREE.Points(geometry, material);
-        scene.add(points);
+                    const alt = Math.acos(clamp(r3 / norm, -1, 1));
+                    const sinAlt = Math.sin(alt);
+                    const lat = (Math.abs(sinAlt) > 1e-10) ? Math.acos(clamp(r2 / (norm * sinAlt), -1, 1)) : 0;
+                    const lon = Math.atan2(r1, r0);
 
-        // Функционал кнопок
-        const stepBtn = document.getElementById('stepBtn');
-        const startBtn = document.getElementById('startBtn');
-        const infoDisp = document.getElementById('info');
+                    pointsData[i] = { lat, lon, alt };
+                    p = polarToCartesian(lat, lon, alt, baseRadius);
+                } else {
+                    // Остальные в центре (радиус 0)
+                    p = { x: 0, y: 0, z: 0, w: 0 };
+                }
+
+                posAttr.setXYZ(i, p.x, p.y, p.z);
+
+                const t = (p.w + radiusMax) / (2 * radiusMax);
+                colorTool.setHSL(0.7 * (1 - t), 1.0, 0.5);
+                colorAttr.setXYZ(i, colorTool.r, colorTool.g, colorTool.b);
+            }
+            posAttr.needsUpdate = true;
+            colorAttr.needsUpdate = true;
+            updateInfo();
+        }
 
         function performStep() {
-            if (currentStep >= 10) return false;
+            if (currentStep >= totalSteps) return;
 
             const prevStepStart = (currentStep - 1) * pointsPerStep;
-            currentStep++;
-            const currStepStart = (currentStep - 1) * pointsPerStep;
-            const newRadius = baseRadius * currentStep;
+            const currStepStart = currentStep * pointsPerStep;
+            const newRadius = radiusPrev + radiusStep;
+
+            // Определяем реальный размер текущей группы (защита от нецелого деления)
+            let currentGroupSize = pointsPerStep;
+            if (currentStep === totalSteps - 1) {
+                currentGroupSize = count - currStepStart;
+            }
 
             const posAttr = geometry.getAttribute('position');
             const colorAttr = geometry.getAttribute('color');
 
-            for (let j = 0; j < pointsPerStep; j++) {
-                const prevIdx = prevStepStart + j;
+            for (let j = 0; j < currentGroupSize; j++) {
+                const prevIdx = prevStepStart + (j % pointsPerStep);
                 const currIdx = currStepStart + j;
 
-                // Копирование углов из предыдущего набора
+                // Наследование углов
                 pointsData[currIdx].lat = pointsData[prevIdx].lat;
                 pointsData[currIdx].lon = pointsData[prevIdx].lon;
                 pointsData[currIdx].alt = pointsData[prevIdx].alt;
@@ -207,26 +222,27 @@
 
                 posAttr.setXYZ(currIdx, p.x, p.y, p.z);
 
-                // Обновление цвета
-                const t = (p.w + 1) / 2;
+                const t = (p.w + radiusMax) / (2 * radiusMax);
                 colorTool.setHSL(0.7 * (1 - t), 1.0, 0.5);
                 colorAttr.setXYZ(currIdx, colorTool.r, colorTool.g, colorTool.b);
             }
 
+            radiusPrev = newRadius;
+            currentStep++;
             posAttr.needsUpdate = true;
             colorAttr.needsUpdate = true;
-            infoDisp.innerText = `Текущий шаг: ${currentStep} (R=${newRadius.toFixed(1)})`;
+            updateInfo();
 
-            if (currentStep === 10) {
-                stepBtn.disabled = true;
-                startBtn.disabled = true;
+            if (currentStep === totalSteps) {
+                document.getElementById('stepBtn').disabled = true;
+                document.getElementById('startBtn').disabled = true;
             }
-            return true;
         }
 
-        stepBtn.addEventListener('click', performStep);
-        startBtn.addEventListener('click', () => {
-            while (currentStep < 10) performStep();
+        // События
+        document.getElementById('stepBtn').addEventListener('click', performStep);
+        document.getElementById('startBtn').addEventListener('click', () => {
+            while (currentStep < totalSteps) performStep();
         });
 
         window.addEventListener('resize', () => {
@@ -240,6 +256,9 @@
             controls.update();
             renderer.render(scene, camera);
         }
+
+        // Запуск
+        initFirstGroup();
         animate();
     </script>
 </body>
