@@ -72,12 +72,23 @@
     let currentStep = 1;
     let radiusPrev = baseRadius;
 
+/*	
     // Массив данных для углов с новыми названиями
     const angles = new Array(count).fill(null).map(() => ({ 
         latitude: 0, 
         longitude: 0, 
         altitude: 0 
     }));
+*/	
+
+	//Все точки, противоположные точке 0, имеют близкие координаты.
+	const angles = [
+		{altitude: Math.PI / 2, latitude: Math.PI / 19, longitude: 0},//0
+		{altitude: Math.PI / 2, latitude: Math.PI / 20, longitude: 0},//1
+		{altitude: Math.PI / 3, latitude: Math.PI / 21, longitude: Math.PI / 2},//2
+		{altitude: Math.PI / 4, latitude: Math.PI / 22, longitude: -Math.PI / 2},//3
+		{altitude: Math.PI / 5, latitude: Math.PI / 23, longitude: Math.PI},//4
+	];
     
 	const a = 50;//0.5;
 	const REPULSION_STRENGTH = a / angles.length;//0.05; // Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
@@ -120,6 +131,7 @@
     // --- МАТЕМАТИКА ---
     const clamp = (val, min, max) => Math.max(min, Math.min(max, val));
 
+/*	
     function polarToCartesian(latitude, longitude, altitude, r) {
         return {
             x: r * Math.sin(altitude) * Math.sin(latitude) * Math.cos(longitude),
@@ -127,6 +139,29 @@
             z: r * Math.sin(altitude) * Math.cos(latitude),
             w: r * Math.cos(altitude)
         };
+    }
+*/	
+    function polarToCartesian(lat, lon, alt, r) {
+/*		
+		const lat = angles.latitude;
+		const lon = angles.longitude;
+		const alt = angles.altitude;
+*/		
+	
+		// Вычисляем компоненту, которая проецируется на 3D-подпространство (x, y, z)
+		const r_xyz = r * Math.sin(alt);
+	
+		// Координата в четвертом измерении
+		const w = r * Math.cos(alt);
+	
+		// Стандартные сферические координаты, но масштабированные r_xyz
+		const x = r_xyz * Math.cos(lat) * Math.cos(lon);
+		const y = r_xyz * Math.cos(lat) * Math.sin(lon);
+		const z = r_xyz * Math.sin(lat);
+		
+		if(isNaN(x) || isNaN(y) || isNaN(z) || isNaN(w)) console.error('Invalid cartesian: x = ' + x + ', y = ' + y + ', z = ' + z + ', w = ' + w);
+	
+        return { x: x, y: y, z: z, w: w };
     }
 	function cartesianToPolar(vertice) {
 	
@@ -182,10 +217,13 @@
     function initFirstGroup() {
         const posAttr = geometry.getAttribute('position');
         const colorAttr = geometry.getAttribute('color');
-
+			
         for (let i = 0; i < count; i++) {
             let p;
             if (i < pointsPerStep) {
+				const verticeAngles = angles[i];
+                p = polarToCartesian(verticeAngles.latitude, verticeAngles.longitude, verticeAngles.altitude, baseRadius);
+				/*
                 const u1 = Math.random(), u2 = Math.random(), u3 = Math.random(), u4 = Math.random();
                 const r0 = Math.sqrt(-2.0 * Math.log(u1 || 0.0001)) * Math.cos(2.0 * Math.PI * u2);
                 const r1 = Math.sqrt(-2.0 * Math.log(u1 || 0.0001)) * Math.sin(2.0 * Math.PI * u2);
@@ -200,8 +238,10 @@
 
                 angles[i] = { latitude, longitude, altitude };
                 p = polarToCartesian(latitude, longitude, altitude, baseRadius);
+				*/
             } else {
                 p = { x: 0, y: 0, z: 0, w: 0 };
+				angles.push({altitude: 0, latitude: 0, longitude: 0});
             }
 
             posAttr.setXYZ(i, p.x, p.y, p.z);
@@ -255,12 +295,12 @@
             //На каждом шаге итерации все точки постепенно движутся в положение, при котором точки окажутся на максимальном удалении друг от друга.
 			let pos2, angles2;
 			for (
-//				let j = i + 1;
-				let j = 0;
+				let j = i + 1;
+//				let j = 0;
 				j < pointsPerStep;
 				j++
 			) {
-				if(i === j) continue;
+//				if(i === j) continue;
 				if (!pos2) {
                     angles2 = angles[j];
                     pos2 = polarToCartesian(
@@ -280,7 +320,7 @@
 				let dist = Math.sqrt(dx * dx + dy * dy + dz * dz + dw * dw);
                 
 //				const arc = π - hyperbola((dist / classSettings.overriddenProperties.r(settings.bufferGeometry.userData.timeId - 1) / 2) * π);
-const arc = 0;//шум равен нулю
+				const arc = dist=== 0 ? Math.PI: 0;//шум равен нулю
                 
 				// Случайное направление для точки i
 //				const noise1 = utils.anglesToCartesian(RandomVertice.get(arc, utils.angles([angles1[0], angles1[1], angles1[2]]), classSettings, RandomVertice), r);
@@ -312,6 +352,7 @@ const arc = 0;//шум равен нулю
 				dist = Math.sqrt(dx * dx + dy * dy + dz * dz + dw * dw);
 //				boRandomVertice = true;
 				pos2 = undefined;
+				if (dist === 0) continue;
 				
 				// Сила обратно пропорциональна расстоянию
 				const forceMagnitude = REPULSION_STRENGTH / (dist * dist);
