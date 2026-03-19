@@ -55,9 +55,14 @@
     import * as THREE from 'three';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
+    const π = Math.PI;
+    
+    // Скорости точек (для инерции)
+    let velocities = [];
+
     // --- КОНФИГУРАЦИЯ ---
-    const totalSteps = 100;
-    const pointsPerStep = 500;
+    const totalSteps = 10;
+    const pointsPerStep = 5;
     const count = totalSteps * pointsPerStep;
 
     const baseRadius = 0.1;
@@ -68,11 +73,18 @@
     let radiusPrev = baseRadius;
 
     // Массив данных для углов с новыми названиями
-    const pointsData = new Array(count).fill(null).map(() => ({ 
+    const angles = new Array(count).fill(null).map(() => ({ 
         latitude: 0, 
         longitude: 0, 
         altitude: 0 
     }));
+    
+	const a = 50;//0.5;
+	const REPULSION_STRENGTH = a / angles.length;//0.05; // Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
+	const DAMPING = 0.95; // Демпфирование движения
+    
+	// Инициализируем скорости
+	if (velocities.length === 0) velocities = new Array(pointsPerStep).fill(null).map(() => ({ x: 0, y: 0, z: 0, w: 0 }));
 
     // --- THREE.JS SETUP ---
     const scene = new THREE.Scene();
@@ -116,6 +128,48 @@
             w: r * Math.cos(altitude)
         };
     }
+	function cartesianToPolar(vertice) {
+	
+		const x = vertice.x;
+		const y = vertice.y;
+		const z = vertice.z;
+		const w = vertice.w;
+	
+		// 1. Полный радиус гиперсферы
+		const R = Math.sqrt(x * x + y * y + z * z + w * w);
+	
+		if (R === 0) {
+			console.error('Under constraction');
+//			return [0, 0, 0];
+			return {altitude: 0, latitude: 0, longitude: 0};
+		}
+	
+		// 2. Вычисление Altitude (относительно оси W)
+		// Диапазон [0, PI]
+		const altitude = Math.acos(w / R);
+	
+		// Вычисляем радиус проекции в 3D пространстве (xyz)
+		const rXYZ = Math.sqrt(x * x + y * y + z * z);
+	
+		// Если rXYZ близок к 0, значит точка лежит на оси W, 
+		// и широта с долготой не определены (принимаем за 0)
+		if (rXYZ < 1e-10) {
+			console.error('Under constraction');
+//			return [altitude, 0, 0];
+			return {altitude: altitude, latitude: 0, longitude: 0};
+		}
+	
+		// 3. Вычисление Latitude (аналогично 3D сфере)
+		// Диапазон [-PI/2, PI/2]
+		const latitude = Math.asin(z / rXYZ);
+	
+		// 4. Вычисление Longitude
+		// Диапазон (-PI, PI]
+		const longitude = Math.atan2(y, x);
+		
+		if((isNaN(altitude) || isNaN(latitude) || isNaN(longitude))) console.error('Invalid angles: altitude = ' + altitude + ', latitude = ' + latitude + ', longitude = ' + longitude);
+		return {altitude: altitude, latitude: latitude, longitude: longitude};
+	}
 
     const colorTool = new THREE.Color();
 
@@ -144,7 +198,7 @@
                 const latitude = (Math.abs(sinAlt) > 1e-10) ? Math.acos(clamp(r2 / (norm * sinAlt), -1, 1)) : 0;
                 const longitude = Math.atan2(r1, r0);
 
-                pointsData[i] = { latitude, longitude, altitude };
+                angles[i] = { latitude, longitude, altitude };
                 p = polarToCartesian(latitude, longitude, altitude, baseRadius);
             } else {
                 p = { x: 0, y: 0, z: 0, w: 0 };
@@ -163,6 +217,9 @@
 
     function performStep() {
         if (currentStep >= totalSteps) return;
+		
+		// Вычисляем силы отталкивания для каждой точки
+		const forces = new Array(pointsPerStep).fill(null).map(() => ({ x: 0, y: 0, z: 0, w: 0 }));
 
         const prevStepStart = (currentStep - 1) * pointsPerStep;
         const currStepStart = currentStep * pointsPerStep;
@@ -170,29 +227,159 @@
 
         const posAttr = geometry.getAttribute('position');
         const colorAttr = geometry.getAttribute('color');
-
-        for (let j = 0; j < pointsPerStep; j++) {
-            const prevIdx = prevStepStart + j;
-            const currIdx = currStepStart + j;
-
+		console.log('currentStep = ' + currentStep + ', of ' + totalSteps);
+ 
+        for (let i = 0; i < pointsPerStep; i++) {
+            const prevIdx = prevStepStart + i;
+            const currIdx = currStepStart + i;
+//console.log('currentStep = ' + currentStep + ', i = ' + i);
             // Наследование углов с новыми названиями
-            pointsData[currIdx].latitude = pointsData[prevIdx].latitude;
-            pointsData[currIdx].longitude = pointsData[prevIdx].longitude;
-            pointsData[currIdx].altitude = pointsData[prevIdx].altitude;
-
-            const p = polarToCartesian(
-                pointsData[currIdx].latitude, 
-                pointsData[currIdx].longitude, 
-                pointsData[currIdx].altitude, 
-                newRadius
+            const angles1 = angles[prevIdx];
+            const pos1 = polarToCartesian(
+                angles1.latitude, 
+                angles1.longitude, 
+                angles1.altitude, 
+                1//radiusPrev
             );
-            
-            posAttr.setXYZ(currIdx, p.x, p.y, p.z);
+/*            
+            angles[currIdx].latitude = angles1.latitude;
+            angles[currIdx].longitude = angles1.longitude;
+            angles[currIdx].altitude = angles1.altitude;
+*/            
+/*            
+            angles[currIdx].latitude = angles[prevIdx].latitude;
+            angles[currIdx].longitude = angles[prevIdx].longitude;
+            angles[currIdx].altitude = angles[prevIdx].altitude;
+*/           
+            //Мы будем решать проблему Томсона (распределение зарядов на сфере для минимизации энергии), но применительно к 4D-пространству (поверхности гиперсферы).
+            //На каждом шаге итерации все точки постепенно движутся в положение, при котором точки окажутся на максимальном удалении друг от друга.
+			let pos2, angles2;
+			for (
+//				let j = i + 1;
+				let j = 0;
+				j < pointsPerStep;
+				j++
+			) {
+				if(i === j) continue;
+				if (!pos2) {
+                    angles2 = angles[j];
+                    pos2 = polarToCartesian(
+                        angles2.latitude, 
+                        angles2.longitude, 
+                        angles2.altitude, 
+                        1//radiusPrev
+                    );
+				}
+                
+				// Вектор от i к j
+				let dx = pos1.x - pos2.x;
+				let dy = pos1.y - pos2.y;
+				let dz = pos1.z - pos2.z;
+				let dw = pos1.w - pos2.w;
 
-            const t = (p.w + radiusMax) / (2 * radiusMax);
-            colorTool.setHSL(0.7 * (1 - t), 1.0, 0.5);
-            colorAttr.setXYZ(currIdx, colorTool.r, colorTool.g, colorTool.b);
+				let dist = Math.sqrt(dx * dx + dy * dy + dz * dz + dw * dw);
+                
+//				const arc = π - hyperbola((dist / classSettings.overriddenProperties.r(settings.bufferGeometry.userData.timeId - 1) / 2) * π);
+const arc = 0;//шум равен нулю
+                
+				// Случайное направление для точки i
+//				const noise1 = utils.anglesToCartesian(RandomVertice.get(arc, utils.angles([angles1[0], angles1[1], angles1[2]]), classSettings, RandomVertice), r);
+				const noise1 = pos1;
+					
+				// Случайное направление для точки j (может быть противоположным для лучшего разведения)
+//				const noise2 = utils.anglesToCartesian(RandomVertice.get(arc, utils.angles([angles2[0], angles2[1], angles2[2]]), classSettings, RandomVertice), r);
+				const noise2 = pos2;
+                
+				// Применяем шум к позициям через скорости
+				const antiDist = arc / π;
+				if(antiDist < 0) console.error(sAverageVertices + ': iterationStep. Invalid antiDist = ' + antiDist);
+				velocities[i].x += noise1.x * antiDist;
+				velocities[i].y += noise1.y * antiDist;
+				velocities[i].z += noise1.z * antiDist;
+				velocities[i].w += noise1.w * antiDist;
+				
+				velocities[j].x += noise2.x * antiDist;
+				velocities[j].y += noise2.y * antiDist;
+				velocities[j].z += noise2.z * antiDist;
+				velocities[j].w += noise2.w * antiDist;
+
+				// Вектор от i к j
+				dx = noise1.x - noise2.x;
+				dy = noise1.y - noise2.y;
+				dz = noise1.z - noise2.z;
+				dw = noise1.w - noise2.w;
+
+				dist = Math.sqrt(dx * dx + dy * dy + dz * dz + dw * dw);
+//				boRandomVertice = true;
+				pos2 = undefined;
+				
+				// Сила обратно пропорциональна расстоянию
+				const forceMagnitude = REPULSION_STRENGTH / (dist * dist);
+
+				// Нормализуем вектор
+				dx /= dist;
+				dy /= dist;
+				dz /= dist;
+				dw /= dist;
+
+				const forcei = forces[i], forcesj = forces[j];
+
+				// Применяем силу: отталкивание
+				forcei.x += dx * forceMagnitude;
+				forcei.y += dy * forceMagnitude;
+				forcei.z += dz * forceMagnitude;
+				forcei.w += dw * forceMagnitude;
+
+				forcesj.x -= dx * forceMagnitude;
+				forcesj.y -= dy * forceMagnitude;
+				forcesj.z -= dz * forceMagnitude;
+				forcesj.w -= dw * forceMagnitude;
+
+            }
+
         }
+
+		// Применяем силы к точкам
+		for (let i = 0; i < pointsPerStep; i++) {
+
+			const prevIdx = prevStepStart + i;
+			const currIdx = currStepStart + i;
+			const verticeAngles = angles[prevIdx];
+			const pos = polarToCartesian(
+				verticeAngles.latitude, 
+				verticeAngles.longitude, 
+				verticeAngles.altitude, 
+				1//radiusPrev
+			);
+			const velocitie = velocities[i],
+				force = forces[i];
+
+			// Обновляем скорость с учетом силы и демпфирования
+			velocitie.x = velocitie.x * DAMPING + force.x;
+			velocitie.y = velocitie.y * DAMPING + force.y;
+			velocitie.z = velocitie.z * DAMPING + force.z;
+			velocitie.w = velocitie.w * DAMPING + force.w;
+
+			const anglesCurr = cartesianToPolar({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z, w: pos.w + velocitie.w });
+			const p = polarToCartesian(
+				anglesCurr.latitude, 
+				anglesCurr.longitude, 
+				anglesCurr.altitude, 
+				newRadius
+			);
+			
+			posAttr.setXYZ(currIdx, p.x, p.y, p.z);
+
+			const t = (p.w + radiusMax) / (2 * radiusMax);
+			colorTool.setHSL(0.7 * (1 - t), 1.0, 0.5);
+			colorAttr.setXYZ(currIdx, colorTool.r, colorTool.g, colorTool.b);
+
+/*				
+			const vertice = utils.cartesianToAngles({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z, w: pos.w + velocitie.w }, classSettings.debug);
+			settings.overriddenProperties.editVertice(data.timeId, vertice, angles, i);
+*/				
+
+		}
 
         radiusPrev = newRadius;
         currentStep++;

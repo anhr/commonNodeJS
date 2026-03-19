@@ -138,6 +138,7 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 
 		// Вычисляем силы отталкивания для каждой точки
 		const forces = new Array(angles.length).fill(null).map(() => ({ x: 0, y: 0, z: 0, w: 0 }));
+
 		let timestamp = classSettings.debug ? window.performance.now() : undefined;
 
 		// Для каждой пары точек
