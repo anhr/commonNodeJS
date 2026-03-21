@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>averageUniverse - Dynamic GPU</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #000;
+            font-family: sans-serif;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        #ui {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 5px;
+        }
+
+        button {
+            padding: 10px 15px;
+            cursor: pointer;
+            background: #222;
+            color: #fff;
+            border: 1px solid #444;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+            button:hover {
+                background: #333;
+            }
+
+            button:disabled {
+                opacity: 0.5;
+                cursor: wait;
+            }
+
+        #info {
+            color: #aaa;
+            font-size: 13px;
+            background: rgba(0,0,0,0.6);
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        .timer {
+            color: #00ffcc;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="ui">
+        <div class="controls">
+            <button id="stepBtn">Шаг (CPU)</button>
+            <button id="startBtn">Старт (CPU)</button>
+            <button id="gpuBtn">Старт (GPU)</button>
+        </div>
+        <div id="info">
+            Шаг: <span id="stepCounter">1</span> / 100 | R: <span id="radVal">0.10</span>
+            <div id="timeResult" class="timer"></div>
+        </div>
+    </div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        // --- КОНФИГУРАЦИЯ ---
+        const totalSteps = 100;
+        const pointsPerStep = 500; // Теперь это значение учитывается и в GPU
+        const count = totalSteps * pointsPerStep;
+        const baseRadius = 0.1;
+        const radiusMax = 2;
+        const radiusStep = (radiusMax - baseRadius) / (totalSteps - 1);
+        const DAMPING = 0.95;
+        const REPULSION = 50 / pointsPerStep;
+
+        let currentStep = 1;
+        let radiusPrev = baseRadius;
+        let velocities = Array.from({ length: pointsPerStep }, () => ({ x: 0, y: 0, z: 0, w: 0 }));
+        const angles = new Array(count).fill(null).map(() => ({ latitude: 0, longitude: 0, altitude: 0 }));
+
+        // --- THREE.JS ---
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 1000);
+        camera.position.set(3, 3, 3);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+        const controls = new OrbitControls(camera, renderer.domElement);
+
+        const geometry = new THREE.BufferGeometry();
+        const posAttr = new THREE.BufferAttribute(new Float32Array(count * 3), 3);
+        const colorAttr = new THREE.BufferAttribute(new Float32Array(count * 3), 3);
+        geometry.setAttribute('position', posAttr);
+        geometry.setAttribute('color', colorAttr);
+        scene.add(new THREE.Points(geometry, new THREE.PointsMaterial({ size: 0.015, vertexColors: true })));
+
+        // --- WebGPU SHADER (Динамический pointsPerStep) ---
+        const shaderCode = `
+            struct Params {
+                damping: f32,
+                repulsion: f32,
+                radius: f32,
+                stepOffset: f32,
+                pointsPerStep: f32
+            };
+            @group(0) @binding(0) var<storage, read_write> positions: array<vec4<f32>>;
+            @group(0) @binding(1) var<storage, read_write> velocities: array<vec4<f32>>;
+            @group(0) @binding(2) var<uniform> p: Params;
+
+            @compute @workgroup_size(64)
+            fn main(@builtin(global_invocation_id) id: vec3<u32>) {
+                let i = id.x;
+                let n = u32(p.pointsPerStep);
+                if (i >= n) { return; }
+
+                let prevOffset = u32(p.stepOffset - p.pointsPerStep);
+                let currOffset = u32(p.stepOffset);
+
+                let p1 = positions[prevOffset + i];
+                let p1_n = normalize(p1);
+
+                var force = vec4<f32>(0.0);
+                for (var j = 0u; j < n; j++) {
+                    if (i == j) { continue; }
+                    let p2_n = normalize(positions[prevOffset + j]);
+                    let diff = p1_n - p2_n;
+                    let d2 = dot(diff, diff) + 1e-6;
+                    force += normalize(diff) * (p.repulsion / d2);
+                }
+
+                let v = velocities[i] * p.damping + force;
+                velocities[i] = v;
+                positions[currOffset + i] = normalize(p1_n + v) * p.radius;
+            }
+        `;
+
+        // --- CPU МАТЕМАТИКА ---
+        const polarToCartesian = (la, lo, al, r) => {
+            const r_xyz = r * Math.sin(al), w = r * Math.cos(al);
+            return { x: r_xyz * Math.cos(la) * Math.cos(lo), y: r_xyz * Math.cos(la) * Math.sin(lo), z: r_xyz * Math.sin(la), w };
+        };
+        const cartesianToPolar = (v) => {
+            const R = Math.sqrt(v.x ** 2 + v.y ** 2 + v.z ** 2 + v.w ** 2) || 1e-10, al = Math.acos(Math.min(1, Math.max(-1, v.w / R)));
+            const rXYZ = Math.sqrt(v.x ** 2 + v.y ** 2 + v.z ** 2) || 1e-10;
+            return { altitude: al, latitude: Math.asin(Math.min(1, Math.max(-1, v.z / rXYZ))), longitude: Math.atan2(v.y, v.x) };
+        };
+
+        function initPoints() {
+            const color = new THREE.Color();
+            for (let i = 0; i < pointsPerStep; i++) {
+                const u = Array.from({ length: 4 }, () => Math.random() * 2 - 1);
+                const norm = Math.sqrt(u.reduce((a, b) => a + b * b, 0)) || 1;
+                angles[i] = cartesianToPolar({ x: u[0] / norm, y: u[1] / norm, z: u[2] / norm, w: u[3] / norm });
+                const p = polarToCartesian(angles[i].latitude, angles[i].longitude, angles[i].altitude, baseRadius);
+                posAttr.setXYZ(i, p.x, p.y, p.z);
+                color.setHSL(0.7 * (1 - (p.w + radiusMax) / (2 * radiusMax)), 1, 0.5);
+                colorAttr.setXYZ(i, color.r, color.g, color.b);
+            }
+            posAttr.needsUpdate = true;
+            colorAttr.needsUpdate = true;
+        }
+
+        async function performStepCPU() {
+            if (currentStep >= totalSteps) return;
+            const prevStart = (currentStep - 1) * pointsPerStep;
+            const currStart = currentStep * pointsPerStep;
+            const newRadius = radiusPrev + radiusStep;
+            const color = new THREE.Color();
+            const currentPoints = [];
+
+            for (let i = 0; i < pointsPerStep; i++)
+                currentPoints.push(polarToCartesian(angles[prevStart + i].latitude, angles[prevStart + i].longitude, angles[prevStart + i].altitude, 1));
+
+            for (let i = 0; i < pointsPerStep; i++) {
+                let f = { x: 0, y: 0, z: 0, w: 0 };
+                for (let j = 0; j < pointsPerStep; j++) {
+                    if (i === j) continue;
+                    const dx = currentPoints[i].x - currentPoints[j].x, dy = currentPoints[i].y - currentPoints[j].y, dz = currentPoints[i].z - currentPoints[j].z, dw = currentPoints[i].w - currentPoints[j].w;
+                    const d2 = dx * dx + dy * dy + dz * dz + dw * dw + 1e-6;
+                    const m = REPULSION / d2;
+                    f.x += dx / Math.sqrt(d2) * m; f.y += dy / Math.sqrt(d2) * m; f.z += dz / Math.sqrt(d2) * m; f.w += dw / Math.sqrt(d2) * m;
+                }
+                velocities[i].x = velocities[i].x * DAMPING + f.x;
+                velocities[i].y = velocities[i].y * DAMPING + f.y;
+                velocities[i].z = velocities[i].z * DAMPING + f.z;
+                velocities[i].w = velocities[i].w * DAMPING + f.w;
+
+                angles[currStart + i] = cartesianToPolar({ x: currentPoints[i].x + velocities[i].x, y: currentPoints[i].y + velocities[i].y, z: currentPoints[i].z + velocities[i].z, w: currentPoints[i].w + velocities[i].w });
+                const p = polarToCartesian(angles[currStart + i].latitude, angles[currStart + i].longitude, angles[currStart + i].altitude, newRadius);
+                posAttr.setXYZ(currStart + i, p.x, p.y, p.z);
+                color.setHSL(0.7 * (1 - (p.w + radiusMax) / (2 * radiusMax)), 1, 0.5);
+                colorAttr.setXYZ(currStart + i, color.r, color.g, color.b);
+            }
+            radiusPrev = newRadius;
+            currentStep++;
+            posAttr.needsUpdate = true;
+            colorAttr.needsUpdate = true;
+            updateUIDisplay();
+        }
+
+        // --- WebGPU SYNC ---
+        let device, pipeline, posBuf, velBuf, paramBuf, bindGroup;
+        async function initWebGPU() {
+            if (!navigator.gpu) return false;
+            const adapter = await navigator.gpu.requestAdapter();
+            device = await adapter.requestDevice();
+            pipeline = device.createComputePipeline({ layout: 'auto', compute: { module: device.createShaderModule({ code: shaderCode }), entryPoint: 'main' } });
+
+            posBuf = device.createBuffer({ size: count * 16, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST });
+            velBuf = device.createBuffer({ size: pointsPerStep * 16, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
+            paramBuf = device.createBuffer({ size: 32, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
+
+            const initialData = new Float32Array(count * 4);
+            for (let i = 0; i < pointsPerStep; i++) {
+                const p = polarToCartesian(angles[i].latitude, angles[i].longitude, angles[i].altitude, baseRadius);
+                initialData[i * 4] = p.x; initialData[i * 4 + 1] = p.y; initialData[i * 4 + 2] = p.z; initialData[i * 4 + 3] = p.w;
+            }
+            device.queue.writeBuffer(posBuf, 0, initialData);
+            bindGroup = device.createBindGroup({
+                layout: pipeline.getBindGroupLayout(0), entries: [
+                    { binding: 0, resource: { buffer: posBuf } }, { binding: 1, resource: { buffer: velBuf } }, { binding: 2, resource: { buffer: paramBuf } }
+                ]
+            });
+            return true;
+        }
+
+        async function finalSyncGPU() {
+            const readBuf = device.createBuffer({ size: count * 16, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+            const enc = device.createCommandEncoder();
+            enc.copyBufferToBuffer(posBuf, 0, readBuf, 0, count * 16);
+            device.queue.submit([enc.finish()]);
+            await readBuf.mapAsync(GPUMapMode.READ);
+            const data = new Float32Array(readBuf.getMappedRange());
+            const color = new THREE.Color();
+            for (let i = 0; i < count; i++) {
+                const x = data[i * 4], y = data[i * 4 + 1], z = data[i * 4 + 2], w = data[i * 4 + 3];
+                if (x !== 0 || y !== 0) {
+                    posAttr.setXYZ(i, x, y, z);
+                    color.setHSL(0.7 * (1 - (w + radiusMax) / (2 * radiusMax)), 1, 0.5);
+                    colorAttr.setXYZ(i, color.r, color.g, color.b);
+                }
+            }
+            posAttr.needsUpdate = true;
+            colorAttr.needsUpdate = true;
+            readBuf.unmap(); readBuf.destroy();
+        }
+
+        function updateUIDisplay() {
+            document.getElementById('stepCounter').innerText = currentStep;
+            document.getElementById('radVal').innerText = radiusPrev.toFixed(2);
+        }
+
+        const runAuto = async (mode) => {
+            const isGPU = mode === 'GPU';
+            document.querySelectorAll('button').forEach(b => b.disabled = true);
+            const start = performance.now();
+
+            if (isGPU) {
+                if (!device) await initWebGPU();
+                while (currentStep < totalSteps) {
+                    const currStart = currentStep * pointsPerStep;
+                    const newRadius = radiusPrev + radiusStep;
+
+                    device.queue.writeBuffer(paramBuf, 0, new Float32Array([
+                        DAMPING, REPULSION, newRadius, currStart, pointsPerStep
+                    ]));
+
+                    const encoder = device.createCommandEncoder();
+                    const pass = encoder.beginComputePass();
+                    pass.setPipeline(pipeline);
+                    pass.setBindGroup(0, bindGroup);
+                    pass.dispatchWorkgroups(Math.ceil(pointsPerStep / 64));
+                    pass.end();
+                    device.queue.submit([encoder.finish()]);
+
+                    radiusPrev = newRadius;
+                    currentStep++;
+                }
+                await finalSyncGPU();
+            } else {
+                while (currentStep < totalSteps) {
+                    await performStepCPU();
+                    await new Promise(r => requestAnimationFrame(r));
+                }
+            }
+
+            const end = performance.now();
+            updateUIDisplay();
+            document.getElementById('timeResult').innerText = `Итог (${mode}): ${((end - start) / 1000).toFixed(3)} сек.`;
+            document.querySelectorAll('button').forEach(b => b.disabled = false);
+        };
+
+        document.getElementById('stepBtn').onclick = () => performStepCPU();
+        document.getElementById('startBtn').onclick = () => runAuto('CPU');
+        document.getElementById('gpuBtn').onclick = () => runAuto('GPU');
+
+        function animate() { requestAnimationFrame(animate); controls.update(); renderer.render(scene, camera); }
+        initPoints();
+        animate();
+    </script>
+</body>
+</html>

@@ -61,8 +61,8 @@
     let velocities = [];
 
     // --- КОНФИГУРАЦИЯ ---
-    const totalSteps = 10;
-    const pointsPerStep = 5;
+    const totalSteps = 100;
+    const pointsPerStep = 500;
     const count = totalSteps * pointsPerStep;
 
     const baseRadius = 0.1;
@@ -72,16 +72,14 @@
     let currentStep = 1;
     let radiusPrev = baseRadius;
 
-/*	
     // Массив данных для углов с новыми названиями
     const angles = new Array(count).fill(null).map(() => ({ 
         latitude: 0, 
         longitude: 0, 
         altitude: 0 
     }));
-*/	
 
-	//Все точки, противоположные точке 0, имеют близкие координаты.
+	/*
 	const angles = [
 		{altitude: Math.PI / 2, latitude: Math.PI / 19, longitude: 0},//0
 		{altitude: Math.PI / 2, latitude: Math.PI / 20, longitude: 0},//1
@@ -89,6 +87,7 @@
 		{altitude: Math.PI / 4, latitude: Math.PI / 22, longitude: -Math.PI / 2},//3
 		{altitude: Math.PI / 5, latitude: Math.PI / 23, longitude: Math.PI},//4
 	];
+	*/	
     
 	const a = 50;//0.5;
 	const REPULSION_STRENGTH = a / angles.length;//0.05; // Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
@@ -221,9 +220,10 @@
         for (let i = 0; i < count; i++) {
             let p;
             if (i < pointsPerStep) {
+				/*
 				const verticeAngles = angles[i];
                 p = polarToCartesian(verticeAngles.latitude, verticeAngles.longitude, verticeAngles.altitude, baseRadius);
-				/*
+				*/
                 const u1 = Math.random(), u2 = Math.random(), u3 = Math.random(), u4 = Math.random();
                 const r0 = Math.sqrt(-2.0 * Math.log(u1 || 0.0001)) * Math.cos(2.0 * Math.PI * u2);
                 const r1 = Math.sqrt(-2.0 * Math.log(u1 || 0.0001)) * Math.sin(2.0 * Math.PI * u2);
@@ -238,10 +238,9 @@
 
                 angles[i] = { latitude, longitude, altitude };
                 p = polarToCartesian(latitude, longitude, altitude, baseRadius);
-				*/
             } else {
                 p = { x: 0, y: 0, z: 0, w: 0 };
-				angles.push({altitude: 0, latitude: 0, longitude: 0});
+				//angles.push({altitude: 0, latitude: 0, longitude: 0});
             }
 
             posAttr.setXYZ(i, p.x, p.y, p.z);
