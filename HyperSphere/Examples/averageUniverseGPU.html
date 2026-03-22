@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>averageUniverse - Dynamic GPU</title>
+    <title>averageUniverse - Full Debug 4D</title>
     <style>
         body {
             margin: 0;
@@ -56,12 +56,22 @@
             background: rgba(0,0,0,0.6);
             padding: 8px;
             border-radius: 4px;
+            min-width: 200px;
         }
 
         .timer {
             color: #00ffcc;
             font-weight: bold;
             margin-top: 5px;
+            display: block;
+        }
+
+        #gpuNameDisplay {
+            color: #777;
+            font-size: 11px;
+            margin-top: 3px;
+            display: block;
+            font-style: italic;
         }
     </style>
 </head>
@@ -75,7 +85,8 @@
         </div>
         <div id="info">
             Шаг: <span id="stepCounter">1</span> / 100 | R: <span id="radVal">0.10</span>
-            <div id="timeResult" class="timer"></div>
+            <span id="timeResult" class="timer"></span>
+            <span id="gpuNameDisplay"></span>
         </div>
     </div>
 
@@ -93,8 +104,9 @@
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
         // --- КОНФИГУРАЦИЯ ---
+        const DEBUG_MODE = true; // Выводить x,y,z,w силы в консоль
         const totalSteps = 100;
-        const pointsPerStep = 500; // Теперь это значение учитывается и в GPU
+        const pointsPerStep = 500;
         const count = totalSteps * pointsPerStep;
         const baseRadius = 0.1;
         const radiusMax = 2;
@@ -107,7 +119,7 @@
         let velocities = Array.from({ length: pointsPerStep }, () => ({ x: 0, y: 0, z: 0, w: 0 }));
         const angles = new Array(count).fill(null).map(() => ({ latitude: 0, longitude: 0, altitude: 0 }));
 
-        // --- THREE.JS ---
+        // --- THREE.JS SCENE ---
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 1000);
         camera.position.set(3, 3, 3);
@@ -123,18 +135,13 @@
         geometry.setAttribute('color', colorAttr);
         scene.add(new THREE.Points(geometry, new THREE.PointsMaterial({ size: 0.015, vertexColors: true })));
 
-        // --- WebGPU SHADER (Динамический pointsPerStep) ---
+        // --- WebGPU SHADER ---
         const shaderCode = `
-            struct Params {
-                damping: f32,
-                repulsion: f32,
-                radius: f32,
-                stepOffset: f32,
-                pointsPerStep: f32
-            };
+            struct Params { damping: f32, repulsion: f32, radius: f32, stepOffset: f32, pointsPerStep: f32 };
             @group(0) @binding(0) var<storage, read_write> positions: array<vec4<f32>>;
             @group(0) @binding(1) var<storage, read_write> velocities: array<vec4<f32>>;
             @group(0) @binding(2) var<uniform> p: Params;
+            @group(0) @binding(3) var<storage, read_write> debugForce: vec4<f32>;
 
             @compute @workgroup_size(64)
             fn main(@builtin(global_invocation_id) id: vec3<u32>) {
@@ -157,13 +164,15 @@
                     force += normalize(diff) * (p.repulsion / d2);
                 }
 
+                if (i == 0u) { debugForce = force; }
+
                 let v = velocities[i] * p.damping + force;
                 velocities[i] = v;
                 positions[currOffset + i] = normalize(p1_n + v) * p.radius;
             }
         `;
 
-        // --- CPU МАТЕМАТИКА ---
+        // --- МАТЕМАТИКА CPU ---
         const polarToCartesian = (la, lo, al, r) => {
             const r_xyz = r * Math.sin(al), w = r * Math.cos(al);
             return { x: r_xyz * Math.cos(la) * Math.cos(lo), y: r_xyz * Math.cos(la) * Math.sin(lo), z: r_xyz * Math.sin(la), w };
@@ -185,8 +194,7 @@
                 color.setHSL(0.7 * (1 - (p.w + radiusMax) / (2 * radiusMax)), 1, 0.5);
                 colorAttr.setXYZ(i, color.r, color.g, color.b);
             }
-            posAttr.needsUpdate = true;
-            colorAttr.needsUpdate = true;
+            posAttr.needsUpdate = true; colorAttr.needsUpdate = true;
         }
 
         async function performStepCPU() {
@@ -222,22 +230,35 @@
             }
             radiusPrev = newRadius;
             currentStep++;
-            posAttr.needsUpdate = true;
-            colorAttr.needsUpdate = true;
+            posAttr.needsUpdate = true; colorAttr.needsUpdate = true;
             updateUIDisplay();
         }
 
-        // --- WebGPU SYNC ---
-        let device, pipeline, posBuf, velBuf, paramBuf, bindGroup;
+        // --- WebGPU ---
+        let device, pipeline, posBuf, velBuf, paramBuf, debugBuf, bindGroup, activeGpuName;
+
         async function initWebGPU() {
             if (!navigator.gpu) return false;
-            const adapter = await navigator.gpu.requestAdapter();
+            let adapter;
+            try {
+                adapter = await navigator.gpu.requestAdapter({ powerPreference: 'high-performance' });
+            } catch (e) {
+                adapter = await navigator.gpu.requestAdapter();
+            }
+            if (!adapter) return false;
             device = await adapter.requestDevice();
-            pipeline = device.createComputePipeline({ layout: 'auto', compute: { module: device.createShaderModule({ code: shaderCode }), entryPoint: 'main' } });
 
+            try {
+                const info = (adapter.info) ? adapter.info : (await adapter.requestAdapterInfo());
+                activeGpuName = info.description || info.vendor || "WebGPU Device";
+                if (adapter.isFallbackAdapter) activeGpuName += " (Fallback Mode)";
+            } catch (e) { activeGpuName = "High Performance GPU"; }
+
+            pipeline = device.createComputePipeline({ layout: 'auto', compute: { module: device.createShaderModule({ code: shaderCode }), entryPoint: 'main' } });
             posBuf = device.createBuffer({ size: count * 16, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST });
             velBuf = device.createBuffer({ size: pointsPerStep * 16, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
             paramBuf = device.createBuffer({ size: 32, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
+            debugBuf = device.createBuffer({ size: 16, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
 
             const initialData = new Float32Array(count * 4);
             for (let i = 0; i < pointsPerStep; i++) {
@@ -245,12 +266,28 @@
                 initialData[i * 4] = p.x; initialData[i * 4 + 1] = p.y; initialData[i * 4 + 2] = p.z; initialData[i * 4 + 3] = p.w;
             }
             device.queue.writeBuffer(posBuf, 0, initialData);
+
             bindGroup = device.createBindGroup({
                 layout: pipeline.getBindGroupLayout(0), entries: [
-                    { binding: 0, resource: { buffer: posBuf } }, { binding: 1, resource: { buffer: velBuf } }, { binding: 2, resource: { buffer: paramBuf } }
+                    { binding: 0, resource: { buffer: posBuf } }, { binding: 1, resource: { buffer: velBuf } },
+                    { binding: 2, resource: { buffer: paramBuf } }, { binding: 3, resource: { buffer: debugBuf } }
                 ]
             });
             return true;
+        }
+
+        async function readDebugValue(step) {
+            const readBuf = device.createBuffer({ size: 16, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+            const encoder = device.createCommandEncoder();
+            encoder.copyBufferToBuffer(debugBuf, 0, readBuf, 0, 16);
+            device.queue.submit([encoder.finish()]);
+            await readBuf.mapAsync(GPUMapMode.READ);
+            const f = new Float32Array(readBuf.getMappedRange());
+
+            // ВЫВОД ВСЕХ 4 КООРДИНАТ
+            console.log(`[GPU Step ${step}] Force Point 0: x=${f[0].toFixed(6)}, y=${f[1].toFixed(6)}, z=${f[2].toFixed(6)}, w=${f[3].toFixed(6)}`);
+
+            readBuf.unmap(); readBuf.destroy();
         }
 
         async function finalSyncGPU() {
@@ -265,12 +302,12 @@
                 const x = data[i * 4], y = data[i * 4 + 1], z = data[i * 4 + 2], w = data[i * 4 + 3];
                 if (x !== 0 || y !== 0) {
                     posAttr.setXYZ(i, x, y, z);
-                    color.setHSL(0.7 * (1 - (w + radiusMax) / (2 * radiusMax)), 1, 0.5);
+                    const t = (w + radiusMax) / (2 * radiusMax);
+                    color.setHSL(0.7 * (1 - t), 1, 0.5);
                     colorAttr.setXYZ(i, color.r, color.g, color.b);
                 }
             }
-            posAttr.needsUpdate = true;
-            colorAttr.needsUpdate = true;
+            posAttr.needsUpdate = true; colorAttr.needsUpdate = true;
             readBuf.unmap(); readBuf.destroy();
         }
 
@@ -286,24 +323,19 @@
 
             if (isGPU) {
                 if (!device) await initWebGPU();
+                document.getElementById('gpuNameDisplay').innerText = activeGpuName;
                 while (currentStep < totalSteps) {
                     const currStart = currentStep * pointsPerStep;
                     const newRadius = radiusPrev + radiusStep;
-
-                    device.queue.writeBuffer(paramBuf, 0, new Float32Array([
-                        DAMPING, REPULSION, newRadius, currStart, pointsPerStep
-                    ]));
-
+                    device.queue.writeBuffer(paramBuf, 0, new Float32Array([DAMPING, REPULSION, newRadius, currStart, pointsPerStep]));
                     const encoder = device.createCommandEncoder();
                     const pass = encoder.beginComputePass();
-                    pass.setPipeline(pipeline);
-                    pass.setBindGroup(0, bindGroup);
+                    pass.setPipeline(pipeline); pass.setBindGroup(0, bindGroup);
                     pass.dispatchWorkgroups(Math.ceil(pointsPerStep / 64));
                     pass.end();
                     device.queue.submit([encoder.finish()]);
-
-                    radiusPrev = newRadius;
-                    currentStep++;
+                    if (DEBUG_MODE) await readDebugValue(currentStep);
+                    radiusPrev = newRadius; currentStep++;
                 }
                 await finalSyncGPU();
             } else {
@@ -324,8 +356,7 @@
         document.getElementById('gpuBtn').onclick = () => runAuto('GPU');
 
         function animate() { requestAnimationFrame(animate); controls.update(); renderer.render(scene, camera); }
-        initPoints();
-        animate();
+        initPoints(); animate();
     </script>
 </body>
 </html>
