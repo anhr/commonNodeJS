@@ -84,7 +84,7 @@
             <button id="gpuBtn">Старт (GPU)</button>
         </div>
         <div id="info">
-            Шаг: <span id="stepCounter">1</span> / 100 | R: <span id="radVal">0.10</span>
+            Шаг: <span id="stepCounter">1</span> / <span id="totalSteps">100</span> | R: <span id="radVal">0.10</span>
             <span id="timeResult" class="timer"></span>
             <span id="gpuNameDisplay"></span>
         </div>
@@ -104,15 +104,18 @@
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
         // --- КОНФИГУРАЦИЯ ---
-        const DEBUG_MODE = true; // Выводить x,y,z,w силы в консоль
-        const totalSteps = 100;
-        const pointsPerStep = 500;
+        const DEBUG_MODE = false;
+        const RANDOM_POINTS = DEBUG_MODE ? false : true;//Случайные точки во время инициализации
+        const totalSteps = RANDOM_POINTS ? 100 : 10;
+        const pointsPerStep = RANDOM_POINTS ? 500 : 5;
         const count = totalSteps * pointsPerStep;
         const baseRadius = 0.1;
         const radiusMax = 2;
         const radiusStep = (radiusMax - baseRadius) / (totalSteps - 1);
         const DAMPING = 0.95;
         const REPULSION = 50 / pointsPerStep;
+
+        document.getElementById('totalSteps').innerText = totalSteps;
 
         let currentStep = 1;
         let radiusPrev = baseRadius;
@@ -185,10 +188,19 @@
 
         function initPoints() {
             const color = new THREE.Color();
+            if (!RANDOM_POINTS) {
+                angles[0] = {altitude: Math.PI / 2, latitude: Math.PI / 19, longitude: 0};
+                angles[1] = {altitude: Math.PI / 2, latitude: Math.PI / 20, longitude: 0};
+                angles[2] = {altitude: Math.PI / 3, latitude: Math.PI / 21, longitude: Math.PI / 2};
+                angles[3] = {altitude: Math.PI / 4, latitude: Math.PI / 22, longitude: -Math.PI / 2};
+                angles[4] = {altitude: Math.PI / 5, latitude: Math.PI / 23, longitude: Math.PI};
+            }
             for (let i = 0; i < pointsPerStep; i++) {
-                const u = Array.from({ length: 4 }, () => Math.random() * 2 - 1);
-                const norm = Math.sqrt(u.reduce((a, b) => a + b * b, 0)) || 1;
-                angles[i] = cartesianToPolar({ x: u[0] / norm, y: u[1] / norm, z: u[2] / norm, w: u[3] / norm });
+                if (RANDOM_POINTS){
+                    const u = Array.from({ length: 4 }, () => Math.random() * 2 - 1);
+                    const norm = Math.sqrt(u.reduce((a, b) => a + b * b, 0)) || 1;
+                    angles[i] = cartesianToPolar({ x: u[0] / norm, y: u[1] / norm, z: u[2] / norm, w: u[3] / norm });
+                }
                 const p = polarToCartesian(angles[i].latitude, angles[i].longitude, angles[i].altitude, baseRadius);
                 posAttr.setXYZ(i, p.x, p.y, p.z);
                 color.setHSL(0.7 * (1 - (p.w + radiusMax) / (2 * radiusMax)), 1, 0.5);
