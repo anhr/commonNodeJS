@@ -107,7 +107,7 @@
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
         // --- КОНФИГУРАЦИЯ ---
-        const DEBUG_MODE = false;
+        const DEBUG_MODE = true;
         const RANDOM_POINTS = !DEBUG_MODE;
         const totalSteps = RANDOM_POINTS ? 100 : 10;
         const pointsPerStep = RANDOM_POINTS ? 500 : 5;
@@ -117,7 +117,7 @@
         const radiusMax = 2;
         const radiusStep = (radiusMax - baseRadius) / (totalSteps - 1);
         const DAMPING = 0.95;
-        const REPULSION = 50 / pointsPerStep;
+        const REPULSION_STRENGTH = 50 / pointsPerStep;
 
         let currentStep = 1;
         let radiusPrev = baseRadius;
@@ -144,7 +144,7 @@
 
         // --- WebGPU SHADER ---
         const shaderCode = `
-                struct Params { damping: f32, repulsion: f32, radius: f32, stepOffset: f32, pointsPerStep: f32 };
+                struct Params { damping: f32, repulsionStrength: f32, radius: f32, stepOffset: f32, pointsPerStep: f32 };
                 struct PolarAngles { latitude: f32, longitude: f32, altitude: f32, _pad: f32 };
 
                 @group(0) @binding(0) var<storage, read_write> positions: array<vec4<f32>>;
@@ -178,7 +178,7 @@
                         let p2_n = normalize(positions[prevOffset + j]);
                         let diff = p1_n - p2_n;
                         let d2 = dot(diff, diff) + 1e-6;
-                        force += normalize(diff) * (p.repulsion / d2);
+                        force += normalize(diff) * (p.repulsionStrength / d2);
                     }
 
                     if (i == 0u) { debugForce = force; }
@@ -325,7 +325,7 @@
                     const p2 = polarToCartesian(angles[prevStart + j].latitude, angles[prevStart + j].longitude, angles[prevStart + j].altitude, 1);
                     const dx = p1.x - p2.x, dy = p1.y - p2.y, dz = p1.z - p2.z, dw = p1.w - p2.w;
                     const d2 = dx * dx + dy * dy + dz * dz + dw * dw + 1e-6;
-                    const m = REPULSION / d2;
+                    const m = REPULSION_STRENGTH / d2;
                     f.x += dx / Math.sqrt(d2) * m; f.y += dy / Math.sqrt(d2) * m; f.z += dz / Math.sqrt(d2) * m; f.w += dw / Math.sqrt(d2) * m;
                 }
                 velocities[i].x = velocities[i].x * DAMPING + f.x;
@@ -392,7 +392,7 @@
                 await initWebGPU(idx);
                 while (currentStep < totalSteps) {
                     const newRadius = radiusPrev + radiusStep;
-                    device.queue.writeBuffer(paramBuf, 0, new Float32Array([DAMPING, REPULSION, newRadius, currentStep * pointsPerStep, pointsPerStep]));
+                    device.queue.writeBuffer(paramBuf, 0, new Float32Array([DAMPING, REPULSION_STRENGTH, newRadius, currentStep * pointsPerStep, pointsPerStep]));
                     const encoder = device.createCommandEncoder();
                     const pass = encoder.beginComputePass();
                     pass.setPipeline(pipeline); pass.setBindGroup(0, bindGroup);
