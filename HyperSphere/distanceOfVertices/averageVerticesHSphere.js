@@ -134,46 +134,29 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 	// --- Итерационный процесс движения точек ---
 	function iterationStep() {
 		
-//		if (!isAnimating) return;
-
 		// Вычисляем силы отталкивания для каждой точки
 		const forces = new Array(angles.length).fill(null).map(() => ({ x: 0, y: 0, z: 0, w: 0 }));
 
 		let timestamp = classSettings.debug ? window.performance.now() : undefined;
 
 		// Для каждой пары точек
-//		for (let i = 0; i < angles.length; i++)
 		let progressBar, i = 0;// verticeId = 0;
 		const step = () => {
 			
 			progressBar.value = i;
 			const userData = settings.bufferGeometry.userData;
-//			const pos1 = _this.a2v(angles[i].latitude, angles[i].longitude);
-//			const pos1 = polarToCartesian(angles[i].latitude, angles[i].longitude);
 			const pos1 = settings.overriddenProperties.position(position, i, userData);
-/*			
-			settings.bufferGeometry.userData.timeId--;
-			const pos1 = position[i];
-			settings.bufferGeometry.userData.timeId++;
-*/			
 			const angles1 = utils.cartesianToAngles(pos1);
 
-//			let boRandomVertice = true;
 			let pos2, angles2;
 			for (let j = i + 1; j < angles.length; j++) {
 				
-//				const pos2 = polarToCartesian(angles[j].latitude, angles[j].longitude);
 				if (!pos2) {
 					
 					pos2 = settings.overriddenProperties.position(position, j, userData);
 					angles2 = utils.cartesianToAngles(pos2);
 
 				}
-/*				
-				settings.bufferGeometry.userData.timeId--;
-				const pos2 = position[j];
-				settings.bufferGeometry.userData.timeId++;
-*/				
 
 				// Вектор от i к j
 				let dx = pos1.x - pos2.x;
@@ -183,12 +166,8 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 
 				let dist = Math.sqrt(dx * dx + dy * dy + dz * dz + dw * dw);
 
-//				if (dist < 0.001) {
-
 				const arc = π - hyperbola((dist / classSettings.overriddenProperties.r(settings.bufferGeometry.userData.timeId - 1) / 2) * π);
 				userData.timeId--;//Во вселенной углы берутся из предыдушего шага проигрывателя
-//					const angles1 = angles[i];
-//					const angles2 = angles[j];
 				const timeIdOld = settings.guiPoints ? settings.guiPoints.timeId : undefined;
 				if (settings.guiPoints) settings.guiPoints.timeId = userData.timeId;
 				const r = classSettings.overriddenProperties.rTime();
@@ -198,26 +177,10 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 					
 				// Случайное направление для точки j (может быть противоположным для лучшего разведения)
 				const noise2 = utils.anglesToCartesian(RandomVertice.get(arc, utils.angles([angles2[0], angles2[1], angles2[2]]), classSettings, RandomVertice), r);
-//					angles[j] = RandomVertice.get(arc, utils.angles([angles2[0], angles2[1]]), classSettings, RandomVertice);
 				if (settings.guiPoints) settings.guiPoints.timeId = timeIdOld;
 				userData.timeId++;
 
-/*					
-				if (dist === 0) {
-					
-					// Применяем шум к позициям через скорости
-					velocities[i].x += noise1.x;
-					velocities[i].y += noise1.y;
-					velocities[i].z += noise1.z;
-					
-					velocities[j].x += noise2.x;
-					velocities[j].y += noise2.y;
-					velocities[j].z += noise2.z;
-
-				}
-*/					
 				// Применяем шум к позициям через скорости
-//					const antiDist = r - dist / π;
 				const antiDist = arc / π;
 				if(antiDist < 0) console.error(sAverageVertices + ': iterationStep. Invalid antiDist = ' + antiDist);
 				velocities[i].x += noise1.x * antiDist;
@@ -237,7 +200,6 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 				dw = noise1.w - noise2.w;
 
 				dist = Math.sqrt(dx * dx + dy * dy + dz * dz + dw * dw);
-//				boRandomVertice = true;
 				pos2 = undefined;
 				
 				// Сила обратно пропорциональна расстоянию
@@ -270,19 +232,10 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 
 				if (classSettings.debug) classSettings.debug.logTimestamp('Play step. Average vertices. ', timestamp);
 
-//				if (classSettings.debug) classSettings.debug.logTimestamp('Для каждой пары точек. ', timestamp);
-//				timestamp = classSettings.debug ? window.performance.now() : undefined;
-
 				// Применяем силы к точкам
 				for (let i = 0; i < angles.length; i++) {
 
-					//			const pos = polarToCartesian(angles[i].latitude, angles[i].longitude);
 					const pos = settings.overriddenProperties.position(position, i, userData);
-/*					
-					settings.bufferGeometry.userData.timeId--;
-					const pos = position[i];
-					settings.bufferGeometry.userData.timeId++;
-*/					
 					const velocitie = velocities[i],
 						force = forces[i];
 
@@ -292,22 +245,12 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 					velocitie.z = velocitie.z * DAMPING + force.z;
 					velocitie.w = velocitie.w * DAMPING + force.w;
 
-//					vertices.push(utils.cartesianToAngles({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z }));
-//					classSettings.overriddenProperties.pushMiddleVertice(data.timeId, utils.cartesianToAngles({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z }));
-//					position[i] = { x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z };
-//					classSettings.settings.guiPoints.timeId = data.timeId;
 					const vertice = utils.cartesianToAngles({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z, w: pos.w + velocitie.w }, classSettings.debug);
 					settings.overriddenProperties.editVertice(data.timeId, vertice, angles, i);
-//					classSettings.overriddenProperties.pushMiddleVertice(data.timeId, vertice);//добавляем новый item в classSettings.settings.object.geometry.times[data.timeId]. Это нужно что бы после выполнения шага проигрывателя при наедении мыши на вершину отображалась полная информачия о вершине
-//					angles[i] = vertice;
 
 				}
-//				angles.needsUpdate;
-
-//				if (classSettings.debug) classSettings.debug.logTimest
 
 				_this.bufferGeometry.attributes.position.needsUpdate = true
-//				overriddenProperties.updateVertices();//vertices);
 				
 				_this.onSelectSceneEnd(data.timeId);
 
