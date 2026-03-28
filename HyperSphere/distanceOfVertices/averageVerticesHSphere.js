@@ -135,7 +135,9 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 	function iterationStep() {
 		
 		// Вычисляем силы отталкивания для каждой точки
-		const forces = new Array(angles.length).fill(null).map(() => ({ x: 0, y: 0, z: 0, w: 0 }));
+//		const forces = new Array(angles.length).fill(null).map(() => ({ x: 0, y: 0, z: 0, w: 0 }));
+
+		const anglesTemp = new Array(angles.length).fill(null).map(() => ({ x: 0, y: 0, z: 0, w: 0 }));
 
 		let timestamp = classSettings.debug ? window.performance.now() : undefined;
 
@@ -145,24 +147,42 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 			
 			progressBar.value = i;
 			const userData = settings.bufferGeometry.userData;
-			const pos1 = settings.overriddenProperties.position(position, i, userData);
-			const angles1 = utils.cartesianToAngles(pos1);
+//			const pos1 = settings.overriddenProperties.position(position, i, userData);
+			const p1 = settings.overriddenProperties.position(position, i, userData);
+			const angles1 = utils.cartesianToAngles(p1);
 
-			let pos2, angles2;
-			for (let j = i + 1; j < angles.length; j++) {
+//			let pos2, angles2;
+			let fx = 0, fy = 0, fz = 0, fw = 0;
+			for (
+//				let j = i + 1;
+				let j = 0;//перебитаем все вершины для совместимости алгоритмов итерации на CPU и GPU. Для объяснения найти "во время выполнения шага итерации на CPU цикл" по ссылке https://gemini.google.com/share/94f727cf6035
+				j < angles.length; j++) {
 				
+				if (i === j) continue;
+
+//				const pos2 = settings.overriddenProperties.position(position, j, userData);
+				const p2 = settings.overriddenProperties.position(position, j, userData);
+				const angles2 = utils.cartesianToAngles(p2);
+/*
 				if (!pos2) {
 					
 					pos2 = settings.overriddenProperties.position(position, j, userData);
 					angles2 = utils.cartesianToAngles(pos2);
 
 				}
+*/					
 
 				// Вектор от i к j
+				let dx = p1.x - p2.x;
+				let dy = p1.y - p2.y;
+				let dz = p1.z - p2.z;
+				let dw = p1.w - p2.w;
+/*				
 				let dx = pos1.x - pos2.x;
 				let dy = pos1.y - pos2.y;
 				let dz = pos1.z - pos2.z;
 				let dw = pos1.w - pos2.w;
+*/				
 
 				let dist = Math.sqrt(dx * dx + dy * dy + dz * dz + dw * dw);
 
@@ -180,6 +200,7 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 				if (settings.guiPoints) settings.guiPoints.timeId = timeIdOld;
 				userData.timeId++;
 
+/*				
 				// Применяем шум к позициям через скорости
 				const antiDist = arc / π;
 				if(antiDist < 0) console.error(sAverageVertices + ': iterationStep. Invalid antiDist = ' + antiDist);
@@ -192,6 +213,7 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 				velocities[j].y += noise2.y * antiDist;
 				velocities[j].z += noise2.z * antiDist;
 				velocities[j].w += noise2.w * antiDist;
+*/				
 
 				// Вектор от i к j
 				dx = noise1.x - noise2.x;
@@ -199,10 +221,19 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 				dz = noise1.z - noise2.z;
 				dw = noise1.w - noise2.w;
 
-				dist = Math.sqrt(dx * dx + dy * dy + dz * dz + dw * dw);
-				pos2 = undefined;
+				const d2 = dx * dx + dy * dy + dz * dz + dw * dw;// + 1e-6;
+				dist = Math.sqrt(d2);
+//				dist = Math.sqrt(dx * dx + dy * dy + dz * dz + dw * dw);
+//				pos2 = undefined;
 				
 				// Сила обратно пропорциональна расстоянию
+				const m = REPULSION_STRENGTH / d2;
+				
+				fx += (dx / dist) * m;
+				fy += (dy / dist) * m;
+				fz += (dz / dist) * m;
+				fw += (dw / dist) * m;
+/*				
 				const forceMagnitude = REPULSION_STRENGTH / (dist * dist);
 
 				// Нормализуем вектор
@@ -223,8 +254,19 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 				forcesj.y -= dy * forceMagnitude;
 				forcesj.z -= dz * forceMagnitude;
 				forcesj.w -= dw * forceMagnitude;
+*/				
 
 			}
+			
+			velocities[i].x = velocities[i].x * DAMPING + fx;
+			velocities[i].y = velocities[i].y * DAMPING + fy;
+			velocities[i].z = velocities[i].z * DAMPING + fz;
+			velocities[i].w = velocities[i].w * DAMPING + fw;
+			
+			anglesTemp[i] = utils.cartesianToAngles({
+				x: p1.x + velocities[i].x, y: p1.y + velocities[i].y, z: p1.z + velocities[i].z, w: p1.w + velocities[i].w
+			});
+			
 			i += 1;
 			if (i >= angles.length) {
 
@@ -232,6 +274,9 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 
 				if (classSettings.debug) classSettings.debug.logTimestamp('Play step. Average vertices. ', timestamp);
 
+				if (angles.length != anglesTemp.length) console.error(sAverageVertices + ': iterationStep. angles.length != anglesTemp.length');
+				for (let i = 0; i < angles.length; i++) angles[i] = anglesTemp[i];
+/*				
 				// Применяем силы к точкам
 				for (let i = 0; i < angles.length; i++) {
 
@@ -249,6 +294,7 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 					settings.overriddenProperties.editVertice(data.timeId, vertice, angles, i);
 
 				}
+*/				
 
 				_this.bufferGeometry.attributes.position.needsUpdate = true
 				
