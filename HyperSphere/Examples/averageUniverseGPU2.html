@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>averageUniverse - Debug Sync Mode</title>
+    <title>averageUniverse - Meta-Programmed GPU</title>
     <style>
         body {
             margin: 0;
@@ -107,7 +107,7 @@
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
         // --- КОНФИГУРАЦИЯ ---
-        const DEBUG_MODE = true;
+        const DEBUG_MODE = false;
         const RANDOM_POINTS = !DEBUG_MODE;
         const totalSteps = RANDOM_POINTS ? 100 : 10;
         const pointsPerStep = RANDOM_POINTS ? 500 : 5;
@@ -142,55 +142,6 @@
         geometry.setAttribute('color', colorAttr);
         scene.add(new THREE.Points(geometry, new THREE.PointsMaterial({ size: 0.015, vertexColors: true })));
 
-        // --- WebGPU SHADER ---
-        const shaderCode = `
-                struct Params { damping: f32, repulsionStrength: f32, radius: f32, stepOffset: f32, pointsPerStep: f32 };
-                struct PolarAngles { latitude: f32, longitude: f32, altitude: f32, _pad: f32 };
-
-                @group(0) @binding(0) var<storage, read_write> positions: array<vec4<f32>>;
-                @group(0) @binding(1) var<storage, read_write> velocities: array<vec4<f32>>;
-                @group(0) @binding(2) var<uniform> p: Params;
-                @group(0) @binding(3) var<storage, read_write> debugForce: vec4<f32>;
-                @group(0) @binding(4) var<storage, read_write> anglesBuf: array<PolarAngles>;
-
-                fn gpuCartesianToPolar(v: vec4<f32>) -> PolarAngles {
-                    let R = sqrt(dot(v, v)) + 1e-10;
-                    let alt = acos(clamp(v.w / R, -1.0, 1.0));
-                    let rXYZ = sqrt(v.x*v.x + v.y*v.y + v.z*v.z) + 1e-10;
-                    let lat = asin(clamp(v.z / rXYZ, -1.0, 1.0));
-                    let lon = atan2(v.y, v.x);
-                    return PolarAngles(lat, lon, alt, 0.0);
-                }
-
-                @compute @workgroup_size(64)
-                fn main(@builtin(global_invocation_id) id: vec3<u32>) {
-                    let i = id.x;
-                    if (i >= u32(p.pointsPerStep)) { return; }
-
-                    let prevOffset = u32(p.stepOffset - p.pointsPerStep);
-                    let currOffset = u32(p.stepOffset);
-                    let p1 = positions[prevOffset + i];
-                    let p1_n = normalize(p1);
-
-                    var force = vec4<f32>(0.0);
-                    for (var j = 0u; j < u32(p.pointsPerStep); j++) {
-                        if (i == j) { continue; }
-                        let p2_n = normalize(positions[prevOffset + j]);
-                        let diff = p1_n - p2_n;
-                        let d2 = dot(diff, diff) + 1e-6;
-                        force += normalize(diff) * (p.repulsionStrength / d2);
-                    }
-
-                    if (i == 0u) { debugForce = force; }
-
-                    let v_new = velocities[i] * p.damping + force;
-                    velocities[i] = v_new;
-                    let next_pos_unit = normalize(p1_n + v_new);
-                    positions[currOffset + i] = next_pos_unit * p.radius;
-                    anglesBuf[currOffset + i] = gpuCartesianToPolar(next_pos_unit);
-                }
-            `;
-
         const polarToCartesian = (la, lo, al, r) => {
             const r_xyz = r * Math.sin(al), w = r * Math.cos(al);
             return { x: r_xyz * Math.cos(la) * Math.cos(lo), y: r_xyz * Math.cos(la) * Math.sin(lo), z: r_xyz * Math.sin(la), w };
@@ -201,52 +152,30 @@
             return { altitude: al, latitude: Math.asin(Math.min(1, Math.max(-1, v.z / rXYZ))), longitude: Math.atan2(v.y, v.x) };
         };
 
-        // --- WebGPU: ПОИСК АДАПТЕРОВ ---
+        // --- WebGPU: ИНИЦИАЛИЗАЦИЯ И КОДОГЕНЕРАЦИЯ ---
         let device, pipeline, posBuf, velBuf, paramBuf, debugBuf, anglesBufGPU, bindGroup;
         let availableAdapters = [];
 
         async function getSafeAdapterName(adapter, index) {
             if (!adapter) return `${index + 1}. Неизвестное устройство`;
             let name = "WebGPU Adapter";
-            if (adapter.info) {
-                name = adapter.info.description || adapter.info.vendor || name;
-            } else if (typeof adapter.requestAdapterInfo === 'function') {
-                try {
-                    const info = await adapter.requestAdapterInfo();
-                    name = info.description || info.vendor || name;
-                } catch (e) { name = "Protected GPU Name"; }
-            }
+            if (adapter.info) name = adapter.info.description || adapter.info.vendor || name;
             return `${index + 1}. ${name}`;
         }
 
         async function findAdapters() {
             const select = document.getElementById('gpuSelect');
-            if (!navigator.gpu) {
-                select.innerHTML = '<option value="-1">WebGPU не поддерживается</option>';
-                return;
-            }
+            if (!navigator.gpu) { select.innerHTML = '<option value="-1">WebGPU не поддерживается</option>'; return; }
             try {
-                availableAdapters = [];
-                if (navigator.gpu.enumerateAdapters) {
-                    availableAdapters = await navigator.gpu.enumerateAdapters();
-                }
+                if (navigator.gpu.enumerateAdapters) availableAdapters = await navigator.gpu.enumerateAdapters();
                 if (availableAdapters.length === 0) {
                     const high = await navigator.gpu.requestAdapter({ powerPreference: 'high-performance' });
-                    const low = await navigator.gpu.requestAdapter({ powerPreference: 'low-power' });
                     if (high) availableAdapters.push(high);
-                    if (low && low !== high) availableAdapters.push(low);
-                }
-                if (availableAdapters.length === 0) {
-                    select.innerHTML = '<option value="-1">Карты не найдены</option>';
-                    return;
                 }
                 select.innerHTML = '';
                 for (let i = 0; i < availableAdapters.length; i++) {
                     const displayName = await getSafeAdapterName(availableAdapters[i], i);
-                    const opt = document.createElement('option');
-                    opt.value = i;
-                    opt.text = displayName;
-                    select.appendChild(opt);
+                    const opt = document.createElement('option'); opt.value = i; opt.text = displayName; select.appendChild(opt);
                 }
             } catch (e) { select.innerHTML = '<option value="-1">Ошибка поиска</option>'; }
         }
@@ -257,13 +186,66 @@
             device = await adapter.requestDevice();
             document.getElementById('activeGpu').innerText = `Активен: ${await getSafeAdapterName(adapter, idx)}`;
 
+            // --- ГЕНЕРАЦИЯ ШЕЙДЕРА С ВШИТЫМИ КОНСТАНТАМИ ---
+            const dynamicShaderCode = `
+                    struct Params { radius: f32, stepOffset: f32 };
+                    struct PolarAngles { latitude: f32, longitude: f32, altitude: f32, _pad: f32 };
+
+                    @group(0) @binding(0) var<storage, read_write> positions: array<vec4<f32>>;
+                    @group(0) @binding(1) var<storage, read_write> velocities: array<vec4<f32>>;
+                    @group(0) @binding(2) var<uniform> p: Params;
+                    @group(0) @binding(3) var<storage, read_write> debugForce: vec4<f32>;
+                    @group(0) @binding(4) var<storage, read_write> anglesBuf: array<PolarAngles>;
+
+                    const DAMPING: f32 = ${DAMPING.toFixed(8)};
+                    const REPULSION: f32 = ${REPULSION_STRENGTH.toFixed(8)};
+                    const POINTS_PER_STEP: u32 = ${Math.floor(pointsPerStep)}u;
+
+                    fn gpuCartesianToPolar(v: vec4<f32>) -> PolarAngles {
+                        let R = sqrt(dot(v, v)) + 1e-10;
+                        let alt = acos(clamp(v.w / R, -1.0, 1.0));
+                        let rXYZ = sqrt(v.x*v.x + v.y*v.y + v.z*v.z) + 1e-10;
+                        let lat = asin(clamp(v.z / rXYZ, -1.0, 1.0));
+                        let lon = atan2(v.y, v.x);
+                        return PolarAngles(lat, lon, alt, 0.0);
+                    }
+
+                    @compute @workgroup_size(64)
+                    fn main(@builtin(global_invocation_id) id: vec3<u32>) {
+                        let i = id.x;
+                        if (i >= POINTS_PER_STEP) { return; }
+
+                        let prevOffset = u32(p.stepOffset - f32(POINTS_PER_STEP));
+                        let currOffset = u32(p.stepOffset);
+                        let p1 = positions[prevOffset + i];
+                        let p1_n = normalize(p1);
+
+                        var force = vec4<f32>(0.0);
+                        for (var j = 0u; j < POINTS_PER_STEP; j++) {
+                            if (i == j) { continue; }
+                            let p2_n = normalize(positions[prevOffset + j]);
+                            let diff = p1_n - p2_n;
+                            let d2 = dot(diff, diff) + 1e-6;
+                            force += normalize(diff) * (REPULSION / d2);
+                        }
+
+                        if (i == 0u) { debugForce = force; }
+
+                        let v_new = velocities[i] * DAMPING + force;
+                        velocities[i] = v_new;
+                        let next_pos_unit = normalize(p1_n + v_new);
+                        positions[currOffset + i] = next_pos_unit * p.radius;
+                        anglesBuf[currOffset + i] = gpuCartesianToPolar(next_pos_unit);
+                    }
+                `;
+
             pipeline = device.createComputePipeline({
-                layout: 'auto', compute: { module: device.createShaderModule({ code: shaderCode }), entryPoint: 'main' }
+                layout: 'auto', compute: { module: device.createShaderModule({ code: dynamicShaderCode }), entryPoint: 'main' }
             });
 
             posBuf = device.createBuffer({ size: count * 16, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST });
             velBuf = device.createBuffer({ size: pointsPerStep * 16, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
-            paramBuf = device.createBuffer({ size: 32, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
+            paramBuf = device.createBuffer({ size: 16, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
             debugBuf = device.createBuffer({ size: 16, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
             anglesBufGPU = device.createBuffer({ size: count * 16, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST });
 
@@ -287,7 +269,7 @@
         }
 
         async function finalSyncGPU() {
-            const readBuf = device.createBuffer({ size: count * 16, usage: GPUBufferUsage.COPY_DST | GPUMapMode.READ | GPUBufferUsage.MAP_READ });
+            const readBuf = device.createBuffer({ size: count * 16, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
             const enc = device.createCommandEncoder();
             enc.copyBufferToBuffer(anglesBufGPU, 0, readBuf, 0, count * 16);
             device.queue.submit([enc.finish()]);
@@ -310,7 +292,7 @@
             readBuf.unmap(); readBuf.destroy();
         }
 
-        // --- ЛОГИКА CPU (СИНХРОНИЗИРОВАННАЯ С GPU j = 0) ---
+        // --- ЛОГИКА CPU ---
         async function performStepCPU() {
             if (currentStep >= totalSteps) return;
             const prevStart = (currentStep - 1) * pointsPerStep;
@@ -320,40 +302,29 @@
 
             for (let i = 0; i < pointsPerStep; i++) {
                 const p1 = polarToCartesian(angles[prevStart + i].latitude, angles[prevStart + i].longitude, angles[prevStart + i].altitude, 1);
-
                 let fx = 0, fy = 0, fz = 0, fw = 0;
                 for (let j = 0; j < pointsPerStep; j++) {
                     if (i === j) continue;
                     const p2 = polarToCartesian(angles[prevStart + j].latitude, angles[prevStart + j].longitude, angles[prevStart + j].altitude, 1);
                     const dx = p1.x - p2.x, dy = p1.y - p2.y, dz = p1.z - p2.z, dw = p1.w - p2.w;
-                    const d2 = dx * dx + dy * dy + dz * dz + dw * dw;// + 1e-6;
+                    const d2 = dx * dx + dy * dy + dz * dz + dw * dw + 1e-6;
                     const dist = Math.sqrt(d2);
                     const m = REPULSION_STRENGTH / d2;
-
-                    fx += (dx / dist) * m;
-                    fy += (dy / dist) * m;
-                    fz += (dz / dist) * m;
-                    fw += (dw / dist) * m;
+                    fx += (dx / dist) * m; fy += (dy / dist) * m; fz += (dz / dist) * m; fw += (dw / dist) * m;
                 }
-
                 velocities[i].x = velocities[i].x * DAMPING + fx;
                 velocities[i].y = velocities[i].y * DAMPING + fy;
                 velocities[i].z = velocities[i].z * DAMPING + fz;
                 velocities[i].w = velocities[i].w * DAMPING + fw;
-
-                angles[currStart + i] = cartesianToPolar({
-                    x: p1.x + velocities[i].x, y: p1.y + velocities[i].y, z: p1.z + velocities[i].z, w: p1.w + velocities[i].w
-                });
+                angles[currStart + i] = cartesianToPolar({ x: p1.x + velocities[i].x, y: p1.y + velocities[i].y, z: p1.z + velocities[i].z, w: p1.w + velocities[i].w });
                 const p = polarToCartesian(angles[currStart + i].latitude, angles[currStart + i].longitude, angles[currStart + i].altitude, newRadius);
                 posAttr.setXYZ(currStart + i, p.x, p.y, p.z);
                 const t = (p.w + radiusMax) / (2 * radiusMax);
                 color.setHSL(0.7 * (1 - t), 1, 0.5);
                 colorAttr.setXYZ(currStart + i, color.r, color.g, color.b);
             }
-
             radiusPrev = newRadius; currentStep++;
-            posAttr.needsUpdate = true; colorAttr.needsUpdate = true;
-            updateDisplay();
+            posAttr.needsUpdate = true; colorAttr.needsUpdate = true; updateDisplay();
         }
 
         function initPoints() {
@@ -374,8 +345,7 @@
                 const p = polarToCartesian(angles[i].latitude, angles[i].longitude, angles[i].altitude, baseRadius);
                 posAttr.setXYZ(i, p.x, p.y, p.z);
                 const t = (p.w + radiusMax) / (2 * radiusMax);
-                color.setHSL(0.7 * (1 - t), 1, 0.5);
-                colorAttr.setXYZ(i, color.r, color.g, color.b);
+                color.setHSL(0.7 * (1 - t), 1, 0.5); colorAttr.setXYZ(i, color.r, color.g, color.b);
             }
             posAttr.needsUpdate = true; colorAttr.needsUpdate = true;
         }
@@ -391,20 +361,14 @@
             if (mode === 'GPU') {
                 const idx = parseInt(document.getElementById('gpuSelect').value);
                 if (idx === -1) { alert("Выберите карту"); document.querySelectorAll('button').forEach(b => b.disabled = false); return; }
-
                 const adapter = availableAdapters[idx];
-                const requiredBytes = count * 16;
-                const maxAllowedBytes = adapter.limits.maxStorageBufferBindingSize;
-
-                if (requiredBytes > maxAllowedBytes) {
-                    alert(`ОШИБКА: Превышен лимит памяти GPU!\n\nТекущее кол-во точек: ${count.toLocaleString()}\nДопустимое кол-во точек: ${Math.floor(maxAllowedBytes / 16).toLocaleString()}\n\nИтерация остановлена.`);
-                    document.querySelectorAll('button').forEach(b => b.disabled = false); return;
+                if ((count * 16) > adapter.limits.maxStorageBufferBindingSize) {
+                    alert("Превышен лимит памяти GPU!"); document.querySelectorAll('button').forEach(b => b.disabled = false); return;
                 }
-
                 await initWebGPU(idx);
                 while (currentStep < totalSteps) {
                     const newRadius = radiusPrev + radiusStep;
-                    device.queue.writeBuffer(paramBuf, 0, new Float32Array([DAMPING, REPULSION_STRENGTH, newRadius, currentStep * pointsPerStep, pointsPerStep]));
+                    device.queue.writeBuffer(paramBuf, 0, new Float32Array([newRadius, currentStep * pointsPerStep]));
                     const encoder = device.createCommandEncoder();
                     const pass = encoder.beginComputePass();
                     pass.setPipeline(pipeline); pass.setBindGroup(0, bindGroup);
