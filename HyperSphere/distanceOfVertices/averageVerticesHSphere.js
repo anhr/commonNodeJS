@@ -138,6 +138,7 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 //		const forces = new Array(angles.length).fill(null).map(() => ({ x: 0, y: 0, z: 0, w: 0 }));
 
 		const anglesTemp = new Array(angles.length).fill(null).map(() => ({ x: 0, y: 0, z: 0, w: 0 }));
+		const newRadius = classSettings.overriddenProperties.r(settings.bufferGeometry.userData.timeId - 1);
 
 		let timestamp = classSettings.debug ? window.performance.now() : undefined;
 
@@ -186,7 +187,7 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 
 				let dist = Math.sqrt(dx * dx + dy * dy + dz * dz + dw * dw);
 
-				const arc = π - hyperbola((dist / classSettings.overriddenProperties.r(settings.bufferGeometry.userData.timeId - 1) / 2) * π);
+				const arc = π - hyperbola((dist / newRadius / 2) * π);
 				userData.timeId--;//Во вселенной углы берутся из предыдушего шага проигрывателя
 				const timeIdOld = settings.guiPoints ? settings.guiPoints.timeId : undefined;
 				if (settings.guiPoints) settings.guiPoints.timeId = userData.timeId;
