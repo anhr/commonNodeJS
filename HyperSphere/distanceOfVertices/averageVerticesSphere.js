@@ -15,7 +15,6 @@
 import * as utils from '../utilsSphere.js'
 import ProgressBar from '../../ProgressBar/ProgressBar.js'
 import { RandomVerticeSphere as RandomVertice } from '../RandomVertice/randomVerticeSphere.js';
-import Position from '../position.js'
 
 const sAverageVertices = 'averageVertices', π = Math.PI;
 
@@ -27,20 +26,12 @@ const averageVertices = (data) => {
 	const _this = data.this,
 		classSettings = _this.classSettings,
 		settings = classSettings.settings,
-		overriddenProperties = classSettings.overriddenProperties,
+//		overriddenProperties = classSettings.overriddenProperties,
 		angles = settings.object.geometry.angles,
-		userData = settings.bufferGeometry.userData,
+//		userData = settings.bufferGeometry.userData,
 		position = classSettings.settings.bufferGeometry.userData.position,
-/*		
-		timeId = userData.timeId;
-	if (timeId != 0) userData.timeId -= 1;
-	const position = overriddenProperties.position,
-*/	
-//		vertices = [],//overriddenProperties.vertices(),
-		//vertices = overriddenProperties.position0.angles;
 		options = data.options,
 		t = data.t;
-//	userData.timeId = timeId;
 	/*
 Написать функцию на языке javascript.
 Задан массив : const angles = [].
@@ -70,101 +61,40 @@ const averageVertices = (data) => {
 	//20             0.05
 	//1000          0.0001
 	//5000          0.00001
-//	const a = 0.00001 * 5000;
 	const a = 0.5;
 	const REPULSION_STRENGTH = a / angles.length;//0.05; // Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
-/*	
-//	const a = (0.0001 - 0.05) / 1000, b = 0.05;
-	const a = (0.00001 - 0.05) / 5000, b = 0.05;
-	const REPULSION_STRENGTH = a * angles.length + b;//0.0001;//0.05; // Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
-*/	
-//	const REPULSION_STRENGTH = 0.00001;//0.05; // Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
 	const DAMPING = 0.95; // Демпфирование движения
-//	const RADIUS = data.this.r; // Радиус сферы
 	data.this.r; // Радиус сферы. Нужно что бы во вселенной в classSettings.settings.object.geometry.times был добавлен новый time. Это нужно что бы пользователь мышкой мог выбрать вершину в вселенной
 
-/*	
-	// Скорости точек (для инерции)
-	let velocities = [];
-*/	
 	// Инициализируем скорости
 	if (velocities.length === 0) velocities = new Array(angles.length).fill(null).map(() => ({ x: 0, y: 0, z: 0 }));
 
-/*	
-	// Преобразование полярных координат в декартовы
-	// Ось Z направлена через полюса, широта от -π/2 до π/2, долгота от -π до π
-	function polarToCartesian(latitude, longitude) {
-		return {
-			x: RADIUS * Math.cos(latitude) * Math.cos(longitude),
-			y: RADIUS * Math.cos(latitude) * Math.sin(longitude),
-			z: RADIUS * Math.sin(latitude)
-		};
-	}
-
-	// Преобразование декартовых координат в полярные
-	function cartesianToPolar(x, y, z) {
-		const r = Math.sqrt(x * x + y * y + z * z);
-		const latitude = Math.asin(z / r); // z - высота (ось через полюса)
-		const longitude = Math.atan2(y, x); // y/x для долготы
-		return {
-			latitude: latitude,
-			longitude: longitude
-		};
-	}
-
-	// Нормализация точки на сфере
-	function normalizeToSphere(x, y, z) {
-		const r = Math.sqrt(x * x + y * y + z * z);
-		return {
-			x: (x / r) * RADIUS,
-			y: (y / r) * RADIUS,
-			z: (z / r) * RADIUS
-		};
-	}
-*/
 	
 	// --- Итерационный процесс движения точек ---
 	function iterationStep() {
 		
-//		if (!isAnimating) return;
-
 		// Вычисляем силы отталкивания для каждой точки
 		const forces = new Array(angles.length).fill(null).map(() => ({ x: 0, y: 0, z: 0 }));
 		let timestamp = classSettings.debug ? window.performance.now() : undefined;
 
 		// Для каждой пары точек
-//		for (let i = 0; i < angles.length; i++)
 		let progressBar, i = 0;// verticeId = 0;
 		const step = () => {
 			
 			progressBar.value = i;
 			const userData = settings.bufferGeometry.userData;
-//			const pos1 = _this.a2v(angles[i].latitude, angles[i].longitude);
-//			const pos1 = polarToCartesian(angles[i].latitude, angles[i].longitude);
 			const pos1 = settings.overriddenProperties.position(position, i, userData);
-/*			
-			settings.bufferGeometry.userData.timeId--;
-			const pos1 = position[i];
-			settings.bufferGeometry.userData.timeId++;
-*/			
 			const angles1 = utils.cartesianToAngles(pos1);
 
-//			let boRandomVertice = true;
 			let pos2, angles2;
 			for (let j = i + 1; j < angles.length; j++) {
 				
-//				const pos2 = polarToCartesian(angles[j].latitude, angles[j].longitude);
 				if (!pos2) {
 					
 					pos2 = settings.overriddenProperties.position(position, j, userData);
 					angles2 = utils.cartesianToAngles(pos2);
 
 				}
-/*				
-				settings.bufferGeometry.userData.timeId--;
-				const pos2 = position[j];
-				settings.bufferGeometry.userData.timeId++;
-*/				
 
 				// Вектор от i к j
 				let dx = pos1.x - pos2.x;
@@ -173,12 +103,8 @@ const averageVertices = (data) => {
 
 				let dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-//				if (dist < 0.001) {
-
 				const arc = π - hyperbola((dist / classSettings.overriddenProperties.r(settings.bufferGeometry.userData.timeId - 1) / 2) * π);
 				userData.timeId--;//Во вселенной углы берутся из предыдушего шага проигрывателя
-//					const angles1 = angles[i];
-//					const angles2 = angles[j];
 				const timeIdOld = settings.guiPoints ? settings.guiPoints.timeId : undefined;
 				if (settings.guiPoints) settings.guiPoints.timeId = userData.timeId;
 				const r = classSettings.overriddenProperties.rTime();
@@ -188,26 +114,10 @@ const averageVertices = (data) => {
 					
 				// Случайное направление для точки j (может быть противоположным для лучшего разведения)
 				const noise2 = utils.anglesToCartesian(RandomVertice.get(arc, utils.angles([angles2[0], angles2[1]]), classSettings, RandomVertice), r);
-//					angles[j] = RandomVertice.get(arc, utils.angles([angles2[0], angles2[1]]), classSettings, RandomVertice);
 				if (settings.guiPoints) settings.guiPoints.timeId = timeIdOld;
 				userData.timeId++;
 
-/*					
-				if (dist === 0) {
-					
-					// Применяем шум к позициям через скорости
-					velocities[i].x += noise1.x;
-					velocities[i].y += noise1.y;
-					velocities[i].z += noise1.z;
-					
-					velocities[j].x += noise2.x;
-					velocities[j].y += noise2.y;
-					velocities[j].z += noise2.z;
-
-				}
-*/					
 				// Применяем шум к позициям через скорости
-//					const antiDist = r - dist / π;
 				const antiDist = arc / π;
 				if(antiDist < 0) console.error(sAverageVertices + ': iterationStep. Invalid antiDist = ' + antiDist);
 				velocities[i].x += noise1.x * antiDist;
@@ -224,7 +134,6 @@ const averageVertices = (data) => {
 				dz = noise1.z - noise2.z;
 
 				dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-//				boRandomVertice = true;
 				pos2 = undefined;
 				
 				// Сила обратно пропорциональна расстоянию
@@ -254,19 +163,10 @@ const averageVertices = (data) => {
 
 				if (classSettings.debug) classSettings.debug.logTimestamp('Play step. Average vertices. ', timestamp);
 
-//				if (classSettings.debug) classSettings.debug.logTimestamp('Для каждой пары точек. ', timestamp);
-//				timestamp = classSettings.debug ? window.performance.now() : undefined;
-
 				// Применяем силы к точкам
 				for (let i = 0; i < angles.length; i++) {
 
-					//			const pos = polarToCartesian(angles[i].latitude, angles[i].longitude);
 					const pos = settings.overriddenProperties.position(position, i, userData);
-/*					
-					settings.bufferGeometry.userData.timeId--;
-					const pos = position[i];
-					settings.bufferGeometry.userData.timeId++;
-*/					
 					const velocitie = velocities[i],
 						force = forces[i];
 
@@ -275,22 +175,12 @@ const averageVertices = (data) => {
 					velocitie.y = velocitie.y * DAMPING + force.y;
 					velocitie.z = velocitie.z * DAMPING + force.z;
 
-//					vertices.push(utils.cartesianToAngles({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z }));
-//					classSettings.overriddenProperties.pushMiddleVertice(data.timeId, utils.cartesianToAngles({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z }));
-//					position[i] = { x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z };
-//					classSettings.settings.guiPoints.timeId = data.timeId;
 					const vertice = utils.cartesianToAngles({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z });
 					settings.overriddenProperties.editVertice(data.timeId, vertice, angles, i);
-//					classSettings.overriddenProperties.pushMiddleVertice(data.timeId, vertice);//добавляем новый item в classSettings.settings.object.geometry.times[data.timeId]. Это нужно что бы после выполнения шага проигрывателя при наедении мыши на вершину отображалась полная информачия о вершине
-//					angles[i] = vertice;
 
 				}
-//				angles.needsUpdate;
-
-//				if (classSettings.debug) classSettings.debug.logTimest
 
 				_this.bufferGeometry.attributes.position.needsUpdate = true
-//				overriddenProperties.updateVertices();//vertices);
 				
 				_this.onSelectSceneEnd(data.timeId);
 
@@ -300,7 +190,6 @@ const averageVertices = (data) => {
 		progressBar = new ProgressBar(options.renderer.domElement.parentElement, step, {
 
 			sTitle: 't = ' + t + '<br> Average vertices',
-//			max: position.length - 1,
 			max: settings.object.geometry.angles.length - 1,
 			
 			//for 1000 vertices:
@@ -311,29 +200,6 @@ const averageVertices = (data) => {
 		});
 
 	}
-/*
-		step = () => {
-
-		progressBar.value = verticeId;
-		const stepItem = () => {
-
-			iterationStep();
-			verticeId += 1;
-			if (verticeId >= 0) {
-
-				progressBar.remove();
-
-				if (classSettings.debug) classSettings.debug.logTimestamp('Play step. Average vertices.', timestamp);
-				_this.onSelectSceneEnd(data.timeId);
-				return true;
-
-			}
-
-		}
-		if (!stepItem()) progressBar.step();
-
-	};
-*/
 	iterationStep();
 	
 }

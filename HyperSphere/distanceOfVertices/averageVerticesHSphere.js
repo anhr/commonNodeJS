@@ -15,7 +15,6 @@
 import * as utils from '../utilsHSphere.js'
 import RandomVertice from '../RandomVertice/randomVerticeHSphere.js';
 import ProgressBar from '../../ProgressBar/ProgressBar.js'
-//import Position from '../position.js'
 
 const sAverageVertices = 'averageVertices', π = Math.PI;
 
@@ -27,17 +26,10 @@ const averageVertices = (data) => {
 	const _this = data.this,
 		classSettings = _this.classSettings,
 		settings = classSettings.settings,
-		overriddenProperties = classSettings.overriddenProperties,
+//		overriddenProperties = classSettings.overriddenProperties,
 		angles = settings.object.geometry.angles,
-		userData = settings.bufferGeometry.userData,
+//		userData = settings.bufferGeometry.userData,
 		position = classSettings.settings.bufferGeometry.userData.position,
-/*		
-		timeId = userData.timeId;
-	if (timeId != 0) userData.timeId -= 1;
-	const position = overriddenProperties.position,
-*/	
-//		vertices = [],//overriddenProperties.vertices(),
-		//vertices = overriddenProperties.position0.angles;
 		options = data.options,
 		t = data.t;
 //	userData.timeId = timeId;
@@ -78,65 +70,17 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 	//20             0.05
 	//1000          0.0001
 	//5000          0.00001
-//	const a = 0.00001 * 5000;
 	const a = 50;//0.5;
 	const REPULSION_STRENGTH = a / angles.length;//0.05; // Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
-/*	
-//	const a = (0.0001 - 0.05) / 1000, b = 0.05;
-	const a = (0.00001 - 0.05) / 5000, b = 0.05;
-	const REPULSION_STRENGTH = a * angles.length + b;//0.0001;//0.05; // Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
-*/	
-//	const REPULSION_STRENGTH = 0.00001;//0.05; // Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
 	const DAMPING = 0.95; // Демпфирование движения
-//	const RADIUS = data.this.r; // Радиус сферы
 	data.this.r; // Радиус сферы. Нужно что бы во вселенной в classSettings.settings.object.geometry.times был добавлен новый time. Это нужно что бы пользователь мышкой мог выбрать вершину в вселенной
 
-/*	
-	// Скорости точек (для инерции)
-	let velocities = [];
-*/	
 	// Инициализируем скорости
 	if (velocities.length === 0) velocities = new Array(angles.length).fill(null).map(() => ({ x: 0, y: 0, z: 0, w: 0 }));
 
-/*	
-	// Преобразование полярных координат в декартовы
-	// Ось Z направлена через полюса, широта от -π/2 до π/2, долгота от -π до π
-	function polarToCartesian(latitude, longitude) {
-		return {
-			x: RADIUS * Math.cos(latitude) * Math.cos(longitude),
-			y: RADIUS * Math.cos(latitude) * Math.sin(longitude),
-			z: RADIUS * Math.sin(latitude)
-		};
-	}
-
-	// Преобразование декартовых координат в полярные
-	function cartesianToPolar(x, y, z) {
-		const r = Math.sqrt(x * x + y * y + z * z);
-		const latitude = Math.asin(z / r); // z - высота (ось через полюса)
-		const longitude = Math.atan2(y, x); // y/x для долготы
-		return {
-			latitude: latitude,
-			longitude: longitude
-		};
-	}
-
-	// Нормализация точки на сфере
-	function normalizeToSphere(x, y, z) {
-		const r = Math.sqrt(x * x + y * y + z * z);
-		return {
-			x: (x / r) * RADIUS,
-			y: (y / r) * RADIUS,
-			z: (z / r) * RADIUS
-		};
-	}
-*/
-	
 	// --- Итерационный процесс движения точек ---
 	function iterationStep() {
 		
-		// Вычисляем силы отталкивания для каждой точки
-//		const forces = new Array(angles.length).fill(null).map(() => ({ x: 0, y: 0, z: 0, w: 0 }));
-
 		const anglesTemp = new Array(angles.length).fill(null).map(() => ({ x: 0, y: 0, z: 0, w: 0 }));
 		const newRadius = classSettings.overriddenProperties.r(settings.bufferGeometry.userData.timeId - 1);
 
@@ -148,11 +92,9 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 			
 			progressBar.value = i;
 			const userData = settings.bufferGeometry.userData;
-//			const pos1 = settings.overriddenProperties.position(position, i, userData);
 			const p1 = settings.overriddenProperties.position(position, i, userData);
 			const angles1 = utils.cartesianToAngles(p1);
 
-//			let pos2, angles2;
 			let fx = 0, fy = 0, fz = 0, fw = 0;
 			for (
 //				let j = i + 1;
@@ -161,29 +103,14 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 				
 				if (i === j) continue;
 
-//				const pos2 = settings.overriddenProperties.position(position, j, userData);
 				const p2 = settings.overriddenProperties.position(position, j, userData);
 				const angles2 = utils.cartesianToAngles(p2);
-/*
-				if (!pos2) {
-					
-					pos2 = settings.overriddenProperties.position(position, j, userData);
-					angles2 = utils.cartesianToAngles(pos2);
-
-				}
-*/					
 
 				// Вектор от i к j
 				let dx = p1.x - p2.x;
 				let dy = p1.y - p2.y;
 				let dz = p1.z - p2.z;
 				let dw = p1.w - p2.w;
-/*				
-				let dx = pos1.x - pos2.x;
-				let dy = pos1.y - pos2.y;
-				let dz = pos1.z - pos2.z;
-				let dw = pos1.w - pos2.w;
-*/				
 
 				let dist = Math.sqrt(dx * dx + dy * dy + dz * dz + dw * dw);
 
@@ -201,20 +128,6 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 				if (settings.guiPoints) settings.guiPoints.timeId = timeIdOld;
 				userData.timeId++;
 
-/*				
-				// Применяем шум к позициям через скорости
-				const antiDist = arc / π;
-				if(antiDist < 0) console.error(sAverageVertices + ': iterationStep. Invalid antiDist = ' + antiDist);
-				velocities[i].x += noise1.x * antiDist;
-				velocities[i].y += noise1.y * antiDist;
-				velocities[i].z += noise1.z * antiDist;
-				velocities[i].w += noise1.w * antiDist;
-				
-				velocities[j].x += noise2.x * antiDist;
-				velocities[j].y += noise2.y * antiDist;
-				velocities[j].z += noise2.z * antiDist;
-				velocities[j].w += noise2.w * antiDist;
-*/				
 
 				// Вектор от i к j
 				dx = noise1.x - noise2.x;
@@ -224,8 +137,6 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 
 				const d2 = dx * dx + dy * dy + dz * dz + dw * dw;// + 1e-6;
 				dist = Math.sqrt(d2);
-//				dist = Math.sqrt(dx * dx + dy * dy + dz * dz + dw * dw);
-//				pos2 = undefined;
 				
 				// Сила обратно пропорциональна расстоянию
 				const m = REPULSION_STRENGTH / d2;
@@ -234,28 +145,6 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 				fy += (dy / dist) * m;
 				fz += (dz / dist) * m;
 				fw += (dw / dist) * m;
-/*				
-				const forceMagnitude = REPULSION_STRENGTH / (dist * dist);
-
-				// Нормализуем вектор
-				dx /= dist;
-				dy /= dist;
-				dz /= dist;
-				dw /= dist;
-
-				const forcei = forces[i], forcesj = forces[j];
-
-				// Применяем силу: отталкивание
-				forcei.x += dx * forceMagnitude;
-				forcei.y += dy * forceMagnitude;
-				forcei.z += dz * forceMagnitude;
-				forcei.w += dw * forceMagnitude;
-
-				forcesj.x -= dx * forceMagnitude;
-				forcesj.y -= dy * forceMagnitude;
-				forcesj.z -= dz * forceMagnitude;
-				forcesj.w -= dw * forceMagnitude;
-*/				
 
 			}
 			
@@ -277,25 +166,6 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 
 				if (angles.length != anglesTemp.length) console.error(sAverageVertices + ': iterationStep. angles.length != anglesTemp.length');
 				for (let i = 0; i < angles.length; i++) angles[i] = anglesTemp[i];
-/*				
-				// Применяем силы к точкам
-				for (let i = 0; i < angles.length; i++) {
-
-					const pos = settings.overriddenProperties.position(position, i, userData);
-					const velocitie = velocities[i],
-						force = forces[i];
-
-					// Обновляем скорость с учетом силы и демпфирования
-					velocitie.x = velocitie.x * DAMPING + force.x;
-					velocitie.y = velocitie.y * DAMPING + force.y;
-					velocitie.z = velocitie.z * DAMPING + force.z;
-					velocitie.w = velocitie.w * DAMPING + force.w;
-
-					const vertice = utils.cartesianToAngles({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z, w: pos.w + velocitie.w }, classSettings.debug);
-					settings.overriddenProperties.editVertice(data.timeId, vertice, angles, i);
-
-				}
-*/				
 
 				_this.bufferGeometry.attributes.position.needsUpdate = true
 				
@@ -307,7 +177,6 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 		progressBar = new ProgressBar(options.renderer.domElement.parentElement, step, {
 
 			sTitle: 't = ' + t + '<br> Average vertices',
-//			max: position.length - 1,
 			max: settings.object.geometry.angles.length - 1,
 			
 			//for 1000 vertices:
@@ -318,29 +187,6 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 		});
 
 	}
-/*
-		step = () => {
-
-		progressBar.value = verticeId;
-		const stepItem = () => {
-
-			iterationStep();
-			verticeId += 1;
-			if (verticeId >= 0) {
-
-				progressBar.remove();
-
-				if (classSettings.debug) classSettings.debug.logTimestamp('Play step. Average vertices.', timestamp);
-				_this.onSelectSceneEnd(data.timeId);
-				return true;
-
-			}
-
-		}
-		if (!stepItem()) progressBar.step();
-
-	};
-*/
 	iterationStep();
 	
 }
