@@ -217,4 +217,5 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 const hyperbola = RandomVertice.calculateHyperbola(1);//0.99);
 averageVertices.verticeProxy = (vertice) => { return vertice; }
 */
+averageVertices.verticeProxy = averageVerticesBase.verticeProxy;
 export default averageVertices;
