@@ -61,7 +61,7 @@ const Position = (position) => {
 		},
 
 	});
-	Object.defineProperty(position, 'w', {
+	if (position.length > 3) Object.defineProperty(position, 'w', {
 
 		get: () => { return position[3]; },
 		set: (w) => {

@@ -1,6 +1,6 @@
 /**
- * @module middleVerticesSphere
- * @description An iterative process in which, at each step, all vertices gradually move toward a position in which the vertices are at the maximum distance from each other.
+ * @module averageVerticesSphere
+ * @description An iterative process in which, at each step, all vertices gradually move toward a position in which the vertices are at the maximum distance from each other on the sphere.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
@@ -12,17 +12,42 @@
  *
  * http://www.apache.org/licenses/LICENSE-2.0
 */
+import averageVerticesBase from './averageVertices.js'
 import * as utils from '../utilsSphere.js'
-import ProgressBar from '../../ProgressBar/ProgressBar.js'
 import { RandomVerticeSphere as RandomVertice } from '../RandomVertice/randomVerticeSphere.js';
+/*
+import ProgressBar from '../../ProgressBar/ProgressBar.js'
 
 const sAverageVertices = 'averageVertices', π = Math.PI;
 
 // Скорости точек (для инерции)
 let velocities = [];
-
+*/
 const averageVertices = (data) => {
 
+	averageVerticesBase(data, {
+
+		a: 0.5,
+		velocitiesInitValues: () => { return {x: 0, y: 0, z: 0 }; },
+		setVelocities: (velociti, DAMPING, force) => {
+			
+			velociti.x = velociti.x * DAMPING + force.x;
+			velociti.y = velociti.y * DAMPING + force.y;
+			velociti.z = velociti.z * DAMPING + force.z;
+			
+		},
+		anglesInitValues: [0, 0],
+		utils: utils,
+		RandomVertice: RandomVertice,
+		p: 0.99,//Hyperbola parametr. See RandomVertice.calculateHyperbola
+		force: () => { return {x: 0, y: 0, z: 0 }; },
+		setForse: (force, d, dist, m) => { force.x += (d.x / dist) * m; force.y += (d.y / dist) * m; force.z += (d.z / dist) * m; },
+		d: (p1, p2) => { return {x: p1.x - p2.x, y: p1.y - p2.y, z: p1.z - p2.z} },
+		d2: (d) => { return d.x * d.x + d.y * d.y + d.z * d.z },
+		angles: (angles) => { return [angles[0], angles[1]]; },
+		
+	});
+/*
 	const _this = data.this,
 		classSettings = _this.classSettings,
 		settings = classSettings.settings,
@@ -32,6 +57,7 @@ const averageVertices = (data) => {
 		position = classSettings.settings.bufferGeometry.userData.position,
 		options = data.options,
 		t = data.t;
+*/
 	/*
 Написать функцию на языке javascript.
 Задан массив : const angles = [].
@@ -51,12 +77,7 @@ const averageVertices = (data) => {
 	*/
 	//https://chat.deepseek.com/a/chat/s/e808c17c-8258-4029-b70c-d65be630df03
 
-/*	
-	//angles.length REPULSION_STRENGTH
-	//3             0.05
-	//1000          0.0001
-//	const a = (0.05 + 0.0001) / (3 + 1000), b = a * 1000 - 0.0001, REPULSION_STRENGTH = a * angles.length + b;//0.0001;//0.05; // Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
-*/
+/*
 	//angles.length REPULSION_STRENGTH
 	//20             0.05
 	//1000          0.0001
@@ -201,8 +222,11 @@ const averageVertices = (data) => {
 
 	}
 	iterationStep();
+*/
 	
 }
+/*
 const hyperbola = RandomVertice.calculateHyperbola(0.99);
 averageVertices.verticeProxy = (vertice) => { return vertice; }
+*/
 export default averageVertices;
