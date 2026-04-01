@@ -45,6 +45,7 @@ const averageVertices = (data) => {
 		d: (p1, p2) => { return {x: p1.x - p2.x, y: p1.y - p2.y, z: p1.z - p2.z} },
 		d2: (d) => { return d.x * d.x + d.y * d.y + d.z * d.z },
 		angles: (angles) => { return [angles[0], angles[1]]; },
+		vertice: (p, velociti) => { return { x: p.x + velociti.x, y: p.y + velociti.y, z: p.z + velociti.z } },
 		
 	});
 /*

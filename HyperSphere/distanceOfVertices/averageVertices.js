@@ -228,9 +228,8 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 			velocities[i].w = velocities[i].w * DAMPING + fw;
 */			
 			
-			anglesTemp[i] = utils.cartesianToAngles({
-				x: p1.x + velocities[i].x, y: p1.y + velocities[i].y, z: p1.z + velocities[i].z, w: p1.w + velocities[i].w
-			});
+//			anglesTemp[i] = utils.cartesianToAngles({ x: p1.x + velocities[i].x, y: p1.y + velocities[i].y, z: p1.z + velocities[i].z, w: p1.w + velocities[i].w });
+			anglesTemp[i] = utils.cartesianToAngles(overrides.vertice(p1, velocities[i]));
 			
 			i += 1;
 			if (i >= angles.length) {
