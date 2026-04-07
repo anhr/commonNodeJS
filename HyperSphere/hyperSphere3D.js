@@ -640,7 +640,7 @@ class HyperSphere3D extends Sphere {
 	}
 	a2v(angles, r = this.r) {
 
-		return utils.anglesToCartesian(angles, r, this.classSettings.debug);
+		return utils.polarToCartesian(angles, r, this.classSettings.debug);
 		/*https://chat.deepseek.com/a/chat/s/831d9a90-2396-4b09-b548-288415124814
 		Задана точка на 3D гиперсфере в полярной системе координат. Начало координат находится в центре 3D гиперсферы.
 		Положение точки обозначить как

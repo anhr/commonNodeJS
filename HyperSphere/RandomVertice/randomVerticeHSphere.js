@@ -58,7 +58,7 @@ class RandomVerticeHSphere extends RandomVertice {
 
 /*			
 			// 1. Преобразование углов в декартовы координаты на гиперсфере
-			anglesToCartesian(latitude, longitude, altitude) {
+			polarToCartesian(latitude, longitude, altitude) {
 				const a = altitude;                 // altitude ∈ [0, π]
 				const b = Math.PI / 2 - latitude;     // b ∈ [0, π]
 				const c = longitude;                // longitude ∈ [-π, π]
@@ -165,9 +165,9 @@ class RandomVerticeHSphere extends RandomVertice {
 					lat = oppositeVertice.latitude, lon = oppositeVertice.longitude, alt = oppositeVertice.altitude;
 
 				// Исходная точка
-//				const P = utils.anglesToCartesian(oppositeVertice);
-				const objectP = utils.anglesToCartesian(oppositeVertice);
-//				const Pold = this.anglesToCartesian(lat, lon, alt);
+//				const P = utils.polarToCartesian(oppositeVertice);
+				const objectP = utils.polarToCartesian(oppositeVertice);
+//				const Pold = this.polarToCartesian(lat, lon, alt);
 //				const P = [Pnew[3], Pnew[2], Pnew[0], Pnew[1]];
 				const P = [objectP.w, objectP.z, objectP.x, objectP.y]
 
@@ -205,7 +205,7 @@ class RandomVerticeHSphere extends RandomVertice {
 			 */
 			calculateNewPoint(startingPointParams, distance, eta, psi) {
 				// Исходная точка
-				//		const P = this.anglesToCartesian(lat, lon, alt);
+				//		const P = this.polarToCartesian(lat, lon, alt);
 				const P = startingPointParams.P;
 
 				// Касательный базис
@@ -277,8 +277,8 @@ class RandomVerticeHSphere extends RandomVertice {
 
 			// 5. Вычисление расстояния между двумя точками на гиперсфере
 			greatCircleDistance(lat1, lon1, alt1, lat2, lon2, alt2) {
-				const P1 = this.anglesToCartesian(lat1, lon1, alt1);
-				const P2 = this.anglesToCartesian(lat2, lon2, alt2);
+				const P1 = this.polarToCartesian(lat1, lon1, alt1);
+				const P2 = this.polarToCartesian(lat2, lon2, alt2);
 
 				let dot = 0;
 				for (let i = 0; i < 4; i++) {

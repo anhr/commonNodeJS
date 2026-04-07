@@ -28,7 +28,7 @@ angles.latitude - широта в диапазоне от -π/2 на южном 
 Вычислить координаты точки в декартовой системе координат.
 Написать код на javascript
 */
-const sAnglesToCartesian = 'anglesToCartesian';
+const sAnglesToCartesian = 'polarToCartesian';
 /**
  * Вычисляет декартовы координаты (x, y, z) точки на сфере,
  * заданной в полярной системе координат (r, широта, долгота).
@@ -44,7 +44,7 @@ const sAnglesToCartesian = 'anglesToCartesian';
  * @param {float} [r=1] - Радиус сферы.
  * @returns {array} Массив с декартовыми координатами [x, y, z].
  */
-export function anglesToCartesian(angles, r = 1) {
+export function polarToCartesian(angles, r = 1) {
 
 	const lat = angles.latitude;
 	const lon = angles.longitude;

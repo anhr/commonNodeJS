@@ -233,7 +233,7 @@ class Sphere extends Circle {
 	 * @returns Vertice angles.
 	 */
 	vertice2angles(vertice) { return utils.cartesianToAngles(Position(vertice)); }
-	a2v(angles, r = this.r) { return utils.anglesToCartesian(angles, r); }
+	a2v(angles, r = this.r) { return utils.polarToCartesian(angles, r); }
 	get verticeEdgesLengthMax() { return 3/*6*/; }//нельзя добавлть новое ребро если у вершины уже 6 ребра
 	get dimension() { return 3; }//space dimension
 	get verticesCountMin() { return 4; }

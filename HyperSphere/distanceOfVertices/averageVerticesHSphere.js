@@ -144,10 +144,10 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 				const r = classSettings.overriddenProperties.rTime();
 				
 				// Случайное направление для точки i
-				const noise1 = utils.anglesToCartesian(RandomVertice.get(arc, utils.angles([angles1[0], angles1[1], angles1[2]]), classSettings, RandomVertice), r);
+				const noise1 = utils.polarToCartesian(RandomVertice.get(arc, utils.angles([angles1[0], angles1[1], angles1[2]]), classSettings, RandomVertice), r);
 					
 				// Случайное направление для точки j (может быть противоположным для лучшего разведения)
-				const noise2 = utils.anglesToCartesian(RandomVertice.get(arc, utils.angles([angles2[0], angles2[1], angles2[2]]), classSettings, RandomVertice), r);
+				const noise2 = utils.polarToCartesian(RandomVertice.get(arc, utils.angles([angles2[0], angles2[1], angles2[2]]), classSettings, RandomVertice), r);
 				if (settings.guiPoints) settings.guiPoints.timeId = timeIdOld;
 				userData.timeId++;
 

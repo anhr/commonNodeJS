@@ -30,7 +30,7 @@ angles.latitude - широта в диапазоне от -π/2 на южном 
 Тогда в положении точки появится новый угол altitude в диапазоне от 0 до π.
 Также появится новая координата точки w = vertice[3] в декартовой системе координат.
 */
-const sAnglesToCartesian = 'anglesToCartesian';
+const sAnglesToCartesian = 'polarToCartesian';
 /**
  * Вычисляет 4D декартовы координаты (x, y, z, w) точки на гиперсфере.
  * @param {object} angles - Объект с углами в радианах.
@@ -41,7 +41,7 @@ const sAnglesToCartesian = 'anglesToCartesian';
  * @param {object|boolean} [debug] - debug = object Выводит на консоль сообщение об ошибке если координаты вычислились не корректно.
  * @returns {array} Массив с декартовыми координатами [x, y, z, w].
  */
-export function anglesToCartesian(angles, r=1, debug) {
+export function polarToCartesian(angles, r=1, debug) {
 	const lat = angles.latitude;
 	const lon = angles.longitude;
 	const alt = angles.altitude;
