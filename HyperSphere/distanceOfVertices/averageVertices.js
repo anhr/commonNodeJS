@@ -105,7 +105,7 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 			const userData = settings.bufferGeometry.userData;
 			const RandomVertice = overrides.RandomVertice;
 			const p1 = settings.overriddenProperties.position(position, i, userData);
-			const angles1 = utils.cartesianToAngles(p1);
+			const angles1 = utils.cartesianToPolar(p1);
 //const g = utils.polarToCartesian(angles1, newRadius);
 //console.log('Undre constraction')
 
@@ -122,12 +122,12 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 				if (!pos2) {
 					
 					pos2 = settings.overriddenProperties.position(position, j, userData);
-					angles2 = utils.cartesianToAngles(pos2);
+					angles2 = utils.cartesianToPolar(pos2);
 
 				}
 */				
 				const p2 = settings.overriddenProperties.position(position, j, userData);
-				const angles2 = utils.cartesianToAngles(p2);
+				const angles2 = utils.cartesianToPolar(p2);
 
 				// Вектор от i к j
 				let d = overrides.d(p1, p2);
@@ -230,8 +230,8 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 			velocities[i].w = velocities[i].w * DAMPING + fw;
 */			
 			
-//			anglesTemp[i] = utils.cartesianToAngles({ x: p1.x + velocities[i].x, y: p1.y + velocities[i].y, z: p1.z + velocities[i].z, w: p1.w + velocities[i].w });
-			anglesTemp[i] = utils.cartesianToAngles(overrides.vertice(p1, velocities[i]));
+//			anglesTemp[i] = utils.cartesianToPolar({ x: p1.x + velocities[i].x, y: p1.y + velocities[i].y, z: p1.z + velocities[i].z, w: p1.w + velocities[i].w });
+			anglesTemp[i] = utils.cartesianToPolar(overrides.vertice(p1, velocities[i]));
 			
 			i += 1;
 			if (i >= angles.length) {
@@ -253,7 +253,7 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 					velocitie.y = velocitie.y * DAMPING + force.y;
 					velocitie.z = velocitie.z * DAMPING + force.z;
 
-					const vertice = utils.cartesianToAngles({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z });
+					const vertice = utils.cartesianToPolar({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z });
 					settings.overriddenProperties.editVertice(data.timeId, vertice, angles, i);
 
 				}

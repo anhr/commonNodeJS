@@ -230,14 +230,14 @@ class RandomVerticeHSphere extends RandomVertice {
 				}
 
 				// Обратное преобразование в углы
-				const angles = this.cartesianToAngles(Q);
+				const angles = this.cartesianToPolar(Q);
 
 				if (Math.abs((Math.abs(startingPointParams.lat) - π / 2)) < 1e-12) angles.longitude = random() * 2 * π - π;//Противоположная вершина находится на полюсе
 				return angles;
 			}
 
 			// 4. Преобразование декартовых координат в углы
-			cartesianToAngles(Q) {
+			cartesianToPolar(Q) {
 				const [q1, q2, q3, q4] = Q;
 
 				// altitude

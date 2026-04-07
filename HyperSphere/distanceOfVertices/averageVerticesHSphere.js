@@ -116,7 +116,7 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 			progressBar.value = i;
 			const userData = settings.bufferGeometry.userData;
 			const p1 = settings.overriddenProperties.position(position, i, userData);
-			const angles1 = utils.cartesianToAngles(p1);
+			const angles1 = utils.cartesianToPolar(p1);
 
 			let fx = 0, fy = 0, fz = 0, fw = 0;
 			for (
@@ -127,7 +127,7 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 				if (i === j) continue;
 
 				const p2 = settings.overriddenProperties.position(position, j, userData);
-				const angles2 = utils.cartesianToAngles(p2);
+				const angles2 = utils.cartesianToPolar(p2);
 
 				// Вектор от i к j
 				let dx = p1.x - p2.x;
@@ -176,7 +176,7 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 			velocities[i].z = velocities[i].z * DAMPING + fz;
 			velocities[i].w = velocities[i].w * DAMPING + fw;
 			
-			anglesTemp[i] = utils.cartesianToAngles({
+			anglesTemp[i] = utils.cartesianToPolar({
 				x: p1.x + velocities[i].x, y: p1.y + velocities[i].y, z: p1.z + velocities[i].z, w: p1.w + velocities[i].w
 			});
 			

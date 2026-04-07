@@ -98,14 +98,14 @@ latitude - широта в диапазоне от -π/2 на южном пол�
 Тогда в положении точки появится новая координата w = vertice[3].
 Также появится новый угол в полярной системе координат altitude в диапазоне от 0 до π.
 */
-const sCartesianToAngles = 'cartesianToAngles';
+const sCartesianToAngles = 'cartesianToPolar';
 /**
  * Преобразует декартовы координаты 4D (x, y, z, w) в гиперсферические.
  * @param {object} vertice - объект x, y, z, w декартовых координат.
  * @param {object|boolean} [debug] - debug = object Выводит на консоль сообщение об ошибке если углы вычислились не корректно.
  * @returns {{altitude: number, latitude: number, longitude: number}} Объект с полярными координатами в радианах.
  */
-export function cartesianToAngles(vertice, debug) {
+export function cartesianToPolar(vertice, debug) {
 
 /*	
 	const x = vertice[0];

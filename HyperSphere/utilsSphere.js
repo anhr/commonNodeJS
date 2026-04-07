@@ -81,7 +81,7 @@ longitude - долгота в диапазоне от -π до π.
 latitude - широта в диапазоне от -π/2 на южном полюсе до π/2 на северном полюсе.
 Написать код на javascript
 */
-const sSartesianToAngles = 'cartesianToAngles';
+const sSartesianToAngles = 'cartesianToPolar';
 /**
  * Преобразует декартовы координаты (x, y, z) в географические полярные координаты
  * (r, latitude, longitude).
@@ -89,7 +89,7 @@ const sSartesianToAngles = 'cartesianToAngles';
  * @param {object} vertice - объект x, y, z декартовых координат.
  * @returns {{latitude: float, longitude: float}} Объект с полярными координатами в радианах.
  */
-export function cartesianToAngles(vertice) {
+export function cartesianToPolar(vertice) {
 
 	const x = vertice.x;
 	const y = vertice.y;
@@ -108,7 +108,7 @@ export function cartesianToAngles(vertice) {
 	// 2. Вычисление широты (latitude)
 	// Используем Math.asin(z/r). Результат в радианах [-PI/2, PI/2].
 	const latitude = Math.asin(z / r);
-	if (isNaN(latitude)) console.error('cartesianToAngles: invalid latitude = ' + latitude);
+	if (isNaN(latitude)) console.error(sSartesianToAngles + ': invalid latitude = ' + latitude);
 
 	// 3. Вычисление долготы (longitude)
 	// Используем Math.atan2(y, x). Результат в радианах (-PI, PI].

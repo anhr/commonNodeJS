@@ -106,7 +106,7 @@ const averageVertices = (data) => {
 			progressBar.value = i;
 			const userData = settings.bufferGeometry.userData;
 			const pos1 = settings.overriddenProperties.position(position, i, userData);
-			const angles1 = utils.cartesianToAngles(pos1);
+			const angles1 = utils.cartesianToPolar(pos1);
 
 			let pos2, angles2;
 			for (let j = i + 1; j < angles.length; j++) {
@@ -114,7 +114,7 @@ const averageVertices = (data) => {
 				if (!pos2) {
 					
 					pos2 = settings.overriddenProperties.position(position, j, userData);
-					angles2 = utils.cartesianToAngles(pos2);
+					angles2 = utils.cartesianToPolar(pos2);
 
 				}
 
@@ -197,7 +197,7 @@ const averageVertices = (data) => {
 					velocitie.y = velocitie.y * DAMPING + force.y;
 					velocitie.z = velocitie.z * DAMPING + force.z;
 
-					const vertice = utils.cartesianToAngles({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z });
+					const vertice = utils.cartesianToPolar({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z });
 					settings.overriddenProperties.editVertice(data.timeId, vertice, angles, i);
 
 				}
