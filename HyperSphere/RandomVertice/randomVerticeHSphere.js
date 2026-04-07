@@ -56,9 +56,11 @@ class RandomVerticeHSphere extends RandomVertice {
 				this.R = radius;
 			}
 
-/*			
 			// 1. Преобразование углов в декартовы координаты на гиперсфере
 			polarToCartesian(latitude, longitude, altitude) {
+				const objectP = utils.polarToCartesian({latitude: latitude, longitude: longitude, altitude: altitude});
+				return [objectP.w, objectP.z, objectP.x, objectP.y];
+/*				
 				const a = altitude;                 // altitude ∈ [0, π]
 				const b = Math.PI / 2 - latitude;     // b ∈ [0, π]
 				const c = longitude;                // longitude ∈ [-π, π]
@@ -69,8 +71,8 @@ class RandomVerticeHSphere extends RandomVertice {
 				const x4 = this.R * Math.sin(a) * Math.sin(b) * Math.sin(c);
 
 				return [x1, x2, x3, x4];
+*/				
 			}
-*/			
 
 			// 2. Создание ортонормированного базиса в касательном пространстве
 			createTangentBasis(latitude, longitude, altitude) {
@@ -165,11 +167,7 @@ class RandomVerticeHSphere extends RandomVertice {
 					lat = oppositeVertice.latitude, lon = oppositeVertice.longitude, alt = oppositeVertice.altitude;
 
 				// Исходная точка
-//				const P = utils.polarToCartesian(oppositeVertice);
-				const objectP = utils.polarToCartesian(oppositeVertice);
-//				const Pold = this.polarToCartesian(lat, lon, alt);
-//				const P = [Pnew[3], Pnew[2], Pnew[0], Pnew[1]];
-				const P = [objectP.w, objectP.z, objectP.x, objectP.y]
+				const P = this.polarToCartesian(lat, lon, alt);
 
 				// Касательный базис
 				const [e1, e2, e3] = this.createTangentBasis(lat, lon, alt);
