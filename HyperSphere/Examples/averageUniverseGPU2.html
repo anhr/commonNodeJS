@@ -116,7 +116,7 @@
         const count = totalSteps * pointsPerStep;
 
         const baseRadius = 0.1;
-        const radiusMax = 2;
+        const radiusMax = 1;
         const radiusStep = (radiusMax - baseRadius) / (totalSteps - 1);
         const DAMPING = 0.95;
         const REPULSION_STRENGTH = 50 / pointsPerStep;
@@ -145,7 +145,7 @@
         scene.add(new THREE.Points(geometry, new THREE.PointsMaterial({ size: 0.015, vertexColors: true })));
 
         // --- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ МАТЕМАТИКИ ---
-        const polarToCartesian = (la, lo, al, r) => {
+        const polarToCartesian = (la, lo, al, r=1) => {
             const r_xyz = r * Math.sin(al), w = r * Math.cos(al);
             return { x: r_xyz * Math.cos(la) * Math.cos(lo), y: r_xyz * Math.cos(la) * Math.sin(lo), z: r_xyz * Math.sin(la), w };
         };
@@ -322,17 +322,142 @@
             const newRadius = radiusPrev + radiusStep;
             const color = new THREE.Color();
 
+			// 2. Создание ортонормированного базиса в касательном пространстве
+			const createTangentBasis = (latitude, longitude, altitude) => {
+				const a = altitude;
+				const b = Math.PI / 2 - latitude;
+				const c = longitude;
+
+				// e1 - направление увеличения altitude
+				const e1 = [
+					-Math.sin(a),
+					Math.cos(a) * Math.cos(b),
+					Math.cos(a) * Math.sin(b) * Math.cos(c),
+					Math.cos(a) * Math.sin(b) * Math.sin(c)
+				];
+				// Нормализация e1 (уже единичный, но для точности)
+				const norm_e1 = Math.sqrt(e1.reduce((sum, val) => sum + val * val, 0));
+				const e1_norm = e1.map(v => v / norm_e1);
+
+				// e2 - направление увеличения b (уменьшения latitude)
+				const e2_raw = [
+					0,
+					-Math.sin(a) * Math.sin(b),
+					Math.sin(a) * Math.cos(b) * Math.cos(c),
+					Math.sin(a) * Math.cos(b) * Math.sin(c)
+				];
+				const norm_e2 = Math.sqrt(e2_raw.reduce((sum, val) => sum + val * val, 0));
+				const e2_norm = norm_e2 > 1e-10 ? e2_raw.map(v => v / norm_e2) : [0, 0, 0, 0];
+
+				// e3 - направление увеличения longitude
+				const e3_raw = [
+					0,
+					0,
+					-Math.sin(a) * Math.sin(b) * Math.sin(c),
+					Math.sin(a) * Math.sin(b) * Math.cos(c)
+				];
+				const norm_e3 = Math.sqrt(e3_raw.reduce((sum, val) => sum + val * val, 0));
+				const e3_norm = norm_e3 > 1e-10 ? e3_raw.map(v => v / norm_e3) : [0, 0, 0, 0];
+
+				return [e1_norm, e2_norm, e3_norm];
+			}
+
             for (let i = 0; i < pointsPerStep; i++) {
-                const p1 = polarToCartesian(angles[prevStart + i].latitude, angles[prevStart + i].longitude, angles[prevStart + i].altitude, newRadius);
-                let fx = 0, fy = 0, fz = 0, fw = 0;
+                const angles1 = angles[prevStart + i];
+                const p1 = polarToCartesian(angles1.latitude, angles1.longitude, angles1.altitude, radiusPrev);
+                const force = { x: 0, y: 0, z: 0, w: 0 }
 
                 // Полный перебор для идентичности с шейдером
                 for (let j = 0; j < pointsPerStep; j++) {
                     if (i === j) continue;
-                    const p2 = polarToCartesian(angles[prevStart + j].latitude, angles[prevStart + j].longitude, angles[prevStart + j].altitude, newRadius);
-                    const dx = p1.x - p2.x, dy = p1.y - p2.y, dz = p1.z - p2.z, dw = p1.w - p2.w;
-    				let dist = Math.sqrt(dx * dx + dy * dy + dz * dz + dw * dw);
-    				const arc = π - hyperbola((dist / newRadius / 2) * π);
+                    const p2 = polarToCartesian(angles[prevStart + j].latitude, angles[prevStart + j].longitude, angles[prevStart + j].altitude, radiusPrev);
+                    const d = { x: p1.x - p2.x, y: p1.y - p2.y, z: p1.z - p2.z, w: p1.w - p2.w }
+    				let dist = Math.sqrt(d.x * d.x + d.y * d.y + d.z * d.z + d.w * d.w);
+    				const arc = π - hyperbola((dist / radiusPrev / 2) * π);
+    				const r = radiusPrev;
+                    const GetRandomVertice = (arc, oppositeVertice) => {
+                        const getStartingPointParams = () => {
+        					const lat = oppositeVertice.latitude, lon = oppositeVertice.longitude, alt = oppositeVertice.altitude;
+        
+            				// Исходная точка
+            				const objectP = polarToCartesian(lat, lon, alt), P = [objectP.w, objectP.z, objectP.x, objectP.y];
+
+            				// Касательный базис
+            				const [e1, e2, e3] = createTangentBasis(lat, lon, alt);
+            
+            				return {
+            
+            					lat: lat,
+            					alt: alt,
+            					P: P,
+            					e1: e1,
+            					e2: e2,
+            					e3: e3,
+            
+            				}
+                                        
+                        }
+                        const startingPointParams = getStartingPointParams();
+                		const getRandomAngles = (startingPointParams) => {
+                
+            			/**
+            			 * Обратная функция распределения для равномерной выборки на S³
+            			 * Для равномерного распределения на 3-сфере от северного полюса:
+            			 * Плотность: f(θ) ∝ sin³(θ), где θ = distance/R
+            			 * CDF: F(θ) = (3θ - 3sinθcosθ + 2sin³θ) / 4
+            			 * Здесь используем численное решение обратной функции
+            			 */
+            			const inverseCDF_S3 = (u) => {
+            				// u ∈ [0, 1] равномерно
+            				// Ищем θ такой, что CDF(θ) = u, θ ∈ [0, π]
+            
+            				// Численное решение методом бисекции
+            				let low = 0;
+            				let high = Math.PI;
+            				const tolerance = 1e-10;
+            				const maxIterations = 100;
+            
+            				for (let i = 0; i < maxIterations; i++) {
+            					const mid = (low + high) / 2;
+            					const cdfValue = this.CDF_S3(mid);
+            
+            					if (Math.abs(cdfValue - u) < tolerance) {
+            						return mid;
+            					}
+            
+            					if (cdfValue < u) {
+            						low = mid;
+            					} else {
+            						high = mid;
+            					}
+            				}
+            
+            				return (low + high) / 2;
+            			}
+                            
+                			// Правильное распределение для равномерного покрытия:
+                			// Вероятность попасть в сферическую шапочку радиуса d пропорциональна sin^3(d/R)
+                			const R = 1, distance = this.distance(R * this.navigator.inverseCDF_S3(random()), R) * 2;
+                
+                			if (!startingPointParams) startingPointParams = this.navigator.startingPointParams();
+                			const result = this.navigator.calculateNewPoint(
+                					startingPointParams,
+                					distance,//0.5,//random() * this.navigator.R * π,//distance максимальная дистанция находится на противоположной стороне гиперсферы
+                					point ? point.iEta : acos(2 * random() - 1),//eta. первый угол направления (полярный угол). 0 ≤ eta ≤ π
+                					(point ? point.iPsi : random()) * 2 * π//psi. второй угол направления (азимутальный угол). 0 ≤ psi < 2π или -π ≤ psi ≤ π
+                				);
+                			const angles = utils.angles([result.altitude, result.latitude, result.longitude]);
+                			this.paramsVerticesAngles(angles);
+                			return this.angles;
+                			
+                		}
+                        getRandomAngles(startingPointParams);
+        
+                    }
+				
+    				// Случайное направление для точки i
+    				const noise1 = polarToCartesian(GetRandomVertice(arc, angles1), r);
+                    
                     const d2 = dx * dx + dy * dy + dz * dz + dw * dw;// + 1e-6;
                     dist = Math.sqrt(d2);
                     const m = REPULSION_STRENGTH / d2;

@@ -92,7 +92,7 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 */		
 //		const anglesTemp = new Array(angles.length).fill(null).map(() => ({ x: 0, y: 0, z: 0, w: 0 }));
 		const anglesTemp = new Array(angles.length).fill(null).map(() => (overrides.anglesInitValues));
-		const newRadius = classSettings.overriddenProperties.r(settings.bufferGeometry.userData.timeId - 1);
+		const newRadius = classSettings.overriddenProperties.r(settings.bufferGeometry.userData.timeId);
 		
 		let timestamp = classSettings.debug ? window.performance.now() : undefined;
 
@@ -106,6 +106,8 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 			const RandomVertice = overrides.RandomVertice;
 			const p1 = settings.overriddenProperties.position(position, i, userData);
 			const angles1 = utils.cartesianToAngles(p1);
+//const g = utils.anglesToCartesian(angles1, newRadius);
+//console.log('Undre constraction')
 
 //			let pos2, angles2;
 //			let fx = 0, fy = 0, fz = 0, fw = 0;
