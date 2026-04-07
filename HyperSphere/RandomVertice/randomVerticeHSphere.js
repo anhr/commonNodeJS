@@ -56,6 +56,7 @@ class RandomVerticeHSphere extends RandomVertice {
 				this.R = radius;
 			}
 
+/*			
 			// 1. Преобразование углов в декартовы координаты на гиперсфере
 			anglesToCartesian(latitude, longitude, altitude) {
 				const a = altitude;                 // altitude ∈ [0, π]
@@ -69,6 +70,7 @@ class RandomVerticeHSphere extends RandomVertice {
 
 				return [x1, x2, x3, x4];
 			}
+*/			
 
 			// 2. Создание ортонормированного базиса в касательном пространстве
 			createTangentBasis(latitude, longitude, altitude) {
@@ -163,7 +165,11 @@ class RandomVerticeHSphere extends RandomVertice {
 					lat = oppositeVertice.latitude, lon = oppositeVertice.longitude, alt = oppositeVertice.altitude;
 
 				// Исходная точка
-				const P = this.anglesToCartesian(lat, lon, alt);
+//				const P = utils.anglesToCartesian(oppositeVertice);
+				const objectP = utils.anglesToCartesian(oppositeVertice);
+//				const Pold = this.anglesToCartesian(lat, lon, alt);
+//				const P = [Pnew[3], Pnew[2], Pnew[0], Pnew[1]];
+				const P = [objectP.w, objectP.z, objectP.x, objectP.y]
 
 				// Касательный базис
 				const [e1, e2, e3] = this.createTangentBasis(lat, lon, alt);
