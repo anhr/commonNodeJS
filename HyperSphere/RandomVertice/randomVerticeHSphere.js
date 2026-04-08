@@ -18,9 +18,11 @@ import * as utils from '../utilsHSphere.js'
 import HyperSphere from '../hyperSphere3D.js';
 
 const sRandomVerticesHyperSphere = 'RandomVerticesHSphere',
-	π = Math.PI, round = Math.round, random = Math.random,//abs = Math.abs, 
-	//cos = Math.cos, sin = Math.sin,
-	atan = Math.atan, acos = Math.acos;// asin = Math.asin, atan2 = Math.atan2,
+	π = Math.PI, round = Math.round,
+	atan = Math.atan, acos = Math.acos,
+//	random = Math.random,
+random = () => { return 0.5 };
+console.error('Under constraction');
 
 /**
  * Generates a random vertice near the opposite vertice in 3D hypersphere.
