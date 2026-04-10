@@ -20,9 +20,9 @@ import HyperSphere from '../hyperSphere3D.js';
 const sRandomVerticesHyperSphere = 'RandomVerticesHSphere',
 	π = Math.PI, round = Math.round,
 	atan = Math.atan, acos = Math.acos,
-//	random = Math.random,
-random = () => { return 0.5 };
-console.error('Under constraction');
+	random = Math.random;
+//random = () => { return 0.5 };
+//console.error('Under constraction');
 
 /**
  * Generates a random vertice near the opposite vertice in 3D hypersphere.
@@ -238,6 +238,8 @@ class RandomVerticeHSphere extends RandomVertice {
 
 			// 4. Преобразование декартовых координат в углы
 			cartesianToPolar(Q) {
+				return utils.cartesianToPolar({x: Q[2], y: Q[3],  z: Q[1],  w: Q[0] });
+/*				
 				const [q1, q2, q3, q4] = Q;
 
 				// altitude
@@ -273,6 +275,8 @@ class RandomVerticeHSphere extends RandomVertice {
 					altitude,
 					//cartesian: Q
 				};
+*/				
+				
 			}
 
 			// 5. Вычисление расстояния между двумя точками на гиперсфере

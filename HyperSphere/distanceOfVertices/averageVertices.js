@@ -147,39 +147,30 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 				const r = classSettings.overriddenProperties.rTime();
 				
 				// Случайное направление для точки i
-				const noise1 = utils.polarToCartesian(RandomVertice.get(arc, utils.angles(overrides.angles(angles1)), classSettings, RandomVertice), r);
-//				const noise1 = utils.polarToCartesian(RandomVertice.get(arc, utils.angles([angles1[0], angles1[1]]), classSettings, RandomVertice), r);
+//				const noise1 = utils.polarToCartesian(RandomVertice.get(arc, utils.angles(overrides.angles(angles1)), classSettings, RandomVertice), r);
 					
 				// Случайное направление для точки j (может быть противоположным для лучшего разведения)
-//				const noise2 = utils.polarToCartesian(RandomVertice.get(arc, utils.angles([angles2[0], angles2[1]]), classSettings, RandomVertice), r);
 				const noise2 = utils.polarToCartesian(RandomVertice.get(arc, utils.angles(overrides.angles(angles2)), classSettings, RandomVertice), r);
 				
 				if (settings.guiPoints) settings.guiPoints.timeId = timeIdOld;
 				userData.timeId++;
 
 				// Вектор от i к j
-				d = overrides.d(noise1, noise2);
-/*				
-				dx = noise1.x - noise2.x;
-				dy = noise1.y - noise2.y;
-				dz = noise1.z - noise2.z;
-				dw = noise1.w - noise2.w;
-*/				
+				d = overrides.d(p1, noise2);
 
-//				const d2 = dx * dx + dy * dy + dz * dz + dw * dw;// + 1e-6;
 				const d2 = overrides.d2(d);
 				dist = Math.sqrt(d2);
+				if (dist === 0) {
+
+					console.error(sAverageVertices + ': step. Invalid dist = ' + dist);
+					return;
+					
+				}
 				
 				// Сила обратно пропорциональна расстоянию
 				const m = REPULSION_STRENGTH / d2;
 
 				overrides.setForse(force, d, dist, m);
-/*				
-				fx += (dx / dist) * m;
-				fy += (dy / dist) * m;
-				fz += (dz / dist) * m;
-				fw += (dw / dist) * m;
-*/				
 /*				
 				// Применяем шум к позициям через скорости
 				const antiDist = arc / π;
