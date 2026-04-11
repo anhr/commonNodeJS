@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>averageUniverse - High Performance GPU</title>
+    <title>averageUniverse - Meta-Programmed & Documented</title>
     <style>
         body {
             margin: 0;
@@ -106,15 +106,24 @@
         import * as THREE from 'three';
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-        // --- КОНФИГУРАЦИЯ ---
+        const π = Math.PI;
+
+        // --- ГЛОБАЛЬНАЯ КОНФИГУРАЦИЯ ---
         const DEBUG_MODE = true;
         const RANDOM_POINTS = !DEBUG_MODE;
         const totalSteps = RANDOM_POINTS ? 100 : 10;
         const pointsPerStep = RANDOM_POINTS ? 500 : 5;
         const count = totalSteps * pointsPerStep;
+        const p = 0.99;//Hyperbola parametr. See calculateHyperbola
+
+        //выбрать один из вариантов:
+        //const random = Math.random;
+        //Или для облегчения отладки функция возвращает постоянное значение
+        const random = () => { return 0.5 };
+        console.error('Under constraction');
 
         const baseRadius = 0.1;
-        const radiusMax = 2;
+        const radiusMax = 1;
         const radiusStep = (radiusMax - baseRadius) / (totalSteps - 1);
         const DAMPING = 0.95;
         const REPULSION_STRENGTH = 50 / pointsPerStep;
@@ -126,7 +135,7 @@
 
         document.getElementById('totalStepsDisplay').innerText = totalSteps;
 
-        // --- THREE.JS ---
+        // --- THREE.JS ИНИЦИАЛИЗАЦИЯ ---
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 1000);
         camera.position.set(3, 3, 3);
@@ -142,111 +151,344 @@
         geometry.setAttribute('color', colorAttr);
         scene.add(new THREE.Points(geometry, new THREE.PointsMaterial({ size: 0.015, vertexColors: true })));
 
-        // --- WebGPU SHADER ---
-        const shaderCode = `
-                struct Params { damping: f32, repulsionStrength: f32, radius: f32, stepOffset: f32, pointsPerStep: f32 };
-                struct PolarAngles { latitude: f32, longitude: f32, altitude: f32, _pad: f32 };
-
-                @group(0) @binding(0) var<storage, read_write> positions: array<vec4<f32>>;
-                @group(0) @binding(1) var<storage, read_write> velocities: array<vec4<f32>>;
-                @group(0) @binding(2) var<uniform> p: Params;
-                @group(0) @binding(3) var<storage, read_write> debugForce: vec4<f32>;
-                @group(0) @binding(4) var<storage, read_write> anglesBuf: array<PolarAngles>;
-
-                fn gpuCartesianToPolar(v: vec4<f32>) -> PolarAngles {
-                    let R = sqrt(dot(v, v)) + 1e-10;
-                    let alt = acos(clamp(v.w / R, -1.0, 1.0));
-                    let rXYZ = sqrt(v.x*v.x + v.y*v.y + v.z*v.z) + 1e-10;
-                    let lat = asin(clamp(v.z / rXYZ, -1.0, 1.0));
-                    let lon = atan2(v.y, v.x);
-                    return PolarAngles(lat, lon, alt, 0.0);
-                }
-
-                @compute @workgroup_size(64)
-                fn main(@builtin(global_invocation_id) id: vec3<u32>) {
-                    let i = id.x;
-                    if (i >= u32(p.pointsPerStep)) { return; }
-
-                    let prevOffset = u32(p.stepOffset - p.pointsPerStep);
-                    let currOffset = u32(p.stepOffset);
-                    let p1 = positions[prevOffset + i];
-                    let p1_n = normalize(p1);
-
-                    var force = vec4<f32>(0.0);
-                    for (var j = 0u; j < u32(p.pointsPerStep); j++) {
-                        if (i == j) { continue; }
-                        let p2_n = normalize(positions[prevOffset + j]);
-                        let diff = p1_n - p2_n;
-                        let d2 = dot(diff, diff) + 1e-6;
-                        force += normalize(diff) * (p.repulsionStrength / d2);
-                    }
-
-                    if (i == 0u) { debugForce = force; }
-
-                    let v_new = velocities[i] * p.damping + force;
-                    velocities[i] = v_new;
-                    let next_pos_unit = normalize(p1_n + v_new);
-                    positions[currOffset + i] = next_pos_unit * p.radius;
-                    anglesBuf[currOffset + i] = gpuCartesianToPolar(next_pos_unit);
-                }
-            `;
-
-        const polarToCartesian = (la, lo, al, r) => {
+        // --- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ МАТЕМАТИКИ ---
+        const polarToCartesian = (la, lo, al, r = 1) => {
             const r_xyz = r * Math.sin(al), w = r * Math.cos(al);
             return { x: r_xyz * Math.cos(la) * Math.cos(lo), y: r_xyz * Math.cos(la) * Math.sin(lo), z: r_xyz * Math.sin(la), w };
         };
         const cartesianToPolar = (v) => {
-            const R = Math.sqrt(v.x ** 2 + v.y ** 2 + v.z ** 2 + v.w ** 2) || 1e-10, al = Math.acos(Math.min(1, Math.max(-1, v.w / R)));
+            const R = Math.sqrt(v.x ** 2 + v.y ** 2 + v.z ** 2 + v.w ** 2) || 1e-10;
+            const al = Math.acos(Math.min(1, Math.max(-1, v.w / R)));
             const rXYZ = Math.sqrt(v.x ** 2 + v.y ** 2 + v.z ** 2) || 1e-10;
             return { altitude: al, latitude: Math.asin(Math.min(1, Math.max(-1, v.z / rXYZ))), longitude: Math.atan2(v.y, v.x) };
         };
 
-        // --- WebGPU: ПОИСК АДАПТЕРОВ ---
+        // --- ВСПОМОГАТЕЛЬНЫЕ  ФУНКЦИИ ВЫЧИСЛЕНИЯ СЛУЧАЙНОЙ ТОЧКИ ---
+
+        /**
+         *<pre>
+         [Deepseek. Гипербола через три точки]{@link https://chat.deepseek.com/a/chat/s/1f8ddb5d-b9de-43d3-aa0d-3cfe49cd48a3}
+        Есть декартова система координат. Ось x обозначим как arc. Найди элементарную функцию гиперболы которая пересекает три точки:
+        (arc1 = 0, y1 = 0),
+        (arc2 = π / 100, y2 = π - π / 100),
+        (arc3 = π, y3 = π)
+         arc меняется только в диапазоне от 0 до π. arc это не угол.
+        Написать код на javascript.
+
+        Tеперь для построения функции для нахождения коэффициентов гиперболы оставим только две крайних точки, первую и третью, уберем среднюю точку,
+        а вместо нее добавим некоторый параметр p, который будет меняться в диапазоне допустим от 0 до 1.
+        Если p = 0, то гипербола вырождется в прямую.
+        Если p = 1, то гипербола вырождется в два отрезка прямых:
+           Первый отрезок: (arc1 = 0, y1 = 0), (arc2 = 0, y2 = π) вертикальная прямая из начала координат.
+           Второй отрезок: (arc1 = 0, y1 = π), (arc2 = π, y2 = π) горизональная прямая.
+        Написать код на javascript.
+        Для визуализации примеров сделать [веб страницу]{@link https://raw.githack.com/anhr/commonNodeJS/master/HyperSphere/Examples/hyperbola.html}, в которой применить библиотеку three.js
+
+         Функция для вычисления коэффициентов гиперболы по параметру p
+         * </pre>
+         * @param {float} p <pre>Параметр, который меняется в диапазоне от 0 до 1 и который используется для вычисления параметров гиперболы.
+        Если p = 0, то гипербола вырождется в прямую.
+        Если p = 1, то гипербола вырождется в два отрезка прямых:
+           Первый отрезок: (arc1 = 0, y1 = 0), (arc2 = 0, y2 = π) вертикальная прямая из начала координат.
+           Второй отрезок: (arc1 = 0, y1 = π), (arc2 = π, y2 = π) горизональная прямая.
+         * </pre>
+         */
+        const calculateHyperbola = (p) => {
+
+            // Крайние случаи
+            if (p === 0) {
+                // Прямая линия: y = x (через точки (0,0) и (π,π))
+                return (arc) => { return arc; }
+            }
+
+            if (p === 1) {
+                // Два отрезка: вертикальный и горизонтальный
+                return (arc) => {
+
+                    if (arc === 0) return 0
+                    return π;
+
+                }
+            }
+
+            // Общий случай: гипербола вида y = a/(x - h) + k
+            // У нас есть две точки: (0,0) и (π,π)
+            // и дополнительное условие: при x = 0, y = 0
+            // при x = π, y = π
+
+            // Из точки (0,0): 0 = a/(0 - h) + k => k = a/h
+
+            // Из точки (π,π): π = a/(π - h) + a/h
+
+            // Вводим параметр p для контроля кривизны
+            // Будем использовать p для определения положения асимптоты h
+            // При p -> 0: h -> -∞ (гипербола вырождается в прямую)
+            // При p -> 1: h -> 0 (гипербола вырождается в вертикальную линию)
+
+            // Свяжем h с p: h = - (1-p)/p * C, где C некоторая константа
+            // Чтобы при p=1, h=0; при p=0, h=-∞
+            // Возьмем C = π/2 для хорошей визуализации
+
+            const C = π / 2;
+
+            // Избегаем деления на ноль при p=0 (уже обработано выше)
+            let h;
+            if (p < 0.001) {
+                // Для очень малых p используем линейную аппроксимацию
+                h = -C / p;
+            } else {
+                h = -C * (1 - p) / p;
+            }
+
+            // Вычисляем a из уравнения π = a/(π - h) + a/h
+            // a = π / (1/(π - h) + 1/h) = π / ((h + π - h)/(h(π - h))) = π * h(π - h) / π = h(π - h)
+            // Упростим: a = h * (PI - h)
+
+            const a = h * (π - h);
+
+            // Вычисляем k
+            const k = a / h;
+
+            return (x) => {
+
+                // Гипербола
+                //		const { a, h, k } = hyperbola;
+
+                // Генерируем точки слева от асимптоты (если асимптота слева от 0)
+                // В нашем случае h всегда отрицательное, так что асимптота слева от 0
+                // Проверяем, что не попадаем в асимптоту
+                if (Math.abs(x - h) < 0.001) {
+
+                    console.error(sRandomVertice + ': calculateHyperbola. Under consraction');
+                    return x;
+
+                }
+                return a / (x - h) + k;
+
+            }
+
+        }
+        const hyperbola = calculateHyperbola(p);
+
+        // 4. Преобразование декартовых координат в углы
+        const cartesianToPolarRandom = (Q) => { return cartesianToPolar({ x: Q[2], y: Q[3], z: Q[1], w: Q[0] }); }
+
+        // 2. Создание ортонормированного базиса в касательном пространстве
+        const createTangentBasis = (latitude, longitude, altitude) => {
+            const a = altitude;
+            const b = Math.PI / 2 - latitude;
+            const c = longitude;
+
+            // e1 - направление увеличения altitude
+            const e1 = [
+                -Math.sin(a),
+                Math.cos(a) * Math.cos(b),
+                Math.cos(a) * Math.sin(b) * Math.cos(c),
+                Math.cos(a) * Math.sin(b) * Math.sin(c)
+            ];
+            // Нормализация e1 (уже единичный, но для точности)
+            const norm_e1 = Math.sqrt(e1.reduce((sum, val) => sum + val * val, 0));
+            const e1_norm = e1.map(v => v / norm_e1);
+
+            // e2 - направление увеличения b (уменьшения latitude)
+            const e2_raw = [
+                0,
+                -Math.sin(a) * Math.sin(b),
+                Math.sin(a) * Math.cos(b) * Math.cos(c),
+                Math.sin(a) * Math.cos(b) * Math.sin(c)
+            ];
+            const norm_e2 = Math.sqrt(e2_raw.reduce((sum, val) => sum + val * val, 0));
+            const e2_norm = norm_e2 > 1e-10 ? e2_raw.map(v => v / norm_e2) : [0, 0, 0, 0];
+
+            // e3 - направление увеличения longitude
+            const e3_raw = [
+                0,
+                0,
+                -Math.sin(a) * Math.sin(b) * Math.sin(c),
+                Math.sin(a) * Math.sin(b) * Math.cos(c)
+            ];
+            const norm_e3 = Math.sqrt(e3_raw.reduce((sum, val) => sum + val * val, 0));
+            const e3_norm = norm_e3 > 1e-10 ? e3_raw.map(v => v / norm_e3) : [0, 0, 0, 0];
+
+            return [e1_norm, e2_norm, e3_norm];
+        }
+
+        /**
+         * Вычисление новой точки
+         * @param {object} startingPointParams see startingPointParams above.
+         * @param {any} distance геодезическое расстояние. Диапазон значений: 0 ≤ distance ≤ πR
+         * @param {any} eta первый угол направления (полярный угол). Определяет наклон направления движения относительно "вертикали" в касательном пространстве.
+         * Аналог "широты" направления или "угла места".
+         * Диапазон значений: 0 ≤ eta ≤ π
+         * @param {any} psi второй угол направления (азимутальный угол)
+         * Назначение:
+         * Определяет азимут направления движения в горизонтальной плоскости касательного пространства
+         * Задает вращение вокруг оси e1
+         * Диапазон значений:
+         * Необходимый и достаточный: 0 ≤ psi < 2π
+         * Но обычно достаточно: -π ≤ psi ≤ π (как в коде)
+         * @returns координаты новой точки в полярной системе координат
+         */
+        const calculateNewPoint = (startingPointParams, distance, eta, psi, R) => {
+            // Исходная точка
+            //		const P = this.polarToCartesian(lat, lon, alt);
+            const P = startingPointParams.P;
+
+            // Касательный базис
+            //		const [e1, e2, e3] = this.createTangentBasis(lat, lon, alt);
+            const [e1, e2, e3] = [startingPointParams.e1, startingPointParams.e2, startingPointParams.e3];
+
+            // Направляющий вектор в касательном пространстве
+            const u = [0, 0, 0, 0];
+            for (let i = 0; i < 4; i++) {
+                u[i] = Math.cos(eta) * e1[i] +
+                    Math.sin(eta) * Math.cos(psi) * e2[i] +
+                    Math.sin(eta) * Math.sin(psi) * e3[i];
+            }
+
+            // Угловое расстояние
+            const delta = distance / R;
+
+            // Экспоненциальное отображение
+            const Q = [0, 0, 0, 0];
+            for (let i = 0; i < 4; i++) {
+                Q[i] = Math.cos(delta) * P[i] + R * Math.sin(delta) * u[i];
+            }
+
+            // Обратное преобразование в углы
+            const angles = cartesianToPolarRandom(Q);
+
+            if (Math.abs((Math.abs(startingPointParams.lat) - π / 2)) < 1e-12) angles.longitude = random() * 2 * π - π;//Противоположная вершина находится на полюсе
+            return angles;
+        }
+        const getStartingPointParams = (oppositeVertice) => {
+            const lat = oppositeVertice.latitude, lon = oppositeVertice.longitude, alt = oppositeVertice.altitude;
+
+            // Исходная точка
+            const objectP = polarToCartesian(lat, lon, alt), P = [objectP.w, objectP.z, objectP.x, objectP.y];
+
+            // Касательный базис
+            const [e1, e2, e3] = createTangentBasis(lat, lon, alt);
+
+            return {
+
+                lat: lat,
+                alt: alt,
+                P: P,
+                e1: e1,
+                e2: e2,
+                e3: e3,
+
+            }
+
+        }
+
+        /**
+         * Функция распределения (CDF) для расстояния на S³
+         */
+        const CDF_S3 = (theta) => {
+            // CDF(θ) = (3θ - 3sinθcosθ + 2sin³θ) / 4
+            const sinTheta = Math.sin(theta);
+            const cosTheta = Math.cos(theta);
+            const sin3Theta = sinTheta * sinTheta * sinTheta;
+
+            return (3 * theta - 3 * sinTheta * cosTheta + 2 * sin3Theta) / 4;
+        }
+        const getDistance = (distance, R, arc) => {
+
+            if (arc === 0) return 0;
+
+            /*Есть декартова система координат. Ось x обозначим как arc. Найди элементарную функцию которая неогранниченно растет в точке arc = 0 и равна нулю в точке arc = π.
+            arc меняется только в диапазоне от 0 до π. arc это не угол.
+            Написать код на javascript
+            */
+            //https://chat.deepseek.com/a/chat/s/0b71542a-46a2-47e2-9888-f95f26f0fa37
+            const y = 1 / arc - 1 / π;
+
+            return distance / (1 + (y * R * random()));
+
+        }
+        const getRandomAngles = (startingPointParams, arc) => {
+
+
+            // Правильное распределение для равномерного покрытия:
+            // Вероятность попасть в сферическую шапочку радиуса d пропорциональна sin^3(d/R)
+            const R = 1, distance = getDistance(R * inverseCDF_S3(random()), R, arc) * 2;
+
+            const result = calculateNewPoint(
+                startingPointParams,
+                distance,//максимальная дистанция находится на противоположной стороне гиперсферы
+                Math.acos(2 * random() - 1),//eta. первый угол направления (полярный угол). 0 ≤ eta ≤ π
+                random() * 2 * π,//psi. второй угол направления (азимутальный угол). 0 ≤ psi < 2π или -π ≤ psi ≤ π
+                R
+            );
+            return result;
+
+        }
+        const GetRandomVertice = (arc, oppositeVertice) => {
+            const startingPointParams = getStartingPointParams(oppositeVertice);
+            return getRandomAngles(startingPointParams, arc);
+
+        }
+        /**
+         * Обратная функция распределения для равномерной выборки на S³
+         * Для равномерного распределения на 3-сфере от северного полюса:
+         * Плотность: f(θ) ∝ sin³(θ), где θ = distance/R
+         * CDF: F(θ) = (3θ - 3sinθcosθ + 2sin³θ) / 4
+         * Здесь используем численное решение обратной функции
+         */
+        const inverseCDF_S3 = (u) => {
+            // u ∈ [0, 1] равномерно
+            // Ищем θ такой, что CDF(θ) = u, θ ∈ [0, π]
+
+            // Численное решение методом бисекции
+            let low = 0;
+            let high = Math.PI;
+            const tolerance = 1e-10;
+            const maxIterations = 100;
+
+            for (let i = 0; i < maxIterations; i++) {
+                const mid = (low + high) / 2;
+                const cdfValue = CDF_S3(mid);
+
+                if (Math.abs(cdfValue - u) < tolerance) {
+                    return mid;
+                }
+
+                if (cdfValue < u) {
+                    low = mid;
+                } else {
+                    high = mid;
+                }
+            }
+
+            return (low + high) / 2;
+        }
+
+        // --- WebGPU: СЕРДЦЕ СИСТЕМЫ ---
         let device, pipeline, posBuf, velBuf, paramBuf, debugBuf, anglesBufGPU, bindGroup;
         let availableAdapters = [];
 
         async function getSafeAdapterName(adapter, index) {
             if (!adapter) return `${index + 1}. Неизвестное устройство`;
             let name = "WebGPU Adapter";
-            if (adapter.info) {
-                name = adapter.info.description || adapter.info.vendor || name;
-            } else if (typeof adapter.requestAdapterInfo === 'function') {
-                try {
-                    const info = await adapter.requestAdapterInfo();
-                    name = info.description || info.vendor || name;
-                } catch (e) { name = "Protected GPU Name"; }
-            }
+            if (adapter.info) name = adapter.info.description || adapter.info.vendor || name;
             return `${index + 1}. ${name}`;
         }
 
         async function findAdapters() {
             const select = document.getElementById('gpuSelect');
-            if (!navigator.gpu) {
-                select.innerHTML = '<option value="-1">WebGPU не поддерживается</option>';
-                return;
-            }
+            if (!navigator.gpu) { select.innerHTML = '<option value="-1">WebGPU не поддерживается</option>'; return; }
             try {
-                availableAdapters = [];
-                if (navigator.gpu.enumerateAdapters) {
-                    availableAdapters = await navigator.gpu.enumerateAdapters();
-                }
+                if (navigator.gpu.enumerateAdapters) availableAdapters = await navigator.gpu.enumerateAdapters();
                 if (availableAdapters.length === 0) {
                     const high = await navigator.gpu.requestAdapter({ powerPreference: 'high-performance' });
-                    const low = await navigator.gpu.requestAdapter({ powerPreference: 'low-power' });
                     if (high) availableAdapters.push(high);
-                    if (low && low !== high) availableAdapters.push(low);
-                }
-                if (availableAdapters.length === 0) {
-                    select.innerHTML = '<option value="-1">Карты не найдены</option>';
-                    return;
                 }
                 select.innerHTML = '';
                 for (let i = 0; i < availableAdapters.length; i++) {
                     const displayName = await getSafeAdapterName(availableAdapters[i], i);
-                    const opt = document.createElement('option');
-                    opt.value = i;
-                    opt.text = displayName;
-                    select.appendChild(opt);
+                    const opt = document.createElement('option'); opt.value = i; opt.text = displayName; select.appendChild(opt);
                 }
             } catch (e) { select.innerHTML = '<option value="-1">Ошибка поиска</option>'; }
         }
@@ -257,13 +499,153 @@
             device = await adapter.requestDevice();
             document.getElementById('activeGpu').innerText = `Активен: ${await getSafeAdapterName(adapter, idx)}`;
 
+            // Предварительный расчет гиперболы для констант шейдера
+            const h_val = p === 0 ? -1e10 : -(π / 2) * (1 - p) / Math.max(p, 0.001);
+            const a_val = h_val * (π - h_val);
+            const k_val = a_val / h_val;
+
+            // ГЕНЕРАЦИЯ ШЕЙДЕРА (МЕТАПРОГРАММИРОВАНИЕ)
+            const dynamicShaderCode = `
+                        /* СТРУКТУРЫ ДАННЫХ */
+                        struct Params {
+                            radius: f32,      // Текущий радиус сферы
+                            stepOffset: f32   // Индекс начала текущей группы
+                        };
+
+                        struct PolarAngles {
+                            latitude: f32, longitude: f32, altitude: f32, _pad: f32
+                        };
+
+                        /* ПРИВЯЗКИ */
+                        @group(0) @binding(0) var<storage, read_write> positions: array<vec4<f32>>;
+                        @group(0) @binding(1) var<storage, read_write> velocities: array<vec4<f32>>;
+                        @group(0) @binding(2) var<uniform> p_param: Params;
+                        @group(0) @binding(3) var<storage, read_write> debugForce: vec4<f32>;
+                        @group(0) @binding(4) var<storage, read_write> anglesBuf: array<PolarAngles>;
+
+                        /* ВШИТЫЕ КОНСТАНТЫ (Generated by JS) */
+                        const PI: f32 = ${π};
+                        const DAMPING: f32 = ${DAMPING.toFixed(8)};
+                        const REPULSION: f32 = ${REPULSION_STRENGTH.toFixed(8)};
+                        const POINTS_PER_STEP: u32 = ${Math.floor(pointsPerStep)}u;
+                        const HYP_A: f32 = ${a_val.toFixed(8)};
+                        const HYP_H: f32 = ${h_val.toFixed(8)};
+                        const HYP_K: f32 = ${k_val.toFixed(8)};
+
+                        // Временная функция-заглушка для random
+                        fn random_gpu() -> f32 { return 0.5; }
+
+                        fn hyperbola_gpu(x: f32) -> f32 {
+                            if (${p === 0}) { return x; }
+                            if (${p === 1}) { if (x == 0.0) { return 0.0; } return PI; }
+                            return HYP_A / (x - HYP_H) + HYP_K;
+                        }
+
+                        fn CDF_S3(theta: f32) -> f32 {
+                            return (3.0 * theta - 3.0 * sin(theta) * cos(theta) + 2.0 * pow(sin(theta), 3.0)) / 4.0;
+                        }
+
+                        fn inverseCDF_S3(u: f32) -> f32 {
+                            var low = 0.0; var high = PI;
+                            for (var i = 0; i < 20; i++) {
+                                let mid = (low + high) / 2.0;
+                                if (CDF_S3(mid) < u) { low = mid; } else { high = mid; }
+                            }
+                            return (low + high) / 2.0;
+                        }
+
+                        fn getDistance(dist: f32, R: f32, arc: f32) -> f32 {
+                            if (arc == 0.0) { return 0.0; }
+                            let y = 1.0 / arc - 1.0 / PI;
+                            return dist / (1.0 + (y * R * random_gpu()));
+                        }
+
+                        fn createTangentBasis(lat: f32, lon: f32, alt: f32) -> mat3x4<f32> {
+                            let a = alt; let b = PI / 2.0 - lat; let c = lon;
+                            let e1 = normalize(vec4<f32>(-sin(a), cos(a)*cos(b), cos(a)*sin(b)*cos(c), cos(a)*sin(b)*sin(c)));
+
+                            var e2 = vec4<f32>(0.0, -sin(a)*sin(b), sin(a)*cos(b)*cos(c), sin(a)*cos(b)*sin(c));
+                            let n2 = length(e2);
+                            if (n2 > 1e-10) { e2 = e2 / n2; }
+
+                            var e3 = vec4<f32>(0.0, 0.0, -sin(a)*sin(b)*sin(c), sin(a)*sin(b)*cos(c));
+                            let n3 = length(e3);
+                            if (n3 > 1e-10) { e3 = e3 / n3; }
+
+                            return mat3x4<f32>(e1, e2, e3);
+                        }
+
+                        fn calculateNewPoint(P: vec4<f32>, basis: mat3x4<f32>, distance_val: f32, eta: f32, psi: f32, R: f32) -> vec4<f32> {
+                            let u = cos(eta) * basis[0] + sin(eta) * cos(psi) * basis[1] + sin(eta) * sin(psi) * basis[2];
+                            let delta = distance_val / R;
+                            return cos(delta) * P + R * sin(delta) * u;
+                        }
+
+                        /* МАТЕМАТИКА ВНУТРИ GPU */
+                        fn gpuCartesianToPolar(v: vec4<f32>) -> PolarAngles {
+                            let R = length(v) + 1e-10;
+                            let alt = acos(clamp(v.w / R, -1.0, 1.0));
+                            let rXYZ = length(v.xyz) + 1e-10;
+                            let lat = asin(clamp(v.z / rXYZ, -1.0, 1.0));
+                            let lon = atan2(v.y, v.x);
+                            return PolarAngles(lat, lon, alt, 0.0);
+                        }
+
+                        @compute @workgroup_size(64)
+                        fn main(@builtin(global_invocation_id) id: vec3<u32>) {
+                            let i = id.x;
+                            if (i >= POINTS_PER_STEP) { return; }
+
+                            let prevOffset = u32(p_param.stepOffset - f32(POINTS_PER_STEP));
+                            let currOffset = u32(p_param.stepOffset);
+
+                            let p1 = positions[prevOffset + i];
+
+                            // СБОР СИЛ
+                            var force = vec4<f32>(0.0);
+                            for (var j = 0u; j < POINTS_PER_STEP; j++) {
+                                if (i == j) { continue; }
+                                let p2_orig = positions[prevOffset + j];
+                                let d_vec_orig = p1 - p2_orig;
+                                let dist_orig = length(d_vec_orig);
+                                let arc = PI - hyperbola_gpu((dist_orig / p_param.radius / 2.0) * PI);
+
+                                // Расчет шума для точки j
+                                let ang2 = gpuCartesianToPolar(p2_orig);
+                                let basis2 = createTangentBasis(ang2.latitude, ang2.longitude, ang2.altitude);
+                                let dist_noise = getDistance(1.0 * inverseCDF_S3(random_gpu()), 1.0, arc) * 2.0;
+                                // P в calculateNewPoint должен быть [w, z, x, y] как в JS?
+                                // В JS: P = [objectP.w, objectP.z, objectP.x, objectP.y]
+                                let P_js = vec4<f32>(p2_orig.w, p2_orig.z, p2_orig.x, p2_orig.y);
+                                let noise2_q = calculateNewPoint(P_js, basis2, dist_noise, acos(2.0 * random_gpu() - 1.0), random_gpu() * 2.0 * PI, 1.0);
+
+                                // Обратное преобразование из Q [w,z,x,y] в декартовы [x,y,z,w] для расчета силы
+                                let noise2 = vec4<f32>(noise2_q.z, noise2_q.w, noise2_q.y, noise2_q.x);
+
+                                let d = p1 - noise2;
+                                let d2 = dot(d, d);
+                                let m = REPULSION / d2;
+                                force += (d / (length(d) + 1e-6)) * m;
+                            }
+
+                            if (i == 0u) { debugForce = force; }
+
+                            // ИНТЕГРАЦИЯ СКОРОСТИ И ПОЗИЦИИ
+                            let v_new = velocities[i] * DAMPING + force;
+                            velocities[i] = v_new;
+                            let next_pos_unit = normalize(p1 + v_new);
+                            positions[currOffset + i] = next_pos_unit * p_param.radius;
+                            anglesBuf[currOffset + i] = gpuCartesianToPolar(next_pos_unit);
+                        }
+                    `;
+
             pipeline = device.createComputePipeline({
-                layout: 'auto', compute: { module: device.createShaderModule({ code: shaderCode }), entryPoint: 'main' }
+                layout: 'auto', compute: { module: device.createShaderModule({ code: dynamicShaderCode }), entryPoint: 'main' }
             });
 
             posBuf = device.createBuffer({ size: count * 16, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST });
             velBuf = device.createBuffer({ size: pointsPerStep * 16, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
-            paramBuf = device.createBuffer({ size: 32, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
+            paramBuf = device.createBuffer({ size: 16, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
             debugBuf = device.createBuffer({ size: 16, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
             anglesBufGPU = device.createBuffer({ size: count * 16, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST });
 
@@ -310,29 +692,60 @@
             readBuf.unmap(); readBuf.destroy();
         }
 
-        // --- ЛОГИКА CPU ---
+        // --- ЛОГИКА CPU (СИНХРОНИЗИРОВАНА С GPU j=0) ---
+        const setVelocities = (velociti, DAMPING, force) => {
+
+            velociti.x = velociti.x * DAMPING + force.x;
+            velociti.y = velociti.y * DAMPING + force.y;
+            velociti.z = velociti.z * DAMPING + force.z;
+            velociti.w = velociti.w * DAMPING + force.w;
+
+        }
+        const setForse = (force, d, dist, m) => { force.x += (d.x / dist) * m; force.y += (d.y / dist) * m; force.z += (d.z / dist) * m; force.w += (d.w / dist) * m; }
+        const getD = (p1, p2) => { return { x: p1.x - p2.x, y: p1.y - p2.y, z: p1.z - p2.z, w: p1.w - p2.w } }
+        const getD2 = (d) => { return d.x * d.x + d.y * d.y + d.z * d.z + d.w * d.w }
         async function performStepCPU() {
             if (currentStep >= totalSteps) return;
             const prevStart = (currentStep - 1) * pointsPerStep;
             const currStart = currentStep * pointsPerStep;
             const newRadius = radiusPrev + radiusStep;
             const color = new THREE.Color();
+
             for (let i = 0; i < pointsPerStep; i++) {
-                const p1 = polarToCartesian(angles[prevStart + i].latitude, angles[prevStart + i].longitude, angles[prevStart + i].altitude, 1);
-                let f = { x: 0, y: 0, z: 0, w: 0 };
+                const angles1 = angles[prevStart + i];
+                const p1 = polarToCartesian(angles1.latitude, angles1.longitude, angles1.altitude, radiusPrev);
+                const force = { x: 0, y: 0, z: 0, w: 0 }
+
+                // Полный перебор для идентичности с шейдером
                 for (let j = 0; j < pointsPerStep; j++) {
                     if (i === j) continue;
-                    const p2 = polarToCartesian(angles[prevStart + j].latitude, angles[prevStart + j].longitude, angles[prevStart + j].altitude, 1);
-                    const dx = p1.x - p2.x, dy = p1.y - p2.y, dz = p1.z - p2.z, dw = p1.w - p2.w;
-                    const d2 = dx * dx + dy * dy + dz * dz + dw * dw + 1e-6;
+                    const angles2 = angles[prevStart + j];
+                    const p2 = polarToCartesian(angles2.latitude, angles2.longitude, angles2.altitude, radiusPrev);
+                    let d = getD(p1, p2);
+                    let dist = Math.sqrt(getD2(d));
+                    const arc = π - hyperbola((dist / radiusPrev / 2) * π);
+                    const r = radiusPrev;
+
+                    // Случайное направление для точки j (может быть противоположным для лучшего разведения)
+                    const polarNoise2 = GetRandomVertice(arc, angles2);
+                    const noise2 = polarToCartesian(polarNoise2.latitude, polarNoise2.longitude, polarNoise2.altitude, r);
+
+                    // Вектор от i к j
+                    d = getD(p1, noise2);
+                    const d2 = getD2(d);
+                    dist = Math.sqrt(d2);
+                    if (dist === 0) {
+                        console.error('performStepCPU: step. Invalid dist = ' + dist);
+                        return;
+                    }
                     const m = REPULSION_STRENGTH / d2;
-                    f.x += dx / Math.sqrt(d2) * m; f.y += dy / Math.sqrt(d2) * m; f.z += dz / Math.sqrt(d2) * m; f.w += dw / Math.sqrt(d2) * m;
+                    setForse(force, d, dist, m);
                 }
-                velocities[i].x = velocities[i].x * DAMPING + f.x;
-                velocities[i].y = velocities[i].y * DAMPING + f.y;
-                velocities[i].z = velocities[i].z * DAMPING + f.z;
-                velocities[i].w = velocities[i].w * DAMPING + f.w;
-                angles[currStart + i] = cartesianToPolar({ x: p1.x + velocities[i].x, y: p1.y + velocities[i].y, z: p1.z + velocities[i].z, w: p1.w + velocities[i].w });
+
+                const velociti = velocities[i];
+                setVelocities(velociti, DAMPING, force);
+
+                angles[currStart + i] = cartesianToPolar({ x: p1.x + velociti.x, y: p1.y + velociti.y, z: p1.z + velociti.z, w: p1.w + velociti.w });
                 const p = polarToCartesian(angles[currStart + i].latitude, angles[currStart + i].longitude, angles[currStart + i].altitude, newRadius);
                 posAttr.setXYZ(currStart + i, p.x, p.y, p.z);
                 const t = (p.w + radiusMax) / (2 * radiusMax);
@@ -340,8 +753,7 @@
                 colorAttr.setXYZ(currStart + i, color.r, color.g, color.b);
             }
             radiusPrev = newRadius; currentStep++;
-            posAttr.needsUpdate = true; colorAttr.needsUpdate = true;
-            updateDisplay();
+            posAttr.needsUpdate = true; colorAttr.needsUpdate = true; updateDisplay();
         }
 
         function initPoints() {
@@ -362,8 +774,7 @@
                 const p = polarToCartesian(angles[i].latitude, angles[i].longitude, angles[i].altitude, baseRadius);
                 posAttr.setXYZ(i, p.x, p.y, p.z);
                 const t = (p.w + radiusMax) / (2 * radiusMax);
-                color.setHSL(0.7 * (1 - t), 1, 0.5);
-                colorAttr.setXYZ(i, color.r, color.g, color.b);
+                color.setHSL(0.7 * (1 - t), 1, 0.5); colorAttr.setXYZ(i, color.r, color.g, color.b);
             }
             posAttr.needsUpdate = true; colorAttr.needsUpdate = true;
         }
@@ -379,20 +790,10 @@
             if (mode === 'GPU') {
                 const idx = parseInt(document.getElementById('gpuSelect').value);
                 if (idx === -1) { alert("Выберите карту"); document.querySelectorAll('button').forEach(b => b.disabled = false); return; }
-
-                const adapter = availableAdapters[idx];
-                const requiredBytes = count * 16;
-                const maxAllowedBytes = adapter.limits.maxStorageBufferBindingSize;
-
-                if (requiredBytes > maxAllowedBytes) {
-                    alert(`ОШИБКА: Превышен лимит памяти GPU!\n\nТекущее кол-во точек: ${count.toLocaleString()}\nДопустимое кол-во точек: ${Math.floor(maxAllowedBytes / 16).toLocaleString()}\n\nИтерация остановлена.`);
-                    document.querySelectorAll('button').forEach(b => b.disabled = false); return;
-                }
-
                 await initWebGPU(idx);
                 while (currentStep < totalSteps) {
                     const newRadius = radiusPrev + radiusStep;
-                    device.queue.writeBuffer(paramBuf, 0, new Float32Array([DAMPING, REPULSION_STRENGTH, newRadius, currentStep * pointsPerStep, pointsPerStep]));
+                    device.queue.writeBuffer(paramBuf, 0, new Float32Array([newRadius, currentStep * pointsPerStep]));
                     const encoder = device.createCommandEncoder();
                     const pass = encoder.beginComputePass();
                     pass.setPipeline(pipeline); pass.setBindGroup(0, bindGroup);
