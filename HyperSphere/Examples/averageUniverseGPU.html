@@ -255,7 +255,7 @@
                                 // В WGSL нет прямой возможности вывести текст в консоль JS
                                 return x;
                             }
-                            return 0;
+                            return PI;
                         }`;
 
             return (x) => {
@@ -825,7 +825,10 @@
                     pass.dispatchWorkgroups(Math.ceil(pointsPerStep / 64));
                     pass.end();
                     device.queue.submit([encoder.finish()]);
-                    if (DEBUG_MODE) await readDebugValue(currentStep);
+                    if (DEBUG_MODE) {
+                        await readDebugValue(currentStep);
+                        updateDisplay();
+                    }
                     radiusPrev = newRadius; currentStep++;
                 }
 
