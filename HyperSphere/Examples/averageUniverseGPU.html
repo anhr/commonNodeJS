@@ -120,7 +120,7 @@
         //const random = Math.random;
         //Или для облегчения отладки функция возвращает постоянное значение
         const random = () => { return 0.5 };
-        console.error('Under constraction');
+        console.error('random under constraction');
 
         const baseRadius = 0.1;
         const radiusMax = 1;
@@ -193,6 +193,7 @@
            Второй отрезок: (arc1 = 0, y1 = π), (arc2 = π, y2 = π) горизональная прямая.
          * </pre>
          */
+        let hyperbola_gpu;
         const calculateHyperbola = (p) => {
 
             // Крайние случаи
@@ -248,6 +249,14 @@
 
             // Вычисляем k
             const k = a / h;
+            hyperbola_gpu = `
+                        fn hyperbola_gpu(x: f32) -> f32 {
+                            if (abs(x - (${h})) < 0.001) {
+                                // В WGSL нет прямой возможности вывести текст в консоль JS
+                                return x;
+                            }
+                            return 0;
+                        }`;
 
             return (x) => {
 
@@ -466,7 +475,7 @@
         }
 
         // --- WebGPU: СЕРДЦЕ СИСТЕМЫ ---
-        let device, pipeline, posBuf, velBuf, paramBuf, debugBuf, anglesBufGPU, bindGroup;
+        let device, pipeline, posBuf, velBuf, paramBuf, debugBuf, readDebugBuf, anglesBufGPU, bindGroup;
         let availableAdapters = [];
 
         async function getSafeAdapterName(adapter, index) {
@@ -499,10 +508,12 @@
             device = await adapter.requestDevice();
             document.getElementById('activeGpu').innerText = `Активен: ${await getSafeAdapterName(adapter, idx)}`;
 
+/*
             // Предварительный расчет гиперболы для констант шейдера
             const h_val = p === 0 ? -1e10 : -(π / 2) * (1 - p) / Math.max(p, 0.001);
             const a_val = h_val * (π - h_val);
             const k_val = a_val / h_val;
+*/
 
             // ГЕНЕРАЦИЯ ШЕЙДЕРА (МЕТАПРОГРАММИРОВАНИЕ)
             const dynamicShaderCode = `
@@ -528,18 +539,11 @@
                         const DAMPING: f32 = ${DAMPING.toFixed(8)};
                         const REPULSION: f32 = ${REPULSION_STRENGTH.toFixed(8)};
                         const POINTS_PER_STEP: u32 = ${Math.floor(pointsPerStep)}u;
-                        const HYP_A: f32 = ${a_val.toFixed(8)};
-                        const HYP_H: f32 = ${h_val.toFixed(8)};
-                        const HYP_K: f32 = ${k_val.toFixed(8)};
 
                         // Временная функция-заглушка для random
                         fn random_gpu() -> f32 { return 0.5; }
 
-                        fn hyperbola_gpu(x: f32) -> f32 {
-                            if (${p === 0}) { return x; }
-                            if (${p === 1}) { if (x == 0.0) { return 0.0; } return PI; }
-                            return HYP_A / (x - HYP_H) + HYP_K;
-                        }
+                        ${hyperbola_gpu}
 
                         fn CDF_S3(theta: f32) -> f32 {
                             return (3.0 * theta - 3.0 * sin(theta) * cos(theta) + 2.0 * pow(sin(theta), 3.0)) / 4.0;
@@ -647,6 +651,8 @@
             velBuf = device.createBuffer({ size: pointsPerStep * 16, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
             paramBuf = device.createBuffer({ size: 16, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
             debugBuf = device.createBuffer({ size: 16, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
+            // Создание буфера для чтения debug данных на CPU
+            readDebugBuf = device.createBuffer({ size: 16, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
             anglesBufGPU = device.createBuffer({ size: count * 16, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST });
 
             const initialPos = new Float32Array(count * 4);
@@ -690,6 +696,7 @@
             }
             posAttr.needsUpdate = true; colorAttr.needsUpdate = true;
             readBuf.unmap(); readBuf.destroy();
+
         }
 
         // --- ЛОГИКА CPU (СИНХРОНИЗИРОВАНА С GPU j=0) ---
@@ -802,6 +809,16 @@
                     device.queue.submit([encoder.finish()]);
                     radiusPrev = newRadius; currentStep++;
                 }
+
+                // ЧТЕНИЕ DEBUG ДАННЫХ ПОСЛЕ ИТЕРАЦИЙ
+                const debugEncoder = device.createCommandEncoder();
+                debugEncoder.copyBufferToBuffer(debugBuf, 0, readDebugBuf, 0, 16);
+                device.queue.submit([debugEncoder.finish()]);
+                await readDebugBuf.mapAsync(GPUMapMode.READ);
+                const debugRes = new Float32Array(readDebugBuf.getMappedRange());
+                console.log("GPU Debug Force (i=0):", debugRes[0], debugRes[1], debugRes[2], debugRes[3]);
+                readDebugBuf.unmap();
+
                 await finalSyncGPU(); updateDisplay();
             } else {
                 while (currentStep < totalSteps) { await performStepCPU(); await new Promise(r => requestAnimationFrame(r)); }
