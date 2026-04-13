@@ -110,17 +110,13 @@
 
         // --- ГЛОБАЛЬНАЯ КОНФИГУРАЦИЯ ---
         const DEBUG_MODE = true;
-        const RANDOM_POINTS = true;// !DEBUG_MODE;
+        const RANDOM_POINTS = false;// !DEBUG_MODE;
         const totalSteps = RANDOM_POINTS ? 100 : 10;
         const pointsPerStep = RANDOM_POINTS ? 500 : 5;
         const count = totalSteps * pointsPerStep;
         const p = 0.99;//Hyperbola parametr. See calculateHyperbola
 
-        //выбрать один из вариантов:
-        //const random = Math.random;
-        //Или для облегчения отладки функция возвращает постоянное значение
-        const random = () => { return 0.5 };
-        console.error('random under constraction');
+        const random = RANDOM_POINTS ? Math.random : () => { return 0.5 };
 
         const baseRadius = 0.1;
         const radiusMax = 1;
