@@ -252,11 +252,11 @@
             hyperbola_gpu = `
                         fn hyperbola_gpu(x: f32, i: u32) -> f32 {
                             if (abs(x - (${h})) < 0.001) {
-                                // В WGSL нет прямой возможности вывести текст в консоль JS
+                                messageBuffer.errorCode = 1u; // Код ошибки 1 = "hyperbola_gpu: Under construction"
+                                messageBuffer.i = i;
+                                messageBuffer.value = x;
                                 return x;
                             }
-                            messageBuffer.errorCode = 1u; // Код ошибки 1 = "Under construction"
-                            messageBuffer.value = x;
                             return PI;
                         }`;
 
@@ -532,6 +532,7 @@
 
                         struct Message {
                             errorCode: u32,
+                            i: u32,
                             value: f32,
                         };
 
@@ -705,7 +706,6 @@
         async function readMessageValue(step) {
             const readBuf = device.createBuffer({ size: 16, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
             const encoder = device.createCommandEncoder();
-//            encoder.copyBufferToBuffer(messageArray, 0, readBuf, 0, 16);
             
             // 1. Кодируем команду копирования из GPU-буфера в доступный для чтения буфер
             encoder.copyBufferToBuffer(
@@ -713,7 +713,7 @@
                 0, 
                 readBuf,  // Вспомогательный буфер с GPUBufferUsage.MAP_READ
                 0, 
-                8            // Размер в байтах (u32 + f32 = 8 байт)
+                12            // Размер в байтах (u32 + u32 + f32 = 12 байт)
             );            
             
             device.queue.submit([encoder.finish()]);
@@ -722,10 +722,16 @@
             const mappedRange = readBuf.getMappedRange();
             
             // 3. Создаем типизированный массив на основе данных буфера
-            const messageCode = new Uint32Array(mappedRange);
+            const message = new Uint32Array(mappedRange), messageCode = message[0];
             
-            console.log('WGSL message. messageCode: ' + messageCode[0] + ' x: ' + new Float32Array(mappedRange)[1]);
-//            console.log(new Float32Array(mappedRange)[1]); // Значение x
+            if (messageCode != 0) {
+                let messageString;
+                switch(messageCode) {
+                    case 1: messageString = 'hyperbola_gpu: Under construction.'; break;
+                    default: messageString = 'Unknown code: ' + messageCode;
+                }
+                console.error(`[GPU Step ${step}] ` + messageString + ' i: ' + message[1] + ' x: ' + new Float32Array(mappedRange)[2]);
+            }
             
             readBuf.unmap(); readBuf.destroy();
         }
@@ -870,19 +876,8 @@
                     radiusPrev = newRadius; currentStep++;
                 }
 
-                if (DEBUG_MODE) await readDebugValue(currentStep);
+//                if (DEBUG_MODE) await readDebugValue(currentStep);
                 await readMessageValue(currentStep);
-/*                
-                // ЧТЕНИЕ DEBUG ДАННЫХ ПОСЛЕ ИТЕРАЦИЙ
-                const debugEncoder = device.createCommandEncoder();
-                debugEncoder.copyBufferToBuffer(debugBuf, 0, readDebugBuf, 0, 16);
-                device.queue.submit([debugEncoder.finish()]);
-                await readDebugBuf.mapAsync(GPUMapMode.READ);
-                const debugRes = new Float32Array(readDebugBuf.getMappedRange());
-                console.log("GPU Debug Force (i=0):", debugRes[0], debugRes[1], debugRes[2], debugRes[3]);
-                readDebugBuf.unmap();
-*/                
-
                 await finalSyncGPU(); updateDisplay();
             } else {
                 while (currentStep < totalSteps) { await performStepCPU(); await new Promise(r => requestAnimationFrame(r)); }
