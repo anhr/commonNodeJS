@@ -629,17 +629,17 @@
                                 var dist = length(d);
                                 let arc = PI - hyperbola_gpu((dist / p_param.radius / 2.0) * PI, i);
 
-                                ${DEBUG_MODE ? `if ((i == 0u) && (j == 1u)) {
-                                    debug.i = i;
-                                    debug.j = j;
-                                    debug.value = vec4<f32>(arc, p_param.radius, 0.0, 0.0);
-                                }` : ``}
-                                
-
                                 // Расчет шума для точки j
                                 let ang2 = gpuCartesianToPolar(p2);
                                 let basis2 = createTangentBasis(ang2.latitude, ang2.longitude, ang2.altitude);
                                 dist = getDistance(1.0 * inverseCDF_S3(random_gpu()), 1.0, arc) * 2.0;
+
+                                ${DEBUG_MODE ? `if ((i == 0u) && (j == 1u)) {
+                                    debug.i = i;
+                                    debug.j = j;
+                                    debug.value = vec4<f32>(arc, p_param.radius, dist, 0.0);
+                                }` : ``}
+                                
                                 // P в calculateNewPoint должен быть [w, z, x, y] как в JS?
                                 // В JS: P = [objectP.w, objectP.z, objectP.x, objectP.y]
                                 let P_js = vec4<f32>(p2.w, p2.z, p2.x, p2.y);
@@ -884,7 +884,7 @@
                 await initWebGPU(idx);
                 while (currentStep < totalSteps) {
                     const newRadius = radiusPrev + radiusStep;
-                    device.queue.writeBuffer(paramBuf, 0, new Float32Array([newRadius, currentStep * pointsPerStep]));
+                    device.queue.writeBuffer(paramBuf, 0, new Float32Array([radiusPrev, currentStep * pointsPerStep]));
                     const encoder = device.createCommandEncoder();
                     const pass = encoder.beginComputePass();
                     pass.setPipeline(pipeline); pass.setBindGroup(0, bindGroup);
