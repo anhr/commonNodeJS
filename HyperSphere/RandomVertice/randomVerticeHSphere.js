@@ -19,7 +19,7 @@ import HyperSphere from '../hyperSphere3D.js';
 
 const sRandomVerticesHyperSphere = 'RandomVerticesHSphere',
 	π = Math.PI, round = Math.round,
-	atan = Math.atan, acos = Math.acos,
+	atan = Math.atan, acos = Math.acos, sin = Math.sin, cos = Math.cos,
 	random = Math.random;
 //random = () => { return 0.5 };
 //console.error('Under constraction');
@@ -78,27 +78,30 @@ class RandomVerticeHSphere extends RandomVertice {
 
 			// 2. Создание ортонормированного базиса в касательном пространстве
 			createTangentBasis(latitude, longitude, altitude) {
-				const a = altitude;
-				const b = Math.PI / 2 - latitude;
-				const c = longitude;
+				const a = altitude, b = Math.PI / 2 - latitude, c = longitude,
+					sina = sin(a), cosa = cos(a),
+					sinb = sin(b), cosb = cos(b),
+					sinc = sin(c), cosc = cos(c);
 
 				// e1 - направление увеличения altitude
 				const e1 = [
-					-Math.sin(a),
-					Math.cos(a) * Math.cos(b),
-					Math.cos(a) * Math.sin(b) * Math.cos(c),
-					Math.cos(a) * Math.sin(b) * Math.sin(c)
+					-sina,
+					cosa * cosb,
+					cosa * sinb * cosc,
+					cosa * sinb * sinc
 				];
 				// Нормализация e1 (уже единичный, но для точности)
+				//e1.reduce вычисляет сумму квадратов улементов e1
 				const norm_e1 = Math.sqrt(e1.reduce((sum, val) => sum + val * val, 0));
+				//e1.map создает новый массив путем деления каждого элемента на norm_e1
 				const e1_norm = e1.map(v => v / norm_e1);
 
 				// e2 - направление увеличения b (уменьшения latitude)
 				const e2_raw = [
 					0,
-					-Math.sin(a) * Math.sin(b),
-					Math.sin(a) * Math.cos(b) * Math.cos(c),
-					Math.sin(a) * Math.cos(b) * Math.sin(c)
+					-sina * sinb,
+					sina * cosb * cosc,
+					sina * cosb * sinc
 				];
 				const norm_e2 = Math.sqrt(e2_raw.reduce((sum, val) => sum + val * val, 0));
 				const e2_norm = norm_e2 > 1e-10 ? e2_raw.map(v => v / norm_e2) : [0, 0, 0, 0];
@@ -107,8 +110,8 @@ class RandomVerticeHSphere extends RandomVertice {
 				const e3_raw = [
 					0,
 					0,
-					-Math.sin(a) * Math.sin(b) * Math.sin(c),
-					Math.sin(a) * Math.sin(b) * Math.cos(c)
+					-sina * sinb * sinc,
+					sina * sinb * cosc
 				];
 				const norm_e3 = Math.sqrt(e3_raw.reduce((sum, val) => sum + val * val, 0));
 				const e3_norm = norm_e3 > 1e-10 ? e3_raw.map(v => v / norm_e3) : [0, 0, 0, 0];
