@@ -22,7 +22,7 @@ const sRandomVerticesHyperSphere = 'RandomVerticesHSphere',
 	atan = Math.atan, acos = Math.acos, sin = Math.sin, cos = Math.cos,
 	random = Math.random;
 //random = () => { return 0.5 };
-//console.error('Under constraction');
+//console.error('random: Under constraction');
 
 /**
  * Generates a random vertice near the opposite vertice in 3D hypersphere.
@@ -208,19 +208,19 @@ class RandomVerticeHSphere extends RandomVertice {
 			 */
 			calculateNewPoint(startingPointParams, distance, eta, psi) {
 				// Исходная точка
-				//		const P = this.polarToCartesian(lat, lon, alt);
 				const P = startingPointParams.P;
 
 				// Касательный базис
-				//		const [e1, e2, e3] = this.createTangentBasis(lat, lon, alt);
 				const [e1, e2, e3] = [startingPointParams.e1, startingPointParams.e2, startingPointParams.e3];
-
+				
+	            const coseta = cos(eta), sineta = sin(eta), cospsi = cos(psi), sinpsi = sin(psi), sinetacospsi = sineta * cospsi, sinetasinpsi = sineta * sinpsi;
+				
 				// Направляющий вектор в касательном пространстве
 				const u = [0, 0, 0, 0];
 				for (let i = 0; i < 4; i++) {
-					u[i] = Math.cos(eta) * e1[i] +
-						Math.sin(eta) * Math.cos(psi) * e2[i] +
-						Math.sin(eta) * Math.sin(psi) * e3[i];
+	                u[i] = coseta * e1[i] +
+						sinetacospsi * e2[i] +
+						sinetasinpsi * e3[i];
 				}
 
 				// Угловое расстояние
