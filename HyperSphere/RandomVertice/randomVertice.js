@@ -27,15 +27,14 @@ class RandomVertice {
 
 	/**
 	 * Generates a cloud of random vertices around the opposite vertice.
-	 * @param {object} [params={}] The following parameters are available.
+	 * @param {object} params={} The following parameters are available.
 	 * @param {float} [params.arc=0] Density distribution of a cloud of random vertices on a hypersphere. arc range from 0 to π.
 	 * <pre>
 	 *	arc = 0 A cloud of random vertices degenerates into a single point equal to the opposite vertice.
 	 *	arc = π A cloud of random vertices is uniformly distributed over the entire surface of the hypersphere.
 	 * </pre>
-	 * @param {Array} [params.oppositeVertice=[altitude, latitude, longitude]] Opposite vertice position in polar coordinates.
-	 * @param {object} [params.debug] Debug mode.
-	 * @param {object} [params.debug.notRandomVertices] true - replacing random vertices with strictly defined vertices.
+	 * @param {Array} params.oppositeVertice [altitude, latitude, longitude] Opposite vertice position in polar coordinates.
+	 * @param {object} params.classSettings See <a href="../../jsdoc/module-HyperSphere-HyperSphere.html" target="_blank">HyperSphere classSettings</a>.
 	 * @param {number} [verticesCount=1] count of vertices in the random vertices cloud.
 	 */
 	constructor(params={}, verticesCount = 1) {

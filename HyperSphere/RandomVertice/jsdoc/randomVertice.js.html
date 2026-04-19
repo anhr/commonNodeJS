@@ -45,7 +45,8 @@ import getHyperSphere from './getHyperSphere.js'
 
 const sRandomVertice = 'RandomVertice',
 	sOver = ': Please, override %s method in your ' + sRandomVertice + ' child class.',
-	π = Math.PI, random = Math.random, acos = Math.acos;
+	π = Math.PI, acos = Math.acos;
+let random = Math.random;
 /**
  * Generates random angles between a vertice and its opposite vertice.
  * @class
@@ -54,19 +55,19 @@ class RandomVertice {
 
 	/**
 	 * Generates a cloud of random vertices around the opposite vertice.
-	 * @param {object} [params={}] The following parameters are available.
+	 * @param {object} params={} The following parameters are available.
 	 * @param {float} [params.arc=0] Density distribution of a cloud of random vertices on a hypersphere. arc range from 0 to π.
 	 * &lt;pre>
 	 *	arc = 0 A cloud of random vertices degenerates into a single point equal to the opposite vertice.
 	 *	arc = π A cloud of random vertices is uniformly distributed over the entire surface of the hypersphere.
 	 * &lt;/pre>
-	 * @param {Array} [params.oppositeVertice=[altitude, latitude, longitude]] Opposite vertice position in polar coordinates.
-	 * @param {object} [params.debug] Debug mode.
-	 * @param {object} [params.debug.notRandomVertices] true - replacing random vertices with strictly defined vertices.
+	 * @param {Array} params.oppositeVertice [altitude, latitude, longitude] Opposite vertice position in polar coordinates.
+	 * @param {object} params.classSettings See &lt;a href="../../jsdoc/module-HyperSphere-HyperSphere.html" target="_blank">HyperSphere classSettings&lt;/a>.
 	 * @param {number} [verticesCount=1] count of vertices in the random vertices cloud.
 	 */
 	constructor(params={}, verticesCount = 1) {
 
+		random = params.classSettings.debug.random || random;
 		if (params.arc === undefined) params.arc = 0;
 			
 		if (!params.boArcIsdefined) {
@@ -151,6 +152,7 @@ class RandomVertice {
 			
 			let arc = params.arc;
 			if (arc &lt; 0) arc = 0;//Эта ошибка возникает потому что в GUI переменная arc округляется до 4 знаков
+			if (arc === 0) return 0;
 			
 			/*Есть декартова система координат. Ось x обозначим как arc. Найди элементарную функцию которая неогранниченно растет в точке arc = 0 и равна нулю в точке arc = π.
 			arc меняется только в диапазоне от 0 до π. arc это не угол.
@@ -261,7 +263,117 @@ Tеперь для построения функции для нахождени
  * &lt;/pre>
  */
 RandomVertice.calculateHyperbola = (p) => {
+
+	// Крайние случаи
+	if (p === 0) {
+		// Прямая линия: y = x (через точки (0,0) и (π,π))
+		return (arc) => { return arc; }
+/*		
+		return {
+			type: 'line',
+			a: 1,
+			b: 0,
+			equation: 'y = x'
+		};
+*/		
+	}
+
+	if (p === 1) {
+		// Два отрезка: вертикальный и горизонтальный
+		return (arc) => {
+
+			if (arc === 0 ) return 0
+			return π;
+			
+		}
+/*		
+		return {
+			type: 'segments',
+			segments: [
+				{ from: { x: 0, y: 0 }, to: { x: 0, y: π } },  // вертикальный
+				{ from: { x: 0, y: PI }, to: { x: PI, y: π } } // горизонтальный
+			],
+			equation: 'Вертикальный и горизонтальный отрезки'
+		};
+*/		
+	}
+
+	// Общий случай: гипербола вида y = a/(x - h) + k
+	// У нас есть две точки: (0,0) и (π,π)
+	// и дополнительное условие: при x = 0, y = 0
+	// при x = π, y = π
+
+	// Из точки (0,0): 0 = a/(0 - h) + k => k = a/h
+
+	// Из точки (π,π): π = a/(π - h) + a/h
+
+	// Вводим параметр p для контроля кривизны
+	// Будем использовать p для определения положения асимптоты h
+	// При p -> 0: h -> -∞ (гипербола вырождается в прямую)
+	// При p -> 1: h -> 0 (гипербола вырождается в вертикальную линию)
+
+	// Свяжем h с p: h = - (1-p)/p * C, где C некоторая константа
+	// Чтобы при p=1, h=0; при p=0, h=-∞
+	// Возьмем C = π/2 для хорошей визуализации
+
+	const C = π / 2;
+
+	// Избегаем деления на ноль при p=0 (уже обработано выше)
+	let h;
+	if (p &lt; 0.001) {
+		// Для очень малых p используем линейную аппроксимацию
+		h = -C / p;
+	} else {
+		h = -C * (1 - p) / p;
+	}
+
+	// Вычисляем a из уравнения π = a/(π - h) + a/h
+	// a = π / (1/(π - h) + 1/h) = π / ((h + π - h)/(h(π - h))) = π * h(π - h) / π = h(π - h)
+	// Упростим: a = h * (PI - h)
+
+	const a = h * (π - h);
+
+	// Вычисляем k
+	const k = a / h;
+
+	return (x) => {
+
+		// Гипербола
+//		const { a, h, k } = hyperbola;
 	
+		// Генерируем точки слева от асимптоты (если асимптота слева от 0)
+		// В нашем случае h всегда отрицательное, так что асимптота слева от 0
+//		for (let i = 0; i &lt;= numPoints; i++) {
+//			const x = (i / numPoints) * PI;
+		// Проверяем, что не попадаем в асимптоту
+		if (Math.abs(x - h) &lt; 0.001) {
+
+			console.error(sRandomVertice + ': calculateHyperbola. Under consraction');
+			return x;
+//			continue;
+
+		}
+		return a / (x - h) + k;
+/*
+		const y = a / (x - h) + k;
+		// Ограничиваем y для визуализации
+		if (isFinite(y) &amp;&amp; y >= -1 &amp;&amp; y &lt;= PI + 1) {
+			points.push(new THREE.Vector3(x, y, 0));
+		}
+*/			
+//		}
+		
+	}
+/*
+	return {
+		type: 'hyperbola',
+		a: a,
+		h: h,
+		k: k,
+		equation: `y = ${a.toFixed(4)}/(x - ${h.toFixed(4)}) + ${k.toFixed(4)}`
+	};
+*/
+
 }
 export default RandomVertice;
 </code></pre>
@@ -280,7 +392,7 @@ export default RandomVertice;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Thu Mar 05 2026 08:46:18 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sun Apr 19 2026 11:47:12 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

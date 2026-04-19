@@ -46,9 +46,9 @@ import * as utils from '../utilsHSphere.js'
 import HyperSphere from '../hyperSphere3D.js';
 
 const sRandomVerticesHyperSphere = 'RandomVerticesHSphere',
-	π = Math.PI, round = Math.round, random = Math.random,//abs = Math.abs, 
-	//cos = Math.cos, sin = Math.sin,
-	atan = Math.atan, acos = Math.acos;// asin = Math.asin, atan2 = Math.atan2,
+	π = Math.PI, round = Math.round,
+	atan = Math.atan, acos = Math.acos, sin = Math.sin, cos = Math.cos;
+let random = Math.random;
 
 /**
  * Generates a random vertice near the opposite vertice in 3D hypersphere.
@@ -59,11 +59,13 @@ class RandomVerticeHSphere extends RandomVertice {
 
 	/**
 	 * Generates a random vertice near the opposite vertice in 3D hypersphere.
-	 * @param {object} [params={}] See the &lt;b>params&lt;/b> of the &lt;a href="./module-RandomVertice-RandomVertice.html" target="_blank">&lt;b>RandomVertice&lt;/b>&lt;/a> constructor for details.
-	 * @param {number} verticesCount count of vertices in the random vertices cloud.
+	 * @param {object} params See the &lt;b>params&lt;/b> of the &lt;a href="./module-RandomVertice-RandomVertice.html" target="_blank">&lt;b>RandomVertice&lt;/b>&lt;/a> constructor for details.
+	 * @param {number} [verticesCount] count of vertices in the random vertices cloud.
 	 */
-	constructor(params, verticesCount/*, boRandomVertice = true*/) {
+	constructor(params, verticesCount) {
 
+		random = params.classSettings.debug.random || random;
+		
 		super(params, verticesCount);
 		
 		let randomAngles;
@@ -85,7 +87,10 @@ class RandomVerticeHSphere extends RandomVertice {
 			}
 
 			// 1. Преобразование углов в декартовы координаты на гиперсфере
-			anglesToCartesian(latitude, longitude, altitude) {
+			polarToCartesian(latitude, longitude, altitude) {
+				const objectP = utils.polarToCartesian({latitude: latitude, longitude: longitude, altitude: altitude});
+				return [objectP.w, objectP.z, objectP.x, objectP.y];
+/*				
 				const a = altitude;                 // altitude ∈ [0, π]
 				const b = Math.PI / 2 - latitude;     // b ∈ [0, π]
 				const c = longitude;                // longitude ∈ [-π, π]
@@ -96,31 +101,35 @@ class RandomVerticeHSphere extends RandomVertice {
 				const x4 = this.R * Math.sin(a) * Math.sin(b) * Math.sin(c);
 
 				return [x1, x2, x3, x4];
+*/				
 			}
 
 			// 2. Создание ортонормированного базиса в касательном пространстве
 			createTangentBasis(latitude, longitude, altitude) {
-				const a = altitude;
-				const b = Math.PI / 2 - latitude;
-				const c = longitude;
+				const a = altitude, b = Math.PI / 2 - latitude, c = longitude,
+					sina = sin(a), cosa = cos(a),
+					sinb = sin(b), cosb = cos(b),
+					sinc = sin(c), cosc = cos(c);
 
 				// e1 - направление увеличения altitude
 				const e1 = [
-					-Math.sin(a),
-					Math.cos(a) * Math.cos(b),
-					Math.cos(a) * Math.sin(b) * Math.cos(c),
-					Math.cos(a) * Math.sin(b) * Math.sin(c)
+					-sina,
+					cosa * cosb,
+					cosa * sinb * cosc,
+					cosa * sinb * sinc
 				];
 				// Нормализация e1 (уже единичный, но для точности)
+				//e1.reduce вычисляет сумму квадратов улементов e1
 				const norm_e1 = Math.sqrt(e1.reduce((sum, val) => sum + val * val, 0));
+				//e1.map создает новый массив путем деления каждого элемента на norm_e1
 				const e1_norm = e1.map(v => v / norm_e1);
 
 				// e2 - направление увеличения b (уменьшения latitude)
 				const e2_raw = [
 					0,
-					-Math.sin(a) * Math.sin(b),
-					Math.sin(a) * Math.cos(b) * Math.cos(c),
-					Math.sin(a) * Math.cos(b) * Math.sin(c)
+					-sina * sinb,
+					sina * cosb * cosc,
+					sina * cosb * sinc
 				];
 				const norm_e2 = Math.sqrt(e2_raw.reduce((sum, val) => sum + val * val, 0));
 				const e2_norm = norm_e2 > 1e-10 ? e2_raw.map(v => v / norm_e2) : [0, 0, 0, 0];
@@ -129,8 +138,8 @@ class RandomVerticeHSphere extends RandomVertice {
 				const e3_raw = [
 					0,
 					0,
-					-Math.sin(a) * Math.sin(b) * Math.sin(c),
-					Math.sin(a) * Math.sin(b) * Math.cos(c)
+					-sina * sinb * sinc,
+					sina * sinb * cosc
 				];
 				const norm_e3 = Math.sqrt(e3_raw.reduce((sum, val) => sum + val * val, 0));
 				const e3_norm = norm_e3 > 1e-10 ? e3_raw.map(v => v / norm_e3) : [0, 0, 0, 0];
@@ -191,7 +200,7 @@ class RandomVerticeHSphere extends RandomVertice {
 					lat = oppositeVertice.latitude, lon = oppositeVertice.longitude, alt = oppositeVertice.altitude;
 
 				// Исходная точка
-				const P = this.anglesToCartesian(lat, lon, alt);
+				const P = this.polarToCartesian(lat, lon, alt);
 
 				// Касательный базис
 				const [e1, e2, e3] = this.createTangentBasis(lat, lon, alt);
@@ -227,19 +236,17 @@ class RandomVerticeHSphere extends RandomVertice {
 			 */
 			calculateNewPoint(startingPointParams, distance, eta, psi) {
 				// Исходная точка
-				//		const P = this.anglesToCartesian(lat, lon, alt);
 				const P = startingPointParams.P;
 
 				// Касательный базис
-				//		const [e1, e2, e3] = this.createTangentBasis(lat, lon, alt);
 				const [e1, e2, e3] = [startingPointParams.e1, startingPointParams.e2, startingPointParams.e3];
-
+				
+				const coseta = cos(eta), sineta = sin(eta), cospsi = cos(psi), sinpsi = sin(psi), sinetacospsi = sineta * cospsi, sinetasinpsi = sineta * sinpsi;
+				
 				// Направляющий вектор в касательном пространстве
 				const u = [0, 0, 0, 0];
 				for (let i = 0; i &lt; 4; i++) {
-					u[i] = Math.cos(eta) * e1[i] +
-						Math.sin(eta) * Math.cos(psi) * e2[i] +
-						Math.sin(eta) * Math.sin(psi) * e3[i];
+					u[i] = coseta * e1[i] + sinetacospsi * e2[i] + sinetasinpsi * e3[i];
 				}
 
 				// Угловое расстояние
@@ -252,14 +259,16 @@ class RandomVerticeHSphere extends RandomVertice {
 				}
 
 				// Обратное преобразование в углы
-				const angles = this.cartesianToAngles(Q);
+				const angles = this.cartesianToPolar(Q);
 
 				if (Math.abs((Math.abs(startingPointParams.lat) - π / 2)) &lt; 1e-12) angles.longitude = random() * 2 * π - π;//Противоположная вершина находится на полюсе
 				return angles;
 			}
 
 			// 4. Преобразование декартовых координат в углы
-			cartesianToAngles(Q) {
+			cartesianToPolar(Q) {
+				return utils.cartesianToPolar({x: Q[2], y: Q[3],  z: Q[1],  w: Q[0] });
+/*				
 				const [q1, q2, q3, q4] = Q;
 
 				// altitude
@@ -295,12 +304,14 @@ class RandomVerticeHSphere extends RandomVertice {
 					altitude,
 					//cartesian: Q
 				};
+*/				
+				
 			}
 
 			// 5. Вычисление расстояния между двумя точками на гиперсфере
 			greatCircleDistance(lat1, lon1, alt1, lat2, lon2, alt2) {
-				const P1 = this.anglesToCartesian(lat1, lon1, alt1);
-				const P2 = this.anglesToCartesian(lat2, lon2, alt2);
+				const P1 = this.polarToCartesian(lat1, lon1, alt1);
+				const P2 = this.polarToCartesian(lat2, lon2, alt2);
 
 				let dot = 0;
 				for (let i = 0; i &lt; 4; i++) {
@@ -382,7 +393,7 @@ export default RandomVerticeHSphere;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Thu Mar 05 2026 08:46:18 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sun Apr 19 2026 11:47:12 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
