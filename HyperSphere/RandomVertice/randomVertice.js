@@ -17,7 +17,8 @@ import getHyperSphere from './getHyperSphere.js'
 
 const sRandomVertice = 'RandomVertice',
 	sOver = ': Please, override %s method in your ' + sRandomVertice + ' child class.',
-	π = Math.PI, random = Math.random, acos = Math.acos;
+	π = Math.PI, acos = Math.acos;
+let random = Math.random;
 /**
  * Generates random angles between a vertice and its opposite vertice.
  * @class
@@ -39,6 +40,7 @@ class RandomVertice {
 	 */
 	constructor(params={}, verticesCount = 1) {
 
+		random = params.classSettings.debug.random || random;
 		if (params.arc === undefined) params.arc = 0;
 			
 		if (!params.boArcIsdefined) {

@@ -19,10 +19,8 @@ import HyperSphere from '../hyperSphere3D.js';
 
 const sRandomVerticesHyperSphere = 'RandomVerticesHSphere',
 	π = Math.PI, round = Math.round,
-	atan = Math.atan, acos = Math.acos, sin = Math.sin, cos = Math.cos,
-	random = Math.random;
-//random = () => { return 0.5 };
-//console.error('random: Under constraction');
+	atan = Math.atan, acos = Math.acos, sin = Math.sin, cos = Math.cos;
+let random = Math.random;
 
 /**
  * Generates a random vertice near the opposite vertice in 3D hypersphere.
@@ -38,6 +36,8 @@ class RandomVerticeHSphere extends RandomVertice {
 	 */
 	constructor(params, verticesCount) {
 
+		random = params.classSettings.debug.random || random;
+		
 		super(params, verticesCount);
 		
 		let randomAngles;
@@ -213,14 +213,12 @@ class RandomVerticeHSphere extends RandomVertice {
 				// Касательный базис
 				const [e1, e2, e3] = [startingPointParams.e1, startingPointParams.e2, startingPointParams.e3];
 				
-	            const coseta = cos(eta), sineta = sin(eta), cospsi = cos(psi), sinpsi = sin(psi), sinetacospsi = sineta * cospsi, sinetasinpsi = sineta * sinpsi;
+				const coseta = cos(eta), sineta = sin(eta), cospsi = cos(psi), sinpsi = sin(psi), sinetacospsi = sineta * cospsi, sinetasinpsi = sineta * sinpsi;
 				
 				// Направляющий вектор в касательном пространстве
 				const u = [0, 0, 0, 0];
 				for (let i = 0; i < 4; i++) {
-	                u[i] = coseta * e1[i] +
-						sinetacospsi * e2[i] +
-						sinetasinpsi * e3[i];
+					u[i] = coseta * e1[i] + sinetacospsi * e2[i] + sinetasinpsi * e3[i];
 				}
 
 				// Угловое расстояние
