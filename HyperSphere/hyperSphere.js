@@ -257,6 +257,7 @@ class HyperSphere extends MyObject {
 	 * @param {boolean} [classSettings.debug.middleVertice=true] Middle vertice log.
 	 * @param {boolean} [classSettings.debug.log=true] Vertices and edges log.
 	 * @param {boolean} [classSettings.debug.edges=true] Edges log. Have effect if <b>log = true</b> only
+	 * @param {Function} [classSettings.debug.random] Replacing random vertices with strictly defined vertices. For example: <b>() => { return 0.5 }</b>.
 	 * @param {Function} [classSettings.continue] Callback function that called after hypersphere edges was created.
 	 * @param {boolean} [classSettings.boRemove] false - do not delete the previous hypersphere while projecting a new hypersphere on scene.
 	 * @param {boolean} [classSettings.boGui] false - do not include hypersphere GUI.

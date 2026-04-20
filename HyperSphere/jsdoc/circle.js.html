@@ -147,144 +147,11 @@ class Circle extends HyperSphere {
 			vectors = settings.object.geometry.position;
 		mesh.position.copy(new THREE.Vector3(0, ip * r, 0));
 
-		//длинна дуги
-		const angle = (leg) => Math.asin(leg / r),
-			ai = angle(ip);//угол наклона точки пересечения окружности с линией сечения
-		vectors.forEach(vector => {
-
-			const a = angle(vector.y) - ai;//угол между векторами текущей вершины и точки пересечения
-			console.log(a);
-		})
 		return mesh;
 		
 	}
-/*
-	randomVertices(middleVerticeAngles, scene, boCloud = false, boCreateHypersphere = true) {
-		
-		const classSettings = this.classSettings;
-		if (!classSettings.randomArc) return;
-
-		if (!this.params) this.params = {
-				
-				debug: classSettings.debug ? { notRandomVertices: true,} : false,
-				classSettings: classSettings,//используется для вычисления случайной точки в RandomVerticeHSphere HyperSphereNavigator.calculateNewPoint
-				
-			}
-		this.params.oppositeVertice = middleVerticeAngles;
-		this.params.arc = this.arc;
-		
-		if (this.randomVertice &amp;&amp; (boCloud === false) &amp;&amp; (boCreateHypersphere === false)) this.randomVertice.params = this.params;//Делается очередной шаг проигрывателя и это уже не первая точка
-		else {
-			
-			if (this.randomVertice) this.randomVertice.paramsVerticeOnChange();
-			else this.randomVertice = new this.RandomVertice(this.params, boCloud ? 200 : 1);
-
-		}
-		if (boCreateHypersphere) {
-			
-			if (!this.hsRandomVertice) this.hsRandomVertice = this.randomVertice.getHyperSphere(classSettings, scene, this.middleVerticeColor);
-
-		}
-		
-	}
-*/	
 
 	//Overridden methods from base class
-/*
-	middlePosition(points, boCloud, boCreateHypersphere) {
-	
-		const _this = this;
-		function findEquidistantPointOnCircle(points) {
-
-			if (!points || points.length === 0) {
-				console.error(sCircle + ': findEquidistantPointOnCircle. No points');
-				return null;
-			}
-
-			const radius = _this.r;
-			
-			// 2. Если только одна точка, возвращаем диаметрально противоположную
-			if (points.length === 1) {
-				console.error(sCircle + ': findEquidistantPointOnCircle. Если только одна точка, возвращаем диаметрально противоположную');
-				return {
-					x: -points[0].x,
-					y: -points[0].y
-				};
-			}
-	
-			// 3. Вычисляем среднее направление (центр масс точек)
-			let sumX = 0;
-			let sumY = 0;
-	
-			for (const point of points) {
-				sumX += point.x;
-				sumY += point.y;
-			}
-	
-			const avgX = sumX / points.length;
-			const avgY = sumY / points.length;
-	
-			// 4. Нормализуем вектор среднего направления к длине радиуса
-			const length = Math.sqrt(avgX * avgX + avgY * avgY);
-			_this.setArc(radius, radius - length);
-
-			let middleVertice, middleVerticeAngles;
-			
-			if (length &lt; 1e-10) {
-
-				//Противоположные вершины расположены на противоположных краях окружности. В этом случае с равной вероятностью средняя вершина может распологаться с одной или с другой половины окружности.
-				middleVerticeAngles = utils.angles([((_this.vertice2angles(points[0])[0] + _this.vertice2angles(points[1])[0]) / 2) + (Math.random() > 0.5 ? 0 : π)])
-				middleVertice = _this.a2v(middleVerticeAngles, radius);
-				
-			} else {
-			
-				const scale = radius / length;
-				const result = {
-					x: avgX * scale,
-					y: avgY * scale
-				};
-		
-				// 5. Также проверяем противоположную точку (она тоже может быть решением)
-				const opposite = {
-					x: -result.x,
-					y: -result.y
-				};
-		
-				// 6. Выбираем точку с минимальной дисперсией расстояний
-				middleVertice = selectBetterPoint(result, opposite, points);
-				middleVerticeAngles = _this.vertice2angles(middleVertice);
-
-			}
-
-			_this.randomVertices(middleVerticeAngles, _this.object3D.parent, boCloud, boCreateHypersphere);
-			return middleVertice;
-			
-		}
-
-		function selectBetterPoint(point1, point2, points) {
-			const variance1 = calculateDistanceVariance(point1, points);
-			const variance2 = calculateDistanceVariance(point2, points);
-	
-			return variance1 &lt;= variance2 ? point1 : point2;
-		}
-
-		function calculateDistanceVariance(point, points) {
-			const distances = points.map(p => {
-				const dx = p.x - point.x;
-				const dy = p.y - point.y;
-				return Math.sqrt(dx * dx + dy * dy);
-			});
-	
-			const mean = distances.reduce((sum, d) => sum + d, 0) / distances.length;
-			const variance = distances.reduce((sum, d) => sum + Math.pow(d - mean, 2), 0) / distances.length;
-	
-			return variance;
-		}
-		
-		return findEquidistantPointOnCircle(points);
-
-	}
-*/
 	ZeroArray() { return [0]; }
 	Vertice(angles) { return utils.angles(angles); }
 	/**
@@ -327,7 +194,7 @@ class Circle extends HyperSphere {
 
 	}
 		
-	a2v(angles, r){
+	a2v(angles, r = this.r){
 
 		if(r === undefined) console.error(sCircle + ': a2v. r = ' + r);
 		/*https://gemini.google.com/app/1d5ef1a7e3d3d45f
@@ -396,13 +263,13 @@ export default Circle;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Circle.html">Circle</a></li><li><a href="module-HyperSphere.html">HyperSphere</a></li><li><a href="module-HyperSphere3D.html">HyperSphere3D</a></li><li><a href="module-Sphere.html">Sphere</a></li><li><a href="module-utilsCircle.html">utilsCircle</a></li><li><a href="module-utilsHSphere.html">utilsHSphere</a></li><li><a href="module-utilsSphere.html">utilsSphere</a></li></ul><h3>Classes</h3><ul><li><a href="module-Circle-Circle.html">Circle</a></li><li><a href="module-HyperSphere3D-HyperSphere3D.html">HyperSphere3D</a></li><li><a href="module-HyperSphere-HyperSphere.html">HyperSphere</a></li><li><a href="module-Sphere-Sphere.html">Sphere</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Circle.html">Circle</a></li><li><a href="module-HyperSphere.html">HyperSphere</a></li><li><a href="module-HyperSphere3D.html">HyperSphere3D</a></li><li><a href="module-Sphere.html">Sphere</a></li></ul><h3>Classes</h3><ul><li><a href="module-Circle-Circle.html">Circle</a></li><li><a href="module-HyperSphere3D-HyperSphere3D.html">HyperSphere3D</a></li><li><a href="module-HyperSphere-HyperSphere.html">HyperSphere</a></li><li><a href="module-Sphere-Sphere.html">Sphere</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri Feb 20 2026 11:52:09 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Mon Apr 20 2026 09:41:20 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
