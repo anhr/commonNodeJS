@@ -36,7 +36,7 @@ class RandomVerticeHSphere extends RandomVertice {
 	 */
 	constructor(params, verticesCount) {
 
-		random = params.classSettings.debug.random || random;
+		if (params.classSettings.debug && params.classSettings.debug.random) random = params.classSettings.debug.random;
 		
 		super(params, verticesCount);
 		
@@ -309,13 +309,13 @@ class RandomVerticeHSphere extends RandomVertice {
 			const R = this.navigator.R, distance = this.distance(R * this.navigator.inverseCDF_S3(random()), R) * 2;
 
 			if (!startingPointParams) startingPointParams = this.navigator.startingPointParams();
-			const result = this.navigator.calculateNewPoint(
+			const angles = this.navigator.calculateNewPoint(
 					startingPointParams,
 					distance,//0.5,//random() * this.navigator.R * π,//distance максимальная дистанция находится на противоположной стороне гиперсферы
 					point ? point.iEta : acos(2 * random() - 1),//eta. первый угол направления (полярный угол). 0 ≤ eta ≤ π
 					(point ? point.iPsi : random()) * 2 * π//psi. второй угол направления (азимутальный угол). 0 ≤ psi < 2π или -π ≤ psi ≤ π
 				);
-			const angles = utils.angles([result.altitude, result.latitude, result.longitude]);
+//			const angles = utils.angles([result.altitude, result.latitude, result.longitude]);не помню зачем добавил эту строку
 			this.paramsVerticesAngles(angles);
 			return this.angles;
 			

@@ -39,7 +39,7 @@ class RandomVertice {
 	 */
 	constructor(params={}, verticesCount = 1) {
 
-		random = params.classSettings.debug.random || random;
+		if (params.classSettings.debug && params.classSettings.debug.random) random = params.classSettings.debug.random;
 		if (params.arc === undefined) params.arc = 0;
 			
 		if (!params.boArcIsdefined) {

@@ -20,9 +20,9 @@ import HyperSphere from '../sphere.js';
 
 const sRandomVerticesSphere = 'RandomVerticesSphere',
 	π = Math.PI, round = Math.round,
-	random = Math.random,
-//random = () => { return 0.5 },
 	cos = Math.cos;
+let random = Math.random;
+		
 export const anglesIdMax = 50;//Количество точек на окружности, расположенной на экваторе
 
 /**
@@ -40,6 +40,8 @@ export class RandomVerticeSphere extends RandomVertice {
 	 */
 	constructor(params={}, verticesCount) {
 
+		if (params.classSettings.debug && params.classSettings.debug.random) random = params.classSettings.debug.random;
+		
 		super(params, verticesCount);
 
 		/*

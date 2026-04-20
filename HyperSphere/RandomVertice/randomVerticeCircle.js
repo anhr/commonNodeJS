@@ -18,7 +18,8 @@ import * as utils from '../utilsCircle.js'
 import HyperSphere from '../circle.js';
 
 //const sRandomVerticeCircle = 'RandomVerticeCircle';
-const π = Math.PI, tan = Math.tan, random = Math.random;
+const π = Math.PI, tan = Math.tan;
+let random = Math.random;
 
 /**
  * Generates a random vertice near the opposite vertice in 1D hypersphere.
@@ -34,6 +35,8 @@ class RandomVerticeCircle extends RandomVertice {
 	 */
 	constructor(params={}, verticesCount) {
 
+		if (params.classSettings.debug && params.classSettings.debug.random) random = params.classSettings.debug.random;
+		
 		super(params, verticesCount);
 
 		let randomAngles;
