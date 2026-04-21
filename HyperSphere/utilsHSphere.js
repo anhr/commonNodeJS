@@ -107,21 +107,16 @@ const sCartesianToAngles = 'cartesianToPolar';
  */
 export function cartesianToPolar(vertice, debug) {
 
-/*	
-	const x = vertice[0];
-	const y = vertice[1];
-	const z = vertice[2];
-	const w = vertice[3];
-*/	
-	const x = vertice.x;
-	const y = vertice.y;
-	const z = vertice.z;
-	const w = vertice.w;
+	const x = vertice.x;//, xx = x * x;
+	const y = vertice.y;//, yy = y * y;
+	const z = vertice.z;//, zz = z * z;
+	const w = vertice.w;//, ww = w * w;
+	const xyz = x * x + y * y + z * z;
 
 	// 1. Полный радиус гиперсферы
-	const R = Math.sqrt(x * x + y * y + z * z + w * w);
+	const R = Math.sqrt(xyz + w * w);
 
-	if (R === 0) {
+	if (R < 1e-10) {
 		console.error(sCartesianToAngles + ': Under constraction');
 //		return { r: 0, altitude: 0, latitude: 0, longitude: 0 };
 		return angles([0, 0, 0]);
@@ -132,13 +127,11 @@ export function cartesianToPolar(vertice, debug) {
 	const altitude = Math.acos(w / R);
 
 	// Вычисляем радиус проекции в 3D пространстве (xyz)
-	const rXYZ = Math.sqrt(x * x + y * y + z * z);
+	const rXYZ = Math.sqrt(xyz);
 
 	// Если rXYZ близок к 0, значит точка лежит на оси W, 
 	// и широта с долготой не определены (принимаем за 0)
 	if (rXYZ < 1e-10) {
-		console.error(sCartesianToAngles + ': Under constraction');
-//		return { r: R, altitude, latitude: 0, longitude: 0 };
 		return angles([altitude, 0, 0]);
 	}
 
@@ -151,14 +144,6 @@ export function cartesianToPolar(vertice, debug) {
 	const longitude = Math.atan2(y, x);
 	
 	if(debug && (isNaN(altitude) || isNaN(latitude) || isNaN(longitude))) console.error(sCartesianToAngles + ': Invalid angles: altitude = ' + altitude + ', latitude = ' + latitude + ', longitude = ' + longitude);
-/*
-	return {
-		r: R,
-		altitude: altitude,
-		latitude: latitude,
-		longitude: longitude
-	};
-*/
 	return angles([altitude, latitude, longitude]);
 }
 

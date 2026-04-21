@@ -106,38 +106,19 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 			const RandomVertice = overrides.RandomVertice;
 			const p1 = settings.overriddenProperties.position(position, i, userData);
 			const angles1 = utils.cartesianToPolar(p1);
-//const g = utils.polarToCartesian(angles1, newRadius);
-//console.log('Undre constraction')
 
-//			let pos2, angles2;
-//			let fx = 0, fy = 0, fz = 0, fw = 0;
 			const force = overrides.force();
 			for (
-//				let j = i + 1;
 				let j = 0;//перебитаем все вершины для совместимости алгоритмов итерации на CPU и GPU. Для объяснения найти "во время выполнения шага итерации на CPU цикл" по ссылке https://gemini.google.com/share/94f727cf6035
 				j < angles.length; j++) {
 				
 				if (i === j) continue;
-/*				
-				if (!pos2) {
-					
-					pos2 = settings.overriddenProperties.position(position, j, userData);
-					angles2 = utils.cartesianToPolar(pos2);
-
-				}
-*/				
 				const p2 = settings.overriddenProperties.position(position, j, userData);
 				const angles2 = utils.cartesianToPolar(p2);
 
 				// Вектор от i к j
 				let d = overrides.d(p1, p2);
-/*				
-				let dx = p1.x - p2.x;
-				let dy = p1.y - p2.y;
-				let dz = p1.z - p2.z;
-*/				
 
-//				let dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
 				let dist = Math.sqrt(overrides.d2(d));
 
 				const arc = π - hyperbola((dist / classSettings.overriddenProperties.r(settings.bufferGeometry.userData.timeId - 1) / 2) * π);
@@ -145,9 +126,6 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 				const timeIdOld = settings.guiPoints ? settings.guiPoints.timeId : undefined;
 				if (settings.guiPoints) settings.guiPoints.timeId = userData.timeId;
 				const r = classSettings.overriddenProperties.rTime();
-				
-				// Случайное направление для точки i
-//				const noise1 = utils.polarToCartesian(RandomVertice.get(arc, utils.angles(overrides.angles(angles1)), classSettings, RandomVertice), r);
 					
 				// Случайное направление для точки j (может быть противоположным для лучшего разведения)
 				const noise2 = utils.polarToCartesian(RandomVertice.get(arc, utils.angles(overrides.angles(angles2)), classSettings, RandomVertice), r);
@@ -171,57 +149,11 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 				const m = REPULSION_STRENGTH / d2;
 
 				overrides.setForse(force, d, dist, m);
-/*				
-				// Применяем шум к позициям через скорости
-				const antiDist = arc / π;
-				if(antiDist < 0) console.error(sAverageVertices + ': iterationStep. Invalid antiDist = ' + antiDist);
-				velocities[i].x += noise1.x * antiDist;
-				velocities[i].y += noise1.y * antiDist;
-				velocities[i].z += noise1.z * antiDist;
-				
-				velocities[j].x += noise2.x * antiDist;
-				velocities[j].y += noise2.y * antiDist;
-				velocities[j].z += noise2.z * antiDist;
-
-				// Вектор от i к j
-				dx = noise1.x - noise2.x;
-				dy = noise1.y - noise2.y;
-				dz = noise1.z - noise2.z;
-
-				dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-				pos2 = undefined;
-				
-				// Сила обратно пропорциональна расстоянию
-				const forceMagnitude = REPULSION_STRENGTH / (dist * dist);
-
-				// Нормализуем вектор
-				dx /= dist;
-				dy /= dist;
-				dz /= dist;
-
-				const forcei = forces[i], forcesj = forces[j];
-
-				// Применяем силу: отталкивание
-				forcei.x += dx * forceMagnitude;
-				forcei.y += dy * forceMagnitude;
-				forcei.z += dz * forceMagnitude;
-
-				forcesj.x -= dx * forceMagnitude;
-				forcesj.y -= dy * forceMagnitude;
-				forcesj.z -= dz * forceMagnitude;
-*/				
 
 			}
 
 			overrides.setVelocities(velocities[i], DAMPING, force);
-/*			
-			velocities[i].x = velocities[i].x * DAMPING + fx;
-			velocities[i].y = velocities[i].y * DAMPING + fy;
-			velocities[i].z = velocities[i].z * DAMPING + fz;
-			velocities[i].w = velocities[i].w * DAMPING + fw;
-*/			
 			
-//			anglesTemp[i] = utils.cartesianToPolar({ x: p1.x + velocities[i].x, y: p1.y + velocities[i].y, z: p1.z + velocities[i].z, w: p1.w + velocities[i].w });
 			anglesTemp[i] = utils.cartesianToPolar(overrides.vertice(p1, velocities[i]));
 			
 			i += 1;
