@@ -40,7 +40,12 @@ const averageVertices = (data) => {
 		anglesInitValues: [0, 0, 0],
 		utils: utils,
 		RandomVertice: RandomVertice,
-		p: 0.99,//Hyperbola parametr. See RandomVertice.calculateHyperbola
+
+		//Hyperbola parametr. See RandomVertice.calculateHyperbola
+		//p: 0.99,
+		p: 0,//Прямая линия: y = x (через точки (0,0) и (π,π))
+		//p: 1,// Два отрезка: вертикальный и горизонтальный
+		
 		force: () => { return {x: 0, y: 0, z: 0, w: 0 }; },
 		setForse: (force, d, dist, m) => { force.x += (d.x / dist) * m; force.y += (d.y / dist) * m; force.z += (d.z / dist) * m; force.w += (d.w / dist) * m; },
 		d: (p1, p2) => { return {x: p1.x - p2.x, y: p1.y - p2.y, z: p1.z - p2.z, w: p1.w - p2.w} },

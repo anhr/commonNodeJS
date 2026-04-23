@@ -114,7 +114,12 @@
         const totalSteps = RANDOM_POINTS ? 100 : 10;
         const pointsPerStep = RANDOM_POINTS ? 500 : 5;
         const count = totalSteps * pointsPerStep;
-        const p = 0.99;//Hyperbola parametr. See calculateHyperbola
+
+        //Hyperbola parametr. See calculateHyperbola.
+        //Select one:
+        //const p = 0.0;//Прямая линия: y = x (через точки (0,0) и (π,π))
+        const p = 1;// Два отрезка: вертикальный и горизонтальный
+        //const p = 0.99;
 
         const random = RANDOM_POINTS ? Math.random : () => { return 0.5 };
 
@@ -146,6 +151,16 @@
         geometry.setAttribute('position', posAttr);
         geometry.setAttribute('color', colorAttr);
         scene.add(new THREE.Points(geometry, new THREE.PointsMaterial({ size: 0.015, vertexColors: true })));
+
+        const setAttributes = (pointAngles, r, index) => {
+            const p = polarToCartesian(pointAngles.latitude, pointAngles.longitude, pointAngles.altitude, r);
+            posAttr.setXYZ(index, p.x, p.y, p.z);
+            const t = (p.w + radiusMax) / (2 * radiusMax);
+            const color = new THREE.Color();
+            color.setHSL(0.7 * (1 - t), 1, 0.5);
+            colorAttr.setXYZ(index, color.r, color.g, color.b);
+            console.log('Step:' + (parseInt(index/pointsPerStep)) + ' Point:' + index + '. x=' + p.x + ' y=' + p.y + ' z=' + p.z + ' w=' + p.w + ',alt=' + pointAngles.altitude + ' lat=' + pointAngles.latitude + ' lon=' + pointAngles.longitude);
+        }
 
         // --- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ МАТЕМАТИКИ ---
         const polarToCartesian = (la, lo, al, r = 1) => {
@@ -234,11 +249,20 @@
             // Крайние случаи
             if (p === 0) {
                 // Прямая линия: y = x (через точки (0,0) и (π,π))
+                hyperbola_gpu = 
+                    `fn hyperbola_gpu(arc: f32, i: u32) -> f32 {
+                        return arc;
+                    }`;
                 return (arc) => { return arc; }
             }
 
             if (p === 1) {
                 // Два отрезка: вертикальный и горизонтальный
+                hyperbola_gpu = 
+                    `fn hyperbola_gpu(arc: f32, i: u32) -> f32 {
+                        if (arc == 0) { return 0.0; }
+                        return PI;
+                    }`;
                 return (arc) => {
 
                     if (arc === 0) return 0
@@ -771,8 +795,7 @@
                             var force = vec4<f32>(0.0);
                             for (var j = 0u; j < POINTS_PER_STEP; j++) {
                                 if (i == j) { continue; }
-                                ${DEBUG_MODE ? `if ((i == 0u) && (j == 1u)) { isDebugInfo = true; } else { isDebugInfo = false; }` : ``}
-let angles1 = cartesianToPolar(p1);
+//                                ${DEBUG_MODE ? `if ((i == 0u) && (j == 1u)) { isDebugInfo = true; } else { isDebugInfo = false; }` : ``}
                                 let p2 = positions[prevOffset + j];
                                 let angles2 = cartesianToPolar(p2);
                                 var d = p1 - p2;
@@ -781,40 +804,42 @@ let angles1 = cartesianToPolar(p1);
 
                                 // Случайное направление для точки j (может быть противоположным для лучшего разведения)
                                 let polarNoise2 = GetRandomVertice(arc, angles2);
+                                let noise2 = polarToCartesian(polarNoise2.latitude, polarNoise2.longitude, polarNoise2.altitude, p_param.radiusPrev);
 
-                            ${DEBUG_MODE ? `if (isDebugInfo) {
-                                debug.i = i;
-                                debug.j = j;
-                                debug.value = vec4<f32>(polarNoise2.altitude, polarNoise2.latitude, polarNoise2.longitude, 0.0);
-                            }` : ``}
-
-// Расчет шума для точки j
-let ang2 = cartesianToPolar(p2);
-let basis2 = createTangentBasis(ang2.latitude, ang2.longitude, ang2.altitude);
-dist = getDistance(1.0 * inverseCDF_S3(random()), 1.0, arc) * 2.0;
-
-                                // P в calculateNewPoint должен быть [w, z, x, y] как в JS?
-                                // В JS: P = [objectP.w, objectP.z, objectP.x, objectP.y]
-                                let P_js = vec4<f32>(p2.w, p2.z, p2.x, p2.y);
-//                                let noise2_q = calculateNewPoint(P_js, basis2, dist, acos(2.0 * random() - 1.0), random() * 2.0 * PI, 1.0);
-let noise2_q = vec4<f32>(0.1, 0.2, 0.3, 0.4);
-
-                                // Обратное преобразование из Q [w,z,x,y] в декартовы [x,y,z,w] для расчета силы
-                                let noise2 = vec4<f32>(noise2_q.z, noise2_q.w, noise2_q.y, noise2_q.x);
-
+                                // Вектор от i к j
                                 d = p1 - noise2;
                                 let d2 = dot(d, d);
+                                dist = sqrt(d2);
+                                if (dist == 0) {
+                                    messageBuffer.errorCode = 3u; // Код ошибки 3 = "main: Invalid dist"
+                                    messageBuffer.i = 0;
+                                    messageBuffer.value = dist;
+                                    return;
+                                }
+
                                 let m = REPULSION / d2;
-                                force += (d / (length(d) + 1e-6)) * m;
-                            
+                                force.x += (d.x / dist) * m; force.y += (d.y / dist) * m; force.z += (d.z / dist) * m; force.w += (d.w / dist) * m;
                             }
 
+                            ${DEBUG_MODE ? `if (i == 4u) { isDebugInfo = true; } else { isDebugInfo = false; }` : ``}
+                            
                             // ИНТЕГРАЦИЯ СКОРОСТИ И ПОЗИЦИИ
                             let v_new = velocities[i] * DAMPING + force;
                             velocities[i] = v_new;
                             let next_pos_unit = normalize(p1 + v_new);
                             positions[currOffset + i] = next_pos_unit * p_param.radiusPrev;
                             anglesBuf[currOffset + i] = cartesianToPolar(next_pos_unit);
+                              
+                            ${DEBUG_MODE ? `if (isDebugInfo) {
+                                debug.i = i;
+                                debug.j = 0;
+                                //debug.value = vec4<f32>(anglesBuf[currOffset + i].altitude, anglesBuf[currOffset + i].latitude, anglesBuf[currOffset + i].longitude, 0.0);
+                                //debug.value = vec4<f32>(noise2.x, noise2.y, noise2.z, noise2.w);
+                                //debug.value = velocities[i];
+                                debug.value = p1;
+                            }` : ``}
+                            
+                        
                         }
                     `;
 
@@ -919,17 +944,21 @@ let noise2_q = vec4<f32>(0.1, 0.2, 0.3, 0.4);
             device.queue.submit([enc.finish()]);
             await readBuf.mapAsync(GPUMapMode.READ);
             const data = new Float32Array(readBuf.getMappedRange());
-            const color = new THREE.Color();
+//            const color = new THREE.Color();
             for (let i = 0; i < count; i++) {
                 if (i >= pointsPerStep) {
-                    angles[i].latitude = data[i * 4]; angles[i].longitude = data[i * 4 + 1]; angles[i].altitude = data[i * 4 + 2];
+                    const pointAngles = angles[i]
+                    pointAngles.latitude = data[i * 4]; pointAngles.longitude = data[i * 4 + 1]; pointAngles.altitude = data[i * 4 + 2];
                     const s = Math.floor(i / pointsPerStep);
                     const r = baseRadius + s * radiusStep;
+                    setAttributes(pointAngles, r, i);
+/*
                     const p = polarToCartesian(angles[i].latitude, angles[i].longitude, angles[i].altitude, r);
                     posAttr.setXYZ(i, p.x, p.y, p.z);
                     const t = (p.w + radiusMax) / (2 * radiusMax);
                     color.setHSL(0.7 * (1 - t), 1, 0.5);
                     colorAttr.setXYZ(i, color.r, color.g, color.b);
+*/
                 }
             }
             posAttr.needsUpdate = true; colorAttr.needsUpdate = true;
@@ -954,7 +983,7 @@ let noise2_q = vec4<f32>(0.1, 0.2, 0.3, 0.4);
             const prevStart = (currentStep - 1) * pointsPerStep;
             const currStart = currentStep * pointsPerStep;
             const newRadius = radiusPrev + radiusStep;
-            const color = new THREE.Color();
+//            const color = new THREE.Color();
             const getPoint = (i) => {
                 const pointAnglesPrev = angles[prevStart + i];
                 const pPrev = polarToCartesian(pointAnglesPrev.latitude, pointAnglesPrev.longitude, pointAnglesPrev.altitude, radiusPrev);
@@ -1007,12 +1036,16 @@ let noise2_q = vec4<f32>(0.1, 0.2, 0.3, 0.4);
                 const velociti = velocities[i];
                 setVelocities(velociti, DAMPING, force);
 
-                angles[currStart + i] = cartesianToPolar({ x: p1.x + velociti.x, y: p1.y + velociti.y, z: p1.z + velociti.z, w: p1.w + velociti.w });
+                const index = currStart + i;
+                angles[index] = cartesianToPolar({ x: p1.x + velociti.x, y: p1.y + velociti.y, z: p1.z + velociti.z, w: p1.w + velociti.w });
+                setAttributes(angles[index], newRadius, index);
+/*
                 const p = polarToCartesian(angles[currStart + i].latitude, angles[currStart + i].longitude, angles[currStart + i].altitude, newRadius);
                 posAttr.setXYZ(currStart + i, p.x, p.y, p.z);
                 const t = (p.w + radiusMax) / (2 * radiusMax);
                 color.setHSL(0.7 * (1 - t), 1, 0.5);
                 colorAttr.setXYZ(currStart + i, color.r, color.g, color.b);
+*/
             }
             radiusPrev = newRadius; currentStep++;
             posAttr.needsUpdate = true; colorAttr.needsUpdate = true; updateDisplay();
@@ -1063,10 +1096,9 @@ let noise2_q = vec4<f32>(0.1, 0.2, 0.3, 0.4);
                     pass.dispatchWorkgroups(Math.ceil(pointsPerStep / 64));
                     pass.end();
                     device.queue.submit([encoder.finish()]);
-                    if (DEBUG_MODE) {
-                        await readDebugValue(currentStep);
-                        updateDisplay();
-                    }
+                    if (DEBUG_MODE) await readDebugValue(currentStep);
+                    else await readMessageValue(currentStep);
+                    updateDisplay();
                     radiusPrev = newRadius; currentStep++;
                 }
 
