@@ -111,6 +111,7 @@
         // --- ГЛОБАЛЬНАЯ КОНФИГУРАЦИЯ ---
         const DEBUG_MODE = true;
         const RANDOM_POINTS = false;// !DEBUG_MODE;
+        const LOG = false;//log attributes to console
         const totalSteps = RANDOM_POINTS ? 100 : 10;
         const pointsPerStep = RANDOM_POINTS ? 500 : 5;
         const count = totalSteps * pointsPerStep;
@@ -159,7 +160,7 @@
             const color = new THREE.Color();
             color.setHSL(0.7 * (1 - t), 1, 0.5);
             colorAttr.setXYZ(index, color.r, color.g, color.b);
-            console.log('Step:' + (parseInt(index/pointsPerStep)) + ' Point:' + index + '. x=' + p.x + ' y=' + p.y + ' z=' + p.z + ' w=' + p.w + ',alt=' + pointAngles.altitude + ' lat=' + pointAngles.latitude + ' lon=' + pointAngles.longitude);
+            if (LOG) console.log('Step:' + (parseInt(index/pointsPerStep)) + ' Point:' + index + '. x=' + p.x + ' y=' + p.y + ' z=' + p.z + ' w=' + p.w + ',alt=' + pointAngles.altitude + ' lat=' + pointAngles.latitude + ' lon=' + pointAngles.longitude);
         }
 
         // --- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ МАТЕМАТИКИ ---
@@ -794,7 +795,19 @@ fn rand(state: ptr<function, u32>) -> f32 {
 
                             // Инициализируем локальное состояние один раз
                             var seed = i ^ uTime;
- let ran = rand(&seed);
+ let ran0 = rand(&seed);
+let ran1 = rand(&seed);
+let ran2 = rand(&seed);
+let ran3 = rand(&seed);
+
+                            ${DEBUG_MODE ? `if (i == 0u) { isDebugInfo = true; } else { isDebugInfo = false; }` : ``}
+                              
+                            ${DEBUG_MODE ? `if (isDebugInfo) {
+                                debug.i = i;
+                                debug.j = seed;
+                                //debug.value = vec4<f32>(anglesBuf[currOffset + i].altitude, anglesBuf[currOffset + i].latitude, anglesBuf[currOffset + i].longitude, 0.0);
+                                debug.value = vec4<f32>(ran0, ran1, ran2, ran3);
+                            }` : ``}
 
                             let prevOffset = u32(p_param.stepOffset - f32(POINTS_PER_STEP));
                             let currOffset = u32(p_param.stepOffset);
@@ -830,8 +843,6 @@ fn rand(state: ptr<function, u32>) -> f32 {
                                 let m = REPULSION / d2;
                                 force.x += (d.x / dist) * m; force.y += (d.y / dist) * m; force.z += (d.z / dist) * m; force.w += (d.w / dist) * m;
                             }
-
-                            ${DEBUG_MODE ? `if (i == 4u) { isDebugInfo = true; } else { isDebugInfo = false; }` : ``}
                             
                             // ИНТЕГРАЦИЯ СКОРОСТИ И ПОЗИЦИИ
                             let v_new = velocities[i] * DAMPING + force;
@@ -839,16 +850,6 @@ fn rand(state: ptr<function, u32>) -> f32 {
                             let next_pos_unit = normalize(p1 + v_new);
                             positions[currOffset + i] = next_pos_unit * p_param.radiusPrev;
                             anglesBuf[currOffset + i] = cartesianToPolar(next_pos_unit);
-                              
-                            ${DEBUG_MODE ? `if (isDebugInfo) {
-                                debug.i = i;
-                                debug.j = 0;
-                                //debug.value = vec4<f32>(anglesBuf[currOffset + i].altitude, anglesBuf[currOffset + i].latitude, anglesBuf[currOffset + i].longitude, 0.0);
-                                //debug.value = vec4<f32>(noise2.x, noise2.y, noise2.z, noise2.w);
-                                //debug.value = velocities[i];
-                                debug.value = p1;
-                            }` : ``}
-                            
                         
                         }
                     `;
