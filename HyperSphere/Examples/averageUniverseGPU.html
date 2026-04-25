@@ -630,7 +630,7 @@
                         const POINTS_PER_STEP: u32 = ${Math.floor(pointsPerStep)}u;
 
                         // Временная функция-заглушка для random
-                        fn random() -> f32 { return 0.5; }
+                        fn random(state: ptr<function, u32>) -> f32 { return 0.5; }
 fn rand(state: ptr<function, u32>) -> f32 {
     // 1. Извлекаем текущее значение, перемешиваем его
     var x = *state;
@@ -673,10 +673,10 @@ fn rand(state: ptr<function, u32>) -> f32 {
                             return (low + high) / 2.0;
                         }
 
-                        fn getDistance(dist: f32, R: f32, arc: f32) -> f32 {
+                        fn getDistance(dist: f32, R: f32, arc: f32, state: ptr<function, u32>) -> f32 {
                             if (arc == 0.0) { return 0.0; }
                             let y = 1.0 / arc - 1.0 / PI;
-                            return dist / (1.0 + (y * R * random()));
+                            return dist / (1.0 + (y * R * random(state)));
                         }
 
                         // 2. Создание ортонормированного базиса в касательном пространстве
@@ -699,7 +699,7 @@ fn rand(state: ptr<function, u32>) -> f32 {
 
                             return mat3x4<f32>(e1, e2, e3);
                         }
-                        fn calculateNewPoint(startingPointParams: StartingPointParams, distance: f32, eta: f32, psi: f32, R: f32) -> PolarAngles {
+                        fn calculateNewPoint(startingPointParams: StartingPointParams, distance: f32, eta: f32, psi: f32, R: f32, state: ptr<function, u32>) -> PolarAngles {
 
                             // Исходная точка
                             let P = startingPointParams.P;
@@ -715,7 +715,7 @@ fn rand(state: ptr<function, u32>) -> f32 {
                             // Обратное преобразование в углы
                             var angles = cartesianToPolarRandom(cos(delta) * P + R * sin(delta) * u);
 
-            				if (abs((abs(startingPointParams.lat) - PI / 2)) < 1e-12) { angles.longitude = random() * 2 * PI - PI; }//Противоположная вершина находится на полюсе
+            				if (abs((abs(startingPointParams.lat) - PI / 2)) < 1e-12) { angles.longitude = random(state) * 2 * PI - PI; }//Противоположная вершина находится на полюсе
 
                             return angles;
                         }
@@ -732,24 +732,25 @@ fn rand(state: ptr<function, u32>) -> f32 {
                             return StartingPointParams(lat, alt, P, tangentBasis);
                         }
 
-                        fn getRandomAngles(startingPointParams: StartingPointParams, arc: f32) -> PolarAngles {
+                        fn getRandomAngles(startingPointParams: StartingPointParams, arc: f32, state: ptr<function, u32>) -> PolarAngles {
 
                             // Правильное распределение для равномерного покрытия:
                             // Вероятность попасть в сферическую шапочку радиуса d пропорциональна sin^3(d/R)
-                            let R = 1.0; let distance = getDistance(R * inverseCDF_S3(random()), R, arc) * 2;
+                            let R = 1.0; let distance = getDistance(R * inverseCDF_S3(random(state)), R, arc, state) * 2;
 
                             let angles = calculateNewPoint(
                                 startingPointParams,
                                 distance,//максимальная дистанция находится на противоположной стороне гиперсферы
-                                acos(2.0 * random() - 1),//eta. первый угол направления (полярный угол). 0 ≤ eta ≤ π
-                                random() * 2 * PI,//psi. второй угол направления (азимутальный угол). 0 ≤ psi < 2π или -π ≤ psi ≤ π
-                                R
+                                acos(2.0 * random(state) - 1),//eta. первый угол направления (полярный угол). 0 ≤ eta ≤ π
+                                random(state) * 2 * PI,//psi. второй угол направления (азимутальный угол). 0 ≤ psi < 2π или -π ≤ psi ≤ π
+                                R,
+                                state
                             );
                             return angles;
                         }
 
-                        fn GetRandomVertice(arc: f32, oppositeVertice: PolarAngles) -> PolarAngles {
-                            return getRandomAngles(getStartingPointParams(oppositeVertice), arc);
+                        fn GetRandomVertice(arc: f32, oppositeVertice: PolarAngles, state: ptr<function, u32>) -> PolarAngles {
+                            return getRandomAngles(getStartingPointParams(oppositeVertice), arc, state);
                         }
 
                         /* МАТЕМАТИКА ВНУТРИ GPU */
@@ -826,7 +827,7 @@ let ran3 = rand(&seed);
                                 let arc = PI - hyperbola_gpu((dist / p_param.radiusPrev / 2.0) * PI, i);
 
                                 // Случайное направление для точки j (может быть противоположным для лучшего разведения)
-                                let polarNoise2 = GetRandomVertice(arc, angles2);
+                                let polarNoise2 = GetRandomVertice(arc, angles2, &seed);
                                 let noise2 = polarToCartesian(polarNoise2.latitude, polarNoise2.longitude, polarNoise2.altitude, p_param.radiusPrev);
 
                                 // Вектор от i к j
