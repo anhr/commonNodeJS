@@ -109,20 +109,22 @@
         const π = Math.PI, sin = Math.sin, cos = Math.cos;
 
         // --- ГЛОБАЛЬНАЯ КОНФИГУРАЦИЯ ---
-        const DEBUG_MODE = true;
-        const RANDOM_POINTS = false;// !DEBUG_MODE;
+        const DEBUG_MODE = false;
+        const RANDOM_POINTS = true;
         const LOG = false;//log attributes to console
-        const totalSteps = RANDOM_POINTS ? 100 : 10;
-        const pointsPerStep = RANDOM_POINTS ? 500 : 5;
+        const LOTS_OF_POINTS = true;
+        const totalSteps = LOTS_OF_POINTS ? 100 : 10;
+        const pointsPerStep = LOTS_OF_POINTS ? 500 : 5;
         const count = totalSteps * pointsPerStep;
 
         //Hyperbola parametr. See calculateHyperbola.
         //Select one:
         //const p = 0.0;//Прямая линия: y = x (через точки (0,0) и (π,π))
-        const p = 1;// Два отрезка: вертикальный и горизонтальный
-        //const p = 0.99;
+        //const p = 1;// Два отрезка: вертикальный и горизонтальный
+        const p = 0.99;
 
-        const random = RANDOM_POINTS ? Math.random : () => { return 0.5 };
+        const PSEUDO_RANDOM = 0.5;
+        const random = RANDOM_POINTS ? Math.random : () => { return PSEUDO_RANDOM; };
 
         const baseRadius = 0.1;
         const radiusMax = 1;
@@ -250,20 +252,20 @@
             // Крайние случаи
             if (p === 0) {
                 // Прямая линия: y = x (через точки (0,0) и (π,π))
-                hyperbola_gpu = 
-                    `fn hyperbola_gpu(arc: f32, i: u32) -> f32 {
-                        return arc;
-                    }`;
+                hyperbola_gpu = `
+                        fn hyperbola_gpu(arc: f32, i: u32) -> f32 {
+                            return arc;
+                        }`;
                 return (arc) => { return arc; }
             }
 
             if (p === 1) {
                 // Два отрезка: вертикальный и горизонтальный
-                hyperbola_gpu = 
-                    `fn hyperbola_gpu(arc: f32, i: u32) -> f32 {
-                        if (arc == 0) { return 0.0; }
-                        return PI;
-                    }`;
+                hyperbola_gpu = `
+                        fn hyperbola_gpu(arc: f32, i: u32) -> f32 {
+                            if (arc == 0) { return 0.0; }
+                            return PI;
+                        }`;
                 return (arc) => {
 
                     if (arc === 0) return 0
@@ -340,6 +342,35 @@
 
         }
         const hyperbola = calculateHyperbola(p);
+
+        const random_gpu = RANDOM_POINTS ?
+            /*Этот метод не дает прибавки в производительности но проигрывает в случайности
+            `
+                        //LGC — Линейный конгруэнтный метод. Более быстрый, но чуть менее "хаотичный" вариант
+                        fn random(state: ptr<function, u32>) -> f32 {
+                            *state = (*state * 1664525u + 1013904223u); // Всего одно умножение и сложение
+                            return f32(*state) / f32(0xffffffffu);
+                        }
+            `
+            */
+            `
+                        //Хеширование (Hashing). Простой генератор псевдослучайных чисел (PCG). Permuted Congruential Generator (Перемешанный конгруэнтный генератор).
+                        // Функция принимает указатель на состояние и обновляет его внутри
+                        fn random(seed: ptr<function, u32>) -> f32 {
+                            // 1. Извлекаем текущее значение, перемешиваем его
+                            var x = *seed;
+                            x = ((x >> 16u) ^ x) * 0x45d9f3bu;
+                            x = ((x >> 16u) ^ x) * 0x45d9f3bu;
+                            x = (x >> 16u) ^ x;
+
+                            // 2. Сохраняем обновленное состояние обратно
+                            *seed = x;
+
+                            // 3. Возвращаем нормализованное число 0.0 - 1.0
+                            return f32(x) / f32(0xffffffffu);
+                        }`
+            : `
+                        fn random(seed: ptr<function, u32>) -> f32 { return ${PSEUDO_RANDOM}; }`;
 
         // 4. Преобразование декартовых координат в углы
         const cartesianToPolarRandom = (Q) => { return cartesianToPolar({ x: Q[2], y: Q[3], z: Q[1], w: Q[0] }); }
@@ -629,21 +660,8 @@
                         const REPULSION: f32 = ${REPULSION_STRENGTH.toFixed(8)};
                         const POINTS_PER_STEP: u32 = ${Math.floor(pointsPerStep)}u;
 
-                        // Временная функция-заглушка для random
-                        fn random(seed: ptr<function, u32>) -> f32 { return 0.5; }
-fn rand(seed: ptr<function, u32>) -> f32 {
-    // 1. Извлекаем текущее значение, перемешиваем его
-    var x = *seed;
-    x = ((x >> 16u) ^ x) * 0x45d9f3bu;
-    x = ((x >> 16u) ^ x) * 0x45d9f3bu;
-    x = (x >> 16u) ^ x;
-    
-    // 2. Сохраняем обновленное состояние обратно
-    *seed = x;
-    
-    // 3. Возвращаем нормализованное число 0.0 - 1.0
-    return f32(x) / f32(0xffffffffu);
-}
+                        ${random_gpu}
+
                         ${hyperbola_gpu}
 
                         fn CDF_S3(theta: f32) -> f32 {
@@ -796,10 +814,6 @@ fn rand(seed: ptr<function, u32>) -> f32 {
 
                             // Инициализируем локальное состояние один раз
                             var seed = i ^ uTime;
- let ran0 = rand(&seed);
-let ran1 = rand(&seed);
-let ran2 = rand(&seed);
-let ran3 = rand(&seed);
 
                             ${DEBUG_MODE ? `if (i == 0u) { isDebugInfo = true; } else { isDebugInfo = false; }` : ``}
                               
@@ -807,7 +821,7 @@ let ran3 = rand(&seed);
                                 debug.i = i;
                                 debug.j = seed;
                                 //debug.value = vec4<f32>(anglesBuf[currOffset + i].altitude, anglesBuf[currOffset + i].latitude, anglesBuf[currOffset + i].longitude, 0.0);
-                                debug.value = vec4<f32>(ran0, ran1, ran2, ran3);
+                                debug.value = vec4<f32>(0.0, 0.0, 0.0, 0.0);
                             }` : ``}
 
                             let prevOffset = u32(p_param.stepOffset - f32(POINTS_PER_STEP));
