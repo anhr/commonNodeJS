@@ -2597,139 +2597,17 @@ this.object = () => {
 			this.distanceOfVertices = (timeId, t) => {
 
 				if (timeId === 0) return;//не вычисляется средняя точка когда проигрыватель в начале
-				classSettings.distanceOfVertices({
-
-					timeId: timeId,
-//					classSettings: classSettings,
-					this: this,
-					options: options,
-					t: t,
-					
-				});
-/*
-				const geometry = settings.object.geometry, position = geometry.position, edges = geometry.indices.edges;
-				if (edges.length === 0) {
-
-					//Create edges
-					this.onSelectScene = () => {
-
-						//Непонятно как сюда попадает
-						options.onSelectScene(t);
-						delete this.onSelectScene;
-
-					}
-					if (cEdges) cEdges.setValue(true);
-					else {
-
-						//нет ручной настройки
-						classSettings.edges = cookieOptions.edgesOld || edgesOld;
-						_this.projectGeometry();
-
-					}
-					return;
-
-				}
-				let progressBar, verticeId = 0;
-				if ((typeof WebGPU != 'undefined') && WebGPU.isSupportWebGPU()) {
-
-					const firstMatrix = [
-							[1, 2, 3, 4],
-							[5, 6, 7, 8]
-						],
-						secondMatrix = [
-							[1, 2],
-							[3, 4],
-							[5, 6],
-							[7, 8],
-						];
-					new WebGPU({
-
-						input: { matrices: [firstMatrix, secondMatrix] },
-
-						//shaderCode: shaderCode,
-						shaderCodeFile: '../Shader.c',
-
-						results: [
-
-							{
-
-								count: firstMatrix.length * secondMatrix[0].length +
-
-									//result matrix has reserved three elements in the head of the matrix for size of the matrix.
-									//First element is dimension of result matrix.
-									//Second element is rows count of the matrix.
-									//Third element is columns count of the matrix.
-									//See settings.size of out2Matrix method in https://raw.githack.com/anhr/WebGPU/master/jsdoc/module-WebGPU-WebGPU.html
-									3,
-								out: out => {
-
-									console.log('out:');
-									console.log(new Float32Array(out));
-									const matrix = WebGPU.out2Matrix(out);
-									console.log('matrix:');
-									console.log(matrix);
-
-								}
-
-							},
-						],
-
+				const WebGPU = classSettings.distanceOfVertices.WebGPU;
+				if (WebGPU) new WebGPU(() => {
+					classSettings.distanceOfVertices({
+	
+						timeId: timeId,
+						this: this,
+						options: options,
+						t: t,
+						
 					});
-
-				}
-				const overriddenProperties = classSettings.overriddenProperties,
-					vertices = overriddenProperties.vertices(),
-					timestamp = classSettings.debug ? window.performance.now() : undefined,
-					step = () => {
-
-						progressBar.value = verticeId;
-						const stepItem = () => {
-
-							const vertice = overriddenProperties.position0.angles[verticeId].middleVertice(undefined, timeId, true, false, false);
-							if (vertices) vertices.push(vertice);
-							verticeId += 1;
-							if (verticeId >= position.length) {
-
-								progressBar.remove();
-
-								if (classSettings.debug) classSettings.debug.logTimestamp('Play step. ', timestamp);
-
-								//Обновление текущей вершины без обновления холста для экономии времени
-								overriddenProperties.updateVertices(vertices);
-
-								if (classSettings.debug) {
-
-									classSettings.debug.logTimestamp('Copy vertices. ', timestamp);
-									this.logHyperSphere();
-
-								}
-								else this.oldR = undefined;
-								this.onSelectSceneEnd(timeId);
-								return true;
-
-							}
-
-						}
-						if (!stepItem()) progressBar.step();
-
-					},
-					bufferGeometry = classSettings.settings.bufferGeometry,
-					drawRange = bufferGeometry.drawRange,
-					sTakeMiddleVertices = 'Take middle vertices';
-				if (classSettings.debug.log != false) console.log('\ntimeId = ' + timeId + '. ' + sTakeMiddleVertices + '.')
-
-				//Установить drawRange что бы не появлялась ошибка
-				//HyperSphere.angles2Vertice: anglesId = 2. positionId = 28 is out of range from 0 to 24
-				this.setVerticesRange(drawRange.start,
-					((drawRange.start + drawRange.count) / (bufferGeometry.index != null ? bufferGeometry.attributes.position.itemSize : 1)) + position.length);
-				
-				progressBar = new ProgressBar(options.renderer.domElement.parentElement, step, {
-
-					sTitle: 't = ' + t + '<br> ' + sTakeMiddleVertices,
-					max: position.length - 1,
-
 				});
-*/
 				return true;//player pause
 
 			}
