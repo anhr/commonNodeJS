@@ -50,4 +50,5 @@ const averageVertices = (data) => {
 	
 }
 averageVertices.verticeProxy = averageVerticesBase.verticeProxy;
+averageVertices.webGPU = { compute: (compute) => { compute() }};
 export default averageVertices;

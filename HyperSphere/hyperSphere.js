@@ -2597,6 +2597,15 @@ this.object = () => {
 			this.distanceOfVertices = (timeId, t) => {
 
 				if (timeId === 0) return;//не вычисляется средняя точка когда проигрыватель в начале
+				classSettings.distanceOfVertices.webGPU.compute(() => { classSettings.distanceOfVertices({
+	
+					timeId: timeId,
+					this: this,
+					options: options,
+					t: t,
+					
+				})});
+/*				
 				const webGPU = classSettings.distanceOfVertices.webGPU;
 				if (webGPU && (webGPU.socketStatus === 1)) webGPU.compute();//Successful connection
 				else classSettings.distanceOfVertices({
@@ -2607,6 +2616,7 @@ this.object = () => {
 					t: t,
 					
 				});
+*/				
 				return true;//player pause
 
 			}
