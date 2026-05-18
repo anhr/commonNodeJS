@@ -25,16 +25,13 @@ let velocities = [];
 
 const averageVertices = (data, overrides) => {
 
-	const _this = data.this,
-		classSettings = _this.classSettings,
-		settings = classSettings.settings,
-//		overriddenProperties = classSettings.overriddenProperties,
+	const _this = data.this, classSettings = _this.classSettings, config = classSettings.compute.config;
+	const settings = classSettings.settings,
 		angles = settings.object.geometry.angles,
-//		userData = settings.bufferGeometry.userData,
 		position = classSettings.settings.bufferGeometry.userData.position,
 		options = data.options,
 		t = data.t,
-		hyperbola = overrides.RandomVertice.calculateHyperbola(overrides.p);
+		hyperbola = overrides.RandomVertice.calculateHyperbola(config.p);//overrides.p);
 	/*
 Написать функцию на языке javascript.
 Задан массив : const angles = [].
@@ -73,9 +70,10 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 	//20             0.05
 	//1000          0.0001
 	//5000          0.00001
-	const a = overrides.a;//0.5;
-	const REPULSION_STRENGTH = a / angles.length;//0.05; // Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
-	const DAMPING = 0.95; // Демпфирование движения
+//	const a = overrides.a;//0.5;
+//	if (config.REPULSION_STRENGTH === undefined) config.REPULSION_STRENGTH = a / angles.length;// Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
+//	const REPULSION_STRENGTH = a / angles.length;//0.05; // Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
+//	const DAMPING = 0.95; // Демпфирование движения
 	data.this.r; // Радиус сферы. Нужно что бы во вселенной в classSettings.settings.object.geometry.times был добавлен новый time. Это нужно что бы пользователь мышкой мог выбрать вершину в вселенной
 
 	// Инициализируем скорости
@@ -146,13 +144,13 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 				}
 				
 				// Сила обратно пропорциональна расстоянию
-				const m = REPULSION_STRENGTH / d2;
+				const m = config.REPULSION_STRENGTH / d2;
 
 				overrides.setForse(force, d, dist, m);
 
 			}
 
-			overrides.setVelocities(velocities[i], DAMPING, force);
+			overrides.setVelocities(velocities[i], config.DAMPING, force);
 			
 			anglesTemp[i] = utils.cartesianToPolar(overrides.vertice(p1, velocities[i]));
 			
@@ -172,9 +170,9 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 						force = forces[i];
 
 					// Обновляем скорость с учетом силы и демпфирования
-					velocitie.x = velocitie.x * DAMPING + force.x;
-					velocitie.y = velocitie.y * DAMPING + force.y;
-					velocitie.z = velocitie.z * DAMPING + force.z;
+					velocitie.x = velocitie.x * config.DAMPING + force.x;
+					velocitie.y = velocitie.y * config.DAMPING + force.y;
+					velocitie.z = velocitie.z * config.DAMPING + force.z;
 
 					const vertice = utils.cartesianToPolar({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z });
 					settings.overriddenProperties.editVertice(data.timeId, vertice, angles, i);

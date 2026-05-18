@@ -2597,26 +2597,53 @@ this.object = () => {
 			this.distanceOfVertices = (timeId, t) => {
 
 				if (timeId === 0) return;//не вычисляется средняя точка когда проигрыватель в начале
-				classSettings.distanceOfVertices.webGPU.compute(() => { classSettings.distanceOfVertices({
-	
-					timeId: timeId,
-					this: this,
-					options: options,
-					t: t,
-					
-				})});
-/*				
-				const webGPU = classSettings.distanceOfVertices.webGPU;
-				if (webGPU && (webGPU.socketStatus === 1)) webGPU.compute();//Successful connection
-				else classSettings.distanceOfVertices({
-	
-					timeId: timeId,
-					this: this,
-					options: options,
-					t: t,
-					
-				});
+				classSettings.compute ||= {};
+				const compute = classSettings.compute;
+				if (compute.isUseCPU === undefined) compute.isUseCPU = false;
+				compute.config ||= {
+					//type: 'START_COMPUTE',
+				};
+				const config = compute.config;
+				config.pointsPerStep = settings.object.geometry.angles.length;
+
+				if (config.REPULSION_STRENGTH === undefined) {
+					const a = (config.a != undefined) ? config.a : 50;
+					config.REPULSION_STRENGTH = a / config.pointsPerStep;// Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются				
+				}
+				
+				if (config.DAMPING === undefined) config.DAMPING = 0.95; // Демпфирование движения
+				
+				//Hyperbola parametr. See RandomVertice.calculateHyperbola
+				if (config.p === undefined) {
+					//config.p = 0.99;
+					config.p = 0;//Прямая линия: y = x (через точки (0,0) и (π,π))
+					//config.p = 1;// Два отрезка: вертикальный и горизонтальный
+				}					
+/*
+				const config = {
+					type: 'START_COMPUTE',
+					DEBUG_MODE: DEBUG_MODE,
+					RANDOM_POINTS: RANDOM_POINTS,
+					DAMPING: DAMPING,
+					REPULSION_STRENGTH: REPULSION_STRENGTH,
+					PSEUDO_RANDOM: PSEUDO_RANDOM,
+					p: p,
+					baseRadius: baseRadius,
+					radiusMax: radiusMax,
+					totalSteps: totalSteps,
+					pointsPerStep: pointsPerStep
+				};
 */				
+				const computeCPU = () => {
+					classSettings.distanceOfVertices({
+						timeId: timeId,
+						this: this,
+						options: options,
+						t: t,
+					});
+				}
+				if (classSettings.compute.isUseCPU) computeCPU();
+				else classSettings.distanceOfVertices.webGPU.compute(computeCPU, config);
 				return true;//player pause
 
 			}

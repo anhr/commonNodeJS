@@ -20,7 +20,7 @@ const averageVertices = (data) => {
 
 	averageVerticesBase(data, {
 
-		a: 50,
+//		a: 50,
 		velocitiesInitValues: () => { return {x: 0, y: 0, z: 0, w: 0 }; },
 		setVelocities: (velociti, DAMPING, force) => {
 			
@@ -34,10 +34,12 @@ const averageVertices = (data) => {
 		utils: utils,
 		RandomVertice: RandomVertice,
 
+/*		
 		//Hyperbola parametr. See RandomVertice.calculateHyperbola
 		//p: 0.99,
 		p: 0,//Прямая линия: y = x (через точки (0,0) и (π,π))
 		//p: 1,// Два отрезка: вертикальный и горизонтальный
+*/		
 		
 		force: () => { return {x: 0, y: 0, z: 0, w: 0 }; },
 		setForse: (force, d, dist, m) => { force.x += (d.x / dist) * m; force.y += (d.y / dist) * m; force.z += (d.z / dist) * m; force.w += (d.w / dist) * m; },
