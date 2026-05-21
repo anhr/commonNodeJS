@@ -2601,7 +2601,7 @@ this.object = () => {
 				const compute = classSettings.compute;
 				if (compute.isUseCPU === undefined) compute.isUseCPU = false;
 				compute.config ||= {
-					//type: 'START_COMPUTE',
+					type: 'START_COMPUTE',
 				};
 				const config = compute.config;
 				config.pointsPerStep = settings.object.geometry.angles.length;
@@ -2615,19 +2615,60 @@ this.object = () => {
 				
 				//Hyperbola parametr. See RandomVertice.calculateHyperbola
 				if (config.p === undefined) {
+					//Select one:
+					
 					//config.p = 0.99;
 					config.p = 0;//Прямая линия: y = x (через точки (0,0) и (π,π))
 					//config.p = 1;// Два отрезка: вертикальный и горизонтальный
 				}					
+
+				//config for GPU
+
+				config.DEBUG_MODE = classSettings.debug ? true : false;
+				
+				const playerOptions = settings.options.playerOptions;
+				config.baseRadius = playerOptions.min;
+				config.radiusMax = playerOptions.min;
+				config.totalSteps = playerOptions.marks;
+				
+				config.pointsPerStep = settings.object.geometry.angles.length;
+
+				//Select one:
+				
+		        //Случайная точка не вычисляется. Вместо этого возвращается PSEUDO_RANDOM
+		        config.RANDOM_POINTS = 0;
+		
+		        //Вычисляется случайное число.
+		        //В GPU для получения случайного числа применяется хеширование(Hashing).Простой генератор псевдослучайных чисел(PCG).Permuted Congruential Generator(Перемешанный конгруэнтный генератор).
+		        //Этот метод лучше всего вычисляет случайное число, но требует много времени на вычисления если не оптимизировать Google Chrome.
+		        //Инструкция по оптимизации находится в Technical Guide: Enabling High-Performance GPU for Google Chrome https://github.com/anhr/universe/blob/main/hyperSphere/HUniverseEngine.md#technical-guide-enabling-high-performance-gpu-for-google-chromeИнструкцию по оттимизации смотри в D:\My documents\MyProjects\webgl\three.js\GitHub\universe\main\hyperSphere\webGPUHUniverse.js
+		        //config.RANDOM_POINTS = 1;
+		
+		        //Вычисляется случайное число.
+				//ВНИМАНИЕ!!! Сейчас этот метод не применяю потому что он не дает преимуществ перед config.RANDOM_POINTS = 1 после оптимизации Google Chrome.
+		        //Анализ производительности вычислений в GPU показал, что генерация случайного числа внутри WebGPU по методу хеширования(Hashing) (RANDOM_POINTS = 1) крайне затратно.
+		        //Для того, что бы генерация случайного числа внутри WebGPU по методу хеширования(Hashing) (RANDOM_POINTS = 1) проходила быстро на Goole Chrome, браузер надо оптимизировать.
+		        //Инструкция находится в Technical Guide: Enabling High-Performance GPU for Google Chrome https://github.com/anhr/universe/blob/main/hyperSphere/HUniverseEngine.md#technical-guide-enabling-high-performance-gpu-for-google-chrome
+		        //Например при totalSteps = 100; и pointsPerStep = 500; время итерации заняло 14.644 сек.
+		        //по сравненияю со временем итерации без генератора случайного числа RANDOM_POINTS = false 4.733 сек.
+		        //Поэтому для GPU применяю метод Lookup Table (LUT) — таблицу предварительно вычисленных значений.
+		        //Случайные числа вычисляются на JS и затем через буфер передаются на GPU.
+		        //Этот метод работает гораздо быстрее но случайные числа не сосвем случайные.
+		        //config.RANDOM_POINTS = 2;
+				
+				if (config.RANDOM_POINTS === 0) config.PSEUDO_RANDOM = 0.5;
 /*
 				const config = {
 					type: 'START_COMPUTE',
-					DEBUG_MODE: DEBUG_MODE,
 					RANDOM_POINTS: RANDOM_POINTS,
 					DAMPING: DAMPING,
 					REPULSION_STRENGTH: REPULSION_STRENGTH,
 					PSEUDO_RANDOM: PSEUDO_RANDOM,
 					p: p,
+
+					//for GPU
+
+					DEBUG_MODE: DEBUG_MODE,
 					baseRadius: baseRadius,
 					radiusMax: radiusMax,
 					totalSteps: totalSteps,
@@ -2643,7 +2684,7 @@ this.object = () => {
 					});
 				}
 				if (classSettings.compute.isUseCPU) computeCPU();
-				else classSettings.distanceOfVertices.webGPU.compute(computeCPU, config);
+				else classSettings.distanceOfVertices.webGPU.compute(computeCPU, config, settings);
 				return true;//player pause
 
 			}
