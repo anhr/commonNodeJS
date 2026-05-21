@@ -219,7 +219,8 @@ class MyObject {
 				Infinity//pointsLength * 2 - 1
 				);
 			if (isRCount) settings.bufferGeometry.userData.drawRange = () => { return settings.bufferGeometry.drawRange; }
-			const positions = new Float32Array((MAX_POINTS != undefined ? MAX_POINTS : pointsLength) * pointLength);
+//			const positions = new Float32Array((MAX_POINTS != undefined ? MAX_POINTS : pointsLength) * pointLength);непонятно почему я умножаю MAX_POINTS * pointLength. Буфер получаеься слишком большой
+			const positions = new Float32Array(MAX_POINTS != undefined ? MAX_POINTS : pointsLength * pointLength);
 			settings.bufferGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, pointLength));
 			settings.bufferGeometry.userData.positionOffsetId = (positionId) => { return this.positionOffsetId(positionId) }
 			settings.bufferGeometry.userData.position = new Proxy(settings.bufferGeometry.attributes.position, {
