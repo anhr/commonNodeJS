@@ -2628,7 +2628,7 @@ this.object = () => {
 				
 				const playerOptions = settings.options.playerOptions;
 				config.baseRadius = playerOptions.min;
-				config.radiusMax = playerOptions.min;
+				config.radiusMax = playerOptions.max;
 				config.totalSteps = playerOptions.marks;
 				
 				config.pointsPerStep = settings.object.geometry.angles.length;
@@ -2684,7 +2684,7 @@ this.object = () => {
 					});
 				}
 				if (classSettings.compute.isUseCPU) computeCPU();
-				else classSettings.distanceOfVertices.webGPU.compute(computeCPU, config, settings);
+				else classSettings.distanceOfVertices.webGPU.compute(computeCPU, config, settings, this);
 				return true;//player pause
 
 			}
