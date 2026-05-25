@@ -488,6 +488,47 @@ class MyObject {
 			
 		}
 		/**
+		 * Sets the [BufferGeometry]{@link https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry} color attribute from <b>vertice</b>.
+		 * @param {number} i Vertice identifier for <b>timeId</b> = 0.
+		 * @param {Array} [vertice] Vertice axis array for current <b>timeId</b>.
+		 * @param {number} timeId Time identifier of the <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">player</a> that determines current vertice.
+		 */
+		this.setColorAttributeFromPoint = (i, vertice, timeId, positionData) => {
+			positionData ||= this.getPositionData(i, timeId);
+			const positionBlockLength = positionData.positionBlockLength,
+				attributes = settings.bufferGeometry.attributes, itemSize = attributes.color.itemSize;
+			let colorId = i * itemSize + (timeId === undefined ? 0 : positionBlockLength * timeId * itemSize);
+			const array = attributes.color.array;
+			const verticeColor = this.verticeColor(i, vertice, timeId);
+			if (typeof verticeColor === 'number'){
+
+				if (settings.options) {
+					
+					const wScale = settings.options.scales.w;
+					Player.setColorAttribute(attributes, i + (timeId === undefined ? 0 : positionBlockLength * timeId), settings.options.palette.toColor(verticeColor, wScale.min, wScale.max));
+
+				}
+				colorId += attributes.color.itemSize - 1;
+				
+			} else if (Array.isArray(verticeColor)) verticeColor.forEach(item => array[colorId++] = item);
+			else if (verticeColor instanceof THREE.Color) {
+
+				array [colorId++] = verticeColor.r;
+				array [colorId++] = verticeColor.g;
+				array [colorId++] = verticeColor.b;
+				
+			}
+			else console.error(sMyObject + '.setPositionAttributeFromPoint: Invalid verticeColor = ' + verticeColor);
+
+			//opacity
+			if (attributes.color.itemSize > 3) this.verticeOpacity(i);
+
+			//Необходимо для того, что бы отоборажалась информация о вершине при наведении на нее мышки
+			//Внимание. Иногда эта функция работает и без удаления boundingSphere
+			delete settings.bufferGeometry.boundingSphere;
+			settings.bufferGeometry.boundingSphere = null;
+		}
+		/**
 		 * Sets the [BufferGeometry]{@link https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry} position attribute from <b>vertice</b>.
 		 * @param {number} i Vertice identifier for <b>timeId</b> = 0.
 		 * @param {Array} [vertice] Vertice axis array for current <b>timeId</b>.
@@ -517,15 +558,16 @@ class MyObject {
 			}
 
 			//gui
-			const guiSelectPoint = settings.options.guiSelectPoint,
-				object3D = this.object3D;
+			const guiSelectPoint = settings.options.guiSelectPoint;
 			if (guiSelectPoint && (guiSelectPoint.getSelectedPointIndexShort() === i) && guiSelectPoint.isSelectedMesh(object3D)) {
 				
+				const object3D = this.object3D;
 				guiSelectPoint.setPosition( { index: i, nearestEdgeVerticeId: i, object: object3D });
 				if (object3D && object3D.userData.gui) object3D.userData.gui.reset()//в hyperSphere обновить выделенные ребра, среднюю вершину и плоскости вращения углов
 
 			}
-
+			this.setColorAttributeFromPoint(i, vertice, timeId, positionData);
+/*			
 			//Color attribute
 
 			itemSize = attributes.color.itemSize;
@@ -559,7 +601,7 @@ class MyObject {
 			//Внимание. Иногда эта функция работает и без удаления boundingSphere
 			delete settings.bufferGeometry.boundingSphere;
 			settings.bufferGeometry.boundingSphere = null;
-
+*/
 			return vertice;
 			
 		}
