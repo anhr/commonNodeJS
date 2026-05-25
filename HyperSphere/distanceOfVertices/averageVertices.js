@@ -180,7 +180,11 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 				}
 */				
 				if (angles.length != anglesTemp.length) console.error(sAverageVertices + ': iterationStep. angles.length != anglesTemp.length');
+				
+				const timeIdOld = settings.guiPoints ? settings.guiPoints.timeId : undefined;
+				if (settings.guiPoints) settings.guiPoints.timeId = undefined;
 				for (let i = 0; i < angles.length; i++) angles[i] = anglesTemp[i];
+				if (settings.guiPoints) settings.guiPoints.timeId = timeIdOld;
 
 				_this.bufferGeometry.attributes.position.needsUpdate = true
 				

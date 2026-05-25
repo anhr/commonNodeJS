@@ -269,57 +269,7 @@ class HyperSphere3D extends Sphere {
 		return cartesianToPolar4D(Position(vertice));
 
 	}
-	a2v(angles, r = this.r) {
-
-		return utils.polarToCartesian(angles, r, this.classSettings.debug);
-		/*https://chat.deepseek.com/a/chat/s/831d9a90-2396-4b09-b548-288415124814
-		Задана точка на 3D гиперсфере в полярной системе координат. Начало координат находится в центре 3D гиперсферы.
-		Положение точки обозначить как
-		angles.longitude - долгота (азимутальный угол)  в диапазоне от -π до π,
-		angles.latitude - широта (зенитный угол) в диапазоне -π/2 на южном полюсе до π/2 на северном полюсе.,
-		angles.altitude - полярный угол от оси W  в диапазоне от 0 до π.
-		Радиус сферы обозначить как r.
-		Долгота, широта и полярный угол могут выходить за пределы заданного диапазона.
-		Вычислить координаты точки в декартовой системе координат.
-		Написать код на javascript
-		*/
-		/**
-		 * Вычисляет декартовы координаты (x, y, z) точки на сфере,
-		 * заданной в полярной системе координат (r, широта, долгота).
-		 *
-		 * Предполагается, что:
-		 * - Широта (latitude) находится в диапазоне от -π/2 (южный полюс) до π/2 (северный полюс).
-		 * - Долгота (longitude) находится в диапазоне от -π до π.
-		 * - Углы заданы в радианах.
-		 *
-		 * @param {number} r - Радиус сферы.
-		 * @param {object} angles - Объект с углами.
-		 * @param {number} angles.latitude - Широта (от -π/2 до π/2).
-		 * @param {number} angles.longitude - Долгота (от -π до π).
-		 * @returns {array} Массив с декартовыми координатами [x, y, z].
-		 */
-/*		
-		// Альтернативная версия с более простой нормализацией
-		function polarToCartesian(angles, r, debug) {
-
-			const lon = angles.longitude;
-			const lat = angles.latitude;
-			const alt = angles.altitude;
-
-			// Вычисляем декартовы координаты
-			const x = r * Math.sin(alt) * Math.cos(lat) * Math.cos(lon);
-			const y = r * Math.sin(alt) * Math.cos(lat) * Math.sin(lon);
-			const z = r * Math.sin(alt) * Math.sin(lat);
-			const w = r * Math.cos(alt);
-
-			if(debug && (isNaN(x) || isNaN(y) || isNaN(z) || isNaN(w))) console.error(sHyperSphere3D + ': a2v. Invalid Cartesian: x = ' + x + ', y = ' + y + ', z = ' + z + ', w = ' + w);
-
-			return [ x, y, z, w ];
-		}
-		return polarToCartesian(angles, r, this.classSettings.debug);
-*/		
-
-	}
+	a2v(angles, r = this.r) { return utils.polarToCartesian(angles, r, this.classSettings.debug); }
 	get verticeEdgesLengthMax() { return 4/*6*/; }//нельзя добавлть новое ребро если у вершины уже 6 ребра
 	get dimension() { return 4; }//space dimension
 	get verticesCountMin() { return 4; }
