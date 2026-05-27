@@ -706,6 +706,7 @@ class HyperSphere extends MyObject {
 										settings.guiPoints.timeId :
 									0,
 								vertice = this.a2v(value, classSettings.overriddenProperties.r(timeId));
+							if (classSettings.compute.config.LOG) console.log('Step:' + timeId + ' Point:' + this.getPositionData(i, timeId).verticeId + '. x=' + vertice.x + ' y=' + vertice.y + ' z=' + vertice.z + ' w=' + vertice.w + ',alt=' + value.altitude + ' lat=' + value.latitude + ' lon=' + value.longitude);
 							if (!classSettings.overriddenProperties.pushMiddleVertice(timeId, value))
 								this.setPositionAttributeFromPoint(i, vertice, timeId);
 							
@@ -2636,13 +2637,13 @@ this.object = () => {
 				//Select one:
 				
 		        //Случайная точка не вычисляется. Вместо этого возвращается PSEUDO_RANDOM
-		        config.RANDOM_POINTS = 0;
+		        //config.RANDOM_POINTS = 0;
 		
 		        //Вычисляется случайное число.
 		        //В GPU для получения случайного числа применяется хеширование(Hashing).Простой генератор псевдослучайных чисел(PCG).Permuted Congruential Generator(Перемешанный конгруэнтный генератор).
 		        //Этот метод лучше всего вычисляет случайное число, но требует много времени на вычисления если не оптимизировать Google Chrome.
 		        //Инструкция по оптимизации находится в Technical Guide: Enabling High-Performance GPU for Google Chrome https://github.com/anhr/universe/blob/main/hyperSphere/HUniverseEngine.md#technical-guide-enabling-high-performance-gpu-for-google-chromeИнструкцию по оттимизации смотри в D:\My documents\MyProjects\webgl\three.js\GitHub\universe\main\hyperSphere\webGPUHUniverse.js
-		        //config.RANDOM_POINTS = 1;
+		        if (config.RANDOM_POINTS === undefined) config.RANDOM_POINTS = 1;
 		
 		        //Вычисляется случайное число.
 				//ВНИМАНИЕ!!! Сейчас этот метод не применяю потому что он не дает преимуществ перед config.RANDOM_POINTS = 1 после оптимизации Google Chrome.
@@ -2656,7 +2657,10 @@ this.object = () => {
 		        //Этот метод работает гораздо быстрее но случайные числа не сосвем случайные.
 		        //config.RANDOM_POINTS = 2;
 				
-				if (config.RANDOM_POINTS === 0) config.PSEUDO_RANDOM = 0.5;
+				if (config.RANDOM_POINTS === 0) {
+					if (config.PSEUDO_RANDOM === undefined) config.PSEUDO_RANDOM = 0.5;
+					classSettings.debug.random = () => { return config.PSEUDO_RANDOM };
+				}
 /*
 				const config = {
 					type: 'START_COMPUTE',
