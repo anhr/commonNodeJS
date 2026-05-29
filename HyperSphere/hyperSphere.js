@@ -2602,9 +2602,10 @@ this.object = () => {
 				const compute = classSettings.compute;
 				if (compute.isUseCPU === undefined) compute.isUseCPU = false;
 				compute.config ||= {
-					type: 'START_COMPUTE',
+//					type: 'START_COMPUTE',
 				};
 				const config = compute.config;
+				config.type ||= 'START_COMPUTE';
 				config.pointsPerStep = settings.object.geometry.angles.length;
 
 				if (config.REPULSION_STRENGTH === undefined) {
