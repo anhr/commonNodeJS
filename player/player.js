@@ -409,6 +409,11 @@ class Player {
 		 * @returns selected scene index.
 		 */
 		this.getSelectSceneIndex = function () { return selectSceneIndex; }
+		/**
+		 * sets selected scene index.
+		 * @param {number} selectSceneIndexNew New selected scene index.
+		 */
+		this.setSelectSceneIndex = function (selectSceneIndexNew) { selectSceneIndex = selectSceneIndexNew; }
 
 		/**@namespace
 		 * @descriptionUser has pressed the <b>Repeat</b> button of the <a href="../../player/jsdoc/module-Player-Player_PlayController_PlayController.html" target="_blank">Player.PlayController</a>.
