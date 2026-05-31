@@ -2688,7 +2688,7 @@ this.object = () => {
 						t: t,
 					});
 				}
-				if (classSettings.compute.isUseCPU) computeCPU();
+				if (!classSettings.distanceOfVertices.webGPU || classSettings.compute.isUseCPU) computeCPU();
 				else classSettings.distanceOfVertices.webGPU.compute(computeCPU, config, settings, this);
 				return true;//player pause
 
