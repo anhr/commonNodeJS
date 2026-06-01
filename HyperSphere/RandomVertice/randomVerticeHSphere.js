@@ -40,7 +40,7 @@ class RandomVerticeHSphere extends RandomVertice {
 		
 		super(params, verticesCount);
 		
-		let randomAngles;
+//		let randomAngles;
 
 		/*
 		Есть точка на поверхности 3-мерной гиперсферы встроенной в 4-мерное евклидово пространство в полярной системе координат.
@@ -207,6 +207,7 @@ class RandomVerticeHSphere extends RandomVertice {
 			 * @returns координаты новой точки в полярной системе координат
 			 */
 			calculateNewPoint(startingPointParams, distance, eta, psi) {
+				if (isNaN(eta)) console.error(sRandomVerticesHyperSphere + ': HyperSphereNavigator.calculateNewPoint: invalid eta = ' + eta + ' parameter.');
 				// Исходная точка
 				const P = startingPointParams.P;
 
@@ -317,6 +318,7 @@ class RandomVerticeHSphere extends RandomVertice {
 				);
 //			const angles = utils.angles([result.altitude, result.latitude, result.longitude]);не помню зачем добавил эту строку
 			this.paramsVerticesAngles(angles);
+			if (params.classSettings.debug && (isNaN(angles.altitude) || isNaN(angles.latitude) || isNaN(angles.longitude))) console.error(sRandomVerticesHyperSphere + '.getRandomAngles: Invalid angles: ' + angles);
 			return this.angles;
 			
 		}

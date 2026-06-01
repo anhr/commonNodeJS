@@ -82,7 +82,7 @@ class HyperSphere extends MyObject {
 	 * Random deviation is null if random value is 0.
 	 * Vertice position moves to oppozite position of the hypersphere if random value is 1.
 	 * </pre>
-	 * @param {float} [classSettings.compute.config.PSEUDO_RANDOM=0.5] Have effect only if RANDOM_POINTS = 0.
+	 * @param {float} [classSettings.compute.config.PSEUDO_RANDOM=0.5] Have effect only if RANDOM_POINTS = 0. Available range from 0 to 1.
 	 * @param {float} [classSettings.compute.config.DAMPING=0.95] Motion damping.
 					//DAMPING: 0.95,//Демпфирование движения. Default 0.95
 
@@ -2700,6 +2700,8 @@ this.object = () => {
 				
 				if (config.RANDOM_POINTS === 0) {
 					if (config.PSEUDO_RANDOM === undefined) config.PSEUDO_RANDOM = 0.5;
+					const min = 0, max = 1;
+					if ((config.PSEUDO_RANDOM < min) || (config.PSEUDO_RANDOM > max)) console.error(sHyperSphere + '.project.distanceOfVertices: Invalid config.PSEUDO_RANDOM = ' + config.PSEUDO_RANDOM + '. Available range from ' + min + ' to ' + max + '.');
 					classSettings.debug.random = () => { return config.PSEUDO_RANDOM };
 				}
 /*
