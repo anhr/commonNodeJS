@@ -87,6 +87,48 @@ class HyperSphere extends MyObject {
 	 * Base class for n dimensional [hypersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
 	 * @param {Options} options See &lt;a href="../../../master/jsdoc/Options/Options.html" target="_blank">Options&lt;/a>.
 	 * @param {object} classSettings &lt;b>HyperSphere&lt;/b> class settings.
+	 * @param {object} [classSettings.compute={}] Methods for compute vertices
+	 * @param {boolean} [classSettings.compute.isUseCPU=false]
+	 * &lt;pre>
+	 * true - Uses CPU for compute.
+	 * false - Uses GPU for compute.
+	 * Currently have effect for &lt;a href="https://raw.githack.com/anhr/universe/main/jsdoc/module-HypersphericalUniverse-HypersphericalUniverse.html" target="_blank">Hypersphere Universe&lt;/a> only. Uses CPU for all other cases.
+	 * &lt;/pre>
+	 * @param {object} [classSettings.compute.config={}] Compute method configuration
+	 * @param {number} [classSettings.compute.config.RANDOM_POINTS=1] 
+	 * &lt;pre>
+	 * After сomputing a vertice's position, a random deviation is added to the vertice's position.
+	 * If a vertice's position to calculate multiple times, a cloud of random deviations will form around the true vertice position.
+	 * Select one:
+	 * 0 - A random position is not calculated. Instead, PSEUDO_RANDOM is returned. PSEUDO_RANDOM see below.
+	 *	Use this option for debugging. Algoritm will returns same vertice position for every running.
+	 * 1 - A random deviation is added to the vertice's position.
+	 *	The JavaScript random() function is used to generate a random deviation when calculating on the CPU.
+	 *	On the GPU, hashing is used to generate a random number. A Permuted Congruential Generator (PCG) is used.
+
+	 * Random value have range from 0 to 1.
+	 * Random deviation is null if random value is 0.
+	 * Vertice position moves to oppozite position of the hypersphere if random value is 1.
+	 * &lt;/pre>
+	 * @param {number} [classSettings.compute.config.PSEUDO_RANDOM=0.5] After сomputing a vertice's position, a random deviation is added to the vertice's position.
+					
+					//PSEUDO_RANDOM: 0.1,//Have effect only if RANDOM_POINTS: 0. Default 0.5
+					
+					//DAMPING: 0.95,//Демпфирование движения. Default 0.95
+
+					//Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
+					//REPULSION_STRENGTH: 10,//По умолчанию не определено и зависит от количества вершин REPULSION_STRENGTH = config.a / classSettings.settings.object.geometry.angles.length.
+					//a: 50,//имеет эффект только если не определен REPULSION_STRENGTH. Default 50
+					
+
+					//Hyperbola parametr. See RandomVertice.calculateHyperbola
+					//p: 0 Прямая линия: y = x (через точки (0,0) и (π,π)).
+					//p: 1 Два отрезка: вертикальный и горизонтальный
+					//0 &lt; p &lt; 1 Гипербола. График гиперболы млжно посмотреть на http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/hyperbola.html
+					p: 0.99,//Default 0
+
+					//LOG: true,//log to console all calculated vertices. Default undefined
+				},
 	 * @param {function} classSettings.distanceOfVertices Function, that was imported from:
 	 * &lt;pre>
 	 *	For Circle:
@@ -734,6 +776,7 @@ class HyperSphere extends MyObject {
 										settings.guiPoints.timeId :
 									0,
 								vertice = this.a2v(value, classSettings.overriddenProperties.r(timeId));
+							if (classSettings.compute.config.LOG) console.log('Step:' + timeId + ' Point:' + this.getPositionData(i, timeId).verticeId + '. x=' + vertice.x + ' y=' + vertice.y + ' z=' + vertice.z + ' w=' + vertice.w + ',alt=' + value.altitude + ' lat=' + value.latitude + ' lon=' + value.longitude);
 							if (!classSettings.overriddenProperties.pushMiddleVertice(timeId, value))
 								this.setPositionAttributeFromPoint(i, vertice, timeId);
 							
@@ -2625,139 +2668,98 @@ this.object = () => {
 			this.distanceOfVertices = (timeId, t) => {
 
 				if (timeId === 0) return;//не вычисляется средняя точка когда проигрыватель в начале
-				classSettings.distanceOfVertices({
+				classSettings.compute ||= {};
+				const compute = classSettings.compute;
+				if (compute.isUseCPU === undefined) compute.isUseCPU = false;
+				compute.config ||= {
+//					type: 'START_COMPUTE',
+				};
+				const config = compute.config;
+				config.type ||= 'START_COMPUTE';
+				config.pointsPerStep = settings.object.geometry.angles.length;
 
-					timeId: timeId,
-//					classSettings: classSettings,
-					this: this,
-					options: options,
-					t: t,
-					
-				});
-/*
-				const geometry = settings.object.geometry, position = geometry.position, edges = geometry.indices.edges;
-				if (edges.length === 0) {
-
-					//Create edges
-					this.onSelectScene = () => {
-
-						//Непонятно как сюда попадает
-						options.onSelectScene(t);
-						delete this.onSelectScene;
-
-					}
-					if (cEdges) cEdges.setValue(true);
-					else {
-
-						//нет ручной настройки
-						classSettings.edges = cookieOptions.edgesOld || edgesOld;
-						_this.projectGeometry();
-
-					}
-					return;
-
+				if (config.REPULSION_STRENGTH === undefined) {
+					const a = (config.a != undefined) ? config.a : 50;
+					config.REPULSION_STRENGTH = a / config.pointsPerStep;// Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются				
 				}
-				let progressBar, verticeId = 0;
-				if ((typeof WebGPU != 'undefined') &amp;&amp; WebGPU.isSupportWebGPU()) {
-
-					const firstMatrix = [
-							[1, 2, 3, 4],
-							[5, 6, 7, 8]
-						],
-						secondMatrix = [
-							[1, 2],
-							[3, 4],
-							[5, 6],
-							[7, 8],
-						];
-					new WebGPU({
-
-						input: { matrices: [firstMatrix, secondMatrix] },
-
-						//shaderCode: shaderCode,
-						shaderCodeFile: '../Shader.c',
-
-						results: [
-
-							{
-
-								count: firstMatrix.length * secondMatrix[0].length +
-
-									//result matrix has reserved three elements in the head of the matrix for size of the matrix.
-									//First element is dimension of result matrix.
-									//Second element is rows count of the matrix.
-									//Third element is columns count of the matrix.
-									//See settings.size of out2Matrix method in https://raw.githack.com/anhr/WebGPU/master/jsdoc/module-WebGPU-WebGPU.html
-									3,
-								out: out => {
-
-									console.log('out:');
-									console.log(new Float32Array(out));
-									const matrix = WebGPU.out2Matrix(out);
-									console.log('matrix:');
-									console.log(matrix);
-
-								}
-
-							},
-						],
-
-					});
-
-				}
-				const overriddenProperties = classSettings.overriddenProperties,
-					vertices = overriddenProperties.vertices(),
-					timestamp = classSettings.debug ? window.performance.now() : undefined,
-					step = () => {
-
-						progressBar.value = verticeId;
-						const stepItem = () => {
-
-							const vertice = overriddenProperties.position0.angles[verticeId].middleVertice(undefined, timeId, true, false, false);
-							if (vertices) vertices.push(vertice);
-							verticeId += 1;
-							if (verticeId >= position.length) {
-
-								progressBar.remove();
-
-								if (classSettings.debug) classSettings.debug.logTimestamp('Play step. ', timestamp);
-
-								//Обновление текущей вершины без обновления холста для экономии времени
-								overriddenProperties.updateVertices(vertices);
-
-								if (classSettings.debug) {
-
-									classSettings.debug.logTimestamp('Copy vertices. ', timestamp);
-									this.logHyperSphere();
-
-								}
-								else this.oldR = undefined;
-								this.onSelectSceneEnd(timeId);
-								return true;
-
-							}
-
-						}
-						if (!stepItem()) progressBar.step();
-
-					},
-					bufferGeometry = classSettings.settings.bufferGeometry,
-					drawRange = bufferGeometry.drawRange,
-					sTakeMiddleVertices = 'Take middle vertices';
-				if (classSettings.debug.log != false) console.log('\ntimeId = ' + timeId + '. ' + sTakeMiddleVertices + '.')
-
-				//Установить drawRange что бы не появлялась ошибка
-				//HyperSphere.angles2Vertice: anglesId = 2. positionId = 28 is out of range from 0 to 24
-				this.setVerticesRange(drawRange.start,
-					((drawRange.start + drawRange.count) / (bufferGeometry.index != null ? bufferGeometry.attributes.position.itemSize : 1)) + position.length);
 				
-				progressBar = new ProgressBar(options.renderer.domElement.parentElement, step, {
+				if (config.DAMPING === undefined) config.DAMPING = 0.95; // Демпфирование движения
+				
+				//Hyperbola parametr. See RandomVertice.calculateHyperbola
+				if (config.p === undefined) {
+					//Select one:
+					
+					//config.p = 0.99;
+					config.p = 0;//Прямая линия: y = x (через точки (0,0) и (π,π))
+					//config.p = 1;// Два отрезка: вертикальный и горизонтальный
+				}					
 
-					sTitle: 't = ' + t + '&lt;br> ' + sTakeMiddleVertices,
-					max: position.length - 1,
+				//config for GPU
 
-				});
-*/
+				config.DEBUG_MODE = classSettings.debug ? true : false;
+				
+				const playerOptions = settings.options.playerOptions;
+				config.baseRadius = playerOptions.min;
+				config.radiusMax = playerOptions.max;
+				config.totalSteps = playerOptions.marks;
+				
+				config.pointsPerStep = settings.object.geometry.angles.length;
+
+				//Select one:
+				
+		        //Случайная точка не вычисляется. Вместо этого возвращается PSEUDO_RANDOM
+		        //config.RANDOM_POINTS = 0;
+		
+		        //Вычисляется случайное число.
+		        //В GPU для получения случайного числа применяется хеширование(Hashing).Простой генератор псевдослучайных чисел(PCG).Permuted Congruential Generator(Перемешанный конгруэнтный генератор).
+		        //Этот метод лучше всего вычисляет случайное число, но требует много времени на вычисления если не оптимизировать Google Chrome.
+		        //Инструкция по оптимизации находится в Technical Guide: Enabling High-Performance GPU for Google Chrome https://github.com/anhr/universe/blob/main/hyperSphere/HUniverseEngine.md#technical-guide-enabling-high-performance-gpu-for-google-chromeИнструкцию по оттимизации смотри в D:\My documents\MyProjects\webgl\three.js\GitHub\universe\main\hyperSphere\webGPUHUniverse.js
+		        if (config.RANDOM_POINTS === undefined) config.RANDOM_POINTS = 1;
+		
+		        //Вычисляется случайное число.
+				//ВНИМАНИЕ!!! Сейчас этот метод не применяю потому что он не дает преимуществ перед config.RANDOM_POINTS = 1 после оптимизации Google Chrome.
+		        //Анализ производительности вычислений в GPU показал, что генерация случайного числа внутри WebGPU по методу хеширования(Hashing) (RANDOM_POINTS = 1) крайне затратно.
+		        //Для того, что бы генерация случайного числа внутри WebGPU по методу хеширования(Hashing) (RANDOM_POINTS = 1) проходила быстро на Goole Chrome, браузер надо оптимизировать.
+		        //Инструкция находится в Technical Guide: Enabling High-Performance GPU for Google Chrome https://github.com/anhr/universe/blob/main/hyperSphere/HUniverseEngine.md#technical-guide-enabling-high-performance-gpu-for-google-chrome
+		        //Например при totalSteps = 100; и pointsPerStep = 500; время итерации заняло 14.644 сек.
+		        //по сравненияю со временем итерации без генератора случайного числа RANDOM_POINTS = false 4.733 сек.
+		        //Поэтому для GPU применяю метод Lookup Table (LUT) — таблицу предварительно вычисленных значений.
+		        //Случайные числа вычисляются на JS и затем через буфер передаются на GPU.
+		        //Этот метод работает гораздо быстрее но случайные числа не сосвем случайные.
+		        //config.RANDOM_POINTS = 2;
+				
+				if (config.RANDOM_POINTS === 0) {
+					if (config.PSEUDO_RANDOM === undefined) config.PSEUDO_RANDOM = 0.5;
+					classSettings.debug.random = () => { return config.PSEUDO_RANDOM };
+				}
+/*
+				const config = {
+					type: 'START_COMPUTE',
+					RANDOM_POINTS: RANDOM_POINTS,
+					DAMPING: DAMPING,
+					REPULSION_STRENGTH: REPULSION_STRENGTH,
+					PSEUDO_RANDOM: PSEUDO_RANDOM,
+					p: p,
+
+					//for GPU
+
+					DEBUG_MODE: DEBUG_MODE,
+					baseRadius: baseRadius,
+					radiusMax: radiusMax,
+					totalSteps: totalSteps,
+					pointsPerStep: pointsPerStep
+				};
+*/				
+				const computeCPU = () => {
+					classSettings.distanceOfVertices({
+						timeId: timeId,
+						this: this,
+						options: options,
+						t: t,
+					});
+				}
+				if (!classSettings.distanceOfVertices.webGPU || classSettings.compute.isUseCPU) computeCPU();
+				else classSettings.distanceOfVertices.webGPU.compute(computeCPU, config, settings, this);
 				return true;//player pause
 
 			}
@@ -3473,13 +3475,13 @@ const _display = (element, boDisplay) => { element.style.display = boDisplay ===
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Circle.html">Circle</a></li><li><a href="module-HyperSphere.html">HyperSphere</a></li><li><a href="module-HyperSphere3D.html">HyperSphere3D</a></li><li><a href="module-Sphere.html">Sphere</a></li></ul><h3>Classes</h3><ul><li><a href="module-Circle-Circle.html">Circle</a></li><li><a href="module-HyperSphere3D-HyperSphere3D.html">HyperSphere3D</a></li><li><a href="module-HyperSphere-HyperSphere.html">HyperSphere</a></li><li><a href="module-Sphere-Sphere.html">Sphere</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Circle.html">Circle</a></li><li><a href="module-HyperSphere.html">HyperSphere</a></li><li><a href="module-HyperSphere3D.html">HyperSphere3D</a></li><li><a href="module-Sphere.html">Sphere</a></li><li><a href="module-utilsCircle.html">utilsCircle</a></li><li><a href="module-utilsHSphere.html">utilsHSphere</a></li><li><a href="module-utilsSphere.html">utilsSphere</a></li></ul><h3>Classes</h3><ul><li><a href="module-Circle-Circle.html">Circle</a></li><li><a href="module-HyperSphere3D-HyperSphere3D.html">HyperSphere3D</a></li><li><a href="module-HyperSphere-HyperSphere.html">HyperSphere</a></li><li><a href="module-Sphere-Sphere.html">Sphere</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Mon Apr 20 2026 09:41:20 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Mon Jun 01 2026 07:50:04 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

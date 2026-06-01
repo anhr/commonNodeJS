@@ -31,7 +31,7 @@
         <h2><span class="attribs"><span class="type-signature"></span></span>
             <span class="ancestors"><a href="module-HyperSphere.html">HyperSphere</a>~</span>HyperSphere<span class="signature">(options, classSettings)</span><span class="type-signature"></span></h2>
         
-            <div class="class-description">Base class for n dimensional <a href="https://en.wikipedia.org/wiki/N-sphere">hypersphere</a>. Extends <a href="../../jsdoc/MyObject/module-myObject-MyObject.html" target="_blank">MyObject</a>.</div>
+            <div class="class-description"><div class="class-diagram"> <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="259.9375" height="116"> <defs> <style type="text/css"> text { font-size: initial; } rect { stroke-width: 2; stroke: black; fill: white; } marker { overflow: visible; } marker rect { stroke: none; stroke-width: 0 } marker path { fill: white; stroke: black; } a { cursor: pointer; } a text { fill: blue; text-decoration: underline; } polyline, line { stroke-width: 2; stroke: black; fill: none; } .child rect, .parent rect { stroke: blue; } .interface rect { stroke: blueviolet; } .mixin rect { stroke: green; } .no-ref rect { fill: lightgray; } </style> <marker id="inheritance" refX="5" refY="3" orient="auto-start-reverse"> <rect width="6" height="5"></rect> <path d="M 0 0 L 5 3 L 0 6 z"></path> </marker> </defs> <g transform="translate(129.96875, 73)"><g transform="translate(0, -58)"><polyline class="inherit" marker-end="url(#inheritance)" points="0,58 0,28"></polyline><g class="parent no-ref" transform="translate(-42.71875, 0)"><rect height="28" width="85.4375"></rect><text y="20" text-anchor="middle" x="42.71875">MyObject</text></g></g><g class="noi" transform="translate(-124.96875, 0)"><rect height="28" width="249.9375"></rect><text y="20" text-anchor="middle" x="124.96875">module:HyperSphere~HyperSphere</text></g></g> </svg></div>Base class for n dimensional <a href="https://en.wikipedia.org/wiki/N-sphere">hypersphere</a>. Extends <a href="../../jsdoc/MyObject/module-myObject-MyObject.html" target="_blank">MyObject</a>.</div>
         
     
 </header>
@@ -155,6 +155,279 @@
     </thead>
 
     <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>compute</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    {}
+                
+                </td>
+            
+
+            <td class="description last">Methods for compute vertices
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>isUseCPU</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last"><pre>true - Uses CPU for compute.false - Uses GPU for compute.Currently have effect for <a href="https://raw.githack.com/anhr/universe/main/jsdoc/module-HypersphericalUniverse-HypersphericalUniverse.html" target="_blank">Hypersphere Universe</a> only. Uses CPU for all other cases.</pre></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>config</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    {}
+                
+                </td>
+            
+
+            <td class="description last">Compute method configuration
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>RANDOM_POINTS</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    1
+                
+                </td>
+            
+
+            <td class="description last"><pre>After сomputing a vertice's position, a random deviation is added to the vertice's position.If a vertice's position to calculate multiple times, a cloud of random deviations will form around the true vertice position.Select one:0 - A random position is not calculated. Instead, PSEUDO_RANDOM is returned. PSEUDO_RANDOM see below.	Use this option for debugging. Algoritm will returns same vertice position for every running.1 - A random deviation is added to the vertice's position.	The JavaScript random() function is used to generate a random deviation when calculating on the CPU.	On the GPU, hashing is used to generate a random number. A Permuted Congruential Generator (PCG) is used.Random value have range from 0 to 1.Random deviation is null if random value is 0.Vertice position moves to oppozite position of the hypersphere if random value is 1.</pre></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>PSEUDO_RANDOM</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    0.5
+                
+                </td>
+            
+
+            <td class="description last">After сomputing a vertice's position, a random deviation is added to the vertice's position.
+					
+					//PSEUDO_RANDOM: 0.1,//Have effect only if RANDOM_POINTS: 0. Default 0.5
+					
+					//DAMPING: 0.95,//Демпфирование движения. Default 0.95
+
+					//Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
+					//REPULSION_STRENGTH: 10,//По умолчанию не определено и зависит от количества вершин REPULSION_STRENGTH = config.a / classSettings.settings.object.geometry.angles.length.
+					//a: 50,//имеет эффект только если не определен REPULSION_STRENGTH. Default 50
+					
+
+					//Hyperbola parametr. See RandomVertice.calculateHyperbola
+					//p: 0 Прямая линия: y = x (через точки (0,0) и (π,π)).
+					//p: 1 Два отрезка: вертикальный и горизонтальный
+					//0 < p < 1 Гипербола. График гиперболы млжно посмотреть на http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/hyperbola.html
+					p: 0.99,//Default 0
+
+					//LOG: true,//log to console all calculated vertices. Default undefined
+				},</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
     
 
         <tr>
@@ -2773,7 +3046,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3118">line 3118</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3120">line 3120</a>
     </li></ul></dd>
     
 
@@ -2835,7 +3108,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3128">line 3128</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3130">line 3130</a>
     </li></ul></dd>
     
 
@@ -2897,7 +3170,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3113">line 3113</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3115">line 3115</a>
     </li></ul></dd>
     
 
@@ -2959,7 +3232,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3162">line 3162</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3164">line 3164</a>
     </li></ul></dd>
     
 
@@ -3021,7 +3294,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3433">line 3433</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3435">line 3435</a>
     </li></ul></dd>
     
 
@@ -3083,7 +3356,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3428">line 3428</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3430">line 3430</a>
     </li></ul></dd>
     
 
@@ -3163,7 +3436,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3246">line 3246</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3248">line 3248</a>
     </li></ul></dd>
     
 
@@ -3323,7 +3596,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3262">line 3262</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3264">line 3264</a>
     </li></ul></dd>
     
 
@@ -3486,7 +3759,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3283">line 3283</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3285">line 3285</a>
     </li></ul></dd>
     
 
@@ -3584,7 +3857,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line1501">line 1501</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line1544">line 1544</a>
     </li></ul></dd>
     
 
@@ -3682,7 +3955,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3179">line 3179</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3181">line 3181</a>
     </li></ul></dd>
     
 
@@ -3770,7 +4043,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3167">line 3167</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3169">line 3169</a>
     </li></ul></dd>
     
 
@@ -3868,7 +4141,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3172">line 3172</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3174">line 3174</a>
     </li></ul></dd>
     
 
@@ -4286,7 +4559,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line1487">line 1487</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line1530">line 1530</a>
     </li></ul></dd>
     
 
@@ -4423,7 +4696,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3152">line 3152</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3154">line 3154</a>
     </li></ul></dd>
     
 
@@ -4560,7 +4833,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3332">line 3332</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3334">line 3334</a>
     </li></ul></dd>
     
 
@@ -4616,13 +4889,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Circle.html">Circle</a></li><li><a href="module-HyperSphere.html">HyperSphere</a></li><li><a href="module-HyperSphere3D.html">HyperSphere3D</a></li><li><a href="module-Sphere.html">Sphere</a></li></ul><h3>Classes</h3><ul><li><a href="module-Circle-Circle.html">Circle</a></li><li><a href="module-HyperSphere3D-HyperSphere3D.html">HyperSphere3D</a></li><li><a href="module-HyperSphere-HyperSphere.html">HyperSphere</a></li><li><a href="module-Sphere-Sphere.html">Sphere</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Circle.html">Circle</a></li><li><a href="module-HyperSphere.html">HyperSphere</a></li><li><a href="module-HyperSphere3D.html">HyperSphere3D</a></li><li><a href="module-Sphere.html">Sphere</a></li><li><a href="module-utilsCircle.html">utilsCircle</a></li><li><a href="module-utilsHSphere.html">utilsHSphere</a></li><li><a href="module-utilsSphere.html">utilsSphere</a></li></ul><h3>Classes</h3><ul><li><a href="module-Circle-Circle.html">Circle</a></li><li><a href="module-HyperSphere3D-HyperSphere3D.html">HyperSphere3D</a></li><li><a href="module-HyperSphere-HyperSphere.html">HyperSphere</a></li><li><a href="module-Sphere-Sphere.html">Sphere</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Mon Apr 20 2026 09:41:20 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Mon Jun 01 2026 07:50:04 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -59,6 +59,46 @@ class HyperSphere extends MyObject {
 	 * Base class for n dimensional [hypersphere]{@link https://en.wikipedia.org/wiki/N-sphere}.
 	 * @param {Options} options See <a href="../../../master/jsdoc/Options/Options.html" target="_blank">Options</a>.
 	 * @param {object} classSettings <b>HyperSphere</b> class settings.
+	 * @param {object} [classSettings.compute={}] Methods for compute vertices
+	 * @param {boolean} [classSettings.compute.isUseCPU=false]
+	 * <pre>
+	 * true - Uses CPU for compute.
+	 * false - Uses GPU for compute.
+	 * Currently have effect for <a href="https://raw.githack.com/anhr/universe/main/jsdoc/module-HypersphericalUniverse-HypersphericalUniverse.html" target="_blank">Hypersphere Universe</a> only. Uses CPU for all other cases.
+	 * </pre>
+	 * @param {object} [classSettings.compute.config={}] Compute method configuration
+	 * @param {number} [classSettings.compute.config.RANDOM_POINTS=1] 
+	 * <pre>
+	 * After сomputing a vertice's position, a random deviation is added to the vertice's position.
+	 * If a vertice's position to calculate multiple times, a cloud of random deviations will form around the true vertice position.
+	 * Select one:
+	 * 0 - A random position is not calculated. Instead, PSEUDO_RANDOM is returned. PSEUDO_RANDOM see below.
+	 *	Use this option for debugging. Algoritm will returns same vertice position for every running.
+	 * 1 - A random deviation is added to the vertice's position.
+	 *	The JavaScript random() function is used to generate a random deviation when calculating on the CPU.
+	 *	On the GPU, hashing is used to generate a random number. A Permuted Congruential Generator (PCG) is used.
+
+	 * Random value have range from 0 to 1.
+	 * Random deviation is null if random value is 0.
+	 * Vertice position moves to oppozite position of the hypersphere if random value is 1.
+	 * </pre>
+	 * @param {float} [classSettings.compute.config.PSEUDO_RANDOM=0.5] Have effect only if RANDOM_POINTS = 0.
+	 * @param {float} [classSettings.compute.config.DAMPING=0.95] Motion damping.
+					//DAMPING: 0.95,//Демпфирование движения. Default 0.95
+
+					//Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
+					//REPULSION_STRENGTH: 10,//По умолчанию не определено и зависит от количества вершин REPULSION_STRENGTH = config.a / classSettings.settings.object.geometry.angles.length.
+					//a: 50,//имеет эффект только если не определен REPULSION_STRENGTH. Default 50
+					
+
+					//Hyperbola parametr. See RandomVertice.calculateHyperbola
+					//p: 0 Прямая линия: y = x (через точки (0,0) и (π,π)).
+					//p: 1 Два отрезка: вертикальный и горизонтальный
+					//0 < p < 1 Гипербола. График гиперболы млжно посмотреть на http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/hyperbola.html
+					p: 0.99,//Default 0
+
+					//LOG: true,//log to console all calculated vertices. Default undefined
+				},
 	 * @param {function} classSettings.distanceOfVertices Function, that was imported from:
 	 * <pre>
 	 *	For Circle:

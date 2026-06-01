@@ -195,7 +195,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utilsHSphere.js.html">utilsHSphere.js</a>, <a href="utilsHSphere.js.html#line23">line 23</a>
+        <a href="utilsHSphere.js.html">utilsHSphere.js</a>, <a href="utilsHSphere.js.html#line165">line 165</a>
     </li></ul></dd>
     
 
@@ -214,6 +214,564 @@
         
     
 
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".cartesianToPolar"><span class="type-signature">(static) </span>cartesianToPolar<span class="signature">(vertice, debug<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Преобразует декартовы координаты 4D (x, y, z, w) в гиперсферические.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>vertice</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">объект x, y, z, w декартовых координат.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>debug</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+|
+
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">debug = object Выводит на консоль сообщение об ошибке если углы вычислились не корректно.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="utilsHSphere.js.html">utilsHSphere.js</a>, <a href="utilsHSphere.js.html#line108">line 108</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Объект с полярными координатами в радианах.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".polarToCartesian"><span class="type-signature">(static) </span>polarToCartesian<span class="signature">(angles, r<span class="signature-attributes">opt</span>, debug<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {array}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Вычисляет 4D декартовы координаты (x, y, z, w) точки на гиперсфере.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>angles</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">Объект с углами в радианах.
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>latitude</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">float</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Широта (от -π/2 до π/2).</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>longitude</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">float</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Долгота (от -π до π).</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>altitude</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">float</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Угол в 4-е измерение (от 0 до π).</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>r</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">float</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    1
+                
+                </td>
+            
+
+            <td class="description last">Радиус гиперсферы.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>debug</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+|
+
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">debug = object Выводит на консоль сообщение об ошибке если координаты вычислились не корректно.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="utilsHSphere.js.html">utilsHSphere.js</a>, <a href="utilsHSphere.js.html#line44">line 44</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Массив с декартовыми координатами [x, y, z, w].
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">array</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
     
 
     
@@ -235,7 +793,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri Feb 20 2026 11:52:09 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Mon Jun 01 2026 07:50:04 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

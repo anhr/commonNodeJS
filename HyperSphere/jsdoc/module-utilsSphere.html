@@ -195,7 +195,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utilsSphere.js.html">utilsSphere.js</a>, <a href="utilsSphere.js.html#line121">line 121</a>
+        <a href="utilsSphere.js.html">utilsSphere.js</a>, <a href="utilsSphere.js.html#line127">line 127</a>
     </li></ul></dd>
     
 
@@ -223,7 +223,166 @@
     
 
     
-    <h4 class="name" id=".anglesToCartesian"><span class="type-signature">(static) </span>anglesToCartesian<span class="signature">(angles, r<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {array}</span></h4>
+    <h4 class="name" id=".cartesianToPolar"><span class="type-signature">(static) </span>cartesianToPolar<span class="signature">(vertice)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Преобразует декартовы координаты (x, y, z) в географические полярные координаты(r, latitude, longitude).
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>vertice</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">объект x, y, z декартовых координат.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="utilsSphere.js.html">utilsSphere.js</a>, <a href="utilsSphere.js.html#line92">line 92</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Объект с полярными координатами в радианах.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".polarToCartesian"><span class="type-signature">(static) </span>polarToCartesian<span class="signature">(angles, r<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {array}</span></h4>
     
 
     
@@ -331,7 +490,7 @@
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">float</span>
 
 
             
@@ -354,7 +513,7 @@
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">float</span>
 
 
             
@@ -384,7 +543,7 @@
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">float</span>
 
 
             
@@ -451,7 +610,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utilsSphere.js.html">utilsSphere.js</a>, <a href="utilsSphere.js.html#line45">line 45</a>
+        <a href="utilsSphere.js.html">utilsSphere.js</a>, <a href="utilsSphere.js.html#line47">line 47</a>
     </li></ul></dd>
     
 
@@ -504,165 +663,6 @@
 
 
         
-            
-
-    
-
-    
-    <h4 class="name" id=".casterianToAngles"><span class="type-signature">(static) </span>casterianToAngles<span class="signature">(vertice)</span><span class="type-signature"> &rarr; {Object}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Преобразует декартовы координаты (x, y, z) в географические полярные координаты(r, latitude, longitude).
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>vertice</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array.&lt;number></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Массив [x, y, z] декартовых координат.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utilsSphere.js.html">utilsSphere.js</a>, <a href="utilsSphere.js.html#line89">line 89</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    Объект с полярными координатами в радианах.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Object</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
     
 
     
@@ -684,7 +684,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri Feb 20 2026 11:52:09 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Mon Jun 01 2026 07:50:04 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
