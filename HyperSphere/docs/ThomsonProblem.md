@@ -4,9 +4,10 @@
 **Definition**
 
 The Thomson Problem asks for the minimum energy configuration of $N$ point charges on a unit sphere that repel each other with an electrostatic force (Coulomb's Law). The potential energy $U$ of the system is given by the sum of the inverse distances between all pairs of particles:
-$$U = \sum_{1 \le i < j \le N} \frac{1}{|r_i - r_j|}$$
 
-![Thomson Problem Energy Formula](https://quicklatex.com/cache3/79/ql_8c64d85834ea277714890c507c390579_l3.png)
+```math
+U = \sum_{1 \le i < j \le N} \frac{1}{|r_i - r_j|}
+```
 
 The goal is to find the arrangement of these $N$ points that minimizes this total potential energy $U$.
 
