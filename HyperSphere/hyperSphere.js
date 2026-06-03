@@ -66,9 +66,13 @@ class HyperSphere extends MyObject {
 	 * false - Uses GPU for compute.
 	 * Currently have effect for <a href="https://raw.githack.com/anhr/universe/main/jsdoc/module-HypersphericalUniverse-HypersphericalUniverse.html" target="_blank">Hypersphere Universe</a> only. Uses CPU for all other cases.
 	 * </pre>
-	 * @param {object} [classSettings.compute.config={}] A configuration of an iterative process in which, at each step, all vertices gradually move toward a position in which the vertices are at the maximum distance from each other.
-	 * See [iterative process]{@link https://chat.deepseek.com/share/rrsnfgrld19o8jwxzv} for details.
+	 * @param {object} [classSettings.compute.config={}]
+	 * <pre>
+	 * A configuration of an iterative process in which is resolving the [Thomson Problem]{@link https://github.com/anhr/commonNodeJS/blob/master/HyperSphere/docs/ThomsonProblem.md},
+	 * at each step, all vertices gradually move toward a position in which the vertices are at the maximum distance from each other.
+	 * See my prompts in [deepseek]{@link https://chat.deepseek.com/share/rrsnfgrld19o8jwxzv} or [gemini]{@link https://gemini.google.com/app/9b3e6992edd358a4} for details.
 	 * <a href="../../../../universe/main/hyperSphere/Examples/averageUniverseGPU.html" target="_blank">Simple example of the iteration</a>.
+	 * </pre>
 	 * @param {number} [classSettings.compute.config.RANDOM_POINTS=1] 
 	 * <pre>
 	 * After сomputing a vertice's position, a random deviation is added to the vertice's position.
@@ -95,7 +99,9 @@ class HyperSphere extends MyObject {
 	 *   1 - No damping. Not recommended for production
 	 * [What is DAMPING and why is it needed?]{@link https://chat.deepseek.com/share/azo3y7zgc6hov7mlfp}
 	 * </pre>
-	 * @param {float} [classSettings.compute.config.REPULSION_STRENGTH=50] Motion damping.
+	 * @param {float} [classSettings.compute.config.REPULSION_STRENGTH=50] https://chat.deepseek.com/share/slysikbmgruyb8owpi
+	 * [What is REPULSION_STRENGTH and why is it needed?]{@link https://chat.deepseek.com/share/azo3y7zgc6hov7mlfp}
+	 * </pre>
 					//Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
 					//REPULSION_STRENGTH: 10,//По умолчанию не определено и зависит от количества вершин REPULSION_STRENGTH = config.a / classSettings.settings.object.geometry.angles.length.
 					//a: 50,//имеет эффект только если не определен REPULSION_STRENGTH. Default 50
