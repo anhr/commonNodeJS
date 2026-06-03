@@ -25,3 +25,9 @@ Beyond theoretical physics, the Thomson Problem serves as a model for:
 * The arrangement of proteins on the surface of viruses.
 * The configuration of atoms in fullerene molecules.
 * Optimization problems in material science and nanotechnology.
+
+---
+
+## References
+
+*   [Thomson Problem — Wolfram MathWorld](https://mathworld.wolfram.com/ThomsonProblem.html)
