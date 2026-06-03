@@ -99,15 +99,22 @@ class HyperSphere extends MyObject {
 	 *   1 - No damping. Not recommended for production
 	 * [What is DAMPING and why is it needed?]{@link https://chat.deepseek.com/share/azo3y7zgc6hov7mlfp}
 	 * </pre>
-	 * @param {float} [classSettings.compute.config.REPULSION_STRENGTH=50] https://chat.deepseek.com/share/slysikbmgruyb8owpi
-	 * [What is REPULSION_STRENGTH and why is it needed?]{@link https://chat.deepseek.com/share/azo3y7zgc6hov7mlfp}
+	 * @param {float} [classSettings.compute.config.REPULSION_STRENGTH]
+	 * <pre>
+	 * A force scaling factor that determines how strongly particles repel each other.
+	 * It's the coefficient that multiplies the inverse-square force law between every pair of vertices.
+	 * The smaller the value, the weaker the repulsive forces between the vertices, and the slower they move.
+	 * Available range from 0 to ∞.
+	 *   0 - No repulsion, particles don't interact. Static positions, no movement
+	 *   ∞ - No upper bound (but practically limited by numerical stability).
+	 * default vaue is <b>config.a / classSettings.settings.object.geometry.angles.length</b>. See below.
+	 * [What is REPULSION_STRENGTH and why is it needed?]{@link https://chat.deepseek.com/share/slysikbmgruyb8owpi}
 	 * </pre>
-					//Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
-					//REPULSION_STRENGTH: 10,//По умолчанию не определено и зависит от количества вершин REPULSION_STRENGTH = config.a / classSettings.settings.object.geometry.angles.length.
-					//a: 50,//имеет эффект только если не определен REPULSION_STRENGTH. Default 50
+	 * @param {float} [classSettings.compute.config.a=50] See above. Have effect if <b>REPULSION_STRENGTH</b> is not defined.
+	 * @param {float} [classSettings.compute.config.p=0] Hyperbola parametr. See RandomVertice.calculateHyperbola.
 					
 
-					//Hyperbola parametr. See RandomVertice.calculateHyperbola
+					//
 					//p: 0 Прямая линия: y = x (через точки (0,0) и (π,π)).
 					//p: 1 Два отрезка: вертикальный и горизонтальный
 					//0 < p < 1 Гипербола. График гиперболы млжно посмотреть на http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/hyperbola.html

@@ -466,18 +466,91 @@
             
                 <td class="default">
                 
+                </td>
+            
+
+            <td class="description last"><pre>A force scaling factor that determines how strongly particles repel each other.It's the coefficient that multiplies the inverse-square force law between every pair of vertices.The smaller the value, the weaker the repulsive forces between the vertices, and the slower they move.Available range from 0 to ∞.  0 - No repulsion, particles don't interact. Static positions, no movement  ∞ - No upper bound (but practically limited by numerical stability).default vaue is <b>config.a / classSettings.settings.object.geometry.angles.length</b>. See below.<a href="https://chat.deepseek.com/share/slysikbmgruyb8owpi">What is REPULSION_STRENGTH and why is it needed?</a></pre></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>a</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">float</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
                     50
                 
                 </td>
             
 
-            <td class="description last">https://chat.deepseek.com/share/slysikbmgruyb8owpi<a href="https://chat.deepseek.com/share/azo3y7zgc6hov7mlfp">What is REPULSION_STRENGTH and why is it needed?</a></pre>
-					//Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
-					//REPULSION_STRENGTH: 10,//По умолчанию не определено и зависит от количества вершин REPULSION_STRENGTH = config.a / classSettings.settings.object.geometry.angles.length.
-					//a: 50,//имеет эффект только если не определен REPULSION_STRENGTH. Default 50
+            <td class="description last">See above. Have effect if <b>REPULSION_STRENGTH</b> is not defined.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>p</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">float</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    0
+                
+                </td>
+            
+
+            <td class="description last">Hyperbola parametr. See RandomVertice.calculateHyperbola.
 					
 
-					//Hyperbola parametr. See RandomVertice.calculateHyperbola
+					//
 					//p: 0 Прямая линия: y = x (через точки (0,0) и (π,π)).
 					//p: 1 Два отрезка: вертикальный и горизонтальный
 					//0 < p < 1 Гипербола. График гиперболы млжно посмотреть на http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/hyperbola.html
@@ -3119,7 +3192,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3136">line 3136</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3143">line 3143</a>
     </li></ul></dd>
     
 
@@ -3181,7 +3254,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3146">line 3146</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3153">line 3153</a>
     </li></ul></dd>
     
 
@@ -3243,7 +3316,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3131">line 3131</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3138">line 3138</a>
     </li></ul></dd>
     
 
@@ -3305,7 +3378,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3180">line 3180</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3187">line 3187</a>
     </li></ul></dd>
     
 
@@ -3367,7 +3440,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3451">line 3451</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3458">line 3458</a>
     </li></ul></dd>
     
 
@@ -3429,7 +3502,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3446">line 3446</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3453">line 3453</a>
     </li></ul></dd>
     
 
@@ -3509,7 +3582,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3264">line 3264</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3271">line 3271</a>
     </li></ul></dd>
     
 
@@ -3669,7 +3742,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3280">line 3280</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3287">line 3287</a>
     </li></ul></dd>
     
 
@@ -3832,7 +3905,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3301">line 3301</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3308">line 3308</a>
     </li></ul></dd>
     
 
@@ -3930,7 +4003,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line1558">line 1558</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line1565">line 1565</a>
     </li></ul></dd>
     
 
@@ -4028,7 +4101,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3197">line 3197</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3204">line 3204</a>
     </li></ul></dd>
     
 
@@ -4116,7 +4189,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3185">line 3185</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3192">line 3192</a>
     </li></ul></dd>
     
 
@@ -4214,7 +4287,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3190">line 3190</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3197">line 3197</a>
     </li></ul></dd>
     
 
@@ -4632,7 +4705,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line1544">line 1544</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line1551">line 1551</a>
     </li></ul></dd>
     
 
@@ -4769,7 +4842,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3170">line 3170</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3177">line 3177</a>
     </li></ul></dd>
     
 
@@ -4906,7 +4979,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3350">line 3350</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3357">line 3357</a>
     </li></ul></dd>
     
 
@@ -4968,7 +5041,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Wed Jun 03 2026 09:12:41 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Wed Jun 03 2026 12:22:35 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
