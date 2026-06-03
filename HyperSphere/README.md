@@ -9,7 +9,7 @@ Examples:
 [Sphere](https://raw.githack.com/anhr/commonNodeJS/master/HyperSphere/Examples/sphere.html).
 [HyperSphere](https://raw.githack.com/anhr/commonNodeJS/master/HyperSphere/Examples/hyperSphere.html).
 
-See [HyperSphere API](https://raw.githack.com/anhr/commonNodeJS/master/HyperSphere/jsdoc/index.html) for details.
+See [HyperSphere API](https://raw.githack.com/anhr/commonNodeJS/master/HyperSphere/jsdoc/index.html) and [RandomVertice API](https://raw.githack.com/anhr/commonNodeJS/master/HyperSphere/RandomVertice/jsdoc/index.html) for details.
 
  ## Have a job for me?
 Please read [About Me](https://anhr.github.io/AboutMe/).
