@@ -111,7 +111,9 @@ class HyperSphere extends MyObject {
 	 * [What is REPULSION_STRENGTH and why is it needed?]{@link https://chat.deepseek.com/share/slysikbmgruyb8owpi}
 	 * </pre>
 	 * @param {float} [classSettings.compute.config.a=50] See above. Have effect if <b>REPULSION_STRENGTH</b> is not defined.
-	 * @param {float} [classSettings.compute.config.p=0] Hyperbola parametr. See RandomVertice.calculateHyperbola.
+	 * @param {float} [classSettings.compute.config.p=0] Hyperbola parametr. See RandomVertice.calculateHyperbola. See how the <a href="../Examples/hyperbola.html" target="_blank">hyperbola's shape curve</a> depends on <b>p<b>.
+	 * @param {boolean} [classSettings.compute.config.LOG] true - log to console all calculated vertices.
+	 * 
 					
 
 					//
