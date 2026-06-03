@@ -31,3 +31,5 @@ Beyond theoretical physics, the Thomson Problem serves as a model for:
 ## References
 
 *   [Thomson Problem — Wolfram MathWorld](https://mathworld.wolfram.com/ThomsonProblem.html)
+*   My prompts in [deepseek](https://chat.deepseek.com/share/rrsnfgrld19o8jwxzv)
+*   My prompts in [gemini](https://gemini.google.com/app/9b3e6992edd358a4)
