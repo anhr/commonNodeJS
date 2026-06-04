@@ -111,19 +111,14 @@ class HyperSphere extends MyObject {
 	 * [What is REPULSION_STRENGTH and why is it needed?]{@link https://chat.deepseek.com/share/slysikbmgruyb8owpi}
 	 * </pre>
 	 * @param {float} [classSettings.compute.config.a=50] See above. Have effect if <b>REPULSION_STRENGTH</b> is not defined.
-	 * @param {float} [classSettings.compute.config.p=0] Hyperbola parametr. See RandomVertice.calculateHyperbola. See how the <a href="../Examples/hyperbola.html" target="_blank">hyperbola's shape curve</a> depends on <b>p<b>.
-	 * @param {boolean} [classSettings.compute.config.LOG] true - log to console all calculated vertices.
-	 * 
-					
-
-					//
-					//p: 0 Прямая линия: y = x (через точки (0,0) и (π,π)).
-					//p: 1 Два отрезка: вертикальный и горизонтальный
-					//0 < p < 1 Гипербола. График гиперболы млжно посмотреть на http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/hyperbola.html
-					p: 0.99,//Default 0
-
-					//LOG: true,//log to console all calculated vertices. Default undefined
-				},
+	 * @param {float} [classSettings.compute.config.p=0]
+	 * <pre>
+	 * Hyperbola parametr. See [RandomVertice.calculateHyperbola]{@link https://raw.githack.com/anhr/commonNodeJS/master/HyperSphere/RandomVertice/jsdoc/module-RandomVertice-RandomVertice.html#.calculateHyperbola}.
+	 * 0 Direct line: y = x (from (0,0) to (π,π)).
+	 * 1 Two segments: vertical and horizontal
+	 * 0 < <b>p</b> < 1 Hyperbola. See how the <a href="../Examples/hyperbola.html" target="_blank">hyperbola's shape curve</a> depends on <b>p<b>.
+	 * </pre>
+	 * @param {boolean} [classSettings.compute.config.LOG] true - log to console all calculated vertices. WARNING! This configuration significantly increases iteration time! Use for debugging only.
 	 * @param {function} classSettings.distanceOfVertices Function, that was imported from:
 	 * <pre>
 	 *	For Circle:
