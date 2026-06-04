@@ -208,13 +208,13 @@ class Circle extends HyperSphere {
 	get dimension() { return 2; }//space dimension
 	get verticesCountMin() { return 3; }
 
-	/**
+	/* *
 	 * @param {THREE.Scene} scene [THREE.Scene]{@link https://threejs.org/docs/index.html?q=sce#api/en/scenes/Scene}
 	 * @param {Options} options See <a href="../../jsdoc/Options/Options.html" target="_blank">Options</a>.
 	 * @param {object} randomVerticesSettings See <b>randomVerticesSettings</b> of the <a href="./module-HyperSphere-RandomVertices.html" target="_blank">RandomVertices</a> class.
 	 * @returns new RandomVertices child class.
 	 */
-	newRandomVertices(scene, options, randomVerticesSettings) { return new RandomVertices(scene, options, randomVerticesSettings); }
+//	newRandomVertices(scene, options, randomVerticesSettings) { return new RandomVertices(scene, options, randomVerticesSettings); }
 
 	//overridden methods
 	

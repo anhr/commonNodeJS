@@ -3197,11 +3197,11 @@ this.object = () => {
 	 * @returns a console error if your call this method directly.
 	 */
 	name() { console.error(sOverride.replace('%s', 'name')); }
-	/**
+	/* *
 	 * Base method that returns a RandomVertices child class.
 	 * @returns a console error if your call this method directly.
 	 */
-	newRandomVertices() { console.error(sOverride.replace('%s', 'newRandomVertices')); }
+//	newRandomVertices() { console.error(sOverride.replace('%s', 'newRandomVertices')); }
 
 	/////////////////////////////////////base methods
 
