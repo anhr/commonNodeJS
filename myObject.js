@@ -566,41 +566,6 @@ class MyObject {
 
 			}
 			this.setColorAttributeFromPoint(i, vertice, timeId, positionData);
-/*			
-			//Color attribute
-
-			itemSize = attributes.color.itemSize;
-			let colorId = i * itemSize + (timeId === undefined ? 0 : positionBlockLength * timeId * itemSize);
-			array = attributes.color.array;
-			const verticeColor = this.verticeColor(i, vertice, timeId);
-			if (typeof verticeColor === 'number'){
-
-				if (settings.options) {
-					
-					const wScale = settings.options.scales.w;
-					Player.setColorAttribute(attributes, i + (timeId === undefined ? 0 : positionBlockLength * timeId), settings.options.palette.toColor(verticeColor, wScale.min, wScale.max));
-
-				}
-				colorId += attributes.color.itemSize - 1;
-				
-			} else if (Array.isArray(verticeColor)) verticeColor.forEach(item => array[colorId++] = item);
-			else if (verticeColor instanceof THREE.Color) {
-
-				array [colorId++] = verticeColor.r;
-				array [colorId++] = verticeColor.g;
-				array [colorId++] = verticeColor.b;
-				
-			}
-			else console.error(sMyObject + '.setPositionAttributeFromPoint: Invalid verticeColor = ' + verticeColor);
-
-			//opacity
-			if (attributes.color.itemSize > 3) this.verticeOpacity(i);
-
-			//Необходимо для того, что бы отоборажалась информация о вершине при наведении на нее мышки
-			//Внимание. Иногда эта функция работает и без удаления boundingSphere
-			delete settings.bufferGeometry.boundingSphere;
-			settings.bufferGeometry.boundingSphere = null;
-*/
 			return vertice;
 			
 		}
