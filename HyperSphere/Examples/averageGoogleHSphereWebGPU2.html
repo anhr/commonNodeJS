@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Hypersphere Point Distribution (WebGPU)</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #050505;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        #controls {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            max-width: 400px;
+        }
+
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+            background: rgba(40, 40, 40, 0.8);
+            color: #00ffff;
+            border: 1px solid #00ffff;
+            border-radius: 4px;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1px;
+            box-sizing: border-box;
+        }
+
+            button:hover {
+                background: #00ffff;
+                color: #000;
+                box-shadow: 0 0 10px #00ffff;
+            }
+
+            button:disabled {
+                border-color: #444;
+                color: #444;
+                cursor: default;
+            }
+
+                button:disabled:hover {
+                    background: rgba(40, 40, 40, 0.8);
+                    color: #444;
+                    box-shadow: none;
+                }
+
+        #status {
+            position: absolute;
+            bottom: 60px;
+            left: 20px;
+            color: #00ffff;
+            pointer-events: none;
+            opacity: 0.6;
+            font-size: 12px;
+        }
+
+        #counter {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            color: #ff0055;
+            pointer-events: none;
+            font-size: 16px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="controls">
+        <button id="btnStartStop">Старт</button>
+        <button id="btnStep">Шаг</button>
+        <button id="btnOnePoint">В одну точку</button>
+        <button id="btnGPU" disabled>WebGPU (Эксперимент)</button>
+    </div>
+    <div id="status">Points: 5,000 | LR: 0.001 | Projection: Stereographic 4D -> 3D</div>
+    <div id="counter">Итераций: 0</div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        // --- Настройки ---
+        const NUM_POINTS = 5000;
+        const LEARNING_RATE = 0.001;
+        let isRunning = false;
+        let isProcessing = false; // Флаг блокировки для предотвращения накопления итераций
+        let iterationCount = 0;
+        let gpuEnabled = false;
+
+        // --- Three.js Инициализация ---
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 0, 8);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        document.body.appendChild(renderer.domElement);
+
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+
+        // Сетка для ориентира
+        const grid = new THREE.GridHelper(10, 10, 0x222222, 0x111111);
+        grid.rotation.x = Math.PI / 2;
+        scene.add(grid);
+
+        // Геометрия точек
+        const geometry = new THREE.BufferGeometry();
+        let positions = new Float32Array(NUM_POINTS * 3); // 3D-координаты для визуализации
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        const material = new THREE.PointsMaterial({
+            color: 0x00ffff,
+            size: 0.04,
+            transparent: true,
+            opacity: 0.7,
+            blending: THREE.AdditiveBlending
+        });
+        const pointsMesh = new THREE.Points(geometry, material);
+        scene.add(pointsMesh);
+
+        let points4D = []; // 4D-координаты на CPU
+
+        // --- WebGPU Ресурссы ---
+        let gpuDevice, gpuPipeline, gpuBindGroup, gpuInPointsBuffer, gpuOutPointsBuffer, gpuParamsBuffer;
+        let gpuInitialized = false;
+
+        // WGSL Шейдер
+        const shaderWGSL = `
+            struct Point {
+                position: vec4<f32>,
+            }
+
+            struct Params {
+                learningRate: f32,
+                noiseScale: f32,
+                numPoints: u32,
+            }
+
+            @group(0) @binding(0) var<storage, read_write> pointsIn: array<Point>;
+            @group(0) @binding(1) var<storage, read_write> pointsOut: array<Point>;
+            @group(0) @binding(2) var<uniform> params: Params;
+
+            @compute @workgroup_size(64)
+            fn main(@builtin(global_invocation_id) global_id: vec3<u32>) {
+                let i = global_id.x;
+                if (i >= params.numPoints) { return; }
+
+                var fx = 0.0; var fy = 0.0; var fz = 0.0; var fw = 0.0;
+                let p1 = pointsIn[i].position;
+
+                for (var j: u32 = 0; j < params.numPoints; j++) {
+                    if (i == j) { continue; }
+                    let p2 = pointsIn[j].position;
+
+                    var dx = p1.x - p2.x;
+                    var dy = p1.y - p2.y;
+                    var dz = p1.z - p2.z;
+                    var dw = p1.w - p2.w;
+
+                    var d2 = dx*dx + dy*dy + dz*dz + dw*dw;
+
+                    // Добавляем шум, если точки совпали
+                    if (d2 < 1e-8) {
+                        // Простой шум на основе координат (для детерминизма)
+                        dx += sin(f32(i)) * params.noiseScale;
+                        dy += cos(f32(i)) * params.noiseScale;
+                        d2 += params.noiseScale;
+                    }
+
+                    // Сила отталкивания 1/r^2 (для гиперсферы)
+                    let f = 1.0 / (d2 * sqrt(d2) + 0.01);
+                    fx += dx * f; fy += dy * f; fz += dz * f; fw += dw * f;
+                }
+
+                // Обновление позиции
+                var nx = p1.x + fx * params.learningRate;
+                var ny = p1.y + fy * params.learningRate;
+                var nz = p1.z + fz * params.learningRate;
+                var nw = p1.w + fw * params.learningRate;
+
+                // Нормализация (возврат на поверхность гиперсферы)
+                let mag = sqrt(nx*nx + ny*ny + nz*nz + nw*nw);
+                pointsOut[i].position = vec4<f32>(nx/mag, ny/mag, nz/mag, nw/mag);
+            }
+        `;
+
+        // --- Преобразование координат ---
+        function polarTo4D(lat, lon, alt) {
+            return [
+                Math.sin(alt) * Math.cos(lat) * Math.cos(lon),
+                Math.sin(alt) * Math.cos(lat) * Math.sin(lon),
+                Math.sin(alt) * Math.sin(lat),
+                Math.cos(alt)
+            ];
+        }
+
+        function project4D(p) {
+            // Стереографическая проекция из 4D в 3D
+            const factor = 1 / (1.2 - p[3]);
+            return [p[0] * factor, p[1] * factor, p[2] * factor];
+        }
+
+        // --- Управление состоянием ---
+
+        function initPoints(toOnePoint = false) {
+            points4D = [];
+            for (let i = 0; i < NUM_POINTS; i++) {
+                let lat, lon, alt;
+                if (toOnePoint) {
+                    // Все в одну точку + микро-шум
+                    lat = (Math.random() - 0.5) * 0.001;
+                    lon = (Math.random() - 0.5) * 0.001;
+                    alt = (Math.random() - 0.5) * 0.001;
+                } else {
+                    // Случайное распределение
+                    lat = (Math.random() - 0.5) * Math.PI;
+                    lon = (Math.random() - 0.5) * 2 * Math.PI;
+                    alt = Math.random() * Math.PI;
+                }
+                points4D.push(polarTo4D(lat, lon, alt));
+            }
+            updateVisuals();
+        }
+
+        function updateVisuals() {
+            const posAttr = geometry.attributes.position;
+            for (let i = 0; i < NUM_POINTS; i++) {
+                const p3d = project4D(points4D[i]);
+                posAttr.setXYZ(i, p3d[0], p3d[1], p3d[2]);
+            }
+            posAttr.needsUpdate = true;
+        }
+
+        function updateCounter() {
+            document.getElementById('counter').innerText = `Итераций: ${iterationCount}`;
+        }
+
+        // --- WebGPU Инициализация ---
+        async function initWebGPU() {
+            if (!navigator.gpu) {
+                console.error("WebGPU не поддерживается в этом браузере.");
+                document.getElementById('btnGPU').innerText = "WebGPU (Нет поддержки)";
+                return;
+            }
+
+            const adapter = await navigator.gpu.requestAdapter();
+            if (!adapter) {
+                console.error("Не удалось получить GPU-адаптер.");
+                return;
+            }
+            gpuDevice = await adapter.requestDevice();
+
+            // 1. Создание буферов
+            const pointsSize = NUM_POINTS * 4 * 4; // 4D координаты (vec4) * f32 (4 байта)
+            gpuInPointsBuffer = gpuDevice.createBuffer({
+                size: pointsSize,
+                usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC
+            });
+            gpuOutPointsBuffer = gpuDevice.createBuffer({
+                size: pointsSize,
+                usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST
+            });
+
+            const paramsSize = 3 * 4; // 3 параметра (f32/u32) * 4 байта
+            gpuParamsBuffer = gpuDevice.createBuffer({
+                size: paramsSize,
+                usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+            });
+
+            // 2. Создание шейдера и конвейера
+            const shaderModule = gpuDevice.createShaderModule({ code: shaderWGSL });
+            gpuPipeline = gpuDevice.createComputePipeline({
+                layout: 'auto',
+                compute: { module: shaderModule, entryPoint: 'main' }
+            });
+
+            // 3. Создание группы привязки
+            gpuBindGroup = gpuDevice.createBindGroup({
+                layout: gpuPipeline.getBindGroupLayout(0),
+                entries: [
+                    { binding: 0, resource: { buffer: gpuInPointsBuffer } },
+                    { binding: 1, resource: { buffer: gpuOutPointsBuffer } },
+                    { binding: 2, resource: { buffer: gpuParamsBuffer } }
+                ]
+            });
+
+            gpuInitialized = true;
+            console.log("WebGPU инициализирован.");
+        }
+
+        // --- Итерационные процессы ---
+
+        // O(N^2) на CPU
+        function iterateCPU() {
+            const nextPoints = [];
+            const noiseScale = 0.00001;
+
+            for (let i = 0; i < NUM_POINTS; i++) {
+                let fx = 0, fy = 0, fz = 0, fw = 0;
+                const p1 = points4D[i];
+
+                for (let j = 0; j < NUM_POINTS; j++) {
+                    if (i === j) continue;
+                    const p2 = points4D[j];
+
+                    let dx = p1[0] - p2[0];
+                    let dy = p1[1] - p2[1];
+                    let dz = p1[2] - p2[2];
+                    let dw = p1[3] - p2[3];
+
+                    let d2 = dx * dx + dy * dy + dz * dz + dw * dw;
+
+                    if (d2 < 1e-8) {
+                        dx += (Math.random() - 0.5) * noiseScale;
+                        dy += (Math.random() - 0.5) * noiseScale;
+                        d2 += noiseScale;
+                    }
+
+                    const f = 1.0 / (d2 * Math.sqrt(d2) + 0.01);
+                    fx += dx * f; fy += dy * f; fz += dz * f; fw += dw * f;
+                }
+
+                let nx = p1[0] + fx * LEARNING_RATE;
+                let ny = p1[1] + fy * LEARNING_RATE;
+                let nz = p1[2] + fz * LEARNING_RATE;
+                let nw = p1[3] + fw * LEARNING_RATE;
+
+                const mag = Math.sqrt(nx * nx + ny * ny + nz * nz + nw * nw);
+                nextPoints.push([nx / mag, ny / mag, nz / mag, nw / mag]);
+            }
+            points4D = nextPoints;
+        }
+
+        // O(N^2) на GPU
+        async function iterateGPU() {
+            if (!gpuInitialized) return;
+
+            // 1. Подготовка данных: преобразуем points4D (массив массивов) в Float32Array для GPU
+            const flatPoints = new Float32Array(NUM_POINTS * 4);
+            for (let i = 0; i < NUM_POINTS; i++) {
+                flatPoints.set(points4D[i], i * 4);
+            }
+            gpuDevice.queue.writeBuffer(gpuInPointsBuffer, 0, flatPoints);
+
+            // 2. Запись униформ-параметров
+            const paramsArray = new Float32Array(3);
+            paramsArray[0] = LEARNING_RATE;
+            paramsArray[1] = 0.00001; // Шум
+            const numPointsView = new Uint32Array(paramsArray.buffer);
+            numPointsView[2] = NUM_POINTS;
+            gpuDevice.queue.writeBuffer(gpuParamsBuffer, 0, paramsArray);
+
+            // 3. Создание энкодера команд и диспетчеризация
+            const commandEncoder = gpuDevice.createCommandEncoder();
+            const passEncoder = commandEncoder.beginComputePass();
+            passEncoder.setPipeline(gpuPipeline);
+            passEncoder.setBindGroup(0, gpuBindGroup);
+            const workgroupCount = Math.ceil(NUM_POINTS / 64);
+            passEncoder.dispatchWorkgroups(workgroupCount);
+            passEncoder.end();
+
+            // 4. Копирование результата в буфер для чтения (gpuInPointsBuffer, чтобы повторно использовать)
+            commandEncoder.copyBufferToBuffer(gpuOutPointsBuffer, 0, gpuInPointsBuffer, 0, flatPoints.byteLength);
+
+            // 5. Отправка команд
+            gpuDevice.queue.submit([commandEncoder.finish()]);
+
+            // 6. Чтение результата (пока это медленно на WebGPU, но для N=5000 ок)
+            const readBuffer = gpuDevice.createBuffer({
+                size: flatPoints.byteLength,
+                usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+            });
+            const readEncoder = gpuDevice.createCommandEncoder();
+            readEncoder.copyBufferToBuffer(gpuInPointsBuffer, 0, readBuffer, 0, flatPoints.byteLength);
+            gpuDevice.queue.submit([readEncoder.finish()]);
+
+            await readBuffer.mapAsync(GPUMapMode.READ);
+            const resultArray = new Float32Array(readBuffer.getMappedRange());
+
+            // 7. Обновление points4D на CPU из прочитанного результата
+            for (let i = 0; i < NUM_POINTS; i++) {
+                points4D[i] = [resultArray[i * 4], resultArray[i * 4 + 1], resultArray[i * 4 + 2], resultArray[i * 4 + 3]];
+            }
+            readBuffer.unmap();
+            readBuffer.destroy();
+            isProcessing = false; // Освобождаем блокировку
+        }
+
+        // Основная итерация
+        async function iterate() {
+            if (gpuEnabled) {
+                if (isProcessing) return; // Пропускаем, если предыдущий шаг еще считается
+                isProcessing = true;
+                await iterateGPU();
+            } else {
+                iterateCPU();
+            }
+            iterationCount++;
+            updateVisuals();
+            updateCounter();
+        }
+
+        // --- Обработчики событий ---
+
+        // Проверка поддержки WebGPU при загрузке
+        (async () => {
+            if (navigator.gpu) {
+                document.getElementById('btnGPU').disabled = false;
+            } else {
+                document.getElementById('btnGPU').innerText = "WebGPU (Нет поддержки)";
+            }
+        })();
+
+        document.getElementById('btnStartStop').onclick = (e) => {
+            isRunning = !isRunning;
+            e.target.innerText = isRunning ? "Стоп" : "Старт";
+            e.target.style.borderColor = isRunning ? "#ff0055" : "#00ffff";
+            e.target.style.color = isRunning ? "#ff0055" : "#00ffff";
+        };
+
+        document.getElementById('btnStep').onclick = () => { if (!isRunning) iterate(); };
+
+        document.getElementById('btnOnePoint').onclick = () => {
+            if (isRunning) return;
+            initPoints(true);
+            iterationCount = 0;
+            updateCounter();
+        };
+
+        document.getElementById('btnGPU').onclick = async (e) => {
+            if (isRunning) return; // Не меняем режим при работе
+            if (!gpuInitialized) {
+                e.target.innerText = "Инициализация...";
+                await initWebGPU();
+                if (!gpuInitialized) {
+                    e.target.innerText = "Ошибка GPU";
+                    return;
+                }
+            }
+            gpuEnabled = !gpuEnabled;
+            e.target.innerText = gpuEnabled ? "GPU: Вкл" : "GPU: Выкл";
+            e.target.style.background = gpuEnabled ? "#ff0055" : "rgba(40, 40, 40, 0.8)";
+            e.target.style.color = gpuEnabled ? "#000" : "#00ffff";
+        };
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // --- Цикл рендеринга ---
+        function animate() {
+            requestAnimationFrame(animate);
+            if (isRunning) iterate();
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        initPoints();
+        animate();
+    </script>
+</body>
+</html>

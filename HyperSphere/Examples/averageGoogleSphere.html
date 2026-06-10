@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<title>Points on Sphere - Repulsion</title>
+	<style>
+		body {
+			margin: 0;
+			overflow: hidden;
+			background: #111;
+		}
+
+		#controls {
+			position: absolute;
+			top: 10px;
+			left: 10px;
+			color: white;
+			z-index: 10;
+			font-family: sans-serif;
+		}
+	</style>
+</head>
+<body>
+	<div id="controls">
+		<button onclick="resetPoints(false)">Случайные точки</button>
+		<button onclick="resetPoints(true)">В одной точке</button>
+	</div>
+	<!-- Подключение Three.js и OrbitControls -->
+	<!-- <script type="importmap">
+//        { "imports": { "three": "https://unpkg.com" } }
+/*		
+		{
+			"imports": {
+				"three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+				"three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
+			}
+		}
+*/		
+    </script> -->
+	<script type="module">
+
+		/*
+		Написать функцию на языке javascript.Задан массив : const angles = [].
+		В этот массив добавить несколько точек, случайно расположенных на поверхности сферы в полярной системе координат.
+		Начало координат находится в центре сферы.
+		Каждая точка имеет вид: const vertice = {
+			latitude: latitude,//широта в диапазоне от -π/2 до π/2
+			longitude: longitude//долгота в диапазоне от -π до π
+		}
+		Разработать итерационный процесс, на каждом шаге которого все точки постепенно движутся в положение,
+		при котором точки окажутся на максимальном удалении друг от друга.
+		В полярной системе координат latitude - широта меняется в диапазоне от -π/2 до π/2 и longitude - долгота в диапазоне от -π до π.
+		В декартовой системе координат ось z проходит через северный и южный полюс.
+		Рассмотреть случай когда все заданные точки имеют одинаковое положение на сфере.
+		Создать веб страницу, на которой будет визуально отображаться движение точек в процессе итерации.
+		На веб странице использовать библиотеку three.js для визуализации движения точек.
+		Не вращать сцену во время рендеринга.
+		*/
+		//https://share.google/aimode/b7lQr7bw0HSiDD1qt
+		
+//		import * as THREE from 'three';
+		import * as THREE from 'https://unpkg.com/three@0.128.0/build/three.module.js';
+
+		// Константы
+		const k = 250;
+		const NUM_POINTS = 20 * k;
+		const STEP_SIZE = 0.02/k; // Скорость движения
+		let angles = [];
+		let meshes = [];
+
+		// Инициализация сцены
+		const scene = new THREE.Scene();
+		const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+		const renderer = new THREE.WebGLRenderer({ antialias: true });
+		renderer.setSize(window.innerWidth, window.innerHeight);
+		document.body.appendChild(renderer.domElement);
+
+		// Визуальные объекты
+		const sphereGeo = new THREE.SphereGeometry(1, 32, 32);
+		const sphereMat = new THREE.MeshBasicMaterial({ color: 0x444444, wireframe: true, transparent: true, opacity: 0.3 });
+		const sphere = new THREE.Mesh(sphereGeo, sphereMat);
+		scene.add(sphere);
+
+		const pointGeo = new THREE.SphereGeometry(0.03/5/*0.03*/, 16, 16);
+		const pointMat = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+
+		camera.position.z = 2.5;
+
+		// Перевод из полярных в декартовы
+		function polarToCartesian(lat, lon) {
+			return new THREE.Vector3(
+				Math.cos(lat) * Math.cos(lon),
+				Math.sin(lat),
+				Math.cos(lat) * Math.sin(lon)
+			);
+		}
+
+		// Перевод из декартовых в полярные
+		function cartesianToPolar(v) {
+			return {
+				latitude: Math.asin(v.y),
+				longitude: Math.atan2(v.z, v.x)
+			};
+		}
+
+		// Сброс и создание точек
+		window.resetPoints = function(allInOne) {
+			// Очистка
+			meshes.forEach(m => scene.remove(m));
+			meshes = [];
+			angles = [];
+
+			for (let i = 0; i < NUM_POINTS; i++) {
+				let lat, lon;
+				if (allInOne) {
+					lat = 0; lon = 0; // Все в одну точку
+				} else {
+					lat = (Math.random() - 0.5) * Math.PI;
+					lon = (Math.random() - 0.5) * 2 * Math.PI;
+				}
+
+				angles.push({ latitude: lat, longitude: lon });
+
+				const mesh = new THREE.Mesh(pointGeo, pointMat.clone());
+				meshes.push(mesh);
+				scene.add(mesh);
+			}
+		};
+
+		function updatePhysics() {
+			const positions = angles.map(a => polarToCartesian(a.latitude, a.longitude));
+			const forces = positions.map(() => new THREE.Vector3(0, 0, 0));
+			let stepId = 0;
+
+			for (let i = 0; i < positions.length; i++) {
+				console.log('step = ' + stepId);
+				stepId++;
+				for (let j = i + 1; j < positions.length; j++) {
+					let dir = new THREE.Vector3().subVectors(positions[i], positions[j]);
+
+					// Обработка совпадения точек (добавляем шум)
+					if (dir.lengthSq() < 0.0001) {
+						dir.set(Math.random()-0.5, Math.random()-0.5, Math.random()-0.5).normalize();
+					}
+
+					let distSq = dir.lengthSq();
+					let forceMag = 1 / (distSq + 0.01); // Закон Кулона
+
+					let forceVec = dir.normalize().multiplyScalar(forceMag * STEP_SIZE);
+					forces[i].add(forceVec);
+					forces[j].sub(forceVec);
+				}
+			}
+
+			// Применяем силы и обновляем углы
+			for (let i = 0; i < positions.length; i++) {
+				let newPos = positions[i].add(forces[i]).normalize();
+				angles[i] = cartesianToPolar(newPos);
+
+				// Обновляем 3D объект
+				meshes[i].position.copy(newPos);
+			}
+		}
+
+		function animate() {
+			requestAnimationFrame(animate);
+			updatePhysics();
+			renderer.render(scene, camera);
+		}
+
+		resetPoints(true);
+		animate();
+
+		window.addEventListener('resize', () => {
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+			renderer.setSize(window.innerWidth, window.innerHeight);
+		});</script>
+</body>
+</html>
