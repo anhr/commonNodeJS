@@ -389,11 +389,54 @@ class MyObject {
 			}
 			if (boCreatePositionAttribute) delete bufferGeometry.attributes.position;
 			if (!bufferGeometry.attributes.position) {
-				
-				createPositionAttribute(
-					this.pointLength ? this.pointLength() :
-						points[0].w === undefined ? 3 : 4,
-					points.length);
+				const pointLength = this.pointLength ? this.pointLength() : points[0].w === undefined ? 3 : 4, pointsLength = points.length;
+				try {
+					createPositionAttribute( pointLength, pointsLength);
+				} catch (error) {
+					if (error instanceof RangeError) {
+						console.error("Memory allocation failed:", error.message);
+
+						// Передаем запрошенный размер для расчета лимитов
+						showMemoryWarningToUser();
+					} else {
+						console.error("An unexpected error occurred:", error);
+					}
+				}
+
+				function showMemoryWarningToUser() {
+					const bytesPerElement = Float32Array.BYTES_PER_ELEMENT; // 4 bytes
+
+					// Технический предел V8/Chrome на один ArrayBuffer составляет 4 ГБ (4,294,967,296 байт)
+					let availableBytes = 4 * 1024 * 1024 * 1024;
+
+					// Корректируем лимит, если у браузера осталось меньше свободной памяти в куче
+					if (window.performance && window.performance.memory) {
+						const heapLimit = window.performance.memory.jsHeapSizeLimit;
+						const usedHeap = window.performance.memory.usedJSHeapSize;
+						const freeHeap = heapLimit - usedHeap;
+						// Берем 85% от свободной памяти для стабильности
+						availableBytes = Math.min(availableBytes, freeHeap * 0.85);
+					}
+
+					// Вычисляем максимальные объемы
+					const maxElements = Math.floor(availableBytes / bytesPerElement);
+//					const maxMB = Math.floor(availableBytes / (1024 * 1024));
+					const MAX_POINTS = pointLength * pointsLength * settings.object.geometry.rCount;
+
+					// Англоязычное уведомление с указанием лимитов
+					alert(
+						`Not enough memory! The browser cannot allocate array.\n\n` +
+						`Multiplication classSettings.settings.object.geometry.angles.length *  is limited to ~${maxElements.toLocaleString()}`
+/*						
+						`Maximum limits for Float32Array in your current session:\n` +
+						`• Max elements: ~${maxElements.toLocaleString()}\n` +
+						`• Max total size: ~${maxMB} MB\n\n` +
+						`Please reduce the data size, free up memory, or restart the tab.`
+*/						
+					);
+				}
+
+
 				const boLog = this.classSettings && (this.classSettings.debug != undefined) && (this.classSettings.debug != false) && (this.classSettings.debug.log != false);
 				for (let timeId = 0; timeId < getPlayerTimesLength(); timeId++) {
 					
