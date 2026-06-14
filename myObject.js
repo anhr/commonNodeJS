@@ -208,6 +208,8 @@ class MyObject {
 				//Это случается когда во вселенной вычисляется очередной шаг по времени. Тоесть пользователь нажал ► или →
 				pointLength * pointsLength * settings.object.geometry.rCount :
 				settings.object.geometry.MAX_POINTS;
+			
+			setDrawRangeTypes();
 
 			//Хватит ли памяти для position and color attributes
 /*
