@@ -212,6 +212,8 @@ class MyObject {
 			setDrawRangeTypes();
 
 			//Хватит ли памяти для position and color attributes
+			//Public https://share.google/aimode/3xU4hIbnGhEjUDBA7
+			//Private https://www.google.com/search?sourceid=chrome&ie=UTF-8&amc=1&udm=50&cud=1&qsubts=1781489067364&source=chrome.crn.rb&atvm=1&mstk=AUtExfBYMPQYWGkxSB6QfDuDOBMkgGUmSH38xtjvxaTRGwW0aEU0go3VfmNM4TH7ZH3deJddk46Oy0uQ-2Rjrkk6nyzoRpR9A9UOSpAsuH4b9dG7VY45Kt634vejzi5aUwrVjoGjp_Aa2vmkTblACUngxZ9ULUWIm2aJa6w--yoJYsw5bBiD9GbwRucTfa15ERGJHQnLSaYz2dKTjeyAHXAet68_zjoVS8NKDYvS70rG4FKof3McS-xkJ2vpqFMCJhOJvVAajKqwPeBgNKw0W2KgCaTYLxDjJHnm0zA&mtid=KX4raq2yKI7KwPAPyKegkAU&csuir=1&aep=26&q=%D0%9C%D0%BE%D0%B6%D0%BD%D0%BE+%D0%BB%D0%B8+%D0%B2+javascript+%D1%83%D0%B7%D0%BD%D0%B0%D1%82%D1%8C+%D1%81%D0%BA%D0%BE%D0%BB%D1%8C%D0%BA%D0%BE+%D0%BC%D0%BE%D0%B6%D0%BD%D0%BE+%D0%B2%D1%8B%D0%B4%D0%B5%D0%BB%D0%B8%D1%82%D1%8C+%D0%BF%D0%B0%D0%BC%D1%8F%D1%82%D0%B8+%D0%B2+%D0%B1%D1%83%D1%84%D0%B5%D1%80%D0%B5+%D0%B5%D1%81%D0%BB%D0%B8+%D1%8F+%D0%BF%D0%BE%D0%BB%D1%83%D1%87%D0%B0%D1%8E+%D0%BE%D1%88%D0%B8%D0%B1%D0%BA%D1%83+RangeError%3A+Array+buffer+allocation+failed+%D0%BF%D1%80%D0%B8%D0%B2%D1%8B%D0%B4%D0%B5%D0%BB%D0%B5%D0%BD%D0%B8%D0%B8+%D0%BC%D0%B5%D1%81%D1%82%D0%B0+%D0%B4%D0%BB%D1%8F+%D0%B1%D1%83%D1%84%D0%B5%D1%80%D0%B0%3F&ved=0CAgQ2_wOahcKEwjA_of5k4iVAxUAAAAAHQAAAAAQGg
 /*
 			function getMaxFloat32Space() {
 				const PAGE_SIZE_BYTES = 64 * 1024; // 1 страница WebAssembly = 64 КБ
