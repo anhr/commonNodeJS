@@ -78,9 +78,23 @@
         import * as THREE from 'three';
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
+        const angles = [
+            //[0, 0, 0],//0
+            //[Math.PI / 1, Math.PI / 19, Math.PI / 10],//0. Эта вершина лежит на оси W потомучто Altitude = Math.PI. Это приводит к тому что в функции cartesianToPolar величина rXYZ < 1e-10 и широта с долготой не определены (принимаем за 0)
+            [Math.PI / 1.5, Math.PI / 19, Math.PI / 10],//0.
+            [Math.PI / 2, Math.PI / 20, Math.PI / 11],//1
+            [Math.PI / 3, Math.PI / 21, Math.PI / 2],//2
+            [Math.PI / 4, Math.PI / 22, -Math.PI / 2],//3
+            [Math.PI / 5, Math.PI / 23, Math.PI],//4
+        ];
+        
+        //true - исходные точки вычисляются случайно
+        //false - исходные точки заданы в массиве angles
+        const isRandom = false;
+        
         const k = 10;//250;
-        const NUM_POINTS = 20 * k;
-        const STEP_SIZE = 0.02 / k; // Скорость движения
+        const NUM_POINTS = isRandom ? 20 * k : angles.length;
+        const STEP_SIZE = isRandom ? 0.02 / k : 0.002; // Скорость движения
         let points4D = [];
         let instancedMesh;
         let isRunning = false;
@@ -141,9 +155,9 @@
                 const p = allInOne ?
                     { latitude: 0.001 * i, longitude: 0, altitude: 0.001 } :
                     {
-                        latitude: (Math.random() - 0.5) * Math.PI,
-                        longitude: (Math.random() - 0.5) * 2 * Math.PI,
-                        altitude: Math.random() * Math.PI
+                        longitude: isRandom ? (Math.random() - 0.5) * 2 * Math.PI : angles[i][2],
+                        latitude: isRandom ? (Math.random() - 0.5) * Math.PI : angles[i][1],
+                        altitude: isRandom ? Math.random() * Math.PI : angles[i][0]
                     };
                 points4D.push(p);
 
