@@ -297,10 +297,6 @@
         // longitude: -π до π (долгота, угол в плоскости XY)
         // altitude: 0 до π (высота, угол от оси W)
         function polarToCartesian4D(latitude, longitude, altitude) {
-            // altitude: угол от оси W (0 до π)
-            // latitude: широта в 3D (-π/2 до π/2)
-            // longitude: долгота в 3D (-π до π)
-
             const sinAlt = Math.sin(altitude);
             const cosAlt = Math.cos(altitude);
             const cosLat = Math.cos(latitude);
