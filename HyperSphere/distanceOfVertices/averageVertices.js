@@ -119,23 +119,26 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 
 				let dist = Math.sqrt(overrides.d2(d));
 
-				const arc = π - hyperbola((dist / classSettings.overriddenProperties.r(settings.bufferGeometry.userData.timeId - 1) / 2) * π);
-				userData.timeId--;//Во вселенной углы берутся из предыдушего шага проигрывателя
-				const timeIdOld = settings.guiPoints ? settings.guiPoints.timeId : undefined;
-				if (settings.guiPoints) settings.guiPoints.timeId = userData.timeId;
-				const r = classSettings.overriddenProperties.rTime();
+				if (config.RANDOM_POINTS != 0) {
+					//вычисляем случайную точку
+					const arc = π - hyperbola((dist / classSettings.overriddenProperties.r(settings.bufferGeometry.userData.timeId - 1) / 2) * π);
+					userData.timeId--;//Во вселенной углы берутся из предыдушего шага проигрывателя
+					const timeIdOld = settings.guiPoints ? settings.guiPoints.timeId : undefined;
+					if (settings.guiPoints) settings.guiPoints.timeId = userData.timeId;
+					const r = classSettings.overriddenProperties.rTime();
+						
+					// Случайное направление для точки j (может быть противоположным для лучшего разведения)
+					const noise2 = utils.polarToCartesian(RandomVertice.get(arc, utils.angles(overrides.angles(angles2)), classSettings, RandomVertice), r);
 					
-				// Случайное направление для точки j (может быть противоположным для лучшего разведения)
-				const noise2 = utils.polarToCartesian(RandomVertice.get(arc, utils.angles(overrides.angles(angles2)), classSettings, RandomVertice), r);
-				
-				if (settings.guiPoints) settings.guiPoints.timeId = timeIdOld;
-				userData.timeId++;
-
-				// Вектор от i к j
-				d = overrides.d(p1, noise2);
-
-				const d2 = overrides.d2(d);
-				dist = Math.sqrt(d2);
+					if (settings.guiPoints) settings.guiPoints.timeId = timeIdOld;
+					userData.timeId++;
+	
+					// Вектор от i к j
+					d = overrides.d(p1, noise2);
+	
+					const d2 = overrides.d2(d);
+					dist = Math.sqrt(d2);
+				}
 				if (dist === 0) {
 
 					console.error(sAverageVertices + ': step. Invalid dist = ' + dist);
@@ -144,7 +147,7 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 				}
 				
 				// Сила обратно пропорциональна расстоянию
-				const m = config.REPULSION_STRENGTH / d2;
+				const m = config.REPULSION_STRENGTH / (dist * dist);
 
 				overrides.setForse(force, d, dist, m);
 

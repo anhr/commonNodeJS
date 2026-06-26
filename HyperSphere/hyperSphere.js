@@ -2708,7 +2708,7 @@ this.object = () => {
 				//Select one:
 				
 		        //Случайная точка не вычисляется. Вместо этого возвращается PSEUDO_RANDOM
-		        //config.RANDOM_POINTS = 0;
+		        if (config.RANDOM_POINTS === undefined) config.RANDOM_POINTS = 0;
 		
 		        //Вычисляется случайное число.
 		        //В GPU для получения случайного числа применяется хеширование(Hashing).Простой генератор псевдослучайных чисел(PCG).Permuted Congruential Generator(Перемешанный конгруэнтный генератор).
