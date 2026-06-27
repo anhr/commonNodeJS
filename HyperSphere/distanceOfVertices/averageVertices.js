@@ -1,6 +1,7 @@
 /**
  * @module averageVertices
  * @description An iterative process in which, at each step, all vertices gradually move toward a position in which the vertices are at the maximum distance from each other.
+ * See [Thomson Problem]{@link https://mathworld.wolfram.com/ThomsonProblem.html}.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
@@ -23,6 +24,16 @@ const sAverageVertices = 'averageVertices', π = Math.PI;
 // Скорости точек (для инерции)
 let velocities = [];
 
+/**
+ * Base function for an iterative process in which, at each step, all vertices gradually move toward a position in which the vertices are at the maximum distance from each other.
+ * See [Thomson Problem]{@link https://mathworld.wolfram.com/ThomsonProblem.html}.
+ * @param {Object} data averageVertices data
+ * @param {Object} data.options See the <b>options</b> parameter of the <a href="../../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
+ * @param {float} data.t Current time.
+ * @param {number} data.timeId player time id.
+ * @param {Object} data.this n dimensional <a href="../../../HyperSphere/jsdoc/module-HyperSphere-HyperSphere.html" target="_blank">hypersphere</a> graphical object.
+ * @param {Object} overrides overridden functions
+ */
 const averageVertices = (data, overrides) => {
 
 	const _this = data.this, classSettings = _this.classSettings, config = classSettings.compute.config;

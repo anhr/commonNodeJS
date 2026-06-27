@@ -16,6 +16,10 @@ import averageVerticesBase from './averageVertices.js'
 import * as utils from '../utilsHSphere.js'
 import RandomVertice from '../RandomVertice/randomVerticeHSphere.js';
 
+/**
+ * Child function to override some base functions for hypersphere. See <b>overrides</b> parameter of the base <a href="./module-averageVertices.html" target="_blank">averageVertices</a> function.
+ * @param {Object} data See <b>data</b> parameter of the base <a href="./module-averageVertices.html" target="_blank">averageVertices</a>
+ */
 const averageVertices = (data) => {
 
 	averageVerticesBase(data, {

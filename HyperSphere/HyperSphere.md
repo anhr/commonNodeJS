@@ -6,4 +6,6 @@ Examples:
 [Sphere](https://raw.githack.com/anhr/commonNodeJS/master/HyperSphere/Examples/sphere.html).
 [HyperSphere](https://raw.githack.com/anhr/commonNodeJS/master/HyperSphere/Examples/hyperSphere.html).
 
+[Distance Of Vertices](../distanceOfVertices/jsdoc).
+
 [Random vertice classes](../RandomVertice/jsdoc).
