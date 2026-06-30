@@ -41,13 +41,19 @@
             #toggleBtn.stop {
                 background: #f44336;
             }
+
+        #stepBtn.stop {
+            background: #f44336;
+        }
     </style>
 </head>
 <body>
     <div id="controls">
-        <b>4D Гиперсфера (5000 точек)</b><br>
+        <span>4D Гиперсфера (<span id="pointCount">---</span> точек)</span><br>
+        <span>Итерация: <span id="iteration">---</span></span><br>
         <small>Используйте мышь для вращения</small>
         <button id="toggleBtn" onclick="toggleSimulation()">СТАРТ</button>
+        <button id="stepBtn" onclick="simulationStep()">ШАГ</button>
         <button onclick="resetPoints(false)">Случайные</button>
         <button onclick="resetPoints(true)">В одну точку</button>
     </div>
@@ -87,17 +93,21 @@
             [Math.PI / 4, Math.PI / 22, -Math.PI / 2],//3
             [Math.PI / 5, Math.PI / 23, Math.PI],//4
         ];
-        
+
         //true - исходные точки вычисляются случайно
         //false - исходные точки заданы в массиве angles
-        const isRandom = false;
-        
+        const isRandom = true;
+
         const k = 10;//250;
-        const NUM_POINTS = isRandom ? 20 * k : angles.length;
+        const NUM_POINTS = isRandom ? 500 * k : angles.length;
+        document.getElementById('pointCount').innerHTML = NUM_POINTS;
+        const RADIUS = 1.0;
         const STEP_SIZE = isRandom ? 0.02 / k : 0.002; // Скорость движения
         let points4D = [];
         let instancedMesh;
         let isRunning = false;
+        let isStep = false;
+        let iteration = 0;
 
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -121,11 +131,22 @@
                 const sA = Math.sin(alt), cA = Math.cos(alt);
                 const sLat = Math.sin(lat), cLat = Math.cos(lat);
                 const sLon = Math.sin(lon), cLon = Math.cos(lon);
-                return new Vector4(cLat * cLon * sA, sLat * sA, cLat * sLon * sA, cA);
+                return new Vector4(
+                    cLat * cLon * sA * RADIUS,
+                    sLat * sA * RADIUS,
+                    cLat * sLon * sA * RADIUS,
+                    cA * RADIUS
+                );
+                //                return new Vector4(cLat * cLon * sA, sLat * sA, cLat * sLon * sA, cA);
             }
             normalize() {
                 let d = Math.sqrt(this.x ** 2 + this.y ** 2 + this.z ** 2 + this.w ** 2);
-                this.x /= d; this.y /= d; this.z /= d; this.w /= d; return this;
+                this.x = (this.x / d) * RADIUS;
+                this.y = (this.y / d) * RADIUS;
+                this.z = (this.z / d) * RADIUS;
+                this.w = (this.w / d) * RADIUS;
+                //                this.x /= d; this.y /= d; this.z /= d; this.w /= d;
+                return this;
             }
             projectTo3D() {
                 const factor = 1 / (1.3 - this.w);
@@ -140,7 +161,81 @@
             btn.className = isRunning ? 'stop' : '';
         };
 
+        window.simulationStep = function () {
+            isRunning = true;
+            isStep = true;
+            const btn = document.getElementById('stepBtn');
+            btn.className = 'stop';
+        };
+
+        // Преобразование 4D декартовых координат в 4D полярные
+        function cartesianToPolar4D(x, y, z, w) {
+            const r = Math.sqrt(x * x + y * y + z * z + w * w);
+
+            // altitude (угол от оси W)
+            const altitude = Math.acos(w / r);
+
+            // Проекция на 3D гиперплоскость XYZ
+            const r3d = Math.sqrt(x * x + y * y + z * z);
+
+            let latitude, longitude;
+
+            if (r3d < 0.0001) {
+                // Точка на оси W
+                latitude = 0;
+                longitude = 0;
+            } else {
+                // latitude (широта, угол от плоскости XY)
+                latitude = Math.asin(z / r3d);
+
+                // longitude (долгота, угол в плоскости XY)
+                longitude = Math.atan2(y, x);
+            }
+
+            return {
+                latitude: latitude,
+                longitude: longitude,
+                altitude: altitude
+            };
+        }
+
+        // --- Генерация случайной точки на 4D гиперсфере ---
+        function generateRandomPoint() {
+            // Равномерное распределение на 3-сфере (гиперсфере)
+
+            // Метод: генерируем 4 нормально распределенных числа и нормализуем
+            // Это дает равномерное распределение на сфере
+
+            let x, y, z, w;
+            let r2;
+
+            do {
+                x = Math.random() * 2 - 1;
+                y = Math.random() * 2 - 1;
+                z = Math.random() * 2 - 1;
+                w = Math.random() * 2 - 1;
+                r2 = x * x + y * y + z * z + w * w;
+            } while (r2 > 1 || r2 < 0.01); // Отбрасываем точки вне сферы и слишком близко к центру
+
+            const r = Math.sqrt(r2);
+            x /= r;
+            y /= r;
+            z /= r;
+            w /= r;
+
+            // Преобразуем в полярные координаты
+            return cartesianToPolar4D(
+                x * RADIUS,
+                y * RADIUS,
+                z * RADIUS,
+                w * RADIUS
+            );
+        }
+
         window.resetPoints = function (allInOne) {
+            iteration = 0;
+            document.getElementById('iteration').innerHTML = iteration;
+
             if (instancedMesh) scene.remove(instancedMesh);
 
             points4D = [];
@@ -153,12 +248,16 @@
 
             for (let i = 0; i < NUM_POINTS; i++) {
                 const p = allInOne ?
-                    { latitude: 0.001 * i, longitude: 0, altitude: 0.001 } :
-                    {
-                        longitude: isRandom ? (Math.random() - 0.5) * 2 * Math.PI : angles[i][2],
-                        latitude: isRandom ? (Math.random() - 0.5) * Math.PI : angles[i][1],
-                        altitude: isRandom ? Math.random() * Math.PI : angles[i][0]
-                    };
+                    //                    { latitude: 0.001 * i, longitude: 0, altitude: 0.001 } :
+                    { latitude: 0, longitude: 0, altitude: 0 } :
+                    generateRandomPoint();
+                /*
+                                    {
+                                        longitude: isRandom ? (Math.random() - 0.5) * 2 * Math.PI : angles[i][2],
+                                        latitude: isRandom ? (Math.random() - 0.5) * Math.PI : angles[i][1],
+                                        altitude: isRandom ? Math.random() * Math.PI : angles[i][0]
+                                    };
+                */
                 points4D.push(p);
 
                 const v = Vector4.fromPolar(p.latitude, p.longitude, p.altitude);
@@ -174,33 +273,64 @@
 
         function updatePhysics() {
             if (!isRunning) return;
-
             const dummy = new THREE.Object3D();
             const color = new THREE.Color();
-            let vecs = points4D.map(p => Vector4.fromPolar(p.latitude, p.longitude, p.altitude));
+            const vecs = points4D.map(p => Vector4.fromPolar(p.latitude, p.longitude, p.altitude));
 
-            // ВНИМАНИЕ: Для 5000 точек полный расчет N^2 очень тяжелый.
-            // Используем упрощенную итерацию (проверка только части соседей для скорости)
+            // Массив для хранения сил
+            const forces = vecs.map(() => ({ x: 0, y: 0, z: 0, w: 0 }));
+
+            // Вычисляем силы от всех пар точек (симметрично)
             for (let i = 0; i < vecs.length; i++) {
-                let force = { x: 0, y: 0, z: 0, w: 0 };
-                // Проверяем 100 случайных точек вместо всех 5000 для FPS
-                for (let k = 0; k < NUM_POINTS/*100*/; k++) {
-                    let j = Math.floor(Math.random() * NUM_POINTS);
-                    if (i === j) continue;
+                for (let j = i + 1; j < vecs.length; j++) {
+                    const dx = vecs[i].x - vecs[j].x;
+                    const dy = vecs[i].y - vecs[j].y;
+                    const dz = vecs[i].z - vecs[j].z;
+                    const dw = vecs[i].w - vecs[j].w;
 
-                    let dx = vecs[i].x - vecs[j].x;
-                    let dy = vecs[i].y - vecs[j].y;
-                    let dz = vecs[i].z - vecs[j].z;
-                    let dw = vecs[i].w - vecs[j].w;
-                    let d2 = dx * dx + dy * dy + dz * dz + dw * dw + 0.001;
+                    const d2 = dx * dx + dy * dy + dz * dz + dw * dw;// + 0.0001;
+                    const d = Math.sqrt(d2);
 
-                    let f = STEP_SIZE / d2;
-                    force.x += dx * f; force.y += dy * f; force.z += dz * f; force.w += dw * f;
+                    // Сила отталкивания: 1/d^3 (для 4D сферы)
+                    const forceMag = STEP_SIZE / (d2 * d);
+                    if (forceMag === Infinity) {
+                        console.error('сила отталкивания бесконечна');
+                        break;
+                    }
+
+                    // Применяем силу к обоим точкам (симметрично)
+                    forces[i].x += dx * forceMag;
+                    forces[i].y += dy * forceMag;
+                    forces[i].z += dz * forceMag;
+                    forces[i].w += dw * forceMag;
+
+                    forces[j].x -= dx * forceMag;
+                    forces[j].y -= dy * forceMag;
+                    forces[j].z -= dz * forceMag;
+                    forces[j].w -= dw * forceMag;
+                }
+            }
+
+            // Обновляем позиции
+            for (let i = 0; i < vecs.length; i++) {
+                let fx = forces[i].x;
+                let fy = forces[i].y;
+                let fz = forces[i].z;
+                let fw = forces[i].w;
+
+                // Ограничиваем силу, чтобы избежать "взрыва" системы
+                const maxForce = 0.05;
+                const fMag = Math.sqrt(fx * fx + fy * fy + fz * fz + fw * fw);
+                if (fMag > maxForce) {
+                    fx = (fx / fMag) * maxForce;
+                    fy = (fy / fMag) * maxForce;
+                    fz = (fz / fMag) * maxForce;
+                    fw = (fw / fMag) * maxForce;
                 }
 
-                let v = new Vector4(vecs[i].x + force.x, vecs[i].y + force.y, vecs[i].z + force.z, vecs[i].w + force.w).normalize();
+                let v = new Vector4(vecs[i].x + fx, vecs[i].y + fy, vecs[i].z + fz, vecs[i].w + fw).normalize();
 
-                // Обратный перевод в углы (упрощенно)
+                // Конвертируем обратно в углы
                 const alt = Math.acos(Math.max(-1, Math.min(1, v.w)));
                 const sA = Math.sin(alt);
                 points4D[i] = {
@@ -216,9 +346,81 @@
                 color.setHSL(0.5 + v.w * 0.4, 0.8, 0.5);
                 instancedMesh.setColorAt(i, color);
             }
+
             instancedMesh.instanceMatrix.needsUpdate = true;
             if (instancedMesh.instanceColor) instancedMesh.instanceColor.needsUpdate = true;
+
+            iteration++;
+            document.getElementById('iteration').innerHTML = iteration;
+
+            if (isStep) {
+                isStep = false;
+                isRunning = false;
+
+                const btn = document.getElementById('stepBtn');
+                btn.className = '';
+            }
         }
+        /*
+                function updatePhysics() {
+                    if (!isRunning) return;
+
+                    const dummy = new THREE.Object3D();
+                    const color = new THREE.Color();
+                    let vecs = points4D.map(p => Vector4.fromPolar(p.latitude, p.longitude, p.altitude));
+
+                    // ВНИМАНИЕ: Для 5000 точек полный расчет N^2 очень тяжелый.
+                    // Используем упрощенную итерацию (проверка только части соседей для скорости)
+                    for (let i = 0; i < vecs.length; i++) {
+                        let force = { x: 0, y: 0, z: 0, w: 0 };
+                        // Проверяем 100 случайных точек вместо всех 5000 для FPS
+                        for (let k = 0; k < NUM_POINTS; k++) {
+                            let j = Math.floor(Math.random() * NUM_POINTS);
+                            if (i === j) continue;
+
+                            let dx = vecs[i].x - vecs[j].x;
+                            let dy = vecs[i].y - vecs[j].y;
+                            let dz = vecs[i].z - vecs[j].z;
+                            let dw = vecs[i].w - vecs[j].w;
+                            let d2 = dx * dx + dy * dy + dz * dz + dw * dw + 0.001;
+
+                            let f = STEP_SIZE / d2;
+                            force.x += dx * f; force.y += dy * f; force.z += dz * f; force.w += dw * f;
+                        }
+
+                        let v = new Vector4(vecs[i].x + force.x, vecs[i].y + force.y, vecs[i].z + force.z, vecs[i].w + force.w).normalize();
+
+                        // Обратный перевод в углы (упрощенно)
+                        const alt = Math.acos(Math.max(-1, Math.min(1, v.w)));
+                        const sA = Math.sin(alt);
+                        points4D[i] = {
+                            altitude: alt,
+                            latitude: sA < 0.001 ? 0 : Math.asin(Math.max(-1, Math.min(1, v.y / sA))),
+                            longitude: sA < 0.001 ? 0 : Math.atan2(v.z, v.x)
+                        };
+
+                        dummy.position.copy(v.projectTo3D());
+                        dummy.updateMatrix();
+                        instancedMesh.setMatrixAt(i, dummy.matrix);
+
+                        color.setHSL(0.5 + v.w * 0.4, 0.8, 0.5);
+                        instancedMesh.setColorAt(i, color);
+                    }
+                    instancedMesh.instanceMatrix.needsUpdate = true;
+                    if (instancedMesh.instanceColor) instancedMesh.instanceColor.needsUpdate = true;
+
+                    iteration++;
+                    document.getElementById('iteration').innerHTML = iteration;
+
+                    if (isStep) {
+                        isStep = false;
+                        isRunning = false;
+
+                        const btn = document.getElementById('stepBtn');
+                        btn.className = '';
+                    }
+                }
+        */
 
         function animate() {
             requestAnimationFrame(animate);
