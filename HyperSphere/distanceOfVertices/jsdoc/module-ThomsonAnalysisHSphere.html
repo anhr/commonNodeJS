@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Module: ThomsonAnalysisHSphere</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Module: ThomsonAnalysisHSphere</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        
+            
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description">Analysis the iterative process known as <a href="https://en.wikipedia.org/wiki/Thomson_problem">Thomson problem</a> in which, at each step, all vertices gradually move toward a position in which the vertices are at the maximum distance from each other on the hypersphere.You can see rsults of Analysis in the console of the web page and on a small graph in the rigth top corner of the canvas.</div>
+        
+
+        
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li><a href="https://github.com/anhr">Andrej Hristoliubov</a></li>
+        </ul>
+    </dd>
+    
+
+    
+    <dt class="tag-copyright">Copyright:</dt>
+    <dd class="tag-copyright"><ul class="dummy"><li>2011 Data Arts Team, Google Creative Lab</li></ul></dd>
+    
+
+    
+    <dt class="tag-license">License:</dt>
+    <dd class="tag-license"><ul class="dummy"><li>under the Apache License, Version 2.0 (the "License");you may not use this file except in compliance with the License.You may obtain a copy of the License athttp://www.apache.org/licenses/LICENSE-2.0</li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="thomsonAnalysisHSphere.js.html">thomsonAnalysisHSphere.js</a>, <a href="thomsonAnalysisHSphere.js.html#line1">line 1</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".evaluateDistribution"><span class="type-signature">(static) </span>evaluateDistribution<span class="signature">(stepIndex)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <a href="https://gemini.google.com/app/72b981da2d229516">Оценка равномерности распределения точек</a>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>stepIndex</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">iteration index</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="thomsonAnalysisHSphere.js.html">thomsonAnalysisHSphere.js</a>, <a href="thomsonAnalysisHSphere.js.html#line44">line 44</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    an object with follow properties:<pre><b>totalEnergy</b>: Общая энергия системы (E).	Если <b>totalEnergy</b> растет от шага к шагу:		Ошибка в знаках сил (точки притягиваются вместо отталкивания) либо слишком большой шаг интегрирования (dt).	Энергия <b>totalEnergy</b> уходит в бесконечность или NaN:		Ошибка в коде вычислений, при которой две точки заняли абсолютно одинаковые координаты (деление на ноль).		Проверьте генератор случайных чисел или начальную инициализацию.</pre><b>meanD</b>: Среднее расстояние до ближайшего соседа. Должно постепенно расти, пока не стабилизируется.<pre><b>variance</b>: Дисперсия(средний квадрат отклонения).	Мера того, насколько сильно расстояния до соседей у разных точек "разбросаны" относительно вычисленного среднего значения <b>meanD</b>.</pre><b>stdDev</b>: Среднеквадратичное отклонение (СКО): С каждым шагом алгоритма значение <b>stdDev</b> должно стремиться к нулю.<pre><b>deviationPercent</b>: Коэффициент вариации (дисбаланс).	Коэффициент вариации (<b>deviationPercent</b>) высокий (например, > 15-20%):		Точки распределены хаотично, решетка не сформировалась.		Скорее всего, силам отталкивания не хватает итераций, либо коэффициент затухания скорости (DAMPING) гасит движение слишком рано.	<b>deviationPercent</b> стремится к 0% (например, < 2-5%):		Алгоритм работает отлично, структура симметрична, точки распределились максимально равномерно.</pre>
+</div>
+
+
+
+    
+
+
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-ThomsonAnalysisHSphere.html">ThomsonAnalysisHSphere</a></li><li><a href="module-averageVertices.html">averageVertices</a></li><li><a href="module-averageVerticesHSphere.html">averageVerticesHSphere</a></li><li><a href="module-averageVerticesSphere.html">averageVerticesSphere</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri Jul 03 2026 14:58:52 GMT+0700 (Красноярск, стандартное время)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

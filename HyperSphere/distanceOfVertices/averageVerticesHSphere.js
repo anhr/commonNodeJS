@@ -1,6 +1,6 @@
 /**
  * @module averageVerticesHSphere
- * @description An iterative process in which, at each step, all vertices gradually move toward a position in which the vertices are at the maximum distance from each other on the hypersphere.
+ * @description An iterative process known as [Thomson problem]{@link https://en.wikipedia.org/wiki/Thomson_problem} in which, at each step, all vertices gradually move toward a position in which the vertices are at the maximum distance from each other on the hypersphere.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
