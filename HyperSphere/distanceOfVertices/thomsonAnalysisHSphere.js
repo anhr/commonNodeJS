@@ -1,0 +1,338 @@
+/**
+ * @module ThomsonAnalysisHSphere
+ * @description Analysis the iterative process known as [Thomson problem]{@link https://en.wikipedia.org/wiki/Thomson_problem} in which, at each step, all vertices gradually move toward a position in which the vertices are at the maximum distance from each other on the hypersphere.
+ * You can see rsults of Analysis in the console of the web page and on a small graph in the rigth top corner of the canvas.
+ *
+ * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
+ *
+ * @copyright 2011 Data Arts Team, Google Creative Lab
+ *
+ * @license under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+*/
+
+let params, currentStep;
+
+/**
+ * [Оценка равномерности распределения точек]{@link https://gemini.google.com/app/72b981da2d229516}
+ * @param {number} stepIndex iteration index
+ * @returns an object with follow properties:
+ * <pre>
+ * <b>totalEnergy</b>: Общая энергия системы (E).
+ *	Если <b>totalEnergy</b> растет от шага к шагу:
+ *		Ошибка в знаках сил (точки притягиваются вместо отталкивания) либо слишком большой шаг интегрирования (dt).
+ *	Энергия <b>totalEnergy</b> уходит в бесконечность или NaN:
+ *		Ошибка в коде вычислений, при которой две точки заняли абсолютно одинаковые координаты (деление на ноль).
+ *		Проверьте генератор случайных чисел или начальную инициализацию.
+ * </pre>
+ * <b>meanD</b>: Среднее расстояние до ближайшего соседа. Должно постепенно расти, пока не стабилизируется.
+ * <pre>
+ * <b>variance</b>: Дисперсия(средний квадрат отклонения).
+ *	Мера того, насколько сильно расстояния до соседей у разных точек "разбросаны" относительно вычисленного среднего значения <b>meanD</b>.
+ * </pre>
+ * <b>stdDev</b>: Среднеквадратичное отклонение (СКО): С каждым шагом алгоритма значение <b>stdDev</b> должно стремиться к нулю.
+ * <pre>
+ * <b>deviationPercent</b>: Коэффициент вариации (дисбаланс).
+ *	Коэффициент вариации (<b>deviationPercent</b>) высокий (например, > 15-20%):
+ *		Точки распределены хаотично, решетка не сформировалась.
+ *		Скорее всего, силам отталкивания не хватает итераций, либо коэффициент затухания скорости (DAMPING) гасит движение слишком рано.
+ *	<b>deviationPercent</b> стремится к 0% (например, < 2-5%):
+ *		Алгоритм работает отлично, структура симметрична, точки распределились максимально равномерно.
+ * </pre>
+ */
+function evaluateDistribution(stepIndex) {
+	// pointsCount: Общее количество точек, которые рассчитываются на одной итерации (шаге)
+	const pointsCount = params.pointsPerStep;
+
+	// offset: Смещение индекса в общем массиве posAttr, чтобы найти начало данных для текущего шага stepIndex
+	const offset = stepIndex * params.pointsPerStep;
+
+	// totalEnergy: Суммарная потенциальная (электростатическая) энергия системы на данном шаге. 
+	// В идеальном случае (минимум энергии) она должна быть минимально возможной.
+	let totalEnergy = 0;
+
+	// points: Вспомогательный массив, куда мы соберем декартовы координаты (x, y, z) всех точек текущего шага
+	// для более удобного и быстрого доступа к ним в циклах.
+	let points = [];
+
+	// Цикл по всем точкам текущего шага для извлечения их координат из буфера posAttr
+	for (let i = 0; i < pointsCount; i++) {
+		// idx: Базовый индекс в плоском массиве координат Three.js (каждая точка занимает 3 позиции: x, y, z)
+		const idx = (offset + i) * 3;
+
+		// Добавляем объект с координатами текущей i-й точки в наш рабочий массив
+		points.push({
+			x: params.posAttr.getX(offset + i), // x-координата i-й точки
+			y: params.posAttr.getY(offset + i), // y-координата i-й точки
+			z: params.posAttr.getZ(offset + i)  // z-координата i-й точки
+		});
+	}
+
+	// allMinDistances: Массив, в который мы сохраним расстояние от каждой точки до её самого близкого соседа.
+	// Если распределение идеальное, все эти расстояния будут практически одинаковыми.
+	let allMinDistances = [];
+
+	// Внешний цикл: перебираем каждую точку системы, чтобы найти расстояния до остальных точек
+	for (let i = 0; i < pointsCount; i++) {
+		// distancesForPointI: Временный массив для хранения расстояний от текущей i-й точки до абсолютно всех остальных точек
+		let distancesForPointI = [];
+
+		// Внутренний цикл: перебираем все остальные точки (j), чтобы измерить расстояние до них от i-й точки
+		for (let j = 0; j < pointsCount; j++) {
+			// Если индексы совпадают (i == j), это одна и та же точка. Пропускаем, так как расстояние до самой себя равно 0.
+			if (i === j) continue;
+
+			// dx: Разность координат по оси X между i-й и j-й точками
+			let dx = points[i].x - points[j].x;
+			// dy: Разность координат по оси Y между i-й и j-й точками
+			let dy = points[i].y - points[j].y;
+			// dz: Разность координат по оси Z между i-й и j-й точками
+			let dz = points[i].z - points[j].z;
+
+			// d: Евклидово расстояние (длина хорды) между i-й и j-й точками в пространстве
+			let d = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+			// Добавляем вычисленное расстояние в список расстояний для i-й точки
+			distancesForPointI.push(d);
+
+			// Накапливаем потенциальную энергию взаимодействия между зарядами i и j.
+			// Формула Кулона: E = 1 / d. Если d стремится к 0 (точки слиплись) — энергия уйдет в бесконечность, что укажет на ошибку.
+			totalEnergy += 1.0 / d;
+		}
+
+		// Сортируем массив расстояний для i-й точки по возрастанию.
+		// После сортировки самый близкий сосед окажется на позиции с индексом [0].
+		distancesForPointI.sort((a, b) => a - b);
+
+		// Сохраняем расстояние до 1-го (самого близкого) соседа i-й точки в общий массив минимумов
+		allMinDistances.push(distancesForPointI[0]);
+	}
+
+	// Корректируем totalEnergy: делим накопленную энергию на 2, так как в двойном цикле 
+	// расстояние между каждой парой точек (i, j) и (j, i) было посчитано дважды.
+	totalEnergy = totalEnergy / 2;
+
+	// meanD: Среднее арифметическое расстояние до ближайшего соседа по всей системе.
+	// Считается как сумма всех минимальных расстояний, деленная на количество точек.
+	let meanD = allMinDistances.reduce((a, b) => a + b, 0) / pointsCount;
+
+	// variance: Дисперсия (средний квадрат отклонения). Мера того, насколько сильно расстояния 
+	// до соседей у разных точек "разбросаны" относительно вычисленного среднего значения meanD.
+	let variance = allMinDistances.reduce((sum, d) => sum + Math.pow(d - meanD, 2), 0) / pointsCount;
+
+	// stdDev: Среднеквадратичное отклонение (СКО, или сигма). Показывает реальный разброс расстояний в тех же единицах, что и сами координаты.
+	// Если stdDev близко к нулю — все точки находятся в равных условиях (идеальная геометрия).
+	let stdDev = Math.sqrt(variance);
+
+	// deviationPercent: Коэффициент вариации (дисбаланс распределения), выраженный в процентах.
+	// Показывает относительную погрешность: какая доля от среднего расстояния приходится на ошибку (разброс).
+	let deviationPercent = (stdDev / meanD) * 100;
+	/*
+				aAnalysis.push({
+					//                    step: stepIndex
+					totalEnergy: totalEnergy,
+					minDistance: meanD,
+					standardDeviation: stdDev,
+					deviationPercent: deviationPercent
+				});
+	*/
+	/*            
+				// Вывод диагностической информации в консоль браузера
+				console.log(`--- Результаты анализа для шага ${stepIndex} ---`);
+				console.log(`Общая энергия системы (E): ${totalEnergy.toFixed(4)}`);
+				console.log(`Среднее расстояние до ближайшего соседа: ${meanD.toFixed(4)}`);
+				console.log(`Среднеквадратичное отклонение (СКО): ${stdDev.toFixed(6)}`);
+				console.log(`Коэффициент вариации (дисбаланс): ${deviationPercent.toFixed(2)}%`);
+	*/
+	currentStep++;
+	// Возвращаем объект с ключевыми метриками, чтобы их можно было использовать для построения графиков сходимости
+	return { totalEnergy, meanD, variance, stdDev, deviationPercent };
+}
+
+function drawAnalysisGraph(aAnalysis, propertyKey) {
+	const canvas = document.getElementById('analysisGraphCanvas');
+	if (!canvas) return;
+	const ctx = canvas.getContext('2d');
+
+	// АДАПТИВНОЕ РАЗРЕШЕНИЕ: подгоняем внутренние пиксели холста под его текущий CSS-размер на экране
+	const rect = canvas.getBoundingClientRect();
+	if (canvas.width !== rect.width || canvas.height !== rect.height) {
+		canvas.width = rect.width;
+		canvas.height = rect.height;
+	}
+
+	const width = canvas.width;
+	const height = canvas.height;
+
+	// Очищаем холст
+	ctx.clearRect(0, 0, width, height);
+	if (aAnalysis.length < 2) return;
+
+	// Нахождение мин/макс значений
+	let minVal = aAnalysis[0][propertyKey];
+	let maxVal = aAnalysis[0][propertyKey];
+	for (let i = 0; i < aAnalysis.length; i++) {
+		const val = aAnalysis[i][propertyKey];
+		if (val < minVal) minVal = val;
+		if (val > maxVal) maxVal = val;
+	}
+
+	const range = maxVal - minVal;
+	const padding = range === 0 ? 1 : range * 0.1;
+	const displayMin = minVal - padding;
+	const displayMax = maxVal + padding;
+	const displayRange = displayMax - displayMin;
+
+	// Сетка (смещаем линию чуть ниже, чтобы текст сверху не перекрывался)
+	ctx.strokeStyle = '#222';
+	ctx.lineWidth = 1;
+	ctx.beginPath();
+	ctx.moveTo(0, height * 0.6);
+	ctx.lineTo(width, height * 0.6);
+	ctx.stroke();
+
+	// Построение линии графика
+	ctx.beginPath();
+	ctx.strokeStyle = propertyKey === 'totalEnergy' ? '#00ffcc' : '#ffcc00';
+	ctx.lineWidth = 2;
+
+	for (let i = 0; i < aAnalysis.length; i++) {
+		// Оставляем небольшие отступы (padding) по бокам: 15px слева и 25px справа (чтобы не заезжать под крестик)
+		const x = (i / (aAnalysis.length - 1)) * (width - 40) + 15;
+		const val = aAnalysis[i][propertyKey];
+		const y = height - ((val - displayMin) / displayRange) * (height - 40) - 15;
+
+		if (i === 0) {
+			ctx.moveTo(x, y);
+		} else {
+			ctx.lineTo(x, y);
+		}
+	}
+	ctx.stroke();
+
+	// Вывод текста
+	ctx.fillStyle = '#fff';
+	ctx.font = '11px sans-serif';
+	ctx.fillText(`Шаг: ${aAnalysis.length} / ${params.totalSteps}`, 15, 20);
+
+	const currentVal = aAnalysis[aAnalysis.length - 1][propertyKey];
+	ctx.fillStyle = ctx.strokeStyle;
+	ctx.fillText(`${propertyKey}: ${currentVal.toFixed(4)}`, 15, 36);
+}
+
+export async function analysis(newParams){
+	params = newParams;
+	// 1. Ищем, существует ли уже контейнер виджета
+	let widget = document.getElementById('analysisGraphWidget');
+
+	// Если виджета еще нет на странице, создаем его структуру
+	if (!widget) {
+		// Создаем главный контейнер виджета
+		widget = document.createElement('div');
+		widget.id = 'analysisGraphWidget';
+
+		// Задаем размеры в процентах от основного холста/экрана (например, 25% ширины, 20% высоты)
+		widget.style.width = '25%';
+		widget.style.height = '20%';
+		// Минимальные размеры, чтобы на маленьких экранах график не сжимался в пиксель
+		widget.style.minWidth = '200px';
+		widget.style.minHeight = '120px';
+
+		// Позиционирование в правом верхнем углу
+		widget.style.position = 'absolute';
+		widget.style.top = '20px';
+		widget.style.right = '20px';
+		widget.style.background = 'rgba(0, 0, 0, 0.85)';
+		widget.style.border = '1px solid #555';
+		widget.style.borderRadius = '6px';
+		widget.style.zIndex = '100';
+
+		// Создаем внутренний холст для рисования
+		const graphCanvas = document.createElement('canvas');
+		graphCanvas.id = 'analysisGraphCanvas';
+		// Растягиваем холст на 100% от родительского виджета
+		graphCanvas.style.width = '100%';
+		graphCanvas.style.height = '100%';
+		graphCanvas.style.display = 'block';
+		graphCanvas.style.pointerEvents = 'none'; // Чтобы клики для вращения сцены проходили сквозь сам график
+
+		// Создаем кнопку-крестик
+		const closeBtn = document.createElement('div');
+		closeBtn.innerText = '×';
+		// Стилизуем крестик
+		closeBtn.style.position = 'absolute';
+		closeBtn.style.top = '5px';
+		closeBtn.style.right = '8px';
+		closeBtn.style.color = '#aaa';
+		closeBtn.style.cursor = 'pointer';
+		closeBtn.style.fontFamily = 'sans-serif';
+		closeBtn.style.fontSize = '18px';
+		closeBtn.style.lineHeight = '1';
+		closeBtn.style.zIndex = '101'; // Поверх холста графика, чтобы нажимался
+		closeBtn.style.pointerEvents = 'auto'; // Включаем клики обратно для этой кнопки
+
+		// Эффект наведения на крестик
+		closeBtn.onmouseover = () => closeBtn.style.color = '#ff4d4d';
+		closeBtn.onmouseout = () => closeBtn.style.color = '#aaa';
+
+		// Логика удаления виджета при нажатии на крестик
+		closeBtn.onclick = () => {
+			widget.remove();
+		};
+
+		// Собираем виджет вместе
+		widget.appendChild(closeBtn);
+		widget.appendChild(graphCanvas);
+		document.body.appendChild(widget);
+	}
+
+	const aAnalysis = [];
+
+	currentStep = 0;
+
+	//totalEnergy: Общая энергия системы (E). Если totalEnergy растет от шага к шагу: Ошибка в знаках сил (точки притягиваются вместо отталкивания) либо слишком большой шаг интегрирования (dt). Энергия totalEnergy уходит в бесконечность или NaN: Ошибка в коде вычислений, при которой две точки заняли абсолютно одинаковые координаты (деление на ноль). Проверьте генератор случайных чисел или начальную инициализацию.
+	//meanD: Среднее расстояние до ближайшего соседа. Должно постепенно расти, пока не стабилизируется.
+	//variance: Дисперсия(средний квадрат отклонения).Мера того, насколько сильно расстояния до соседей у разных точек "разбросаны" относительно вычисленного среднего значения meanD.
+	//stdDev: Среднеквадратичное отклонение (СКО): С каждым шагом алгоритма значение stdDev должно стремиться к нулю.
+	//deviationPercent: Коэффициент вариации (дисбаланс). Коэффициент вариации (deviationPercent) высокий (например, > 15-20%): Точки распределены хаотично, решетка не сформировалась. Скорее всего, силам отталкивания не хватает итераций, либо коэффициент затухания скорости (DAMPING) гасит движение слишком рано. deviationPercent стремится к 0% (например, < 2-5%): Алгоритм работает отлично, структура симметрична, точки распределились максимально равномерно.
+	const displayProperty = 'deviationPercent';
+
+	const start = performance.now();
+	document.getElementById('analysisInfo').style.display = 'block';
+	document.getElementById('analysisStepCounter').innerText = currentStep;
+	document.getElementById('analysisTotalStepsDisplay').innerText = params.totalSteps;
+	while (currentStep < params.totalSteps) {
+		// Проверяем в начале каждого шага: если пользователь закрыл виджет,
+		// вычисления могут продолжаться, но график мы больше не рисуем
+		const currentWidget = document.getElementById('analysisGraphWidget');
+		if (!currentWidget) {
+			// Если вы хотите полностью остановить анализ при закрытии графика, раскомментируйте строку ниже:
+			// break; 
+		}
+
+		aAnalysis.push(evaluateDistribution(currentStep));
+
+		// Отрисовываем график (передаем данные только если виджет существует)
+		if (currentWidget) {
+			drawAnalysisGraph(aAnalysis, displayProperty);
+		}
+
+		document.getElementById('analysisStepCounter').innerText = currentStep;
+		document.getElementById('analysisTimeResult').innerText = `Итог: ${((performance.now() - start) / 1000).toFixed(3)} сек.`;
+		await new Promise(r => requestAnimationFrame(r));
+	}
+	console.log('------------------------------------');
+	console.log('Оценка равномерности распределения точек');
+	console.log('');
+	console.log(`totalEnergy: Общая энергия системы (E). Если totalEnergy растет от шага к шагу: Ошибка в знаках сил (точки притягиваются вместо отталкивания) либо слишком большой шаг интегрирования (dt). Энергия totalEnergy уходит в бесконечность или NaN: Ошибка в коде вычислений, при которой две точки заняли абсолютно одинаковые координаты (деление на ноль). Проверьте генератор случайных чисел или начальную инициализацию.`);
+	console.log(`meanD: Среднее расстояние до ближайшего соседа. Должно постепенно расти, пока не стабилизируется.`);
+	console.log(`variance: Дисперсия (средний квадрат отклонения). Мера того, насколько сильно расстояния до соседей у разных точек "разбросаны" относительно вычисленного среднего значения meanD.`);
+	console.log(`stdDev: Среднеквадратичное отклонение (СКО): С каждым шагом алгоритма значение stdDev должно стремиться к нулю.`);
+	console.log(`deviationPercent: Коэффициент вариации (дисбаланс). Коэффициент вариации (deviationPercent) высокий (например, > 15-20%): Точки распределены хаотично, решетка не сформировалась. Скорее всего, силам отталкивания не хватает итераций, либо коэффициент затухания скорости (DAMPING) гасит движение слишком рано. deviationPercent стремится к 0% (например, < 2-5%): Алгоритм работает отлично, структура симметрична, точки распределились максимально равномерно.`);
+	console.table(aAnalysis);
+	console.log('------------------------------------');
+}
+

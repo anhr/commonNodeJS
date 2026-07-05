@@ -1,7 +1,7 @@
 /**
  * @module averageVertices
  * @description An iterative process in which, at each step, all vertices gradually move toward a position in which the vertices are at the maximum distance from each other.
- * See [Thomson Problem]{@link https://mathworld.wolfram.com/ThomsonProblem.html}.
+ * See [Thomson Problem]{@link https://en.wikipedia.org/wiki/Thomson_problem}.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
@@ -26,7 +26,7 @@ let velocities = [];
 
 /**
  * Base function for an iterative process in which, at each step, all vertices gradually move toward a position in which the vertices are at the maximum distance from each other.
- * See [Thomson Problem]{@link https://mathworld.wolfram.com/ThomsonProblem.html}.
+ * See [Thomson Problem]{@link https://en.wikipedia.org/wiki/Thomson_problem}.
  * @param {Object} data averageVertices data
  * @param {Object} data.options See the <b>options</b> parameter of the <a href="../../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> class.
  * @param {float} data.t Current time.

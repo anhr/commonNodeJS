@@ -140,6 +140,7 @@
     <script type="module">
         import * as THREE from 'three';
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+		import { analysis } from '../distanceOfVertices/thomsonAnalysisHSphere.js'
 
         // Параметры
 
@@ -470,6 +471,7 @@
                 spheres.push(pointLight);
                 */
 
+                /*
                 // Добавляем "хвостик" или линию, указывающую на проекцию
                 // (для визуализации 4D измерения можно добавить небольшую линию в направлении w)
                 if (Math.abs(w) > 0.5) {
@@ -482,6 +484,7 @@
                     scene.add(line);
                     spheres.push(line);
                 }
+                */
             });
 
             // Обновляем статистику
