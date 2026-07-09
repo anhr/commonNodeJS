@@ -110,8 +110,10 @@
         <button id="startBtn">▶ Запустить движение</button>
         <button id="stopBtn" disabled>⏸ Пауза</button>
         <button id="resetBtn">🔄 Сбросить</button>
+        <!--
         <button id="addPointsBtn">➕ Добавить 5 точек</button>
         <button id="removePointsBtn">➖ Удалить 5 точек</button>
+        -->
         <div style="margin-top: 15px;">
             <label>Скорость: </label>
             <input type="range" id="speedRange" min="0.1" max="2" step="0.1" value="1">
@@ -140,8 +142,11 @@
     <script type="module">
         import * as THREE from 'three';
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-		import { analysis } from '../distanceOfVertices/thomsonAnalysisHSphere.js'
+		import { AnalysisSteps } from '../distanceOfVertices/thomsonAnalysisHSphere.js'
+		import * as utils from '../utilsHSphere.js'
 
+		let analysisSteps;
+		
         // Параметры
 
         //true случайное расположение точек
@@ -155,6 +160,12 @@
         // --- Глобальные переменные ---
         // Исходный массив точек в 4D полярных координатах когда исходные точки не случайные
         const anglesInit = isRandom ? [] : [
+			//антиподальные точки. Расположены на противоположных концах гиперсферы
+			// Точка 1: Произвольное положение на гиперсфере
+			{ altitude: 1.0, latitude: 0.5, longitude: 2.0 },
+			// Точка 2: Максимально удаленная (антипод для Точки 1)
+			{ altitude: Math.PI - 1.0, latitude: Math.PI - 0.5, longitude: (2.0 + Math.PI) % (2 * Math.PI) },
+			/*
 			//0.
             {
                 altitude: Math.PI / 1.5,
@@ -184,6 +195,7 @@
                 latitude: Math.PI / 23,
                 longitude: Math.PI,
             }
+			*/
         ];
 
         let ANGLES_COUNT = isRandom ? 30 : anglesInit.length; // Начальное количество точек
@@ -291,7 +303,7 @@
         }
 
         // --- Функции для работы с 4D координатами ---
-
+/*
         // Преобразование 4D полярных координат в 4D декартовы
         // Параметры:
         // latitude: -π/2 до π/2 (широта, угол от экватора)
@@ -311,22 +323,6 @@
                 w: RADIUS * cosAlt // w теперь проецируется через cosAlt
             };
         }
-/*
-        function polarToCartesian4D(latitude, longitude, altitude) {
-            const cosAlt = Math.cos(altitude);
-            const sinAlt = Math.sin(altitude);
-            const cosLat = Math.cos(latitude);
-            const sinLat = Math.sin(latitude);
-
-            return {
-                x: RADIUS * cosAlt * cosLat * Math.cos(longitude),
-                y: RADIUS * cosAlt * cosLat * Math.sin(longitude),
-                z: RADIUS * cosAlt * sinLat,
-                w: RADIUS * sinAlt
-            };
-        }
-*/
-
         // Преобразование 4D декартовых координат в 4D полярные
         function cartesianToPolar4D(x, y, z, w) {
             const r = Math.sqrt(x * x + y * y + z * z + w * w);
@@ -357,7 +353,7 @@
                 altitude: altitude
             };
         }
-
+*/
         // Нормализация точки на 4D гиперсфере
         function normalizeToHypersphere(x, y, z, w) {
             const r = Math.sqrt(x * x + y * y + z * z + w * w);
@@ -394,12 +390,20 @@
             w /= r;
 
             // Преобразуем в полярные координаты
+			return utils.cartesianToPolar({
+                x: x * RADIUS,
+                y: y * RADIUS,
+                z: z * RADIUS,
+                w: w * RADIUS
+			});
+/*			
             return cartesianToPolar4D(
                 x * RADIUS,
                 y * RADIUS,
                 z * RADIUS,
                 w * RADIUS
             );
+*/			
         }
 
         // --- Инициализация массива точек ---
@@ -428,7 +432,7 @@
 
             // Создаем новые точки (проецируем 4D -> 3D, теряем координату W)
             angles.forEach((point, index) => {
-                const { x, y, z, w } = polarToCartesian4D(point.latitude, point.longitude, point.altitude);
+                const { x, y, z, w } = utils.polarToCartesian(point, RADIUS);
 
                 // Создаем сферу
                 const geometry = new THREE.SphereGeometry(0.1 / (5 / RADIUS), 24, 12);
@@ -490,6 +494,8 @@
             // Обновляем статистику
             document.getElementById('pointCount').innerHTML = `Количество точек: ${angles.length}`;
             updateAverageDistance();
+
+			if (analysisSteps) analysisSteps.step();
         }
 
         // --- Вычисление среднего расстояния между точками в 4D ---
@@ -503,9 +509,9 @@
             let pairs = 0;
 
             for (let i = 0; i < angles.length; i++) {
-                const pos1 = polarToCartesian4D(angles[i].latitude, angles[i].longitude, angles[i].altitude);
+				const pos1 = utils.polarToCartesian(angles[i], RADIUS);
                 for (let j = i + 1; j < angles.length; j++) {
-                    const pos2 = polarToCartesian4D(angles[j].latitude, angles[j].longitude, angles[j].altitude);
+					const pos2 = utils.polarToCartesian(angles[j], RADIUS);
                     const dx = pos1.x - pos2.x;
                     const dy = pos1.y - pos2.y;
                     const dz = pos1.z - pos2.z;
@@ -528,10 +534,12 @@
 
             // Для каждой пары точек
             for (let i = 0; i < angles.length; i++) {
-                const pos1 = polarToCartesian4D(angles[i].latitude, angles[i].longitude, angles[i].altitude);
+//				const pos1 = polarToCartesian4D(angles[i].latitude, angles[i].longitude, angles[i].altitude);
+				const pos1 = utils.polarToCartesian(angles[i], RADIUS);
 
                 for (let j = i + 1; j < angles.length; j++) {
-                    const pos2 = polarToCartesian4D(angles[j].latitude, angles[j].longitude, angles[j].altitude);
+//					const pos2 = polarToCartesian4D(angles[j].latitude, angles[j].longitude, angles[j].altitude);
+					const pos2 = utils.polarToCartesian(angles[j], RADIUS);
 
                     // Вектор от i к j в 4D
                     let dx = pos1.x - pos2.x;
@@ -567,7 +575,8 @@
 
             // Применяем силы к точкам
             for (let i = 0; i < angles.length; i++) {
-                const pos = polarToCartesian4D(angles[i].latitude, angles[i].longitude, angles[i].altitude);
+//                const pos = polarToCartesian4D(angles[i].latitude, angles[i].longitude, angles[i].altitude);
+				const pos = utils.polarToCartesian(angles[i], RADIUS);
 
                 // Обновляем скорость с учетом силы и демпфирования
                 velocities[i].x = velocities[i].x * DAMPING + forces[i].x;
@@ -585,7 +594,8 @@
                 const normalized = normalizeToHypersphere(newX, newY, newZ, newW);
 
                 // Преобразуем обратно в полярные координаты
-                const polar = cartesianToPolar4D(normalized.x, normalized.y, normalized.z, normalized.w);
+//                const polar = cartesianToPolar4D(normalized.x, normalized.y, normalized.z, normalized.w);
+                const polar = utils.cartesianToPolar(normalized);
                 angles[i].latitude = polar.latitude;
                 angles[i].longitude = polar.longitude;
                 angles[i].altitude = polar.altitude;
@@ -637,7 +647,8 @@
                 updateVisualization();
             });
 
-            document.getElementById('addPointsBtn').addEventListener('click', () => {
+            const addPointsBtn = document.getElementById('addPointsBtn');
+			if (addPointsBtn) addPointsBtn.addEventListener('click', () => {
                 for (let i = 0; i < 5; i++) {
                     angles.push(generateRandomPoint());
                 }
@@ -645,7 +656,8 @@
                 updateVisualization();
             });
 
-            document.getElementById('removePointsBtn').addEventListener('click', () => {
+            const removePointsBtn = document.getElementById('removePointsBtn');
+			if (removePointsBtn) removePointsBtn.addEventListener('click', () => {
                 if (angles.length > 1) {
                     const removeCount = Math.min(5, angles.length - 1);
                     angles.splice(-removeCount);
@@ -685,6 +697,21 @@
 
         // Запуск
         init();
+
+        analysisSteps = new AnalysisSteps({
+			elSecond: document.getElementById('stats'),
+			pointsPerStep: ANGLES_COUNT,
+			angles: angles,
+			
+			//totalEnergy: (default) Общая энергия системы (E). Если totalEnergy растет от шага к шагу: Ошибка в знаках сил (точки притягиваются вместо отталкивания) либо слишком большой шаг интегрирования (dt). Энергия totalEnergy уходит в бесконечность или NaN: Ошибка в коде вычислений, при которой две точки заняли абсолютно одинаковые координаты (деление на ноль). Проверьте генератор случайных чисел или начальную инициализацию.
+			//meanD: Среднее расстояние до ближайшего соседа. Должно постепенно расти, пока не стабилизируется.
+			//variance: Дисперсия(средний квадрат отклонения).Мера того, насколько сильно расстояния до соседей у разных точек "разбросаны" относительно вычисленного среднего значения meanD.
+			//stdDev: Среднеквадратичное отклонение (СКО): С каждым шагом алгоритма значение stdDev должно стремиться к нулю.
+			//deviationPercent: Коэффициент вариации (дисбаланс). Коэффициент вариации (deviationPercent) высокий (например, > 15-20%): Точки распределены хаотично, решетка не сформировалась. Скорее всего, силам отталкивания не хватает итераций, либо коэффициент затухания скорости (DAMPING) гасит движение слишком рано. deviationPercent стремится к 0% (например, < 2-5%): Алгоритм работает отлично, структура симметрична, точки распределились максимально равномерно.
+			//displayProperty: 'totalEnergy',
+		});
+		analysisSteps.step();
+		
     </script>
 </body>
 </html>
