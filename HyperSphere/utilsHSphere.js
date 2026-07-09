@@ -106,6 +106,36 @@ const sCartesianToAngles = 'cartesianToPolar';
  * @returns {{altitude: number, latitude: number, longitude: number}} Объект с полярными координатами в радианах.
  */
 export function cartesianToPolar(vertice, debug) {
+	const x = vertice.x;
+	const y = vertice.y;
+	const z = vertice.z;
+	const w = vertice.w;
+	const r = Math.sqrt(x * x + y * y + z * z + w * w);
+
+	// altitude рассчитывается корректно через acos (от 0 до PI)
+	const altitude = Math.acos(w / r);
+
+	// Считаем длину проекции на плоскость XY для определения четверти широты
+	const rXY = Math.sqrt(x * x + y * y);
+
+	let latitude, longitude;
+
+	//точка в 4D-пространстве оказывается на самой оси W (то есть её декартовы координаты x = 0, y = 0, z = 0), её проекция на всё трехмерное пространство XYZ сжимается в сингулярную точку — ноль.
+	if (rXY < 0.0001 && Math.abs(z) < 0.0001) {
+		latitude = 0;
+		longitude = 0;
+	} else {
+		// Math.atan2(z, rXY) сохраняет правильный знак и четверть широты
+		latitude = Math.atan2(z, rXY);
+		longitude = Math.atan2(y, x);
+	}
+
+	if (debug && (isNaN(altitude) || isNaN(latitude) || isNaN(longitude))) console.error(sCartesianToAngles + ': Invalid angles: altitude = ' + altitude + ', latitude = ' + latitude + ', longitude = ' + longitude);
+	return angles([altitude, latitude, longitude]);
+//	return { latitude, longitude, altitude };
+}
+/*
+export function cartesianToPolar(vertice, debug) {
 
 	const x = vertice.x;//, xx = x * x;
 	const y = vertice.y;//, yy = y * y;
@@ -146,6 +176,7 @@ export function cartesianToPolar(vertice, debug) {
 	if(debug && (isNaN(altitude) || isNaN(latitude) || isNaN(longitude))) console.error(sCartesianToAngles + ': Invalid angles: altitude = ' + altitude + ', latitude = ' + latitude + ', longitude = ' + longitude);
 	return angles([altitude, latitude, longitude]);
 }
+*/
 
 /*
 // --- Тест ---
