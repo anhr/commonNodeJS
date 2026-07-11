@@ -151,7 +151,7 @@
 
         //true случайное расположение точек
         //false расположение точек задано в массиве angles
-        const isRandom = false;
+        const isRandom = true;
 
         const RADIUS = 0.1;//5; // Радиус гиперсферы
         let REPULSION_STRENGTH = 0.03;//0.03; // Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
@@ -164,7 +164,8 @@
 			// Точка 1: Произвольное положение на гиперсфере
 			{ altitude: 1.0, latitude: 0.5, longitude: 2.0 },
 			// Точка 2: Максимально удаленная (антипод для Точки 1)
-			{ altitude: Math.PI - 1.0, latitude: Math.PI - 0.5, longitude: (2.0 + Math.PI) % (2 * Math.PI) },
+//			{ altitude: Math.PI - 1.0, latitude: Math.PI - 0.5, longitude: (2.0 + Math.PI) % (2 * Math.PI) },
+			{ altitude: Math.PI - 1.0, latitude: 0.5, longitude: (2.0 + Math.PI) % (2 * Math.PI) },
 			/*
 			//0.
             {
