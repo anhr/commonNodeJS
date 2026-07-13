@@ -200,7 +200,8 @@ function getTheoreticalMinEnergy4D(N = params.pointsPerStep) {
  *		Алгоритм работает отлично, структура симметрична, точки распределились максимально равномерно.
  * </pre>
  */
-function evaluateDistribution(stepIndex = 0) {
+export async function evaluateDistribution(stepIndex = 0, paramsNew) {
+	params ||= paramsNew;
 	// pointsCount: Общее количество точек, которые рассчитываются на одной итерации (шаге)
 	const pointsCount = params.pointsPerStep;
 
@@ -228,19 +229,6 @@ function evaluateDistribution(stepIndex = 0) {
 		if (!pointAngles) continue;
 
 		points.push(utils.polarToCartesian(pointAngles));
-/*		
-		const latitude = pointAngles.latitude;
-		const longitude = pointAngles.longitude;
-		const altitude = pointAngles.altitude;
-
-		// Честный перевод в 4D Декартовы координаты на единичной гиперсфере (R = 1)
-		const x = Math.sin(altitude) * Math.sin(latitude) * Math.cos(longitude);
-		const y = Math.sin(altitude) * Math.sin(latitude) * Math.sin(longitude);
-		const z = Math.sin(altitude) * Math.cos(latitude);
-		const w = Math.cos(altitude);
-
-		points.push({ x, y, z, w });
-*/		
 	}
 
 	// allMinDistances: Массив, в который мы сохраним расстояние от каждой точки до её самого близкого соседа.
@@ -248,7 +236,12 @@ function evaluateDistribution(stepIndex = 0) {
 	let allMinDistances = [];
 
 	// Внешний цикл: перебираем каждую точку системы, чтобы найти расстояния до остальных точек
-	for (let i = 0; i < pointsCount; i++) {
+	let i = 0,
+		waitCount = 0;//Команда await new Promise(r => requestAnimationFrame(r)); выпоняется медленно. Поэтому вызываем ее только через 500 точек.
+	const elStep = params.elStep || document.getElementById('analysisVerticeStep');
+//	for (let i = 0; i < pointsCount; i++)
+	while (i < params.pointsPerStep)
+	{
 		// distancesForPointI: Временный массив для хранения расстояний от текущей i-й точки до абсолютно всех остальных точек
 		let distancesForPointI = [];
 
@@ -283,6 +276,13 @@ function evaluateDistribution(stepIndex = 0) {
 
 		// Сохраняем расстояние до 1-го (самого близкого) соседа i-й точки в общий массив минимумов
 		allMinDistances.push(distancesForPointI[0]);
+		waitCount++;
+		if (elStep && (waitCount > 50)) {
+			waitCount = 0;
+			elStep.innerText = params.stepFormat ? params.stepFormat.replace('%step', i) : i;
+			await new Promise(r => requestAnimationFrame(r));//Необходим для отрисовки elStep на экране дисплея
+		}
+		i++;
 	}
 
 	// Корректируем totalEnergy: делим накопленную энергию на 2, так как в двойном цикле 
@@ -497,8 +497,13 @@ export async function analysis(newParams){
 
 	const start = performance.now();
 	document.getElementById('analysisInfo').style.display = 'block';
+
 	document.getElementById('analysisStepCounter').innerText = currentStep;
 	document.getElementById('analysisTotalStepsDisplay').innerText = params.totalSteps;
+
+	document.getElementById('analysisVerticeStep').innerText = 0;
+	document.getElementById('totalVertices').innerText = params.pointsPerStep;
+
 	while (currentStep < params.totalSteps) {
 		// Проверяем в начале каждого шага: если пользователь закрыл виджет,
 		// вычисления могут продолжаться, но график мы больше не рисуем
@@ -508,7 +513,7 @@ export async function analysis(newParams){
 			// break; 
 		}
 
-		aAnalysis.push(evaluateDistribution(currentStep));
+		aAnalysis.push(await evaluateDistribution(currentStep));
 
 		// Отрисовываем график (передаем данные только если виджет существует)
 		if (currentWidget) {
@@ -537,7 +542,7 @@ export class AnalysisSteps{
 		createGraphWidget(params.elSecond);
 		const aAnalysis = [];
 		const displayProperty = params.displayProperty || 'totalEnergy';
-		this.step = () => {
+		this.step = async () => {
 			// Проверяем в начале каждого шага: если пользователь закрыл виджет,
 			// вычисления могут продолжаться, но график мы больше не рисуем
 			const currentWidget = document.getElementById(analysisGraphWidgetId);
@@ -546,7 +551,7 @@ export class AnalysisSteps{
 				// break; 
 			}
 
-			aAnalysis.push(evaluateDistribution());
+			aAnalysis.push(await evaluateDistribution());
 
 			// Отрисовываем график (передаем данные только если виджет существует)
 			if (currentWidget) {
