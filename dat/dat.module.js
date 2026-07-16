@@ -24,9 +24,12 @@ if ( typeof dat !== 'undefined' ) {
 
 	function elNameAndTitle( el, name, title ) {
 
+/*		
 		if ( name === undefined )
 			console.warn( 'elNameAndTitle: name = ' + name );
-		el.innerHTML = name;
+*/			
+		if ( name !== undefined )
+			el.innerHTML = name;
 		if ( title !== undefined )
 			el.title = title;
 

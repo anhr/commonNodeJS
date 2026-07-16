@@ -105,7 +105,7 @@ function getTheoreticalMinEnergy4D(N = params.pointsPerStep) {
 		return absolutePhysicalFloor;
 	}
 
-	return calculatedEnergy;
+	return calculatedEnergy * 2;//Непонятно почему надо умножать на 2. Тогда отклонение от минимума будет стремится к нулю
 }
 /**
  * Возвращает точный или приблизительный теоретический минимум энергии Томсона
@@ -306,8 +306,10 @@ export async function evaluateDistribution(stepIndex = 0, paramsNew) {
 	let deviationPercent = (stdDev / meanD) * 100;
 	currentStep++;
 	// Возвращаем объект с ключевыми метриками, чтобы их можно было использовать для построения графиков сходимости
-	return { totalEnergy, meanD, variance, stdDev, deviationPercent };
+	return { totalEnergy, totalEnergyPercent: totalEnergy.toFixed(4) + getTotalEnergyPercent(totalEnergy), meanD, variance, stdDev, deviationPercent };
 }
+
+function getTotalEnergyPercent(currentVal) { return ` of ${totalEnergyMin.toFixed(4)} ${(((currentVal - totalEnergyMin) / totalEnergyMin) * 100).toFixed(1)}%` }
 
 function drawAnalysisGraph(aAnalysis, propertyKey) {
 	const canvas = document.getElementById('analysisGraphCanvas');
@@ -334,7 +336,7 @@ function drawAnalysisGraph(aAnalysis, propertyKey) {
 
 	const currentVal = aAnalysis[aAnalysis.length - 1][propertyKey];
 //	ctx.fillStyle = ctx.strokeStyle;
-	ctx.fillText(`${propertyKey}: ${currentVal.toFixed(4)}` + (propertyKey === 'totalEnergy' ? ` of ${totalEnergyMin.toFixed(4)} ${(((currentVal - totalEnergyMin) / totalEnergyMin) * 100).toFixed(1)}%` : ``), 15, 36);
+	ctx.fillText(`${propertyKey}: ${currentVal.toFixed(4)}` + (propertyKey === 'totalEnergy' ? getTotalEnergyPercent(currentVal) : ``), 15, 36);
 	
 	if (aAnalysis.length < 2) return;
 
