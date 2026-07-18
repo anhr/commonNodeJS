@@ -344,7 +344,7 @@ class Player {
 			if (d > 0) while (timestamp > timeNext)
 				timeNext += d;
 			playNext();
-
+			if (_this.onStep) _this.onStep();
 		}
 
 		/**
