@@ -15,9 +15,11 @@
 */
 
 import * as utils from '../utilsHSphere.js'
+import three from '../../three.js'
 
 let params, currentStep,
 	totalEnergyMin;//минимум потенциальной энергии. Если реальная энергия totalEnergy существенно выше totalEnergyMin (на 5-10% и более) и график перестал падать — вы гарантированно застряли в локальном минимуме, и итерационный процесс работает неэффективно.
+const sThomsonAnalysisHSphere = 'ThomsonAnalysisHSphere';
 
 /**
  * Returns the exact or approximate theoretical minimum of Thomson energy
@@ -96,8 +98,8 @@ function getTheoreticalMinEnergy4D(N = params.pointsPerStep) {
 	const absolutePhysicalFloor = N * 0.25;
 
 	if (calculatedEnergy < absolutePhysicalFloor) {
-		console.error(
-			`%c[Error getTheoreticalMinEnergy4D]: Asymptotic evaluation failed for N = ${N}.\n` +
+		console.error(sThomsonAnalysisHSphere +
+			`: %c[Error getTheoreticalMinEnergy4D]: Asymptotic evaluation failed for N = ${N}.\n` +
 			`Calculated energy (${calculatedEnergy.toFixed(4)}) is below the physical limit (${absolutePhysicalFloor}).\n` +
 			`You need to add "case ${N}:" to the switch(N) structure for an exact analytical solution.`,
 			"color: red; font-weight: bold;"
@@ -221,14 +223,26 @@ export async function evaluateDistribution(stepIndex = 0, paramsNew) {
 	// Временный массив для хранения декартовых 4D координат текущего шага
 //	const currentStepPoints = [];
 
-	// 1. Конвертация 4D полярных координат из объектов в 4D Декартовы координаты
-	for (let i = 0; i < pointsCount; i++) {
-		const pointAngles = params.angles[offset + i];
-
-		// Защита на случай, если данные для этого шага ещё не сгенерированы
-		if (!pointAngles) continue;
-
-		points.push(utils.polarToCartesian(pointAngles));
+	if (params.angles) {
+		if (params.position) console.warn(sThomsonAnalysisHSphere + ': params.position is not using if params.angles is defined');
+		// 1. Конвертация 4D полярных координат из объектов в 4D Декартовы координаты
+		for (let i = 0; i < pointsCount; i++) {
+			const pointAngles = params.angles[offset + i];
+	
+			// Защита на случай, если данные для этого шага ещё не сгенерированы
+			if (!pointAngles) continue;
+	
+			points.push(utils.polarToCartesian(pointAngles));
+		}
+	} else if (params.position) {
+		if (params.angles) console.warn(sThomsonAnalysisHSphere + ': params.angles is not using if params.position is defined');
+		const THREE = three.THREE;
+		for (let i = 0; i < pointsCount; i++) {
+			points.push(new THREE.Vector4().fromBufferAttribute(params.position, offset + i));
+		}
+	} else {
+		console.error(sThomsonAnalysisHSphere + ': define params.position or params.angles');
+		return;
 	}
 
 	// allMinDistances: Массив, в который мы сохраним расстояние от каждой точки до её самого близкого соседа.
@@ -267,6 +281,7 @@ export async function evaluateDistribution(stepIndex = 0, paramsNew) {
 
 			// Накапливаем потенциальную энергию взаимодействия между зарядами i и j.
 			// Формула Кулона: E = 1 / d. Если d стремится к 0 (точки слиплись) — энергия уйдет в бесконечность, что укажет на ошибку.
+			if (d === 0) console.error(sThomsonAnalysisHSphere + ': Invalid d = ' + d);
 			totalEnergy += 1.0 / d;
 		}
 

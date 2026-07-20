@@ -33,11 +33,8 @@ import OrbitControlsGui from '../OrbitControls/OrbitControlsGui.js';
 //import OrbitControlsGui from 'https://raw.githack.com/anhr/commonNodeJS/master/OrbitControls/OrbitControlsGui.js';
 
 import { dat } from '../dat/dat.module.js';
-
 import GuiSelectPoint from '../guiSelectPoint/guiSelectPoint.js';
-
 import { getWorldPosition } from '../getPosition.js';
-
 import { SpriteTextGui } from '../SpriteText/SpriteTextGui.js';
 
 import ColorPicker from '../colorpicker/colorpicker.js';
@@ -67,8 +64,8 @@ three.THREE = THREE2;
 */
 
 import Options from '../Options.js'
-
 import pointLight from '../pointLight.js'
+import clearThree from '../clearThree.js';
 
 function arrayContainersF() {
 
@@ -608,7 +605,7 @@ class MyThree {
 				},
 
 			});
-			if (options.player) new options.player.PlayController();// gui );//, getLanguageCode );
+			if (options.player && (typeof options.player.PlayController === 'function')) new options.player.PlayController();// gui );//, getLanguageCode );
 
 			if (options.dat.gui) {
 
