@@ -203,7 +203,7 @@ function getTheoreticalMinEnergy4D(N = params.pointsPerStep) {
  * </pre>
  */
 export async function evaluateDistribution(stepIndex = 0, paramsNew) {
-	params ||= paramsNew;
+	params = paramsNew || params;
 	// pointsCount: Общее количество точек, которые рассчитываются на одной итерации (шаге)
 	const pointsCount = params.pointsPerStep;
 
@@ -321,7 +321,11 @@ export async function evaluateDistribution(stepIndex = 0, paramsNew) {
 	let deviationPercent = (stdDev / meanD) * 100;
 	currentStep++;
 	// Возвращаем объект с ключевыми метриками, чтобы их можно было использовать для построения графиков сходимости
-	return { totalEnergy, totalEnergyPercent: totalEnergy.toFixed(4) + getTotalEnergyPercent(totalEnergy), meanD, variance, stdDev, deviationPercent };
+	const sourceObj = { totalEnergy, totalEnergyPercent: totalEnergy.toFixed(4) + getTotalEnergyPercent(totalEnergy), meanD, variance, stdDev, deviationPercent };
+	if (params.tomsonAnalysisRes) {
+		Object.assign(params.tomsonAnalysisRes, sourceObj);
+		return params.tomsonAnalysisRes;
+	} else return sourceObj;
 }
 
 function getTotalEnergyPercent(currentVal) { return ` of ${totalEnergyMin.toFixed(4)} ${(((currentVal - totalEnergyMin) / totalEnergyMin) * 100).toFixed(1)}%` }
