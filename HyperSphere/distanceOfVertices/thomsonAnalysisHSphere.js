@@ -1,7 +1,7 @@
 /**
  * @module ThomsonAnalysisHSphere
  * @description Analysis the iterative process known as [Thomson problem]{@link https://en.wikipedia.org/wiki/Thomson_problem} in which, at each step, all vertices gradually move toward a position in which the vertices are at the maximum distance from each other on the hypersphere.
- * You can see rsults of Analysis in the console of the web page and on a small graph in the rigth top corner of the canvas.
+ * You can see results of Analysis in the console of the web page and on a small graph in the rigth top corner of the canvas.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
