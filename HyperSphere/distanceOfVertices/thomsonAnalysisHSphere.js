@@ -21,7 +21,7 @@ let params, currentStep,
 	totalEnergyMin;//минимум потенциальной энергии. Если реальная энергия totalEnergy существенно выше totalEnergyMin (на 5-10% и более) и график перестал падать — вы гарантированно застряли в локальном минимуме, и итерационный процесс работает неэффективно.
 const sThomsonAnalysisHSphere = 'ThomsonAnalysisHSphere';
 
-/**
+/* *
  * Returns the exact or approximate theoretical minimum of Thomson energy
  * for N points on a unit 4D hypersphere (chordal distance, 1/d potential).
  *
@@ -177,29 +177,30 @@ function getTheoreticalMinEnergy4D(N = params.pointsPerStep) {
 
 /**
  * [Оценка равномерности распределения точек]{@link https://gemini.google.com/app/72b981da2d229516}
- * @param {number} stepIndex iteration index
+ * @param {number} [stepIndex=0] Iteration index. <b>TimeId</b> of the <a href="../../../player/jsdoc/" target="_blank">Player</a> if you is analyze of the <a href="../../../../../universe/main/jsdoc/module-HypersphericalUniverse-HypersphericalUniverse.html" target="_blank">Universe</a>.
+ * @param {object} [paramsNew] Analysis parameters. See <b>paramsNew</b> paremetr of the <a href="./module-ThomsonAnalysisHSphere.AnalysisSteps.html" target="_blank">AnalysisSteps</a> class.
  * @returns an object with follow properties:
  * <pre>
- * <b>totalEnergy</b>: Общая энергия системы (E).
- *	Если <b>totalEnergy</b> растет от шага к шагу:
- *		Ошибка в знаках сил (точки притягиваются вместо отталкивания) либо слишком большой шаг интегрирования (dt).
- *	Энергия <b>totalEnergy</b> уходит в бесконечность или NaN:
- *		Ошибка в коде вычислений, при которой две точки заняли абсолютно одинаковые координаты (деление на ноль).
- *		Проверьте генератор случайных чисел или начальную инициализацию.
- * </pre>
- * <b>meanD</b>: Среднее расстояние до ближайшего соседа. Должно постепенно расти, пока не стабилизируется.
- * <pre>
- * <b>variance</b>: Дисперсия(средний квадрат отклонения).
- *	Мера того, насколько сильно расстояния до соседей у разных точек "разбросаны" относительно вычисленного среднего значения <b>meanD</b>.
- * </pre>
- * <b>stdDev</b>: Среднеквадратичное отклонение (СКО): С каждым шагом алгоритма значение <b>stdDev</b> должно стремиться к нулю.
- * <pre>
- * <b>deviationPercent</b>: Коэффициент вариации (дисбаланс).
- *	Коэффициент вариации (<b>deviationPercent</b>) высокий (например, > 15-20%):
- *		Точки распределены хаотично, решетка не сформировалась.
- *		Скорее всего, силам отталкивания не хватает итераций, либо коэффициент затухания скорости (DAMPING) гасит движение слишком рано.
- *	<b>deviationPercent</b> стремится к 0% (например, < 2-5%):
- *		Алгоритм работает отлично, структура симметрична, точки распределились максимально равномерно.
+ * <b>'totalEnergy'</b> Total energy is the cumulative potential electrostatic energy of a system of interacting charges (points).
+ * Calculated via Coulomb's law as the sum of reciprocal distances (1/d) between all pairs of vertices,
+ * it acts as the primary metric for algorithmic convergence, reaching its theoretical minimum when points achieve optimal,
+ * uniform distribution across the hypersphere.
+ *   Increasing from step to step:
+ * 	  Error in the force signs (points attract instead of repel) or the integration step (dt) is too large.
+ *   TotalEnergy goes to infinity or is NaN:
+ * 	  Error in the calculation code, causing two points to occupy exactly the same coordinates (division by zero).
+ * 	  Check the random number generator or initialization.`, 'totalEnergy'
+ * <b>'deviationPercent'</b> The variation coefficient (deviationPercent) is high (e.g., > 15-20%):
+ * 	  The points are distributed randomly, and the lattice has not formed.
+ * 	  Most likely, the repulsive forces are not receiving enough iterations,
+ * 	  or the velocity damping coefficient (DAMPING) is damping the motion too early.
+ *   deviationPercent approaches 0% (e.g., < 2-5%):
+ * 	  The algorithm is working perfectly, the structure is symmetrical, and the points are distributed as evenly as possible.
+ * <b>'meanD'</b> Average distance to nearest neighbor. Should gradually increase until it stabilizes.
+ * <b>'stdDev'</b> Standard Deviation (SD): With each step of the algorithm, the stdDev value should tend to zero.
+ * <b>'variance'</b> Variance (mean squared deviation). A measure of how widely the distances to neighbors
+ * of different points are "dispersed" relative
+ * to the calculated mean value (meanD).
  * </pre>
  */
 export async function evaluateDistribution(stepIndex = 0, paramsNew) {
@@ -502,6 +503,12 @@ const createGraphWidget = (elSecond) => {
 	observer.observe(first);
 
 }
+/**
+ * Analysis of the positions of points in the <a href="../../../../../universe/main/jsdoc/module-HypersphericalUniverse-HypersphericalUniverse.html" target="_blank">Universe</a>.
+ * All points in the <a href="../../../../../universe/main/jsdoc/module-HypersphericalUniverse-HypersphericalUniverse.html" target="_blank">Universe</a> are divided into groups.
+ * Each group consists of the positions of points at a specific time and corresponds to a specific position of the <a href="../../../player/jsdoc/" target="_blank">Player</a>.
+ * @param {object} paramsNew Analysis parameters. See <b>paramsNew</b> paremetr of the <a href="./module-ThomsonAnalysisHSphere.AnalysisSteps.html" target="_blank">AnalysisSteps</a> class.
+*/
 export async function analysis(newParams){
 	params = newParams;
 	createGraphWidget();
@@ -557,16 +564,68 @@ export async function analysis(newParams){
 	console.log('------------------------------------');
 }
 
+/**
+ * Analysis the iterative process known as [Thomson problem]{@link https://en.wikipedia.org/wiki/Thomson_problem} in which, at each step, all vertices gradually move toward a position in which the vertices are at the maximum distance from each other on the hypersphere.
+ * You can see results of Analysis in the console of the web page and on a small graph in the rigth top corner of the canvas.
+ * @class
+ */
 export class AnalysisSteps{
+	/**
+	 * 
+	 * @param {object} paramsNew Analysis parameters.
+	 * @param {array} [paramsNew.angles] An array of points for analysis on a hypersphere in polar coordinates. Every item of the array is a point as object with three angles:
+	 * <pre>
+	 *    latitude. From -π/2 to π/2.
+	 *    longitude. From -π to π.
+	 *    altitude. Angle in the 4th dimension. From 0 to π.
+	 * </pre>
+	 * @param {Float32BufferAttribute} [paramsNew.position] An array of points for analysis on a hypersphere in cartesian coordinates. See [Float32BufferAttribute]{@link https://threejs.org/docs/#Float32BufferAttribute}.
+	 * Have effect only if <b>paramsNew.angles</b> is not defined.
+	 * @param {number} [paramsNew.pointsPerStep = params.angles.length] The number of points that will be analyzed during one analysis step.
+	 * @param {string} [paramsNew.displayProperty = 'totalEnergy'] analysis result type.
+	 * <pre>
+	 * <b>'totalEnergy'</b> Total energy is the cumulative potential electrostatic energy of a system of interacting charges (points).
+	 * Calculated via Coulomb's law as the sum of reciprocal distances (1/d) between all pairs of vertices,
+	 * it acts as the primary metric for algorithmic convergence, reaching its theoretical minimum when points achieve optimal,
+	 * uniform distribution across the hypersphere.
+	 *   Increasing from step to step:
+	 * 	  Error in the force signs (points attract instead of repel) or the integration step (dt) is too large.
+	 *   TotalEnergy goes to infinity or is NaN:
+	 * 	  Error in the calculation code, causing two points to occupy exactly the same coordinates (division by zero).
+	 * 	  Check the random number generator or initialization.`, 'totalEnergy'
+	 * <b>'deviationPercent'</b> The variation coefficient (deviationPercent) is high (e.g., > 15-20%):
+	 * 	  The points are distributed randomly, and the lattice has not formed.
+	 * 	  Most likely, the repulsive forces are not receiving enough iterations,
+	 * 	  or the velocity damping coefficient (DAMPING) is damping the motion too early.
+	 *   deviationPercent approaches 0% (e.g., < 2-5%):
+	 * 	  The algorithm is working perfectly, the structure is symmetrical, and the points are distributed as evenly as possible.
+	 * <b>'meanD'</b> Average distance to nearest neighbor. Should gradually increase until it stabilizes.
+	 * <b>'stdDev'</b> Standard Deviation (SD): With each step of the algorithm, the stdDev value should tend to zero.
+	 * <b>'variance'</b> Variance (mean squared deviation). A measure of how widely the distances to neighbors
+	 * of different points are "dispersed" relative
+	 * to the calculated mean value (meanD).
+	 * </pre>
+	 * @param {HTMLElement} [paramsNew.elSecond] An element on a web page in front of which a canvas with a graph of the analysis results will be displayed.
+	 * @param {HTMLElement} [paramsNew.elStep=document.getElementById('analysisVerticeStep')] An element on a webpage for displaying of the current point for analysis.
+	 * @param {string} [paramsNew.stepFormat] Format of the text for displaying of current step in the <b>paramsNew.elStep</b> element.
+	 * For example: 'Step: %step / 500'. '%step' will be replaced to current step.
+	 * Have effect only if <b>paramsNew.elStep</b> is defined.
+	 * @param {object} [paramsNew.tomsonAnalysisRes] The object to which the analysis results will be copied. See <b>paramsNew.displayProperty</b> for details.
+	*/
 	constructor(paramsNew){
 		params = paramsNew;
+		if (params.pointsPerStep === undefined) params.pointsPerStep = params.angles.length;
+		if (params.pointsPerStep === undefined) console.error(sThomsonAnalysisHSphere + ' AnalysisSteps: Invalid paramsNew.pointsPerStep = ' + paramsNew.pointsPerStep);
 		createGraphWidget(params.elSecond);
 		const aAnalysis = [];
 		const displayProperty = params.displayProperty || 'totalEnergy';
+		/**
+		 * One analysis step. You can repeat the analysis after changing of points position or after changing the analysis parameters.
+		 */
 		this.step = async () => {
+			const currentWidget = document.getElementById(analysisGraphWidgetId);
 			// Проверяем в начале каждого шага: если пользователь закрыл виджет,
 			// вычисления могут продолжаться, но график мы больше не рисуем
-			const currentWidget = document.getElementById(analysisGraphWidgetId);
 			if (!currentWidget) {
 				// Если вы хотите полностью остановить анализ при закрытии графика, раскомментируйте строку ниже:
 				// break; 

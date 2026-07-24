@@ -38,7 +38,7 @@
     <div class="container-overview">
     
         
-            <div class="description">Analysis the iterative process known as <a href="https://en.wikipedia.org/wiki/Thomson_problem">Thomson problem</a> in which, at each step, all vertices gradually move toward a position in which the vertices are at the maximum distance from each other on the hypersphere.You can see rsults of Analysis in the console of the web page and on a small graph in the rigth top corner of the canvas.</div>
+            <div class="description">Analysis the iterative process known as <a href="https://en.wikipedia.org/wiki/Thomson_problem">Thomson problem</a> in which, at each step, all vertices gradually move toward a position in which the vertices are at the maximum distance from each other on the hypersphere.You can see results of Analysis in the console of the web page and on a small graph in the rigth top corner of the canvas.</div>
         
 
         
@@ -139,6 +139,13 @@
     
 
     
+        <h3 class="subsection-title">Classes</h3>
+
+        <dl>
+            <dt><a href="module-ThomsonAnalysisHSphere.AnalysisSteps.html">AnalysisSteps</a></dt>
+            <dd></dd>
+        </dl>
+    
 
     
 
@@ -157,7 +164,7 @@
     
 
     
-    <h4 class="name" id=".evaluateDistribution"><span class="type-signature">(static) </span>evaluateDistribution<span class="signature">(stepIndex)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".analysis"><span class="type-signature">(static) </span>analysis<span class="signature">(paramsNew)</span><span class="type-signature"></span></h4>
     
 
     
@@ -165,7 +172,7 @@
 
 
 <div class="description">
-    <a href="https://gemini.google.com/app/72b981da2d229516">Оценка равномерности распределения точек</a>
+    Analysis of the positions of points in the <a href="../../../../../universe/main/jsdoc/module-HypersphericalUniverse-HypersphericalUniverse.html" target="_blank">Universe</a>.All points in the <a href="../../../../../universe/main/jsdoc/module-HypersphericalUniverse-HypersphericalUniverse.html" target="_blank">Universe</a> are divided into groups.Each group consists of the positions of points at a specific time and corresponds to a specific position of the <a href="../../../player/jsdoc/" target="_blank">Player</a>.
 </div>
 
 
@@ -201,13 +208,13 @@
 
         <tr>
             
-                <td class="name"><code>stepIndex</code></td>
+                <td class="name"><code>paramsNew</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">object</span>
 
 
             
@@ -217,7 +224,7 @@
 
             
 
-            <td class="description last">iteration index</td>
+            <td class="description last">Analysis parameters. See <b>paramsNew</b> paremetr of the <a href="./module-ThomsonAnalysisHSphere.AnalysisSteps.html" target="_blank">AnalysisSteps</a> class.</td>
         </tr>
 
     
@@ -258,7 +265,201 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="thomsonAnalysisHSphere.js.html">thomsonAnalysisHSphere.js</a>, <a href="thomsonAnalysisHSphere.js.html#line44">line 44</a>
+        <a href="thomsonAnalysisHSphere.js.html">thomsonAnalysisHSphere.js</a>, <a href="thomsonAnalysisHSphere.js.html#line512">line 512</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".evaluateDistribution"><span class="type-signature">(static) </span>evaluateDistribution<span class="signature">(stepIndex<span class="signature-attributes">opt</span>, paramsNew<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <a href="https://gemini.google.com/app/72b981da2d229516">Оценка равномерности распределения точек</a>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>stepIndex</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    0
+                
+                </td>
+            
+
+            <td class="description last">Iteration index. <b>TimeId</b> of the <a href="../../../player/jsdoc/" target="_blank">Player</a> if you is analyze of the <a href="../../../../../universe/main/jsdoc/module-HypersphericalUniverse-HypersphericalUniverse.html" target="_blank">Universe</a>.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>paramsNew</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">Analysis parameters. See <b>paramsNew</b> paremetr of the <a href="./module-ThomsonAnalysisHSphere.AnalysisSteps.html" target="_blank">AnalysisSteps</a> class.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="thomsonAnalysisHSphere.js.html">thomsonAnalysisHSphere.js</a>, <a href="thomsonAnalysisHSphere.js.html#line206">line 206</a>
     </li></ul></dd>
     
 
@@ -287,7 +488,7 @@
 
         
 <div class="param-desc">
-    an object with follow properties:<pre><b>totalEnergy</b>: Общая энергия системы (E).	Если <b>totalEnergy</b> растет от шага к шагу:		Ошибка в знаках сил (точки притягиваются вместо отталкивания) либо слишком большой шаг интегрирования (dt).	Энергия <b>totalEnergy</b> уходит в бесконечность или NaN:		Ошибка в коде вычислений, при которой две точки заняли абсолютно одинаковые координаты (деление на ноль).		Проверьте генератор случайных чисел или начальную инициализацию.</pre><b>meanD</b>: Среднее расстояние до ближайшего соседа. Должно постепенно расти, пока не стабилизируется.<pre><b>variance</b>: Дисперсия(средний квадрат отклонения).	Мера того, насколько сильно расстояния до соседей у разных точек "разбросаны" относительно вычисленного среднего значения <b>meanD</b>.</pre><b>stdDev</b>: Среднеквадратичное отклонение (СКО): С каждым шагом алгоритма значение <b>stdDev</b> должно стремиться к нулю.<pre><b>deviationPercent</b>: Коэффициент вариации (дисбаланс).	Коэффициент вариации (<b>deviationPercent</b>) высокий (например, > 15-20%):		Точки распределены хаотично, решетка не сформировалась.		Скорее всего, силам отталкивания не хватает итераций, либо коэффициент затухания скорости (DAMPING) гасит движение слишком рано.	<b>deviationPercent</b> стремится к 0% (например, < 2-5%):		Алгоритм работает отлично, структура симметрична, точки распределились максимально равномерно.</pre>
+    an object with follow properties:<pre><b>'totalEnergy'</b> Total energy is the cumulative potential electrostatic energy of a system of interacting charges (points).Calculated via Coulomb's law as the sum of reciprocal distances (1/d) between all pairs of vertices,it acts as the primary metric for algorithmic convergence, reaching its theoretical minimum when points achieve optimal,uniform distribution across the hypersphere.  Increasing from step to step:	  Error in the force signs (points attract instead of repel) or the integration step (dt) is too large.  TotalEnergy goes to infinity or is NaN:	  Error in the calculation code, causing two points to occupy exactly the same coordinates (division by zero).	  Check the random number generator or initialization.`, 'totalEnergy'<b>'deviationPercent'</b> The variation coefficient (deviationPercent) is high (e.g., > 15-20%):	  The points are distributed randomly, and the lattice has not formed.	  Most likely, the repulsive forces are not receiving enough iterations,	  or the velocity damping coefficient (DAMPING) is damping the motion too early.  deviationPercent approaches 0% (e.g., < 2-5%):	  The algorithm is working perfectly, the structure is symmetrical, and the points are distributed as evenly as possible.<b>'meanD'</b> Average distance to nearest neighbor. Should gradually increase until it stabilizes.<b>'stdDev'</b> Standard Deviation (SD): With each step of the algorithm, the stdDev value should tend to zero.<b>'variance'</b> Variance (mean squared deviation). A measure of how widely the distances to neighborsof different points are "dispersed" relativeto the calculated mean value (meanD).</pre>
 </div>
 
 
@@ -314,13 +515,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-ThomsonAnalysisHSphere.html">ThomsonAnalysisHSphere</a></li><li><a href="module-averageVertices.html">averageVertices</a></li><li><a href="module-averageVerticesHSphere.html">averageVerticesHSphere</a></li><li><a href="module-averageVerticesSphere.html">averageVerticesSphere</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-ThomsonAnalysisHSphere.html">ThomsonAnalysisHSphere</a></li><li><a href="module-averageVertices.html">averageVertices</a></li><li><a href="module-averageVerticesHSphere.html">averageVerticesHSphere</a></li><li><a href="module-averageVerticesSphere.html">averageVerticesSphere</a></li></ul><h3>Classes</h3><ul><li><a href="module-ThomsonAnalysisHSphere.AnalysisSteps.html">AnalysisSteps</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri Jul 03 2026 14:58:52 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri Jul 24 2026 12:11:03 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

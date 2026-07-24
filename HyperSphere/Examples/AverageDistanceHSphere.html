@@ -701,7 +701,7 @@
 
         analysisSteps = new AnalysisSteps({
 			elSecond: document.getElementById('stats'),
-			pointsPerStep: ANGLES_COUNT,
+			//pointsPerStep: ANGLES_COUNT,
 			angles: angles,
 			
 			//totalEnergy: (default) Общая энергия системы (E). Если totalEnergy растет от шага к шагу: Ошибка в знаках сил (точки притягиваются вместо отталкивания) либо слишком большой шаг интегрирования (dt). Энергия totalEnergy уходит в бесконечность или NaN: Ошибка в коде вычислений, при которой две точки заняли абсолютно одинаковые координаты (деление на ноль). Проверьте генератор случайных чисел или начальную инициализацию.

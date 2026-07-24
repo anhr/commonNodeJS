@@ -26,10 +26,10 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>﻿/**
+            <pre class="prettyprint source linenums"><code>/**
  * @module ThomsonAnalysisHSphere
  * @description Analysis the iterative process known as [Thomson problem]{@link https://en.wikipedia.org/wiki/Thomson_problem} in which, at each step, all vertices gradually move toward a position in which the vertices are at the maximum distance from each other on the hypersphere.
- * You can see rsults of Analysis in the console of the web page and on a small graph in the rigth top corner of the canvas.
+ * You can see results of Analysis in the console of the web page and on a small graph in the rigth top corner of the canvas.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
@@ -42,59 +42,236 @@
  * http://www.apache.org/licenses/LICENSE-2.0
 */
 
+import * as utils from '../utilsHSphere.js'
+import three from '../../three.js'
+
+let params, currentStep,
+	totalEnergyMin;//минимум потенциальной энергии. Если реальная энергия totalEnergy существенно выше totalEnergyMin (на 5-10% и более) и график перестал падать — вы гарантированно застряли в локальном минимуме, и итерационный процесс работает неэффективно.
+const sThomsonAnalysisHSphere = 'ThomsonAnalysisHSphere';
+
+/* *
+ * Returns the exact or approximate theoretical minimum of Thomson energy
+ * for N points on a unit 4D hypersphere (chordal distance, 1/d potential).
+ *
+ * @param {number} [N=params.pointsPerStep] - Number of vertices/points
+ * @returns {number} Theoretical minimum of potential energy
+ */
+function getTheoreticalMinEnergy4D(N = params.pointsPerStep) {
+
+	// --- EXACT ANALYTICAL &amp; TABULATED MINIMUMS FOR SYMMETRIC STRUCTURES ---
+	switch (N) {
+		case 0:
+		case 1:
+			return 0;
+
+		case 2:
+			// Two antipodal points (distance d = 2.0)
+			return 0.5;
+
+		case 3:
+			// Equilateral triangle. 3 pairs of points at distance d = sqrt(3)
+			return 3 / Math.sqrt(3); // Exactly Math.sqrt(3) (~1.73205)
+
+		case 4:
+			// Regular Tetrahedron (in 3D hyperplane). 6 pairs at d = sqrt(8/3)
+			return 6 / Math.sqrt(8 / 3); // (~3.67423)
+
+		case 5:
+			// 5-cell (4D Simplex / Hyper-tetrahedron). All 10 pairs at d = sqrt(5/4)
+			return 10 / Math.sqrt(5 / 4); // (~8.94427)
+
+		case 6:
+			// Regular Octahedron (in 3D hyperplane). 3 antipodes (d=2), 12 edges (d=sqrt(2))
+			return (3 / 2.0) + (12 / Math.sqrt(2)); // (~9.98528)
+
+		case 7:
+			// Global minimum configuration for 7 points on S^3
+			return 14.45322;
+
+		case 8:
+			// 16-cell (4D Orthoplex / Cross-polytope). 4 antipodes (d=2), 24 edges (d=sqrt(2))
+			return (4 / 2.0) + (24 / Math.sqrt(2)); // (~18.97056)
+
+		case 24:
+			// 24-cell. Unique highly-symmetric regular polytope in 4D (276 pairs).
+			return 12 * (1 / 2.0 + 8 / 1.0 + 12 / Math.sqrt(2) + 2 / Math.sqrt(3)); // (~217.17691)
+
+		case 120: {
+			// 600-cell (4D Hyper-icosahedron). Maximum regular symmetry, 7140 pairs.
+			const phi = (1 + Math.sqrt(5)) / 2; // Golden ratio
+			return 60 * (
+				1 / 2.0 +
+				12 / phi +
+				20 / Math.sqrt(3) +
+				12 * phi +
+				30 / Math.sqrt(2) +
+				20 * (phi / Math.sqrt(3)) +
+				12 * (Math.pow(phi, 2) / Math.sqrt(5))
+			); // (~6135.023)
+		}
+	}
+
+	// --- ASYMPTOTIC EVALUATION FOR ALL OTHER PRODUCIBLE N (N >= 9) ---
+
+	// Leading term for continuous distribution on 3-sphere (S^3)
+	const leadingTerm = (4 / (3 * Math.PI)) * (N * (N - 1)) / 2;
+
+	// Discrete Wigner-crystal cell correction for 4D space
+	const correction = -0.67 * Math.pow(N, 4 / 3);
+
+	const calculatedEnergy = leadingTerm + correction;
+
+	// --- AUTOMATIC CORRECTNESS CHECK (SELF-CHECK) ---
+	// Absolute physical floor floor for N charges: each point has at least one partner at d &lt;= 2
+	const absolutePhysicalFloor = N * 0.25;
+
+	if (calculatedEnergy &lt; absolutePhysicalFloor) {
+		console.error(sThomsonAnalysisHSphere +
+			`: %c[Error getTheoreticalMinEnergy4D]: Asymptotic evaluation failed for N = ${N}.\n` +
+			`Calculated energy (${calculatedEnergy.toFixed(4)}) is below the physical limit (${absolutePhysicalFloor}).\n` +
+			`You need to add "case ${N}:" to the switch(N) structure for an exact analytical solution.`,
+			"color: red; font-weight: bold;"
+		);
+		return absolutePhysicalFloor;
+	}
+
+	return calculatedEnergy * 2;//Непонятно почему надо умножать на 2. Тогда отклонение от минимума будет стремится к нулю
+}
+/**
+ * Возвращает точный или приблизительный теоретический минимум энергии Томсона
+ * для N точек на единичной 4D гиперсфере (хордовое расстояние, потенциал 1/d).
+ * @param {number} [N=params.pointsPerStep] - количество точек
+ * Включает точные аналитические решения для правильных 4D политопов.
+ * @returns {number} минимум потенциальной энергии
+ */
+/*
+function getTheoreticalMinEnergy4D(N = params.pointsPerStep) {
+    if (N &lt;= 1) return 0;
+    
+    // --- ТОЧНЫЕ АНАЛИТИЧЕСКИЕ МИНИМУМЫ ДЛЯ СИММЕТРИЧНЫХ 4D СТРУКТУР ---
+    
+    // N = 2: Две точки-антиподы (расстояние d = 2.0)
+    if (N === 2) return 0.5; 
+    
+    // N = 5: Пятиячейник (4-мерный симплекс). 
+    // Все пары точек (всего 10 пар) находятся на расстоянии d = sqrt(5/4)
+    if (N === 5) {
+        const d = Math.sqrt(5 / 4);
+        return 10 / d; // ~8.94427
+    }
+    
+    // N = 8: Шестнадцатиячейник (4D Кросс-политоп / Ортоплекс).
+    // Из 28 пар: 4 пары — антиподы (d = 2), 24 пары — смежные вершины (d = sqrt(2))
+    if (N === 8) {
+        return (4 / 2.0) + (24 / Math.sqrt(2)); // ~18.97056
+    }
+    
+    // N = 24: Двадцатьчетырёхячейник (24-cell).
+    // Высокосимметричный 4D-политоп. Общая энергия его 276 межточечных связей
+    // рассчитывается строго через геометрию его радиус-векторов:
+    if (N === 24) {
+        // Сумма обратных расстояний от одной вершины до всех остальных умноженная на 24 и деленная на 2
+        return 12 * (1/2.0 + 8/1.0 + 12/Math.sqrt(2) + 2/Math.sqrt(3)); // ~217.17691
+    }
+    
+    // N = 120: Шестисотиячейник (600-cell).
+    // Высшая точка симметрии в 4D. Аналог икосаэдра. У него 7140 парных взаимодействий.
+    // Его точная энергия Кулона равна:
+    if (N === 120) {
+        const золотоеСечение = (1 + Math.sqrt(5)) / 2;
+        // Точная сумма, полученная из инвариантов группы симметрий H4
+        return 60 * (
+            1/2.0 + 
+            12 / золотоеСечение + 
+            20 / Math.sqrt(3) + 
+            12 * золотоеСечение + 
+            30 / Math.sqrt(2) + 
+            20 * (золотоеСечение / Math.sqrt(3)) + 
+            12 * (Math.pow(золотоеСечение, 2) / Math.sqrt(5))
+        ); // ~6135.023
+    }
+
+    // --- АСИМПТОТИЧЕСКАЯ ОЦЕНКА ДЛЯ ВСЕХ ОСТАЛЬНЫХ ПРОИЗВОЛЬНЫХ N ---
+    
+    // Ведущий член макроскопического распределения на 3-сфере (S^3)
+    const leadingTerm = (4 / (3 * Math.PI)) * (N * (N - 1)) / 2;
+    
+    // Дискретная поправка на "кристаллизацию" локальных ячеек (коэффициент для 4D)
+    const correction = -0.67 * Math.pow(N, 4/3); 
+    
+    return leadingTerm + correction;
+}
+*/
+
 /**
  * [Оценка равномерности распределения точек]{@link https://gemini.google.com/app/72b981da2d229516}
- * @param {number} stepIndex iteration index
+ * @param {number} [stepIndex=0] Iteration index. &lt;b>TimeId&lt;/b> of the &lt;a href="../../../player/jsdoc/" target="_blank">Player&lt;/a> if you is analyze of the &lt;a href="../../../../../universe/main/jsdoc/module-HypersphericalUniverse-HypersphericalUniverse.html" target="_blank">Universe&lt;/a>.
+ * @param {object} [paramsNew] Analysis parameters. See &lt;b>paramsNew&lt;/b> paremetr of the &lt;a href="./module-ThomsonAnalysisHSphere.AnalysisSteps.html" target="_blank">AnalysisSteps&lt;/a> class.
  * @returns an object with follow properties:
  * &lt;pre>
- * &lt;b>totalEnergy&lt;/b>: Общая энергия системы (E).
- *	Если &lt;b>totalEnergy&lt;/b> растет от шага к шагу:
- *		Ошибка в знаках сил (точки притягиваются вместо отталкивания) либо слишком большой шаг интегрирования (dt).
- *	Энергия &lt;b>totalEnergy&lt;/b> уходит в бесконечность или NaN:
- *		Ошибка в коде вычислений, при которой две точки заняли абсолютно одинаковые координаты (деление на ноль).
- *		Проверьте генератор случайных чисел или начальную инициализацию.
- * &lt;/pre>
- * &lt;b>meanD&lt;/b>: Среднее расстояние до ближайшего соседа. Должно постепенно расти, пока не стабилизируется.
- * &lt;pre>
- * &lt;b>variance&lt;/b>: Дисперсия(средний квадрат отклонения).
- *	Мера того, насколько сильно расстояния до соседей у разных точек "разбросаны" относительно вычисленного среднего значения &lt;b>meanD&lt;/b>.
- * &lt;/pre>
- * &lt;b>stdDev&lt;/b>: Среднеквадратичное отклонение (СКО): С каждым шагом алгоритма значение &lt;b>stdDev&lt;/b> должно стремиться к нулю.
- * &lt;pre>
- * &lt;b>deviationPercent&lt;/b>: Коэффициент вариации (дисбаланс).
- *	Коэффициент вариации (&lt;b>deviationPercent&lt;/b>) высокий (например, > 15-20%):
- *		Точки распределены хаотично, решетка не сформировалась.
- *		Скорее всего, силам отталкивания не хватает итераций, либо коэффициент затухания скорости (DAMPING) гасит движение слишком рано.
- *	&lt;b>deviationPercent&lt;/b> стремится к 0% (например, &lt; 2-5%):
- *		Алгоритм работает отлично, структура симметрична, точки распределились максимально равномерно.
+ * &lt;b>'totalEnergy'&lt;/b> Total energy is the cumulative potential electrostatic energy of a system of interacting charges (points).
+ * Calculated via Coulomb's law as the sum of reciprocal distances (1/d) between all pairs of vertices,
+ * it acts as the primary metric for algorithmic convergence, reaching its theoretical minimum when points achieve optimal,
+ * uniform distribution across the hypersphere.
+ *   Increasing from step to step:
+ * 	  Error in the force signs (points attract instead of repel) or the integration step (dt) is too large.
+ *   TotalEnergy goes to infinity or is NaN:
+ * 	  Error in the calculation code, causing two points to occupy exactly the same coordinates (division by zero).
+ * 	  Check the random number generator or initialization.`, 'totalEnergy'
+ * &lt;b>'deviationPercent'&lt;/b> The variation coefficient (deviationPercent) is high (e.g., > 15-20%):
+ * 	  The points are distributed randomly, and the lattice has not formed.
+ * 	  Most likely, the repulsive forces are not receiving enough iterations,
+ * 	  or the velocity damping coefficient (DAMPING) is damping the motion too early.
+ *   deviationPercent approaches 0% (e.g., &lt; 2-5%):
+ * 	  The algorithm is working perfectly, the structure is symmetrical, and the points are distributed as evenly as possible.
+ * &lt;b>'meanD'&lt;/b> Average distance to nearest neighbor. Should gradually increase until it stabilizes.
+ * &lt;b>'stdDev'&lt;/b> Standard Deviation (SD): With each step of the algorithm, the stdDev value should tend to zero.
+ * &lt;b>'variance'&lt;/b> Variance (mean squared deviation). A measure of how widely the distances to neighbors
+ * of different points are "dispersed" relative
+ * to the calculated mean value (meanD).
  * &lt;/pre>
  */
-export function evaluateDistribution(stepIndex) {
+export async function evaluateDistribution(stepIndex = 0, paramsNew) {
+	params = paramsNew || params;
 	// pointsCount: Общее количество точек, которые рассчитываются на одной итерации (шаге)
-	const pointsCount = pointsPerStep;
+	const pointsCount = params.pointsPerStep;
 
-	// offset: Смещение индекса в общем массиве posAttr, чтобы найти начало данных для текущего шага stepIndex
-	const offset = stepIndex * pointsPerStep;
+	if (totalEnergyMin === undefined) totalEnergyMin = getTheoreticalMinEnergy4D();
+
+	// offset: Смещение индекса в общем массиве angles, чтобы найти начало данных для текущего шага stepIndex
+	const offset = stepIndex * params.pointsPerStep;
 
 	// totalEnergy: Суммарная потенциальная (электростатическая) энергия системы на данном шаге. 
 	// В идеальном случае (минимум энергии) она должна быть минимально возможной.
 	let totalEnergy = 0;
 
-	// points: Вспомогательный массив, куда мы соберем декартовы координаты (x, y, z) всех точек текущего шага
+	// points: Вспомогательный массив, куда мы соберем декартовы координаты (x, y, z, w) всех точек текущего шага
 	// для более удобного и быстрого доступа к ним в циклах.
 	let points = [];
 
-	// Цикл по всем точкам текущего шага для извлечения их координат из буфера posAttr
-	for (let i = 0; i &lt; pointsCount; i++) {
-		// idx: Базовый индекс в плоском массиве координат Three.js (каждая точка занимает 3 позиции: x, y, z)
-		const idx = (offset + i) * 3;
+	// Временный массив для хранения декартовых 4D координат текущего шага
+//	const currentStepPoints = [];
 
-		// Добавляем объект с координатами текущей i-й точки в наш рабочий массив
-		points.push({
-			x: posAttr.getX(offset + i), // x-координата i-й точки
-			y: posAttr.getY(offset + i), // y-координата i-й точки
-			z: posAttr.getZ(offset + i)  // z-координата i-й точки
-		});
+	if (params.angles) {
+		if (params.position) console.warn(sThomsonAnalysisHSphere + ': params.position is not using if params.angles is defined');
+		// 1. Конвертация 4D полярных координат из объектов в 4D Декартовы координаты
+		for (let i = 0; i &lt; pointsCount; i++) {
+			const pointAngles = params.angles[offset + i];
+	
+			// Защита на случай, если данные для этого шага ещё не сгенерированы
+			if (!pointAngles) continue;
+	
+			points.push(utils.polarToCartesian(pointAngles));
+		}
+	} else if (params.position) {
+		if (params.angles) console.warn(sThomsonAnalysisHSphere + ': params.angles is not using if params.position is defined');
+		const THREE = three.THREE;
+		for (let i = 0; i &lt; pointsCount; i++) {
+			points.push(new THREE.Vector4().fromBufferAttribute(params.position, offset + i));
+		}
+	} else {
+		console.error(sThomsonAnalysisHSphere + ': define params.position or params.angles');
+		return;
 	}
 
 	// allMinDistances: Массив, в который мы сохраним расстояние от каждой точки до её самого близкого соседа.
@@ -102,7 +279,12 @@ export function evaluateDistribution(stepIndex) {
 	let allMinDistances = [];
 
 	// Внешний цикл: перебираем каждую точку системы, чтобы найти расстояния до остальных точек
-	for (let i = 0; i &lt; pointsCount; i++) {
+	let i = 0,
+		waitCount = 0;//Команда await new Promise(r => requestAnimationFrame(r)); выпоняется медленно. Поэтому вызываем ее только через 500 точек.
+	const elStep = params.elStep || document.getElementById('analysisVerticeStep');
+//	for (let i = 0; i &lt; pointsCount; i++)
+	while (i &lt; params.pointsPerStep)
+	{
 		// distancesForPointI: Временный массив для хранения расстояний от текущей i-й точки до абсолютно всех остальных точек
 		let distancesForPointI = [];
 
@@ -117,15 +299,18 @@ export function evaluateDistribution(stepIndex) {
 			let dy = points[i].y - points[j].y;
 			// dz: Разность координат по оси Z между i-й и j-й точками
 			let dz = points[i].z - points[j].z;
+			// dw: Разность координат по оси Z между i-й и j-й точками
+			let dw = points[i].w - points[j].w;
 
 			// d: Евклидово расстояние (длина хорды) между i-й и j-й точками в пространстве
-			let d = Math.sqrt(dx * dx + dy * dy + dz * dz);
+			let d = Math.sqrt(dx * dx + dy * dy + dz * dz + dw * dw);
 
 			// Добавляем вычисленное расстояние в список расстояний для i-й точки
 			distancesForPointI.push(d);
 
 			// Накапливаем потенциальную энергию взаимодействия между зарядами i и j.
 			// Формула Кулона: E = 1 / d. Если d стремится к 0 (точки слиплись) — энергия уйдет в бесконечность, что укажет на ошибку.
+			if (d === 0) console.error(sThomsonAnalysisHSphere + ': Invalid d = ' + d);
 			totalEnergy += 1.0 / d;
 		}
 
@@ -135,6 +320,13 @@ export function evaluateDistribution(stepIndex) {
 
 		// Сохраняем расстояние до 1-го (самого близкого) соседа i-й точки в общий массив минимумов
 		allMinDistances.push(distancesForPointI[0]);
+		waitCount++;
+		if (elStep &amp;&amp; (waitCount > 50)) {
+			waitCount = 0;
+			elStep.innerText = params.stepFormat ? params.stepFormat.replace('%step', i) : i;
+			await new Promise(r => requestAnimationFrame(r));//Необходим для отрисовки elStep на экране дисплея
+		}
+		i++;
 	}
 
 	// Корректируем totalEnergy: делим накопленную энергию на 2, так как в двойном цикле 
@@ -156,27 +348,16 @@ export function evaluateDistribution(stepIndex) {
 	// deviationPercent: Коэффициент вариации (дисбаланс распределения), выраженный в процентах.
 	// Показывает относительную погрешность: какая доля от среднего расстояния приходится на ошибку (разброс).
 	let deviationPercent = (stdDev / meanD) * 100;
-	/*
-				aAnalysis.push({
-					//                    step: stepIndex
-					totalEnergy: totalEnergy,
-					minDistance: meanD,
-					standardDeviation: stdDev,
-					deviationPercent: deviationPercent
-				});
-	*/
-	/*            
-				// Вывод диагностической информации в консоль браузера
-				console.log(`--- Результаты анализа для шага ${stepIndex} ---`);
-				console.log(`Общая энергия системы (E): ${totalEnergy.toFixed(4)}`);
-				console.log(`Среднее расстояние до ближайшего соседа: ${meanD.toFixed(4)}`);
-				console.log(`Среднеквадратичное отклонение (СКО): ${stdDev.toFixed(6)}`);
-				console.log(`Коэффициент вариации (дисбаланс): ${deviationPercent.toFixed(2)}%`);
-	*/
 	currentStep++;
 	// Возвращаем объект с ключевыми метриками, чтобы их можно было использовать для построения графиков сходимости
-	return { totalEnergy, meanD, variance, stdDev, deviationPercent };
+	const sourceObj = { totalEnergy, totalEnergyPercent: totalEnergy.toFixed(4) + getTotalEnergyPercent(totalEnergy), meanD, variance, stdDev, deviationPercent };
+	if (params.tomsonAnalysisRes) {
+		Object.assign(params.tomsonAnalysisRes, sourceObj);
+		return params.tomsonAnalysisRes;
+	} else return sourceObj;
 }
+
+function getTotalEnergyPercent(currentVal) { return ` of ${totalEnergyMin.toFixed(4)} ${(((currentVal - totalEnergyMin) / totalEnergyMin) * 100).toFixed(1)}%` }
 
 function drawAnalysisGraph(aAnalysis, propertyKey) {
 	const canvas = document.getElementById('analysisGraphCanvas');
@@ -195,6 +376,16 @@ function drawAnalysisGraph(aAnalysis, propertyKey) {
 
 	// Очищаем холст
 	ctx.clearRect(0, 0, width, height);
+
+	// Вывод текста
+	ctx.fillStyle = '#fff';
+	ctx.font = '11px sans-serif';
+	ctx.fillText(`Шаг: ${aAnalysis.length}` + (params.totalSteps === undefined ? `` : ` / ${params.totalSteps}`), 15, 20);
+
+	const currentVal = aAnalysis[aAnalysis.length - 1][propertyKey];
+//	ctx.fillStyle = ctx.strokeStyle;
+	ctx.fillText(`${propertyKey}: ${currentVal.toFixed(4)}` + (propertyKey === 'totalEnergy' ? getTotalEnergyPercent(currentVal) : ``), 15, 36);
+	
 	if (aAnalysis.length &lt; 2) return;
 
 	// Нахождение мин/макс значений
@@ -238,85 +429,119 @@ function drawAnalysisGraph(aAnalysis, propertyKey) {
 		}
 	}
 	ctx.stroke();
-
-	// Вывод текста
-	ctx.fillStyle = '#fff';
-	ctx.font = '11px sans-serif';
-	ctx.fillText(`Шаг: ${aAnalysis.length} / ${totalSteps}`, 15, 20);
-
-	const currentVal = aAnalysis[aAnalysis.length - 1][propertyKey];
-	ctx.fillStyle = ctx.strokeStyle;
-	ctx.fillText(`${propertyKey}: ${currentVal.toFixed(4)}`, 15, 36);
 }
-
-const analysis = async () => {
+const analysisGraphWidgetId = 'analysisGraphWidget';
+const createGraphWidget = (elSecond) => {
 	// 1. Ищем, существует ли уже контейнер виджета
-	let widget = document.getElementById('analysisGraphWidget');
+	let widget = document.getElementById(analysisGraphWidgetId);
+
+	if (widget) return;
 
 	// Если виджета еще нет на странице, создаем его структуру
-	if (!widget) {
-		// Создаем главный контейнер виджета
-		widget = document.createElement('div');
-		widget.id = 'analysisGraphWidget';
 
-		// Задаем размеры в процентах от основного холста/экрана (например, 25% ширины, 20% высоты)
-		widget.style.width = '25%';
-		widget.style.height = '20%';
-		// Минимальные размеры, чтобы на маленьких экранах график не сжимался в пиксель
-		widget.style.minWidth = '200px';
-		widget.style.minHeight = '120px';
+	// Создаем главный контейнер виджета
+	widget = document.createElement('div');
+	widget.id = analysisGraphWidgetId;
 
-		// Позиционирование в правом верхнем углу
-		widget.style.position = 'absolute';
-		widget.style.top = '20px';
-		widget.style.right = '20px';
-		widget.style.background = 'rgba(0, 0, 0, 0.85)';
-		widget.style.border = '1px solid #555';
-		widget.style.borderRadius = '6px';
-		widget.style.zIndex = '100';
+	// Задаем размеры в процентах от основного холста/экрана (например, 25% ширины, 20% высоты)
+	widget.style.width = '25%';
+	widget.style.height = '20%';
+	// Минимальные размеры, чтобы на маленьких экранах график не сжимался в пиксель
+	widget.style.minWidth = '200px';
+	widget.style.minHeight = '120px';
 
-		// Создаем внутренний холст для рисования
-		const graphCanvas = document.createElement('canvas');
-		graphCanvas.id = 'analysisGraphCanvas';
-		// Растягиваем холст на 100% от родительского виджета
-		graphCanvas.style.width = '100%';
-		graphCanvas.style.height = '100%';
-		graphCanvas.style.display = 'block';
-		graphCanvas.style.pointerEvents = 'none'; // Чтобы клики для вращения сцены проходили сквозь сам график
+	
+	// Позиционирование в правом верхнем углу
+	widget.style.position = 'absolute';
+	widget.style.top = '20px';
+	widget.style.right = '20px';
+	widget.style.background = 'rgba(0, 0, 0, 0.85)';
+	widget.style.border = '1px solid #555';
+	widget.style.borderRadius = '6px';
+	widget.style.zIndex = '100';
 
-		// Создаем кнопку-крестик
-		const closeBtn = document.createElement('div');
-		closeBtn.innerText = '×';
-		// Стилизуем крестик
-		closeBtn.style.position = 'absolute';
-		closeBtn.style.top = '5px';
-		closeBtn.style.right = '8px';
-		closeBtn.style.color = '#aaa';
-		closeBtn.style.cursor = 'pointer';
-		closeBtn.style.fontFamily = 'sans-serif';
-		closeBtn.style.fontSize = '18px';
-		closeBtn.style.lineHeight = '1';
-		closeBtn.style.zIndex = '101'; // Поверх холста графика, чтобы нажимался
-		closeBtn.style.pointerEvents = 'auto'; // Включаем клики обратно для этой кнопки
+	// Создаем внутренний холст для рисования
+	const graphCanvas = document.createElement('canvas');
+	graphCanvas.id = 'analysisGraphCanvas';
+	// Растягиваем холст на 100% от родительского виджета
+	graphCanvas.style.width = '100%';
+	graphCanvas.style.height = '100%';
+	graphCanvas.style.display = 'block';
+	graphCanvas.style.pointerEvents = 'none'; // Чтобы клики для вращения сцены проходили сквозь сам график
 
-		// Эффект наведения на крестик
-		closeBtn.onmouseover = () => closeBtn.style.color = '#ff4d4d';
-		closeBtn.onmouseout = () => closeBtn.style.color = '#aaa';
+	// Создаем кнопку-крестик
+	const closeBtn = document.createElement('div');
+	closeBtn.innerText = '×';
+	// Стилизуем крестик
+	closeBtn.style.position = 'absolute';
+	closeBtn.style.top = '5px';
+	closeBtn.style.right = '8px';
+	closeBtn.style.color = '#aaa';
+	closeBtn.style.cursor = 'pointer';
+	closeBtn.style.fontFamily = 'sans-serif';
+	closeBtn.style.fontSize = '18px';
+	closeBtn.style.lineHeight = '1';
+	closeBtn.style.zIndex = '101'; // Поверх холста графика, чтобы нажимался
+	closeBtn.style.pointerEvents = 'auto'; // Включаем клики обратно для этой кнопки
 
-		// Логика удаления виджета при нажатии на крестик
-		closeBtn.onclick = () => {
-			widget.remove();
-		};
+	// Эффект наведения на крестик
+	closeBtn.onmouseover = () => closeBtn.style.color = '#ff4d4d';
+	closeBtn.onmouseout = () => closeBtn.style.color = '#aaa';
 
-		// Собираем виджет вместе
-		widget.appendChild(closeBtn);
-		widget.appendChild(graphCanvas);
-		document.body.appendChild(widget);
+	// Логика удаления виджета при нажатии на крестик
+	closeBtn.onclick = () => {
+		widget.remove();
+	};
+
+	// Собираем виджет вместе
+	widget.appendChild(closeBtn);
+	widget.appendChild(graphCanvas);
+	document.body.appendChild(widget);
+
+	if (!elSecond) return;
+
+	//передвигаем elSecond под widget
+	
+	const first = widget;
+	const second = elSecond;
+
+	// Задаем желаемый фиксированный зазор между элементами в пикселях
+	const GAP = 15;
+
+	const resizer = () => {
+		// 1. Получаем координаты и размеры первого элемента относительно родителя
+		// offsetTop — это его начальный отступ сверху (style.top)
+		// offsetHeight — его текущая полная высота
+		const firstTop = first.offsetTop;
+		const firstHeight = first.offsetHeight;
+
+		// 2. Вычисляем новую позицию top для второго элемента:
+		// Позиция верхнего + Высота верхнего + Зазор
+		const newSecondTop = firstTop + firstHeight + GAP;
+
+		// 3. Применяем значение ко второму элементу
+		second.style.top = `${newSecondTop}px`;
 	}
+	resizer();
+	
+	// Создаем наблюдатель, который реагирует на любые изменения размеров первого элемента
+	const observer = new ResizeObserver(resizer);
 
+	// Запускаем слежку за первым элементом
+	observer.observe(first);
+
+}
+/**
+ * Analysis of the positions of points in the &lt;a href="../../../../../universe/main/jsdoc/module-HypersphericalUniverse-HypersphericalUniverse.html" target="_blank">Universe&lt;/a>.
+ * All points in the &lt;a href="../../../../../universe/main/jsdoc/module-HypersphericalUniverse-HypersphericalUniverse.html" target="_blank">Universe&lt;/a> are divided into groups.
+ * Each group consists of the positions of points at a specific time and corresponds to a specific position of the &lt;a href="../../../player/jsdoc/" target="_blank">Player&lt;/a>.
+ * @param {object} paramsNew Analysis parameters. See &lt;b>paramsNew&lt;/b> paremetr of the &lt;a href="./module-ThomsonAnalysisHSphere.AnalysisSteps.html" target="_blank">AnalysisSteps&lt;/a> class.
+*/
+export async function analysis(newParams){
+	params = newParams;
+	createGraphWidget();
 	const aAnalysis = [];
 
-	//            for (let stepIndex = 0; stepIndex &lt; totalSteps; stepIndex++) evaluateDistribution(stepIndex);
 	currentStep = 0;
 
 	//totalEnergy: Общая энергия системы (E). Если totalEnergy растет от шага к шагу: Ошибка в знаках сил (точки притягиваются вместо отталкивания) либо слишком большой шаг интегрирования (dt). Энергия totalEnergy уходит в бесконечность или NaN: Ошибка в коде вычислений, при которой две точки заняли абсолютно одинаковые координаты (деление на ноль). Проверьте генератор случайных чисел или начальную инициализацию.
@@ -324,22 +549,27 @@ const analysis = async () => {
 	//variance: Дисперсия(средний квадрат отклонения).Мера того, насколько сильно расстояния до соседей у разных точек "разбросаны" относительно вычисленного среднего значения meanD.
 	//stdDev: Среднеквадратичное отклонение (СКО): С каждым шагом алгоритма значение stdDev должно стремиться к нулю.
 	//deviationPercent: Коэффициент вариации (дисбаланс). Коэффициент вариации (deviationPercent) высокий (например, > 15-20%): Точки распределены хаотично, решетка не сформировалась. Скорее всего, силам отталкивания не хватает итераций, либо коэффициент затухания скорости (DAMPING) гасит движение слишком рано. deviationPercent стремится к 0% (например, &lt; 2-5%): Алгоритм работает отлично, структура симметрична, точки распределились максимально равномерно.
-	const displayProperty = 'deviationPercent';
+	const displayProperty = params.displayProperty || 'deviationPercent';
 
-	start = performance.now();
+	const start = performance.now();
 	document.getElementById('analysisInfo').style.display = 'block';
+
 	document.getElementById('analysisStepCounter').innerText = currentStep;
-	document.getElementById('analysisTotalStepsDisplay').innerText = totalSteps;
-	while (currentStep &lt; totalSteps) {
+	document.getElementById('analysisTotalStepsDisplay').innerText = params.totalSteps;
+
+	document.getElementById('analysisVerticeStep').innerText = 0;
+	document.getElementById('totalVertices').innerText = params.pointsPerStep;
+
+	while (currentStep &lt; params.totalSteps) {
 		// Проверяем в начале каждого шага: если пользователь закрыл виджет,
 		// вычисления могут продолжаться, но график мы больше не рисуем
-		const currentWidget = document.getElementById('analysisGraphWidget');
+		const currentWidget = document.getElementById(analysisGraphWidgetId);
 		if (!currentWidget) {
 			// Если вы хотите полностью остановить анализ при закрытии графика, раскомментируйте строку ниже:
 			// break; 
 		}
 
-		aAnalysis.push(evaluateDistribution(currentStep));
+		aAnalysis.push(await evaluateDistribution(currentStep));
 
 		// Отрисовываем график (передаем данные только если виджет существует)
 		if (currentWidget) {
@@ -362,7 +592,92 @@ const analysis = async () => {
 	console.log('------------------------------------');
 }
 
-</code></pre>
+/**
+ * Analysis the iterative process known as [Thomson problem]{@link https://en.wikipedia.org/wiki/Thomson_problem} in which, at each step, all vertices gradually move toward a position in which the vertices are at the maximum distance from each other on the hypersphere.
+ * You can see results of Analysis in the console of the web page and on a small graph in the rigth top corner of the canvas.
+ * @class
+ */
+export class AnalysisSteps{
+	/**
+	 * 
+	 * @param {object} paramsNew Analysis parameters.
+	 * @param {array} [paramsNew.angles] An array of points for analysis on a hypersphere in polar coordinates. Every item of the array is a point as object with three angles:
+	 * &lt;pre>
+	 *    latitude. From -π/2 to π/2.
+	 *    longitude. From -π to π.
+	 *    altitude. Angle in the 4th dimension. From 0 to π.
+	 * &lt;/pre>
+	 * @param {Float32BufferAttribute} [paramsNew.position] An array of points for analysis on a hypersphere in cartesian coordinates. See [Float32BufferAttribute]{@link https://threejs.org/docs/#Float32BufferAttribute}.
+	 * Have effect only if &lt;b>paramsNew.angles&lt;/b> is not defined.
+	 * @param {number} [paramsNew.pointsPerStep = params.angles.length] The number of points that will be analyzed during one analysis step.
+	 * @param {string} [paramsNew.displayProperty = 'totalEnergy'] analysis result type.
+	 * &lt;pre>
+	 * &lt;b>'totalEnergy'&lt;/b> Total energy is the cumulative potential electrostatic energy of a system of interacting charges (points).
+	 * Calculated via Coulomb's law as the sum of reciprocal distances (1/d) between all pairs of vertices,
+	 * it acts as the primary metric for algorithmic convergence, reaching its theoretical minimum when points achieve optimal,
+	 * uniform distribution across the hypersphere.
+	 *   Increasing from step to step:
+	 * 	  Error in the force signs (points attract instead of repel) or the integration step (dt) is too large.
+	 *   TotalEnergy goes to infinity or is NaN:
+	 * 	  Error in the calculation code, causing two points to occupy exactly the same coordinates (division by zero).
+	 * 	  Check the random number generator or initialization.`, 'totalEnergy'
+	 * &lt;b>'deviationPercent'&lt;/b> The variation coefficient (deviationPercent) is high (e.g., > 15-20%):
+	 * 	  The points are distributed randomly, and the lattice has not formed.
+	 * 	  Most likely, the repulsive forces are not receiving enough iterations,
+	 * 	  or the velocity damping coefficient (DAMPING) is damping the motion too early.
+	 *   deviationPercent approaches 0% (e.g., &lt; 2-5%):
+	 * 	  The algorithm is working perfectly, the structure is symmetrical, and the points are distributed as evenly as possible.
+	 * &lt;b>'meanD'&lt;/b> Average distance to nearest neighbor. Should gradually increase until it stabilizes.
+	 * &lt;b>'stdDev'&lt;/b> Standard Deviation (SD): With each step of the algorithm, the stdDev value should tend to zero.
+	 * &lt;b>'variance'&lt;/b> Variance (mean squared deviation). A measure of how widely the distances to neighbors
+	 * of different points are "dispersed" relative
+	 * to the calculated mean value (meanD).
+	 * &lt;/pre>
+	 * @param {HTMLElement} [paramsNew.elSecond] An element on a web page in front of which a canvas with a graph of the analysis results will be displayed.
+	 * @param {HTMLElement} [paramsNew.elStep=document.getElementById('analysisVerticeStep')] An element on a webpage for displaying of the current point for analysis.
+	 * @param {string} [paramsNew.stepFormat] Format of the text for displaying of current step in the &lt;b>paramsNew.elStep&lt;/b> element.
+	 * For example: 'Step: %step / 500'. '%step' will be replaced to current step.
+	 * Have effect only if &lt;b>paramsNew.elStep&lt;/b> is defined.
+	 * @param {object} [paramsNew.tomsonAnalysisRes] The object to which the analysis results will be copied. See &lt;b>paramsNew.displayProperty&lt;/b> for details.
+	*/
+	constructor(paramsNew){
+		params = paramsNew;
+		if (params.pointsPerStep === undefined) params.pointsPerStep = params.angles.length;
+		if (params.pointsPerStep === undefined) console.error(sThomsonAnalysisHSphere + ' AnalysisSteps: Invalid paramsNew.pointsPerStep = ' + paramsNew.pointsPerStep);
+		createGraphWidget(params.elSecond);
+		const aAnalysis = [];
+		const displayProperty = params.displayProperty || 'totalEnergy';
+		/**
+		 * One analysis step. You can repeat the analysis after changing of points position or after changing the analysis parameters.
+		 */
+		this.step = async () => {
+			const currentWidget = document.getElementById(analysisGraphWidgetId);
+			// Проверяем в начале каждого шага: если пользователь закрыл виджет,
+			// вычисления могут продолжаться, но график мы больше не рисуем
+			if (!currentWidget) {
+				// Если вы хотите полностью остановить анализ при закрытии графика, раскомментируйте строку ниже:
+				// break; 
+			}
+
+			aAnalysis.push(await evaluateDistribution());
+
+			// Отрисовываем график (передаем данные только если виджет существует)
+			if (currentWidget) {
+				drawAnalysisGraph(aAnalysis, displayProperty);
+			}
+		}
+/*		
+		Object.defineProperty(this, 'size', {
+			get: function () {
+				const rect = document.getElementById(analysisGraphWidgetId).getBoundingClientRect();
+				return { width:rect.width, height: rect.height};
+			},
+//			enumerable: true,      // Свойство будет видно при переборе (например, в for...in)
+//			configurable: true     // Свойство можно будет удалить или изменить позже
+		});
+*/		
+	}
+}</code></pre>
         </article>
     </section>
 
@@ -372,13 +687,13 @@ const analysis = async () => {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-ThomsonAnalysisHSphere.html">ThomsonAnalysisHSphere</a></li><li><a href="module-averageVertices.html">averageVertices</a></li><li><a href="module-averageVerticesHSphere.html">averageVerticesHSphere</a></li><li><a href="module-averageVerticesSphere.html">averageVerticesSphere</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-ThomsonAnalysisHSphere.html">ThomsonAnalysisHSphere</a></li><li><a href="module-averageVertices.html">averageVertices</a></li><li><a href="module-averageVerticesHSphere.html">averageVerticesHSphere</a></li><li><a href="module-averageVerticesSphere.html">averageVerticesSphere</a></li></ul><h3>Classes</h3><ul><li><a href="module-ThomsonAnalysisHSphere.AnalysisSteps.html">AnalysisSteps</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri Jul 03 2026 14:58:52 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri Jul 24 2026 12:11:03 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
