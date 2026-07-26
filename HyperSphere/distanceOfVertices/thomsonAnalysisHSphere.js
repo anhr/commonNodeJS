@@ -109,71 +109,123 @@ function getTheoreticalMinEnergy4D(N = params.pointsPerStep) {
 
 	return calculatedEnergy * 2;//Непонятно почему надо умножать на 2. Тогда отклонение от минимума будет стремится к нулю
 }
-/**
- * Возвращает точный или приблизительный теоретический минимум энергии Томсона
- * для N точек на единичной 4D гиперсфере (хордовое расстояние, потенциал 1/d).
- * @param {number} [N=params.pointsPerStep] - количество точек
- * Включает точные аналитические решения для правильных 4D политопов.
- * @returns {number} минимум потенциальной энергии
- */
 /*
-function getTheoreticalMinEnergy4D(N = params.pointsPerStep) {
-    if (N <= 1) return 0;
-    
-    // --- ТОЧНЫЕ АНАЛИТИЧЕСКИЕ МИНИМУМЫ ДЛЯ СИММЕТРИЧНЫХ 4D СТРУКТУР ---
-    
-    // N = 2: Две точки-антиподы (расстояние d = 2.0)
-    if (N === 2) return 0.5; 
-    
-    // N = 5: Пятиячейник (4-мерный симплекс). 
-    // Все пары точек (всего 10 пар) находятся на расстоянии d = sqrt(5/4)
-    if (N === 5) {
-        const d = Math.sqrt(5 / 4);
-        return 10 / d; // ~8.94427
-    }
-    
-    // N = 8: Шестнадцатиячейник (4D Кросс-политоп / Ортоплекс).
-    // Из 28 пар: 4 пары — антиподы (d = 2), 24 пары — смежные вершины (d = sqrt(2))
-    if (N === 8) {
-        return (4 / 2.0) + (24 / Math.sqrt(2)); // ~18.97056
-    }
-    
-    // N = 24: Двадцатьчетырёхячейник (24-cell).
-    // Высокосимметричный 4D-политоп. Общая энергия его 276 межточечных связей
-    // рассчитывается строго через геометрию его радиус-векторов:
-    if (N === 24) {
-        // Сумма обратных расстояний от одной вершины до всех остальных умноженная на 24 и деленная на 2
-        return 12 * (1/2.0 + 8/1.0 + 12/Math.sqrt(2) + 2/Math.sqrt(3)); // ~217.17691
-    }
-    
-    // N = 120: Шестисотиячейник (600-cell).
-    // Высшая точка симметрии в 4D. Аналог икосаэдра. У него 7140 парных взаимодействий.
-    // Его точная энергия Кулона равна:
-    if (N === 120) {
-        const золотоеСечение = (1 + Math.sqrt(5)) / 2;
-        // Точная сумма, полученная из инвариантов группы симметрий H4
-        return 60 * (
-            1/2.0 + 
-            12 / золотоеСечение + 
-            20 / Math.sqrt(3) + 
-            12 * золотоеСечение + 
-            30 / Math.sqrt(2) + 
-            20 * (золотоеСечение / Math.sqrt(3)) + 
-            12 * (Math.pow(золотоеСечение, 2) / Math.sqrt(5))
-        ); // ~6135.023
-    }
-
-    // --- АСИМПТОТИЧЕСКАЯ ОЦЕНКА ДЛЯ ВСЕХ ОСТАЛЬНЫХ ПРОИЗВОЛЬНЫХ N ---
-    
-    // Ведущий член макроскопического распределения на 3-сфере (S^3)
-    const leadingTerm = (4 / (3 * Math.PI)) * (N * (N - 1)) / 2;
-    
-    // Дискретная поправка на "кристаллизацию" локальных ячеек (коэффициент для 4D)
-    const correction = -0.67 * Math.pow(N, 4/3); 
-    
-    return leadingTerm + correction;
+const createCanvas = (widget, graphCanvas) => {
+	widget.appendChild(graphCanvas);
 }
 */
+export function graphFolderChild(folder) {
+
+	// 1. Создаем пустой контроллер-контейнер (привязываем к пустой функции)
+	const dummyObj = { totalEnergy: function () { } };
+	const canvasController = folder.add(dummyObj, 'totalEnergy');
+
+	// Отключаем клики по самой строке GUI, чтобы не триггерить "кнопку"
+	canvasController.domElement.style.pointerEvents = 'none';
+
+	// Скрываем правую часть управления dat.gui
+	const rightPart = canvasController.domElement.querySelector('.c') || canvasController.domElement.querySelector('.widget');
+	if (rightPart) rightPart.style.display = 'none';
+
+	// Растягиваем текстовый блок на 100% ширины папки
+	const labelPart = canvasController.domElement.querySelector('div');
+	if (labelPart) {
+/*
+		labelPart.style.width = '100%';
+		labelPart.style.float = 'none';
+		labelPart.style.padding = '0'; // Убираем отступы для чистого вывода холста
+*/
+		labelPart.style.display = 'none';
+	}
+	
+	// 2. Создаем HTML-холст и встраиваем его внутрь контроллера
+	const canvas = document.createElement('canvas');
+
+	// 4. Настраиваем сам контейнер строки, чтобы холст встал ровно по левому краю
+	canvasController.domElement.style.width = '100%';
+	canvasController.domElement.style.padding = '0';
+	canvasController.domElement.style.margin = '0';
+
+	// 5. Вставляем холст напрямую в корневой элемент контроллера (вместо labelPart)
+	canvasController.domElement.appendChild(canvas);
+
+	// Убедимся, что у самого холста сброшены внешние отступы
+	canvas.style.width = '100%';
+	canvas.style.marginLeft = '0';
+	canvas.style.padding = '0';
+	canvas.style.pointerEvents = 'auto'; // Возвращаем мышь холсту для интерактива
+/*
+	canvas.style.width = '100%'; // Ширина всегда равна родительскому элементу папки
+	canvas.style.display = 'block';
+	canvas.style.pointerEvents = 'auto'; // Возвращаем мышь холсту, если нужен интерактив
+
+	// Очищаем текст внутри labelPart и вставляем холст
+	labelPart.innerHTML = '';
+	labelPart.appendChild(canvas);
+//	createCanvas(labelPart, canvas);
+*/
+	
+	const THREE = three.THREE;
+
+	// 3. ИНИЦИАЛИЗАЦИЯ THREE.JS ДЛЯ ГРАФИКА
+	const scene = new THREE.Scene();
+	scene.background = new THREE.Color(0x1a1a1a); // Темный фон в цвет dat.gui
+
+	// Используем Ортографическую камеру (идеально для 2D графиков)
+	const camera = new THREE.OrthographicCamera(-10, 10, 5, -5, 0.1, 100);
+	camera.position.z = 10;
+
+	const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+
+	// Пример создания линии графика (синусоида)
+	const points = [];
+	for (let x = -10; x <= 10; x += 0.5) {
+		points.push(new THREE.Vector3(x, Math.sin(x) * 3, 0));
+	}
+	const geometry = new THREE.BufferGeometry().setFromPoints(points);
+	const material = new THREE.LineBasicMaterial({ color: 0x00ffcc, linewidth: 2 });
+	const line = new THREE.Line(geometry, material);
+	scene.add(line);
+
+	// 4. ФУНКЦИЯ ИЗМЕНЕНИЯ ВЫСОТЫ ИЗ ПРОГРАММЫ
+	function setGraphHeight(newHeightPx) {
+		// 1. Находим корневой элемент строки (в dat.gui это обычно тег <li>)
+		// и убираем жесткие ограничения высоты, которые ставит библиотека
+		const rowElement = canvasController.domElement.closest('li') || canvasController.domElement;
+		if (rowElement) {
+			rowElement.style.height = 'auto';
+			rowElement.style.lineHeight = 'normal'; // Сбрасываем центрирование текста dat.gui
+		}
+
+		// 2. Устанавливаем высоту для самого контейнера контроллера
+		canvasController.domElement.style.height = newHeightPx + 'px';
+
+		// 3. Получаем текущую ширину папки из DOM в пикселях
+		const widthPx = canvas.clientWidth;
+
+		// 4. Устанавливаем новые размеры рендерера Three.js
+		renderer.setSize(widthPx, newHeightPx, false);
+
+		// 5. Обновляем параметры камеры под новые пропорции
+		const aspect = widthPx / newHeightPx;
+		camera.left = -10 * aspect;
+		camera.right = 10 * aspect;
+		camera.updateProjectionMatrix();
+	}
+
+	// Задаем высоту (например, 150 пикселей) — теперь папка послушно растянется!
+	setGraphHeight(150);
+
+	// Задаем начальную высоту, например, 150px
+	setGraphHeight(150)
+	
+	// Отрендерить сцену
+	function animate() {
+		requestAnimationFrame(animate);
+		renderer.render(scene, camera);
+	}
+	animate();
+}
 
 /**
  * [Оценка равномерности распределения точек]{@link https://gemini.google.com/app/72b981da2d229516}
