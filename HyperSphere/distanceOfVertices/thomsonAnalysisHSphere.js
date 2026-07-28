@@ -16,6 +16,7 @@
 
 import * as utils from '../utilsHSphere.js'
 import three from '../../three.js'
+import { dat } from '../../dat/dat.module.js';
 
 let params, currentStep,
 	totalEnergyMin;//минимум потенциальной энергии. Если реальная энергия totalEnergy существенно выше totalEnergyMin (на 5-10% и более) и график перестал падать — вы гарантированно застряли в локальном минимуме, и итерационный процесс работает неэффективно.
@@ -109,16 +110,135 @@ function getTheoreticalMinEnergy4D(N = params.pointsPerStep) {
 
 	return calculatedEnergy * 2;//Непонятно почему надо умножать на 2. Тогда отклонение от минимума будет стремится к нулю
 }
-/*
-const createCanvas = (widget, graphCanvas) => {
-	widget.appendChild(graphCanvas);
+
+let lang;
+const localization = (languageCode) => {
+	if (lang) return;
+	lang = {
+		totalEnergyPercent:
+			`Total energy is the cumulative potential electrostatic energy of a system of interacting charges (points). Calculated via Coulomb's law as the sum of reciprocal distances (1/d) between all pairs of vertices, it acts as the primary metric for algorithmic convergence, reaching its theoretical minimum when points achieve optimal, uniform distribution across the hypersphere.
+Increasing from step to step:
+	Error in the force signs (points attract instead of repel) or the integration step (dt) is too large.
+TotalEnergy goes to infinity or is NaN:
+	Error in the calculation code, causing two points to occupy exactly the same coordinates (division by zero).
+	Check the random number generator or initialization.`,
+		deviationPercent:
+			`Variation coefficient (imbalance).
+The variation coefficient (deviationPercent) is high (e.g., > 15-20%):
+	The points are distributed randomly, and the lattice has not formed.
+	Most likely, the repulsive forces are not receiving enough iterations, or the velocity damping coefficient (DAMPING) is damping the motion too early.
+deviationPercent approaches 0% (e.g., < 2-5%):
+	The algorithm is working perfectly, the structure is symmetrical, and the points are distributed as evenly as possible.`,
+		meanD: `Average distance to nearest neighbor. Should gradually increase until it stabilizes.`,
+		stdDev: `Standard Deviation (SD): With each step of the algorithm, the stdDev value should tend to zero.`,
+		variance: `Variance (mean squared deviation). A measure of how widely the distances to neighbors of different points are "dispersed" relative to the calculated mean value (meanD)..`,
+	};
+	switch (languageCode) {
+		case 'ru'://Russian language
+			lang.totalEnergyPercent =
+				`Общая энергия — это суммарная потенциальная электростатическая энергия системы взаимодействующих зарядов (точек), рассчитываемая по закону Кулона как сумма обратных расстояний (1/d) между всеми парами точек. Она служит главным показателем сходимости алгоритма: при оптимальном и равномерном распределении точек на гиперсфере значение общей энергии стремится к своему теоретическому минимуму
+Растет от шага к шагу:
+ 	Ошибка в знаках сил (точки притягиваются вместо отталкивания) либо слишком большой шаг интегрирования (dt).
+Энергия totalEnergy уходит в бесконечность или NaN:
+ 	Ошибка в коде вычислений, при которой две точки заняли абсолютно одинаковые координаты (деление на ноль).
+ 	Проверьте генератор случайных чисел или начальную инициализацию.`;
+			lang.deviationPercent =
+				`Коэффициент вариации (дисбаланс).
+Коэффициент вариации (deviationPercent) высокий (например, > 15-20%):
+ 	Точки распределены хаотично, решетка не сформировалась.
+ 	Скорее всего, силам отталкивания не хватает итераций, либо коэффициент затухания скорости (DAMPING) гасит движение слишком рано.
+deviationPercent стремится к 0% (например, < 2-5%):
+ 	Алгоритм работает отлично, структура симметрична, точки распределились максимально равномерно.`;
+			lang.meanD = `Среднее расстояние до ближайшего соседа. Должно постепенно расти, пока не стабилизируется.`;
+			lang.stdDev = `Среднеквадратичное отклонение (СКО): С каждым шагом алгоритма значение stdDev должно стремиться к нулю`;
+			lang.variance = `Дисперсия(средний квадрат отклонения). Мера того, насколько сильно расстояния до соседей у разных точек "разбросаны" относительно вычисленного среднего значения meanD`;
+			break;
+	}
+	return lang;
 }
-*/
-export function graphFolderChild(folder) {
+
+const tomsonAnalysisRes = {}, aTomsonAnalysisRes = [];
+
+export async function timeAnalysis(fThomsonAnalysis, elStep, stepFormat, classSettings) {
+	const timeId = classSettings.settings.guiPoints.timeId, anglesLength = classSettings.settings.object.geometry.angles.length;
+	aTomsonAnalysisRes[timeId] ||= {};
+	//Копируем результаты анализа в tomsonAnalysisRes
+	Object.assign(tomsonAnalysisRes, Object.keys(aTomsonAnalysisRes[timeId]).length === 0 ?
+		//Если результаты анализа не готовы, то вычисляем их.
+		await evaluateDistribution(timeId, {
+			pointsPerStep: anglesLength,
+			//								angles: classSettings.settings.object.geometry.angles,
+			position: classSettings.settings.bufferGeometry.attributes.position,
+			elStep: elStep,
+			stepFormat: stepFormat + anglesLength,
+			tomsonAnalysisRes: aTomsonAnalysisRes[timeId],
+		}) :
+		//Результаты анализа уже есть в aTomsonAnalysisRes[timeId]
+		aTomsonAnalysisRes[timeId]);
+
+	const createController = (property, title, name) => {
+		if (fThomsonAnalysis.__controllers.find(c => c.property === property)) return;
+
+		// 2. Добавляем свойство в папку и заставляем GUI следить за ним (.listen())
+
+		const controller = fThomsonAnalysis.add(tomsonAnalysisRes, property).listen();
+
+		// 3. БЛОКИРОВКА РЕДАКТИРОВАНИЯ:
+		// Запрещаем любые клики и ввод в область этого контроллера
+		controller.domElement.style.pointerEvents = 'none';
+
+		// Опционально: делаем поле ввода визуально неотличимым от обычного текста
+		const inputField = controller.domElement.querySelector('input');
+		if (inputField) {
+			inputField.style.background = 'transparent';
+			inputField.style.border = 'none';
+			inputField.style.color = '#fff'; // Оставляем белый цвет текста
+			inputField.style.textShadow = 'none';
+		}
+
+		// Записываем подсказку в атрибут title всего контейнера строки
+		dat.controllerNameAndTitle(controller, name, title);
+
+		// Заставляем браузер правильно обрабатывать переносы строк (\n) внутри всплывающего окна
+		controller.domElement.style.whiteSpace = 'pre-line';
+
+		return controller;
+	}
+	const lang = localization(classSettings.settings.options.getLanguageCode());
+	createController('totalEnergyPercent', lang.totalEnergyPercent);
+	createController('deviationPercent', lang.deviationPercent);
+	createController('meanD', lang.meanD);
+	createController('stdDev', lang.stdDev);
+	createController('variance', lang.variance);
+}
+
+/**
+ * Adds to the <b>dat.gui</b> folder the graphs of the analysis of the results of solving the Thomson problem.
+ * @param {GUI} folder <b>dat.gui</b> folder.
+ */
+export async function graphFolderChild(folder, classSettings) {
+
+	//Заполняем массив aTomsonAnalysisRes результатами анализа
+	const anglesLength = classSettings.settings.object.geometry.angles.length,
+		position = classSettings.settings.bufferGeometry.attributes.position;
+	for (let timeId = 0; timeId < classSettings.settings.options.playerOptions.marks; timeId++) {
+		if (aTomsonAnalysisRes[timeId] != undefined) continue;//Этот элемент массива был получен ранее, когда пользователь открыл папку Thomson Analysis
+		aTomsonAnalysisRes[timeId] = {};
+		await evaluateDistribution(timeId, {
+			pointsPerStep: anglesLength,
+			position: position,
+			//			elStep: elStep,
+			//			stepFormat: stepFormat + anglesLength,
+			tomsonAnalysisRes: aTomsonAnalysisRes[timeId],
+		});
+	}
+
+	const displayProperty = 'totalEnergy';
 
 	// 1. Создаем пустой контроллер-контейнер (привязываем к пустой функции)
 	const dummyObj = { totalEnergy: function () { } };
-	const canvasController = folder.add(dummyObj, 'totalEnergy');
+	const canvasController = folder.add(dummyObj, displayProperty);
+	dat.controllerNameAndTitle(canvasController, undefined, localization(classSettings.settings.options.getLanguageCode()).totalEnergyPercent);
 
 	// Отключаем клики по самой строке GUI, чтобы не триггерить "кнопку"
 	canvasController.domElement.style.pointerEvents = 'none';
@@ -130,11 +250,6 @@ export function graphFolderChild(folder) {
 	// Растягиваем текстовый блок на 100% ширины папки
 	const labelPart = canvasController.domElement.querySelector('div');
 	if (labelPart) {
-/*
-		labelPart.style.width = '100%';
-		labelPart.style.float = 'none';
-		labelPart.style.padding = '0'; // Убираем отступы для чистого вывода холста
-*/
 		labelPart.style.display = 'none';
 	}
 	
@@ -154,17 +269,8 @@ export function graphFolderChild(folder) {
 	canvas.style.marginLeft = '0';
 	canvas.style.padding = '0';
 	canvas.style.pointerEvents = 'auto'; // Возвращаем мышь холсту для интерактива
-/*
-	canvas.style.width = '100%'; // Ширина всегда равна родительскому элементу папки
-	canvas.style.display = 'block';
-	canvas.style.pointerEvents = 'auto'; // Возвращаем мышь холсту, если нужен интерактив
-
-	// Очищаем текст внутри labelPart и вставляем холст
-	labelPart.innerHTML = '';
-	labelPart.appendChild(canvas);
-//	createCanvas(labelPart, canvas);
-*/
 	
+	//drawAnalysisGraph(aTomsonAnalysisRes, displayProperty, canvas);
 	const THREE = three.THREE;
 
 	// 3. ИНИЦИАЛИЗАЦИЯ THREE.JS ДЛЯ ГРАФИКА
@@ -186,8 +292,63 @@ export function graphFolderChild(folder) {
 	const material = new THREE.LineBasicMaterial({ color: 0x00ffcc, linewidth: 2 });
 	const line = new THREE.Line(geometry, material);
 	scene.add(line);
-
+	
 	// 4. ФУНКЦИЯ ИЗМЕНЕНИЯ ВЫСОТЫ ИЗ ПРОГРАММЫ
+	// Переменная для хранения текущей заданной высоты (чтобы использовать её при ресайзе)
+	let currentTargetHeight = 150;
+
+	function setGraphHeight(newHeightPx) {
+		currentTargetHeight = newHeightPx; // Запоминаем высоту
+
+		// 1. Сбрасываем ограничения высоты у строки (li)
+		const rowElement = canvasController.domElement.closest('li') || canvasController.domElement;
+		if (rowElement) {
+			rowElement.style.height = 'auto';
+			rowElement.style.lineHeight = 'normal';
+		}
+
+		// 2. Устанавливаем фиксированную высоту для контейнера контроллера
+		canvasController.domElement.style.height = currentTargetHeight + 'px';
+
+		// 3. Получаем актуальную ширину папки из DOM
+		const widthPx = canvas.clientWidth;
+
+		// 4. Обновляем размеры рендерера Three.js
+		renderer.setSize(widthPx, currentTargetHeight, false);
+
+		// 5. Обновляем параметры камеры под новые пропорции
+		const aspect = widthPx / currentTargetHeight;
+		camera.left = -10 * aspect;
+		camera.right = 10 * aspect;
+		camera.updateProjectionMatrix();
+	}
+
+	// 6. АВТОПДСТРОЙКА ПРИ РАСТЯГИВАНИИ МЫШКОЙ (ResizeObserver)
+	// Этот объект следит за изменением размеров контейнера строки в реальном времени
+	const resizeObserver = new ResizeObserver((entries) => {
+		for (let entry of entries) {
+			// Получаем новую ширину из параметров изменения
+			const newWidth = entry.contentRect.width;
+
+			// Если ширина изменилась и она больше 0
+			if (newWidth > 0) {
+				// Перерендериваем Three.js с НОВОЙ шириной, но СТАРОЙ высотой
+				renderer.setSize(newWidth, currentTargetHeight, false);
+/*
+				// Корректируем пропорции камеры, чтобы график не сжимался/не растягивался по горизонтали
+				const aspect = newWidth / currentTargetHeight;
+				camera.left = -10 * aspect;
+				camera.right = 10 * aspect;
+				camera.updateProjectionMatrix();
+*/				
+				
+			}
+		}
+	});
+
+	// Запускаем отслеживание для контейнера нашего контроллера
+	resizeObserver.observe(canvasController.domElement);
+/*
 	function setGraphHeight(newHeightPx) {
 		// 1. Находим корневой элемент строки (в dat.gui это обычно тег <li>)
 		// и убираем жесткие ограничения высоты, которые ставит библиотека
@@ -211,10 +372,9 @@ export function graphFolderChild(folder) {
 		camera.left = -10 * aspect;
 		camera.right = 10 * aspect;
 		camera.updateProjectionMatrix();
+		
 	}
-
-	// Задаем высоту (например, 150 пикселей) — теперь папка послушно растянется!
-	setGraphHeight(150);
+*/
 
 	// Задаем начальную высоту, например, 150px
 	setGraphHeight(150)
@@ -225,6 +385,7 @@ export function graphFolderChild(folder) {
 		renderer.render(scene, camera);
 	}
 	animate();
+		
 }
 
 /**
@@ -383,8 +544,8 @@ export async function evaluateDistribution(stepIndex = 0, paramsNew) {
 
 function getTotalEnergyPercent(currentVal) { return ` of ${totalEnergyMin.toFixed(4)} ${(((currentVal - totalEnergyMin) / totalEnergyMin) * 100).toFixed(1)}%` }
 
-function drawAnalysisGraph(aAnalysis, propertyKey) {
-	const canvas = document.getElementById('analysisGraphCanvas');
+function drawAnalysisGraph(aAnalysis, propertyKey, canvas) {
+	canvas ||= document.getElementById('analysisGraphCanvas');
 	if (!canvas) return;
 	const ctx = canvas.getContext('2d');
 
