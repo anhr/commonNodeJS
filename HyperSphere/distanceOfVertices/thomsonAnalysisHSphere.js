@@ -268,9 +268,10 @@ export async function graphFolderChild(folder, classSettings) {
 	canvas.style.width = '100%';
 	canvas.style.marginLeft = '0';
 	canvas.style.padding = '0';
+	canvas.style.display = 'block'; // Предотвращаем лишние нижние отступы (inline-gap)
 	canvas.style.pointerEvents = 'auto'; // Возвращаем мышь холсту для интерактива
 	
-	//drawAnalysisGraph(aTomsonAnalysisRes, displayProperty, canvas);
+/*	
 	const THREE = three.THREE;
 
 	// 3. ИНИЦИАЛИЗАЦИЯ THREE.JS ДЛЯ ГРАФИКА
@@ -292,7 +293,7 @@ export async function graphFolderChild(folder, classSettings) {
 	const material = new THREE.LineBasicMaterial({ color: 0x00ffcc, linewidth: 2 });
 	const line = new THREE.Line(geometry, material);
 	scene.add(line);
-	
+*/	
 	// 4. ФУНКЦИЯ ИЗМЕНЕНИЯ ВЫСОТЫ ИЗ ПРОГРАММЫ
 	// Переменная для хранения текущей заданной высоты (чтобы использовать её при ресайзе)
 	let currentTargetHeight = 150;
@@ -309,10 +310,11 @@ export async function graphFolderChild(folder, classSettings) {
 
 		// 2. Устанавливаем фиксированную высоту для контейнера контроллера
 		canvasController.domElement.style.height = currentTargetHeight + 'px';
+		canvas.style.height = currentTargetHeight + 'px'; // <-- Важно: фиксируем CSS-высоту холста!
+/*
 
 		// 3. Получаем актуальную ширину папки из DOM
 		const widthPx = canvas.clientWidth;
-
 		// 4. Обновляем размеры рендерера Three.js
 		renderer.setSize(widthPx, currentTargetHeight, false);
 
@@ -321,6 +323,9 @@ export async function graphFolderChild(folder, classSettings) {
 		camera.left = -10 * aspect;
 		camera.right = 10 * aspect;
 		camera.updateProjectionMatrix();
+*/
+		// Перерисовываем график под новую высоту
+		drawAnalysisGraph(aTomsonAnalysisRes, displayProperty, canvas);
 	}
 
 	// 6. АВТОПДСТРОЙКА ПРИ РАСТЯГИВАНИИ МЫШКОЙ (ResizeObserver)
@@ -332,17 +337,21 @@ export async function graphFolderChild(folder, classSettings) {
 
 			// Если ширина изменилась и она больше 0
 			if (newWidth > 0) {
+				// При изменении ширины папки просто перерисовываем 2D-график.
+				// Функция drawAnalysisGraph возьмет актуальную ширину, но сохранит высоту.
+				drawAnalysisGraph(aTomsonAnalysisRes, displayProperty, canvas);
+/*
 				// Перерендериваем Three.js с НОВОЙ шириной, но СТАРОЙ высотой
 				renderer.setSize(newWidth, currentTargetHeight, false);
-/*
+				
 				// Корректируем пропорции камеры, чтобы график не сжимался/не растягивался по горизонтали
 				const aspect = newWidth / currentTargetHeight;
 				camera.left = -10 * aspect;
 				camera.right = 10 * aspect;
 				camera.updateProjectionMatrix();
 */				
-				
 			}
+				
 		}
 	});
 
@@ -378,13 +387,14 @@ export async function graphFolderChild(folder, classSettings) {
 
 	// Задаем начальную высоту, например, 150px
 	setGraphHeight(150)
-	
+/*	
 	// Отрендерить сцену
 	function animate() {
 		requestAnimationFrame(animate);
 		renderer.render(scene, camera);
 	}
 	animate();
+*/		
 		
 }
 
@@ -549,8 +559,14 @@ function drawAnalysisGraph(aAnalysis, propertyKey, canvas) {
 	if (!canvas) return;
 	const ctx = canvas.getContext('2d');
 
-	// АДАПТИВНОЕ РАЗРЕШЕНИЕ: подгоняем внутренние пиксели холста под его текущий CSS-размер на экране
+	// АДАПТИВНОЕ РАЗРЕШЕНИЕ:
+	// Берем реальную ширину из DOM, а высоту берем строго из clientHeight (или 150 по умолчанию),
+	// чтобы она НЕ скакала вслед за пропорциями.	const rect = canvas.getBoundingClientRect();
 	const rect = canvas.getBoundingClientRect();
+	const targetWidth = Math.floor(rect.width);
+	const targetHeight = Math.floor(canvas.clientHeight || rect.height || 150);
+
+	// Обновляем внутренний размер буфера холста только при реальном изменении
 	if (canvas.width !== rect.width || canvas.height !== rect.height) {
 		canvas.width = rect.width;
 		canvas.height = rect.height;
@@ -558,6 +574,9 @@ function drawAnalysisGraph(aAnalysis, propertyKey, canvas) {
 
 	const width = canvas.width;
 	const height = canvas.height;
+
+	// Если ширина еще не просчиталась DOM-ом (например, папка свернута)
+	if (width === 0 || height === 0) return;
 
 	// Очищаем холст
 	ctx.clearRect(0, 0, width, height);
