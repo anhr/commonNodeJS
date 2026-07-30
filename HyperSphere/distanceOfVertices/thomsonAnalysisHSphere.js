@@ -216,12 +216,14 @@ export async function timeAnalysis(fThomsonAnalysis, elStep, stepFormat, classSe
  * Adds to the <b>dat.gui</b> folder the graphs of the analysis of the results of solving the Thomson problem.
  * @param {GUI} folder <b>dat.gui</b> folder.
  */
-export async function graphFolderChild(folder, classSettings, textController) {
+export async function graphFolderChild(folder, classSettings, textController, timeIdController, createLabel) {
 
+	const sTimeID = 'Time ID: ';
 	//Заполняем массив aTomsonAnalysisRes результатами анализа
 	const anglesLength = classSettings.settings.object.geometry.angles.length,
-		position = classSettings.settings.bufferGeometry.attributes.position;
-	for (let timeId = 0; timeId < classSettings.settings.options.playerOptions.marks; timeId++) {
+		position = classSettings.settings.bufferGeometry.attributes.position,
+		marks = classSettings.settings.options.playerOptions.marks;
+	for (let timeId = 0; timeId < marks; timeId++) {
 		if (aTomsonAnalysisRes[timeId] != undefined) continue;//Этот элемент массива был получен ранее, когда пользователь открыл папку Thomson Analysis
 		aTomsonAnalysisRes[timeId] = {};
 		await evaluateDistribution(timeId, {
@@ -231,15 +233,70 @@ export async function graphFolderChild(folder, classSettings, textController) {
 			stepFormat: 'Step: %step / ' + anglesLength,
 			tomsonAnalysisRes: aTomsonAnalysisRes[timeId],
 		});
+		if (timeIdController) timeIdController.name(sTimeID + timeId + ' / ' + marks);
+	}
+	function getLiEl(controller) {
+
+		var el = controller.domElement;
+		while (el.tagName.toUpperCase() !== "LI") el = el.parentElement;
+		return el;
+
 	}
 
+	//dislay element
+
+	function dislayEl( controller, displayController ) {
+
+		if ( controller === undefined )
+			return;
+		if ( typeof displayController === "boolean" )
+			displayController = displayController ? 'block' : 'none';
+		else if ( displayController === undefined )
+			displayController = 'none';
+		else if ( typeof displayController !== "string" )
+			displayController = 'block';
+		getLiEl(controller).style.display = displayController;
+
+	}
+	if (textController) dislayEl(textController, 'none');
+	if (timeIdController) dislayEl(timeIdController, 'none');;
+
 	const displayProperty = 'totalEnergy';
-	
+
+/*
 	const labelObj = {};
-	const info = aTomsonAnalysisRes[aTomsonAnalysisRes.length - 1][displayProperty];
 	labelObj[displayProperty] = info.toFixed(4) + (displayProperty === 'totalEnergy' ? getTotalEnergyPercent(info) : '');
 	const labelController = folder.add(labelObj, displayProperty);
+*/
+	if (createLabel) {
+		const info = aTomsonAnalysisRes[aTomsonAnalysisRes.length - 1][displayProperty];
+		const labelController = createLabel(sTimeID);
+		labelController.name(displayProperty + ': ' + info.toFixed(4) + (displayProperty === 'totalEnergy' ? getTotalEnergyPercent(info) : ''));
+	}
+/*	
+	const labelObj = { fakeFunction: function () { } };
+	const labelController = folder.add(labelObj, 'fakeFunction');
 
+	// 2. Отключаем клики, чтобы строка не реагировала на нажатия и не вела себя как кнопка
+	labelController.domElement.style.pointerEvents = 'none';
+
+	// 3. Прячем правую часть (где у кнопок обычно стрелочка или пустая зона)
+	const rightPartLabel = labelController.domElement.querySelector('.c');
+	if (rightPartLabel) {
+		rightPartLabel.style.display = 'none';
+	}
+	
+	const firstElement = labelController.__li.firstElementChild.firstElementChild;
+
+	//Растягиваем текст на всю длинну контроллера.
+	//Не могу это сделать сразу после создания textController потому что firstElementChild еще не создан
+	firstElement.style.width = '100%';
+	firstElement.style.float = 'none';
+	firstElement.style.maxWidth = '100%'; // На случай жестких ограничений в стилях
+
+	labelController.name(displayProperty + ': ' + info.toFixed(4) + (displayProperty === 'totalEnergy' ? getTotalEnergyPercent(info) : ''));
+*/	
+/*	
 	// Находим поле ввода внутри контроллера и блокируем его
 	const inputField = labelController.domElement.querySelector('input');
 	if (inputField) {
@@ -247,8 +304,9 @@ export async function graphFolderChild(folder, classSettings, textController) {
 		inputField.style.opacity = '0.7';            // Визуально делает его "выключенным"
 		inputField.style.cursor = 'not-allowed';     // Меняет курсор мыши при наведении
 	}
+*/	
 
-	dat.controllerNameAndTitle(labelController, undefined, localization(classSettings.settings.options.getLanguageCode()).totalEnergyPercent);
+	//dat.controllerNameAndTitle(labelController, undefined, localization(classSettings.settings.options.getLanguageCode()).totalEnergyPercent);
 
 	// 1. Создаем пустой контроллер-контейнер (привязываем к пустой функции)
 	const dummyObj = { totalEnergy: function () { } };
