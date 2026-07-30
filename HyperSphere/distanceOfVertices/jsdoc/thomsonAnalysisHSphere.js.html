@@ -44,6 +44,7 @@
 
 import * as utils from '../utilsHSphere.js'
 import three from '../../three.js'
+import { dat } from '../../dat/dat.module.js';
 
 let params, currentStep,
 	totalEnergyMin;//минимум потенциальной энергии. Если реальная энергия totalEnergy существенно выше totalEnergyMin (на 5-10% и более) и график перестал падать — вы гарантированно застряли в локальном минимуме, и итерационный процесс работает неэффективно.
@@ -137,71 +138,252 @@ function getTheoreticalMinEnergy4D(N = params.pointsPerStep) {
 
 	return calculatedEnergy * 2;//Непонятно почему надо умножать на 2. Тогда отклонение от минимума будет стремится к нулю
 }
-/**
- * Возвращает точный или приблизительный теоретический минимум энергии Томсона
- * для N точек на единичной 4D гиперсфере (хордовое расстояние, потенциал 1/d).
- * @param {number} [N=params.pointsPerStep] - количество точек
- * Включает точные аналитические решения для правильных 4D политопов.
- * @returns {number} минимум потенциальной энергии
- */
-/*
-function getTheoreticalMinEnergy4D(N = params.pointsPerStep) {
-    if (N &lt;= 1) return 0;
-    
-    // --- ТОЧНЫЕ АНАЛИТИЧЕСКИЕ МИНИМУМЫ ДЛЯ СИММЕТРИЧНЫХ 4D СТРУКТУР ---
-    
-    // N = 2: Две точки-антиподы (расстояние d = 2.0)
-    if (N === 2) return 0.5; 
-    
-    // N = 5: Пятиячейник (4-мерный симплекс). 
-    // Все пары точек (всего 10 пар) находятся на расстоянии d = sqrt(5/4)
-    if (N === 5) {
-        const d = Math.sqrt(5 / 4);
-        return 10 / d; // ~8.94427
-    }
-    
-    // N = 8: Шестнадцатиячейник (4D Кросс-политоп / Ортоплекс).
-    // Из 28 пар: 4 пары — антиподы (d = 2), 24 пары — смежные вершины (d = sqrt(2))
-    if (N === 8) {
-        return (4 / 2.0) + (24 / Math.sqrt(2)); // ~18.97056
-    }
-    
-    // N = 24: Двадцатьчетырёхячейник (24-cell).
-    // Высокосимметричный 4D-политоп. Общая энергия его 276 межточечных связей
-    // рассчитывается строго через геометрию его радиус-векторов:
-    if (N === 24) {
-        // Сумма обратных расстояний от одной вершины до всех остальных умноженная на 24 и деленная на 2
-        return 12 * (1/2.0 + 8/1.0 + 12/Math.sqrt(2) + 2/Math.sqrt(3)); // ~217.17691
-    }
-    
-    // N = 120: Шестисотиячейник (600-cell).
-    // Высшая точка симметрии в 4D. Аналог икосаэдра. У него 7140 парных взаимодействий.
-    // Его точная энергия Кулона равна:
-    if (N === 120) {
-        const золотоеСечение = (1 + Math.sqrt(5)) / 2;
-        // Точная сумма, полученная из инвариантов группы симметрий H4
-        return 60 * (
-            1/2.0 + 
-            12 / золотоеСечение + 
-            20 / Math.sqrt(3) + 
-            12 * золотоеСечение + 
-            30 / Math.sqrt(2) + 
-            20 * (золотоеСечение / Math.sqrt(3)) + 
-            12 * (Math.pow(золотоеСечение, 2) / Math.sqrt(5))
-        ); // ~6135.023
-    }
 
-    // --- АСИМПТОТИЧЕСКАЯ ОЦЕНКА ДЛЯ ВСЕХ ОСТАЛЬНЫХ ПРОИЗВОЛЬНЫХ N ---
-    
-    // Ведущий член макроскопического распределения на 3-сфере (S^3)
-    const leadingTerm = (4 / (3 * Math.PI)) * (N * (N - 1)) / 2;
-    
-    // Дискретная поправка на "кристаллизацию" локальных ячеек (коэффициент для 4D)
-    const correction = -0.67 * Math.pow(N, 4/3); 
-    
-    return leadingTerm + correction;
+let lang;
+const localization = (languageCode) => {
+	if (lang) return lang;
+	lang = {
+		totalEnergyPercent:
+			`Total energy is the cumulative potential electrostatic energy of a system of interacting charges (points). Calculated via Coulomb's law as the sum of reciprocal distances (1/d) between all pairs of vertices, it acts as the primary metric for algorithmic convergence, reaching its theoretical minimum when points achieve optimal, uniform distribution across the hypersphere.
+Increasing from step to step:
+	Error in the force signs (points attract instead of repel) or the integration step (dt) is too large.
+TotalEnergy goes to infinity or is NaN:
+	Error in the calculation code, causing two points to occupy exactly the same coordinates (division by zero).
+	Check the random number generator or initialization.`,
+		deviationPercent:
+			`Variation coefficient (imbalance).
+The variation coefficient (deviationPercent) is high (e.g., > 15-20%):
+	The points are distributed randomly, and the lattice has not formed.
+	Most likely, the repulsive forces are not receiving enough iterations, or the velocity damping coefficient (DAMPING) is damping the motion too early.
+deviationPercent approaches 0% (e.g., &lt; 2-5%):
+	The algorithm is working perfectly, the structure is symmetrical, and the points are distributed as evenly as possible.`,
+		meanD: `Average distance to nearest neighbor. Should gradually increase until it stabilizes.`,
+		stdDev: `Standard Deviation (SD): With each step of the algorithm, the stdDev value should tend to zero.`,
+		variance: `Variance (mean squared deviation). A measure of how widely the distances to neighbors of different points are "dispersed" relative to the calculated mean value (meanD)..`,
+	};
+	switch (languageCode) {
+		case 'ru'://Russian language
+			lang.totalEnergyPercent =
+				`Общая энергия — это суммарная потенциальная электростатическая энергия системы взаимодействующих зарядов (точек), рассчитываемая по закону Кулона как сумма обратных расстояний (1/d) между всеми парами точек. Она служит главным показателем сходимости алгоритма: при оптимальном и равномерном распределении точек на гиперсфере значение общей энергии стремится к своему теоретическому минимуму
+Растет от шага к шагу:
+ 	Ошибка в знаках сил (точки притягиваются вместо отталкивания) либо слишком большой шаг интегрирования (dt).
+Энергия totalEnergy уходит в бесконечность или NaN:
+ 	Ошибка в коде вычислений, при которой две точки заняли абсолютно одинаковые координаты (деление на ноль).
+ 	Проверьте генератор случайных чисел или начальную инициализацию.`;
+			lang.deviationPercent =
+				`Коэффициент вариации (дисбаланс).
+Коэффициент вариации (deviationPercent) высокий (например, > 15-20%):
+ 	Точки распределены хаотично, решетка не сформировалась.
+ 	Скорее всего, силам отталкивания не хватает итераций, либо коэффициент затухания скорости (DAMPING) гасит движение слишком рано.
+deviationPercent стремится к 0% (например, &lt; 2-5%):
+ 	Алгоритм работает отлично, структура симметрична, точки распределились максимально равномерно.`;
+			lang.meanD = `Среднее расстояние до ближайшего соседа. Должно постепенно расти, пока не стабилизируется.`;
+			lang.stdDev = `Среднеквадратичное отклонение (СКО): С каждым шагом алгоритма значение stdDev должно стремиться к нулю`;
+			lang.variance = `Дисперсия(средний квадрат отклонения). Мера того, насколько сильно расстояния до соседей у разных точек "разбросаны" относительно вычисленного среднего значения meanD`;
+			break;
+	}
+	return lang;
 }
-*/
+
+const tomsonAnalysisRes = {}, aTomsonAnalysisRes = [];
+
+export async function timeAnalysis(fThomsonAnalysis, elStep, stepFormat, classSettings) {
+	const timeId = classSettings.settings.guiPoints.timeId, anglesLength = classSettings.settings.object.geometry.angles.length;
+	aTomsonAnalysisRes[timeId] ||= {};
+	//Копируем результаты анализа в tomsonAnalysisRes
+	Object.assign(tomsonAnalysisRes, Object.keys(aTomsonAnalysisRes[timeId]).length === 0 ?
+		//Если результаты анализа не готовы, то вычисляем их.
+		await evaluateDistribution(timeId, {
+			pointsPerStep: anglesLength,
+			//								angles: classSettings.settings.object.geometry.angles,
+			position: classSettings.settings.bufferGeometry.attributes.position,
+			elStep: elStep,
+			stepFormat: stepFormat + anglesLength,
+			tomsonAnalysisRes: aTomsonAnalysisRes[timeId],
+		}) :
+		//Результаты анализа уже есть в aTomsonAnalysisRes[timeId]
+		aTomsonAnalysisRes[timeId]);
+
+	const createController = (property, title, name) => {
+		if (fThomsonAnalysis.__controllers.find(c => c.property === property)) return;
+
+		// 2. Добавляем свойство в папку и заставляем GUI следить за ним (.listen())
+
+		const controller = fThomsonAnalysis.add(tomsonAnalysisRes, property).listen();
+
+		// 3. БЛОКИРОВКА РЕДАКТИРОВАНИЯ:
+		// Запрещаем любые клики и ввод в область этого контроллера
+		controller.domElement.style.pointerEvents = 'none';
+
+		// Опционально: делаем поле ввода визуально неотличимым от обычного текста
+		const inputField = controller.domElement.querySelector('input');
+		if (inputField) {
+			inputField.style.background = 'transparent';
+			inputField.style.border = 'none';
+			inputField.style.color = '#fff'; // Оставляем белый цвет текста
+			inputField.style.textShadow = 'none';
+		}
+
+		// Записываем подсказку в атрибут title всего контейнера строки
+		dat.controllerNameAndTitle(controller, name, title);
+
+		// Заставляем браузер правильно обрабатывать переносы строк (\n) внутри всплывающего окна
+		controller.domElement.style.whiteSpace = 'pre-line';
+
+		return controller;
+	}
+	const lang = localization(classSettings.settings.options.getLanguageCode());
+	createController('totalEnergyPercent', lang.totalEnergyPercent);
+	createController('deviationPercent', lang.deviationPercent);
+	createController('meanD', lang.meanD);
+	createController('stdDev', lang.stdDev);
+	createController('variance', lang.variance);
+}
+
+/**
+ * Adds to the &lt;b>dat.gui&lt;/b> folder the graphs of the analysis of the results of solving the Thomson problem.
+ * @param {GUI} folder &lt;b>dat.gui&lt;/b> folder.
+ * @param {object} classSettings &lt;a href="../../jsdoc/module-HyperSphere-HyperSphere.html" target="_blank">HyperSphere classSettings&lt;/a>.
+ * @param {FunctionController} textController Displays the current step of analysis.
+ * @param {FunctionController} timeIdController Displays the current timeID of the &lt;a href="../../../player/jsdoc/" target="_blank">Player&lt;/a>.
+ * @param {Function} createLabel Creates a controller to display the analysis results.
+ */
+export async function graphFolderChild(folder, classSettings, textController, timeIdController, createLabel) {
+
+	const sTimeID = 'Time ID: ';
+	//Заполняем массив aTomsonAnalysisRes результатами анализа
+	const anglesLength = classSettings.settings.object.geometry.angles.length,
+		position = classSettings.settings.bufferGeometry.attributes.position,
+		marks = classSettings.settings.options.playerOptions.marks;
+	for (let timeId = 0; timeId &lt; marks; timeId++) {
+		if (aTomsonAnalysisRes[timeId] != undefined) continue;//Этот элемент массива был получен ранее, когда пользователь открыл папку Thomson Analysis
+		aTomsonAnalysisRes[timeId] = {};
+		await evaluateDistribution(timeId, {
+			pointsPerStep: anglesLength,
+			position: position,
+			elStep: textController,//.domElement,
+			stepFormat: 'Step: %step / ' + anglesLength,
+			tomsonAnalysisRes: aTomsonAnalysisRes[timeId],
+		});
+		if (timeIdController) timeIdController.name(sTimeID + timeId + ' / ' + marks);
+	}
+	function getLiEl(controller) {
+
+		var el = controller.domElement;
+		while (el.tagName.toUpperCase() !== "LI") el = el.parentElement;
+		return el;
+
+	}
+
+	//dislay element
+
+	function dislayEl( controller, displayController ) {
+
+		if ( controller === undefined )
+			return;
+		if ( typeof displayController === "boolean" )
+			displayController = displayController ? 'block' : 'none';
+		else if ( displayController === undefined )
+			displayController = 'none';
+		else if ( typeof displayController !== "string" )
+			displayController = 'block';
+		getLiEl(controller).style.display = displayController;
+
+	}
+	if (textController) dislayEl(textController, 'none');
+	if (timeIdController) dislayEl(timeIdController, 'none');;
+
+	const displayProperty = 'totalEnergy';
+
+	if (createLabel) {
+		const info = aTomsonAnalysisRes[aTomsonAnalysisRes.length - 1][displayProperty];
+		const labelController = createLabel(sTimeID);
+		labelController.name(displayProperty + ': ' + info.toFixed(4) + (displayProperty === 'totalEnergy' ? getTotalEnergyPercent(info) : ''));
+	}
+
+	// 1. Создаем пустой контроллер-контейнер (привязываем к пустой функции)
+	const dummyObj = { totalEnergy: function () { } };
+	const canvasController = folder.add(dummyObj, displayProperty);
+	canvasController.name('');
+
+	// Отключаем клики по самой строке GUI, чтобы не триггерить "кнопку"
+	canvasController.domElement.style.pointerEvents = 'none';
+
+	// Скрываем правую часть управления dat.gui
+	const rightPart = canvasController.domElement.querySelector('.c') || canvasController.domElement.querySelector('.widget');
+	if (rightPart) rightPart.style.display = 'none';
+
+	// Растягиваем текстовый блок на 100% ширины папки
+	const labelPart = canvasController.domElement.querySelector('div');
+	if (labelPart) {
+		labelPart.style.width = '100%';
+		labelPart.style.float = 'none';
+	}
+	
+	// 2. Создаем HTML-холст и встраиваем его внутрь контроллера
+	const canvas = document.createElement('canvas');
+
+	// 4. Настраиваем сам контейнер строки, чтобы холст встал ровно по левому краю
+	canvasController.domElement.style.width = '100%';
+	canvasController.domElement.style.padding = '0';
+	canvasController.domElement.style.margin = '0';
+
+	// 5. Вставляем холст напрямую в корневой элемент контроллера (вместо labelPart)
+	canvasController.domElement.appendChild(canvas);
+
+	// Убедимся, что у самого холста сброшены внешние отступы
+	canvas.style.width = '100%';
+	canvas.style.marginLeft = '0';
+	canvas.style.padding = '0';
+	canvas.style.display = 'block'; // Предотвращаем лишние нижние отступы (inline-gap)
+	canvas.style.pointerEvents = 'auto'; // Возвращаем мышь холсту для интерактива
+	
+	// 4. ФУНКЦИЯ ИЗМЕНЕНИЯ ВЫСОТЫ ИЗ ПРОГРАММЫ
+	// Переменная для хранения текущей заданной высоты (чтобы использовать её при ресайзе)
+	let currentTargetHeight = 150;
+
+	function setGraphHeight(newHeightPx) {
+		currentTargetHeight = newHeightPx; // Запоминаем высоту
+
+		// 1. Сбрасываем ограничения высоты у строки (li)
+		const rowElement = canvasController.domElement.closest('li') || canvasController.domElement;
+		if (rowElement) {
+			rowElement.style.height = 'auto';
+			rowElement.style.lineHeight = 'normal';
+		}
+
+		// 2. Устанавливаем фиксированную высоту для контейнера контроллера
+		canvasController.domElement.style.height = currentTargetHeight + 'px';
+		canvas.style.height = currentTargetHeight + 'px'; // &lt;-- Важно: фиксируем CSS-высоту холста!
+
+		// Перерисовываем график под новую высоту
+		drawAnalysisGraph(aTomsonAnalysisRes, displayProperty, canvas, false);
+	}
+
+	// 6. АВТОПДСТРОЙКА ПРИ РАСТЯГИВАНИИ МЫШКОЙ (ResizeObserver)
+	// Этот объект следит за изменением размеров контейнера строки в реальном времени
+	const resizeObserver = new ResizeObserver((entries) => {
+		for (let entry of entries) {
+			// Получаем новую ширину из параметров изменения
+			const newWidth = entry.contentRect.width;
+
+			// Если ширина изменилась и она больше 0
+			if (newWidth > 0) {
+				// При изменении ширины папки просто перерисовываем 2D-график.
+				// Функция drawAnalysisGraph возьмет актуальную ширину, но сохранит высоту.
+				drawAnalysisGraph(aTomsonAnalysisRes, displayProperty, canvas, false);
+			}
+				
+		}
+	});
+
+	// Запускаем отслеживание для контейнера нашего контроллера
+	resizeObserver.observe(canvasController.domElement);
+
+	// Задаем начальную высоту, например, 150px
+	setGraphHeight(150)
+		
+}
 
 /**
  * [Оценка равномерности распределения точек]{@link https://gemini.google.com/app/72b981da2d229516}
@@ -323,7 +505,8 @@ export async function evaluateDistribution(stepIndex = 0, paramsNew) {
 		waitCount++;
 		if (elStep &amp;&amp; (waitCount > 50)) {
 			waitCount = 0;
-			elStep.innerText = params.stepFormat ? params.stepFormat.replace('%step', i) : i;
+			const text = params.stepFormat ? params.stepFormat.replace('%step', i) : i;
+			elStep instanceof HTMLElement ? elStep.innerText = text : elStep.name(text);
 			await new Promise(r => requestAnimationFrame(r));//Необходим для отрисовки elStep на экране дисплея
 		}
 		i++;
@@ -359,13 +542,21 @@ export async function evaluateDistribution(stepIndex = 0, paramsNew) {
 
 function getTotalEnergyPercent(currentVal) { return ` of ${totalEnergyMin.toFixed(4)} ${(((currentVal - totalEnergyMin) / totalEnergyMin) * 100).toFixed(1)}%` }
 
-function drawAnalysisGraph(aAnalysis, propertyKey) {
-	const canvas = document.getElementById('analysisGraphCanvas');
+function drawAnalysisGraph(aAnalysis, propertyKey, canvas, boText = true) {
+	canvas ||= document.getElementById('analysisGraphCanvas');
 	if (!canvas) return;
 	const ctx = canvas.getContext('2d');
 
-	// АДАПТИВНОЕ РАЗРЕШЕНИЕ: подгоняем внутренние пиксели холста под его текущий CSS-размер на экране
+	// АДАПТИВНОЕ РАЗРЕШЕНИЕ:
+	// Берем реальную ширину из DOM, а высоту берем строго из clientHeight (или 150 по умолчанию),
+	// чтобы она НЕ скакала вслед за пропорциями.	const rect = canvas.getBoundingClientRect();
 	const rect = canvas.getBoundingClientRect();
+/*
+	const targetWidth = Math.floor(rect.width);
+	const targetHeight = Math.floor(canvas.clientHeight || rect.height || 150);
+*/
+
+	// Обновляем внутренний размер буфера холста только при реальном изменении
 	if (canvas.width !== rect.width || canvas.height !== rect.height) {
 		canvas.width = rect.width;
 		canvas.height = rect.height;
@@ -374,17 +565,22 @@ function drawAnalysisGraph(aAnalysis, propertyKey) {
 	const width = canvas.width;
 	const height = canvas.height;
 
+	// Если ширина еще не просчиталась DOM-ом (например, папка свернута)
+	if (width === 0 || height === 0) return;
+
 	// Очищаем холст
 	ctx.clearRect(0, 0, width, height);
 
 	// Вывод текста
-	ctx.fillStyle = '#fff';
-	ctx.font = '11px sans-serif';
-	ctx.fillText(`Шаг: ${aAnalysis.length}` + (params.totalSteps === undefined ? `` : ` / ${params.totalSteps}`), 15, 20);
-
-	const currentVal = aAnalysis[aAnalysis.length - 1][propertyKey];
-//	ctx.fillStyle = ctx.strokeStyle;
-	ctx.fillText(`${propertyKey}: ${currentVal.toFixed(4)}` + (propertyKey === 'totalEnergy' ? getTotalEnergyPercent(currentVal) : ``), 15, 36);
+	if (boText) {
+		ctx.fillStyle = '#fff';
+		ctx.font = '11px sans-serif';
+		ctx.fillText(`Шаг: ${aAnalysis.length}` + (params.totalSteps === undefined ? `` : ` / ${params.totalSteps}`), 15, 20);
+	
+		const currentVal = aAnalysis[aAnalysis.length - 1][propertyKey];
+	//	ctx.fillStyle = ctx.strokeStyle;
+		ctx.fillText(`${propertyKey}: ${currentVal.toFixed(4)}` + (propertyKey === 'totalEnergy' ? getTotalEnergyPercent(currentVal) : ``), 15, 36);
+	}
 	
 	if (aAnalysis.length &lt; 2) return;
 
@@ -402,7 +598,7 @@ function drawAnalysisGraph(aAnalysis, propertyKey) {
 	const displayMin = minVal - padding;
 	const displayMax = maxVal + padding;
 	const displayRange = displayMax - displayMin;
-
+/*
 	// Сетка (смещаем линию чуть ниже, чтобы текст сверху не перекрывался)
 	ctx.strokeStyle = '#222';
 	ctx.lineWidth = 1;
@@ -410,7 +606,7 @@ function drawAnalysisGraph(aAnalysis, propertyKey) {
 	ctx.moveTo(0, height * 0.6);
 	ctx.lineTo(width, height * 0.6);
 	ctx.stroke();
-
+*/
 	// Построение линии графика
 	ctx.beginPath();
 	ctx.strokeStyle = propertyKey === 'totalEnergy' ? '#00ffcc' : '#ffcc00';
@@ -420,7 +616,7 @@ function drawAnalysisGraph(aAnalysis, propertyKey) {
 		// Оставляем небольшие отступы (padding) по бокам: 15px слева и 25px справа (чтобы не заезжать под крестик)
 		const x = (i / (aAnalysis.length - 1)) * (width - 40) + 15;
 		const val = aAnalysis[i][propertyKey];
-		const y = height - ((val - displayMin) / displayRange) * (height - 40) - 15;
+		const y = height - ((val - displayMin) / displayRange) * (height - (boText ? 50 : 10)) - 15;
 
 		if (i === 0) {
 			ctx.moveTo(x, y);
@@ -693,7 +889,7 @@ export class AnalysisSteps{
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri Jul 24 2026 12:11:03 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri Jul 31 2026 05:20:18 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

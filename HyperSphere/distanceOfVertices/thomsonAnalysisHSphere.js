@@ -215,6 +215,10 @@ export async function timeAnalysis(fThomsonAnalysis, elStep, stepFormat, classSe
 /**
  * Adds to the <b>dat.gui</b> folder the graphs of the analysis of the results of solving the Thomson problem.
  * @param {GUI} folder <b>dat.gui</b> folder.
+ * @param {object} classSettings <a href="../../jsdoc/module-HyperSphere-HyperSphere.html" target="_blank">HyperSphere classSettings</a>.
+ * @param {FunctionController} textController Displays the current step of analysis.
+ * @param {FunctionController} timeIdController Displays the current timeID of the <a href="../../../player/jsdoc/" target="_blank">Player</a>.
+ * @param {Function} createLabel Creates a controller to display the analysis results.
  */
 export async function graphFolderChild(folder, classSettings, textController, timeIdController, createLabel) {
 
@@ -263,56 +267,16 @@ export async function graphFolderChild(folder, classSettings, textController, ti
 
 	const displayProperty = 'totalEnergy';
 
-/*
-	const labelObj = {};
-	labelObj[displayProperty] = info.toFixed(4) + (displayProperty === 'totalEnergy' ? getTotalEnergyPercent(info) : '');
-	const labelController = folder.add(labelObj, displayProperty);
-*/
 	if (createLabel) {
 		const info = aTomsonAnalysisRes[aTomsonAnalysisRes.length - 1][displayProperty];
 		const labelController = createLabel(sTimeID);
 		labelController.name(displayProperty + ': ' + info.toFixed(4) + (displayProperty === 'totalEnergy' ? getTotalEnergyPercent(info) : ''));
 	}
-/*	
-	const labelObj = { fakeFunction: function () { } };
-	const labelController = folder.add(labelObj, 'fakeFunction');
-
-	// 2. Отключаем клики, чтобы строка не реагировала на нажатия и не вела себя как кнопка
-	labelController.domElement.style.pointerEvents = 'none';
-
-	// 3. Прячем правую часть (где у кнопок обычно стрелочка или пустая зона)
-	const rightPartLabel = labelController.domElement.querySelector('.c');
-	if (rightPartLabel) {
-		rightPartLabel.style.display = 'none';
-	}
-	
-	const firstElement = labelController.__li.firstElementChild.firstElementChild;
-
-	//Растягиваем текст на всю длинну контроллера.
-	//Не могу это сделать сразу после создания textController потому что firstElementChild еще не создан
-	firstElement.style.width = '100%';
-	firstElement.style.float = 'none';
-	firstElement.style.maxWidth = '100%'; // На случай жестких ограничений в стилях
-
-	labelController.name(displayProperty + ': ' + info.toFixed(4) + (displayProperty === 'totalEnergy' ? getTotalEnergyPercent(info) : ''));
-*/	
-/*	
-	// Находим поле ввода внутри контроллера и блокируем его
-	const inputField = labelController.domElement.querySelector('input');
-	if (inputField) {
-		inputField.setAttribute('disabled', 'true'); // Запрещает ввод с клавиатуры
-		inputField.style.opacity = '0.7';            // Визуально делает его "выключенным"
-		inputField.style.cursor = 'not-allowed';     // Меняет курсор мыши при наведении
-	}
-*/	
-
-	//dat.controllerNameAndTitle(labelController, undefined, localization(classSettings.settings.options.getLanguageCode()).totalEnergyPercent);
 
 	// 1. Создаем пустой контроллер-контейнер (привязываем к пустой функции)
 	const dummyObj = { totalEnergy: function () { } };
 	const canvasController = folder.add(dummyObj, displayProperty);
 	canvasController.name('');
-//	dat.controllerNameAndTitle(canvasController, undefined, localization(classSettings.settings.options.getLanguageCode()).totalEnergyPercent);
 
 	// Отключаем клики по самой строке GUI, чтобы не триггерить "кнопку"
 	canvasController.domElement.style.pointerEvents = 'none';
@@ -324,7 +288,6 @@ export async function graphFolderChild(folder, classSettings, textController, ti
 	// Растягиваем текстовый блок на 100% ширины папки
 	const labelPart = canvasController.domElement.querySelector('div');
 	if (labelPart) {
-//		labelPart.style.display = 'none';
 		labelPart.style.width = '100%';
 		labelPart.style.float = 'none';
 	}
@@ -347,29 +310,6 @@ export async function graphFolderChild(folder, classSettings, textController, ti
 	canvas.style.display = 'block'; // Предотвращаем лишние нижние отступы (inline-gap)
 	canvas.style.pointerEvents = 'auto'; // Возвращаем мышь холсту для интерактива
 	
-/*	
-	const THREE = three.THREE;
-
-	// 3. ИНИЦИАЛИЗАЦИЯ THREE.JS ДЛЯ ГРАФИКА
-	const scene = new THREE.Scene();
-	scene.background = new THREE.Color(0x1a1a1a); // Темный фон в цвет dat.gui
-
-	// Используем Ортографическую камеру (идеально для 2D графиков)
-	const camera = new THREE.OrthographicCamera(-10, 10, 5, -5, 0.1, 100);
-	camera.position.z = 10;
-
-	const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
-
-	// Пример создания линии графика (синусоида)
-	const points = [];
-	for (let x = -10; x <= 10; x += 0.5) {
-		points.push(new THREE.Vector3(x, Math.sin(x) * 3, 0));
-	}
-	const geometry = new THREE.BufferGeometry().setFromPoints(points);
-	const material = new THREE.LineBasicMaterial({ color: 0x00ffcc, linewidth: 2 });
-	const line = new THREE.Line(geometry, material);
-	scene.add(line);
-*/	
 	// 4. ФУНКЦИЯ ИЗМЕНЕНИЯ ВЫСОТЫ ИЗ ПРОГРАММЫ
 	// Переменная для хранения текущей заданной высоты (чтобы использовать её при ресайзе)
 	let currentTargetHeight = 150;
@@ -387,19 +327,7 @@ export async function graphFolderChild(folder, classSettings, textController, ti
 		// 2. Устанавливаем фиксированную высоту для контейнера контроллера
 		canvasController.domElement.style.height = currentTargetHeight + 'px';
 		canvas.style.height = currentTargetHeight + 'px'; // <-- Важно: фиксируем CSS-высоту холста!
-/*
 
-		// 3. Получаем актуальную ширину папки из DOM
-		const widthPx = canvas.clientWidth;
-		// 4. Обновляем размеры рендерера Three.js
-		renderer.setSize(widthPx, currentTargetHeight, false);
-
-		// 5. Обновляем параметры камеры под новые пропорции
-		const aspect = widthPx / currentTargetHeight;
-		camera.left = -10 * aspect;
-		camera.right = 10 * aspect;
-		camera.updateProjectionMatrix();
-*/
 		// Перерисовываем график под новую высоту
 		drawAnalysisGraph(aTomsonAnalysisRes, displayProperty, canvas, false);
 	}
@@ -416,16 +344,6 @@ export async function graphFolderChild(folder, classSettings, textController, ti
 				// При изменении ширины папки просто перерисовываем 2D-график.
 				// Функция drawAnalysisGraph возьмет актуальную ширину, но сохранит высоту.
 				drawAnalysisGraph(aTomsonAnalysisRes, displayProperty, canvas, false);
-/*
-				// Перерендериваем Three.js с НОВОЙ шириной, но СТАРОЙ высотой
-				renderer.setSize(newWidth, currentTargetHeight, false);
-				
-				// Корректируем пропорции камеры, чтобы график не сжимался/не растягивался по горизонтали
-				const aspect = newWidth / currentTargetHeight;
-				camera.left = -10 * aspect;
-				camera.right = 10 * aspect;
-				camera.updateProjectionMatrix();
-*/				
 			}
 				
 		}
@@ -436,18 +354,6 @@ export async function graphFolderChild(folder, classSettings, textController, ti
 
 	// Задаем начальную высоту, например, 150px
 	setGraphHeight(150)
-/*
-	const info = aTomsonAnalysisRes[aTomsonAnalysisRes.length - 1][displayProperty];
-	canvasController.name(info.toFixed(4) + (displayProperty === 'totalEnergy' ? getTotalEnergyPercent(info) : ''));
-*/	
-/*	
-	// Отрендерить сцену
-	function animate() {
-		requestAnimationFrame(animate);
-		renderer.render(scene, camera);
-	}
-	animate();
-*/		
 		
 }
 
