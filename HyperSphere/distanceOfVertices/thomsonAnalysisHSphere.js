@@ -113,7 +113,7 @@ function getTheoreticalMinEnergy4D(N = params.pointsPerStep) {
 
 let lang;
 const localization = (languageCode) => {
-	if (lang) return;
+	if (lang) return lang;
 	lang = {
 		totalEnergyPercent:
 			`Total energy is the cumulative potential electrostatic energy of a system of interacting charges (points). Calculated via Coulomb's law as the sum of reciprocal distances (1/d) between all pairs of vertices, it acts as the primary metric for algorithmic convergence, reaching its theoretical minimum when points achieve optimal, uniform distribution across the hypersphere.
@@ -216,7 +216,7 @@ export async function timeAnalysis(fThomsonAnalysis, elStep, stepFormat, classSe
  * Adds to the <b>dat.gui</b> folder the graphs of the analysis of the results of solving the Thomson problem.
  * @param {GUI} folder <b>dat.gui</b> folder.
  */
-export async function graphFolderChild(folder, classSettings) {
+export async function graphFolderChild(folder, classSettings, textController) {
 
 	//Заполняем массив aTomsonAnalysisRes результатами анализа
 	const anglesLength = classSettings.settings.object.geometry.angles.length,
@@ -227,18 +227,34 @@ export async function graphFolderChild(folder, classSettings) {
 		await evaluateDistribution(timeId, {
 			pointsPerStep: anglesLength,
 			position: position,
-			//			elStep: elStep,
-			//			stepFormat: stepFormat + anglesLength,
+			elStep: textController,//.domElement,
+			stepFormat: 'Step: %step / ' + anglesLength,
 			tomsonAnalysisRes: aTomsonAnalysisRes[timeId],
 		});
 	}
 
 	const displayProperty = 'totalEnergy';
+	
+	const labelObj = {};
+	const info = aTomsonAnalysisRes[aTomsonAnalysisRes.length - 1][displayProperty];
+	labelObj[displayProperty] = info.toFixed(4) + (displayProperty === 'totalEnergy' ? getTotalEnergyPercent(info) : '');
+	const labelController = folder.add(labelObj, displayProperty);
+
+	// Находим поле ввода внутри контроллера и блокируем его
+	const inputField = labelController.domElement.querySelector('input');
+	if (inputField) {
+		inputField.setAttribute('disabled', 'true'); // Запрещает ввод с клавиатуры
+		inputField.style.opacity = '0.7';            // Визуально делает его "выключенным"
+		inputField.style.cursor = 'not-allowed';     // Меняет курсор мыши при наведении
+	}
+
+	dat.controllerNameAndTitle(labelController, undefined, localization(classSettings.settings.options.getLanguageCode()).totalEnergyPercent);
 
 	// 1. Создаем пустой контроллер-контейнер (привязываем к пустой функции)
 	const dummyObj = { totalEnergy: function () { } };
 	const canvasController = folder.add(dummyObj, displayProperty);
-	dat.controllerNameAndTitle(canvasController, undefined, localization(classSettings.settings.options.getLanguageCode()).totalEnergyPercent);
+	canvasController.name('');
+//	dat.controllerNameAndTitle(canvasController, undefined, localization(classSettings.settings.options.getLanguageCode()).totalEnergyPercent);
 
 	// Отключаем клики по самой строке GUI, чтобы не триггерить "кнопку"
 	canvasController.domElement.style.pointerEvents = 'none';
@@ -250,7 +266,9 @@ export async function graphFolderChild(folder, classSettings) {
 	// Растягиваем текстовый блок на 100% ширины папки
 	const labelPart = canvasController.domElement.querySelector('div');
 	if (labelPart) {
-		labelPart.style.display = 'none';
+//		labelPart.style.display = 'none';
+		labelPart.style.width = '100%';
+		labelPart.style.float = 'none';
 	}
 	
 	// 2. Создаем HTML-холст и встраиваем его внутрь контроллера
@@ -325,7 +343,7 @@ export async function graphFolderChild(folder, classSettings) {
 		camera.updateProjectionMatrix();
 */
 		// Перерисовываем график под новую высоту
-		drawAnalysisGraph(aTomsonAnalysisRes, displayProperty, canvas);
+		drawAnalysisGraph(aTomsonAnalysisRes, displayProperty, canvas, false);
 	}
 
 	// 6. АВТОПДСТРОЙКА ПРИ РАСТЯГИВАНИИ МЫШКОЙ (ResizeObserver)
@@ -339,7 +357,7 @@ export async function graphFolderChild(folder, classSettings) {
 			if (newWidth > 0) {
 				// При изменении ширины папки просто перерисовываем 2D-график.
 				// Функция drawAnalysisGraph возьмет актуальную ширину, но сохранит высоту.
-				drawAnalysisGraph(aTomsonAnalysisRes, displayProperty, canvas);
+				drawAnalysisGraph(aTomsonAnalysisRes, displayProperty, canvas, false);
 /*
 				// Перерендериваем Three.js с НОВОЙ шириной, но СТАРОЙ высотой
 				renderer.setSize(newWidth, currentTargetHeight, false);
@@ -357,36 +375,13 @@ export async function graphFolderChild(folder, classSettings) {
 
 	// Запускаем отслеживание для контейнера нашего контроллера
 	resizeObserver.observe(canvasController.domElement);
-/*
-	function setGraphHeight(newHeightPx) {
-		// 1. Находим корневой элемент строки (в dat.gui это обычно тег <li>)
-		// и убираем жесткие ограничения высоты, которые ставит библиотека
-		const rowElement = canvasController.domElement.closest('li') || canvasController.domElement;
-		if (rowElement) {
-			rowElement.style.height = 'auto';
-			rowElement.style.lineHeight = 'normal'; // Сбрасываем центрирование текста dat.gui
-		}
-
-		// 2. Устанавливаем высоту для самого контейнера контроллера
-		canvasController.domElement.style.height = newHeightPx + 'px';
-
-		// 3. Получаем текущую ширину папки из DOM в пикселях
-		const widthPx = canvas.clientWidth;
-
-		// 4. Устанавливаем новые размеры рендерера Three.js
-		renderer.setSize(widthPx, newHeightPx, false);
-
-		// 5. Обновляем параметры камеры под новые пропорции
-		const aspect = widthPx / newHeightPx;
-		camera.left = -10 * aspect;
-		camera.right = 10 * aspect;
-		camera.updateProjectionMatrix();
-		
-	}
-*/
 
 	// Задаем начальную высоту, например, 150px
 	setGraphHeight(150)
+/*
+	const info = aTomsonAnalysisRes[aTomsonAnalysisRes.length - 1][displayProperty];
+	canvasController.name(info.toFixed(4) + (displayProperty === 'totalEnergy' ? getTotalEnergyPercent(info) : ''));
+*/	
 /*	
 	// Отрендерить сцену
 	function animate() {
@@ -518,7 +513,8 @@ export async function evaluateDistribution(stepIndex = 0, paramsNew) {
 		waitCount++;
 		if (elStep && (waitCount > 50)) {
 			waitCount = 0;
-			elStep.innerText = params.stepFormat ? params.stepFormat.replace('%step', i) : i;
+			const text = params.stepFormat ? params.stepFormat.replace('%step', i) : i;
+			elStep instanceof HTMLElement ? elStep.innerText = text : elStep.name(text);
 			await new Promise(r => requestAnimationFrame(r));//Необходим для отрисовки elStep на экране дисплея
 		}
 		i++;
@@ -554,7 +550,7 @@ export async function evaluateDistribution(stepIndex = 0, paramsNew) {
 
 function getTotalEnergyPercent(currentVal) { return ` of ${totalEnergyMin.toFixed(4)} ${(((currentVal - totalEnergyMin) / totalEnergyMin) * 100).toFixed(1)}%` }
 
-function drawAnalysisGraph(aAnalysis, propertyKey, canvas) {
+function drawAnalysisGraph(aAnalysis, propertyKey, canvas, boText = true) {
 	canvas ||= document.getElementById('analysisGraphCanvas');
 	if (!canvas) return;
 	const ctx = canvas.getContext('2d');
@@ -563,8 +559,10 @@ function drawAnalysisGraph(aAnalysis, propertyKey, canvas) {
 	// Берем реальную ширину из DOM, а высоту берем строго из clientHeight (или 150 по умолчанию),
 	// чтобы она НЕ скакала вслед за пропорциями.	const rect = canvas.getBoundingClientRect();
 	const rect = canvas.getBoundingClientRect();
+/*
 	const targetWidth = Math.floor(rect.width);
 	const targetHeight = Math.floor(canvas.clientHeight || rect.height || 150);
+*/
 
 	// Обновляем внутренний размер буфера холста только при реальном изменении
 	if (canvas.width !== rect.width || canvas.height !== rect.height) {
@@ -582,13 +580,15 @@ function drawAnalysisGraph(aAnalysis, propertyKey, canvas) {
 	ctx.clearRect(0, 0, width, height);
 
 	// Вывод текста
-	ctx.fillStyle = '#fff';
-	ctx.font = '11px sans-serif';
-	ctx.fillText(`Шаг: ${aAnalysis.length}` + (params.totalSteps === undefined ? `` : ` / ${params.totalSteps}`), 15, 20);
-
-	const currentVal = aAnalysis[aAnalysis.length - 1][propertyKey];
-//	ctx.fillStyle = ctx.strokeStyle;
-	ctx.fillText(`${propertyKey}: ${currentVal.toFixed(4)}` + (propertyKey === 'totalEnergy' ? getTotalEnergyPercent(currentVal) : ``), 15, 36);
+	if (boText) {
+		ctx.fillStyle = '#fff';
+		ctx.font = '11px sans-serif';
+		ctx.fillText(`Шаг: ${aAnalysis.length}` + (params.totalSteps === undefined ? `` : ` / ${params.totalSteps}`), 15, 20);
+	
+		const currentVal = aAnalysis[aAnalysis.length - 1][propertyKey];
+	//	ctx.fillStyle = ctx.strokeStyle;
+		ctx.fillText(`${propertyKey}: ${currentVal.toFixed(4)}` + (propertyKey === 'totalEnergy' ? getTotalEnergyPercent(currentVal) : ``), 15, 36);
+	}
 	
 	if (aAnalysis.length < 2) return;
 
@@ -606,7 +606,7 @@ function drawAnalysisGraph(aAnalysis, propertyKey, canvas) {
 	const displayMin = minVal - padding;
 	const displayMax = maxVal + padding;
 	const displayRange = displayMax - displayMin;
-
+/*
 	// Сетка (смещаем линию чуть ниже, чтобы текст сверху не перекрывался)
 	ctx.strokeStyle = '#222';
 	ctx.lineWidth = 1;
@@ -614,7 +614,7 @@ function drawAnalysisGraph(aAnalysis, propertyKey, canvas) {
 	ctx.moveTo(0, height * 0.6);
 	ctx.lineTo(width, height * 0.6);
 	ctx.stroke();
-
+*/
 	// Построение линии графика
 	ctx.beginPath();
 	ctx.strokeStyle = propertyKey === 'totalEnergy' ? '#00ffcc' : '#ffcc00';
@@ -624,7 +624,7 @@ function drawAnalysisGraph(aAnalysis, propertyKey, canvas) {
 		// Оставляем небольшие отступы (padding) по бокам: 15px слева и 25px справа (чтобы не заезжать под крестик)
 		const x = (i / (aAnalysis.length - 1)) * (width - 40) + 15;
 		const val = aAnalysis[i][propertyKey];
-		const y = height - ((val - displayMin) / displayRange) * (height - 40) - 15;
+		const y = height - ((val - displayMin) / displayRange) * (height - (boText ? 50 : 10)) - 15;
 
 		if (i === 0) {
 			ctx.moveTo(x, y);
