@@ -159,6 +159,13 @@ deviationPercent стремится к 0% (например, < 2-5%):
 
 const tomsonAnalysisRes = {}, aTomsonAnalysisRes = [];
 
+/**
+ * Analysis for selected time.
+ * @param {GUI} fThomsonAnalysis dat.GUI folder with analysis.
+ * @param {HTMLElement} elStep Controller's element for displaying of the current step of the analisis.
+ * @param {string} stepFormat Format of the string for displaying of the current step of the analisis. " The "%step" part of the string will be replace to the current step.
+ * @param {object} classSettings <a href="../../jsdoc/module-HyperSphere-HyperSphere.html" target="_blank">HyperSphere classSettings</a>.
+ */
 export async function timeAnalysis(fThomsonAnalysis, elStep, stepFormat, classSettings) {
 	const timeId = classSettings.settings.guiPoints.timeId, anglesLength = classSettings.settings.object.geometry.angles.length;
 	aTomsonAnalysisRes[timeId] ||= {};
@@ -221,7 +228,6 @@ export async function timeAnalysis(fThomsonAnalysis, elStep, stepFormat, classSe
  * @param {Function} createLabel Creates a controller to display the analysis results.
  */
 export async function graphFolderChild(folder, classSettings, textController, timeIdController, createLabel) {
-
 	const sTimeID = 'Time ID: ';
 	//Заполняем массив aTomsonAnalysisRes результатами анализа
 	const anglesLength = classSettings.settings.object.geometry.angles.length,
@@ -265,96 +271,101 @@ export async function graphFolderChild(folder, classSettings, textController, ti
 	if (textController) dislayEl(textController, 'none');
 	if (timeIdController) dislayEl(timeIdController, 'none');;
 
-	const displayProperty = 'totalEnergy';
-
-	if (createLabel) {
-		const info = aTomsonAnalysisRes[aTomsonAnalysisRes.length - 1][displayProperty];
-		const labelController = createLabel(sTimeID);
-		labelController.name(displayProperty + ': ' + info.toFixed(4) + (displayProperty === 'totalEnergy' ? getTotalEnergyPercent(info) : ''));
-	}
-
-	// 1. Создаем пустой контроллер-контейнер (привязываем к пустой функции)
-	const dummyObj = { totalEnergy: function () { } };
-	const canvasController = folder.add(dummyObj, displayProperty);
-	canvasController.name('');
-
-	// Отключаем клики по самой строке GUI, чтобы не триггерить "кнопку"
-	canvasController.domElement.style.pointerEvents = 'none';
-
-	// Скрываем правую часть управления dat.gui
-	const rightPart = canvasController.domElement.querySelector('.c') || canvasController.domElement.querySelector('.widget');
-	if (rightPart) rightPart.style.display = 'none';
-
-	// Растягиваем текстовый блок на 100% ширины папки
-	const labelPart = canvasController.domElement.querySelector('div');
-	if (labelPart) {
-		labelPart.style.width = '100%';
-		labelPart.style.float = 'none';
-	}
-	
-	// 2. Создаем HTML-холст и встраиваем его внутрь контроллера
-	const canvas = document.createElement('canvas');
-
-	// 4. Настраиваем сам контейнер строки, чтобы холст встал ровно по левому краю
-	canvasController.domElement.style.width = '100%';
-	canvasController.domElement.style.padding = '0';
-	canvasController.domElement.style.margin = '0';
-
-	// 5. Вставляем холст напрямую в корневой элемент контроллера (вместо labelPart)
-	canvasController.domElement.appendChild(canvas);
-
-	// Убедимся, что у самого холста сброшены внешние отступы
-	canvas.style.width = '100%';
-	canvas.style.marginLeft = '0';
-	canvas.style.padding = '0';
-	canvas.style.display = 'block'; // Предотвращаем лишние нижние отступы (inline-gap)
-	canvas.style.pointerEvents = 'auto'; // Возвращаем мышь холсту для интерактива
-	
-	// 4. ФУНКЦИЯ ИЗМЕНЕНИЯ ВЫСОТЫ ИЗ ПРОГРАММЫ
-	// Переменная для хранения текущей заданной высоты (чтобы использовать её при ресайзе)
-	let currentTargetHeight = 150;
-
-	function setGraphHeight(newHeightPx) {
-		currentTargetHeight = newHeightPx; // Запоминаем высоту
-
-		// 1. Сбрасываем ограничения высоты у строки (li)
-		const rowElement = canvasController.domElement.closest('li') || canvasController.domElement;
-		if (rowElement) {
-			rowElement.style.height = 'auto';
-			rowElement.style.lineHeight = 'normal';
+	const createGraphController = (displayProperty) => {
+		if (displayProperty === 'totalEnergyPercent') return;//вместо этого используется totalEnergy
+		if (createLabel) {
+			const info = aTomsonAnalysisRes[aTomsonAnalysisRes.length - 1][displayProperty];
+			const labelController = createLabel(sTimeID);
+			labelController.name(displayProperty + ': ' + info.toFixed(4) + (displayProperty === 'totalEnergy' ? getTotalEnergyPercent(info) : ''));
 		}
 
-		// 2. Устанавливаем фиксированную высоту для контейнера контроллера
-		canvasController.domElement.style.height = currentTargetHeight + 'px';
-		canvas.style.height = currentTargetHeight + 'px'; // <-- Важно: фиксируем CSS-высоту холста!
+		// 1. Создаем пустой контроллер-контейнер (привязываем к пустой функции)
+//		const dummyObj = { totalEnergy: function () { } };
+		const dummyObj = {};
+		dummyObj[displayProperty] = function () { };
+		const canvasController = folder.add(dummyObj, displayProperty);
+		canvasController.name('');
 
-		// Перерисовываем график под новую высоту
-		drawAnalysisGraph(aTomsonAnalysisRes, displayProperty, canvas, false);
-	}
+		// Отключаем клики по самой строке GUI, чтобы не триггерить "кнопку"
+		canvasController.domElement.style.pointerEvents = 'none';
 
-	// 6. АВТОПДСТРОЙКА ПРИ РАСТЯГИВАНИИ МЫШКОЙ (ResizeObserver)
-	// Этот объект следит за изменением размеров контейнера строки в реальном времени
-	const resizeObserver = new ResizeObserver((entries) => {
-		for (let entry of entries) {
-			// Получаем новую ширину из параметров изменения
-			const newWidth = entry.contentRect.width;
+		// Скрываем правую часть управления dat.gui
+		const rightPart = canvasController.domElement.querySelector('.c') || canvasController.domElement.querySelector('.widget');
+		if (rightPart) rightPart.style.display = 'none';
 
-			// Если ширина изменилась и она больше 0
-			if (newWidth > 0) {
-				// При изменении ширины папки просто перерисовываем 2D-график.
-				// Функция drawAnalysisGraph возьмет актуальную ширину, но сохранит высоту.
-				drawAnalysisGraph(aTomsonAnalysisRes, displayProperty, canvas, false);
+		// Растягиваем текстовый блок на 100% ширины папки
+		const labelPart = canvasController.domElement.querySelector('div');
+		if (labelPart) {
+			labelPart.style.width = '100%';
+			labelPart.style.float = 'none';
+		}
+
+		// 2. Создаем HTML-холст и встраиваем его внутрь контроллера
+		const canvas = document.createElement('canvas');
+
+		// 4. Настраиваем сам контейнер строки, чтобы холст встал ровно по левому краю
+		canvasController.domElement.style.width = '100%';
+		canvasController.domElement.style.padding = '0';
+		canvasController.domElement.style.margin = '0';
+
+		// 5. Вставляем холст напрямую в корневой элемент контроллера (вместо labelPart)
+		canvasController.domElement.appendChild(canvas);
+
+		// Убедимся, что у самого холста сброшены внешние отступы
+		canvas.style.width = '100%';
+		canvas.style.marginLeft = '0';
+		canvas.style.padding = '0';
+		canvas.style.display = 'block'; // Предотвращаем лишние нижние отступы (inline-gap)
+		canvas.style.pointerEvents = 'auto'; // Возвращаем мышь холсту для интерактива
+
+		// 4. ФУНКЦИЯ ИЗМЕНЕНИЯ ВЫСОТЫ ИЗ ПРОГРАММЫ
+		// Переменная для хранения текущей заданной высоты (чтобы использовать её при ресайзе)
+		let currentTargetHeight = 150;
+
+		function setGraphHeight(newHeightPx) {
+			currentTargetHeight = newHeightPx; // Запоминаем высоту
+
+			// 1. Сбрасываем ограничения высоты у строки (li)
+			const rowElement = canvasController.domElement.closest('li') || canvasController.domElement;
+			if (rowElement) {
+				rowElement.style.height = 'auto';
+				rowElement.style.lineHeight = 'normal';
 			}
-				
+
+			// 2. Устанавливаем фиксированную высоту для контейнера контроллера
+			canvasController.domElement.style.height = currentTargetHeight + 'px';
+			canvas.style.height = currentTargetHeight + 'px'; // <-- Важно: фиксируем CSS-высоту холста!
+
+			// Перерисовываем график под новую высоту
+			drawAnalysisGraph(aTomsonAnalysisRes, displayProperty, canvas, false);
 		}
+
+		// 6. АВТОПДСТРОЙКА ПРИ РАСТЯГИВАНИИ МЫШКОЙ (ResizeObserver)
+		// Этот объект следит за изменением размеров контейнера строки в реальном времени
+		const resizeObserver = new ResizeObserver((entries) => {
+			for (let entry of entries) {
+				// Получаем новую ширину из параметров изменения
+				const newWidth = entry.contentRect.width;
+
+				// Если ширина изменилась и она больше 0
+				if (newWidth > 0) {
+					// При изменении ширины папки просто перерисовываем 2D-график.
+					// Функция drawAnalysisGraph возьмет актуальную ширину, но сохранит высоту.
+					drawAnalysisGraph(aTomsonAnalysisRes, displayProperty, canvas, false);
+				}
+
+			}
+		});
+
+		// Запускаем отслеживание для контейнера нашего контроллера
+		resizeObserver.observe(canvasController.domElement);
+
+		// Задаем начальную высоту, например, 150px
+		setGraphHeight(150);
+	}
+	Object.keys(aTomsonAnalysisRes[0]).forEach(key => {
+		createGraphController(key);
 	});
-
-	// Запускаем отслеживание для контейнера нашего контроллера
-	resizeObserver.observe(canvasController.domElement);
-
-	// Задаем начальную высоту, например, 150px
-	setGraphHeight(150)
-		
 }
 
 /**
