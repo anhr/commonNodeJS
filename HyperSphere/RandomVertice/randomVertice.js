@@ -39,7 +39,8 @@ class RandomVertice {
 	 */
 	constructor(params={}, verticesCount = 1) {
 
-		if (params.classSettings.debug && params.classSettings.debug.random) {
+		const debug = params.classSettings ? params.classSettings.debug : params.debug;
+		if (debug && debug.random) {
 
 			console.warn(sRandomVertice + ': debug version of the random')
 			random = params.classSettings.debug.random;

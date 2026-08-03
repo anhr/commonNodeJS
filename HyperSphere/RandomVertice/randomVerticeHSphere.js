@@ -36,7 +36,8 @@ class RandomVerticeHSphere extends RandomVertice {
 	 */
 	constructor(params, verticesCount) {
 
-		if (params.classSettings.debug && params.classSettings.debug.random) random = params.classSettings.debug.random;
+		const debug = params.classSettings ? params.classSettings.debug : params.debug;
+		if (debug && debug.random) random = params.classSettings.debug.random;
 		
 		super(params, verticesCount);
 		
@@ -318,7 +319,8 @@ class RandomVerticeHSphere extends RandomVertice {
 				);
 //			const angles = utils.angles([result.altitude, result.latitude, result.longitude]);не помню зачем добавил эту строку
 			this.paramsVerticesAngles(angles);
-			if (params.classSettings.debug && (isNaN(angles.altitude) || isNaN(angles.latitude) || isNaN(angles.longitude))) console.error(sRandomVerticesHyperSphere + '.getRandomAngles: Invalid angles: ' + angles);
+			const debug = params.classSettings ? params.classSettings.debug : params.debug;
+			if (debug && (isNaN(angles.altitude) || isNaN(angles.latitude) || isNaN(angles.longitude))) console.error(sRandomVerticesHyperSphere + '.getRandomAngles: Invalid angles: ' + angles);
 			return this.angles;
 			
 		}

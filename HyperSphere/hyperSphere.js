@@ -776,7 +776,7 @@ class HyperSphere extends MyObject {
 										settings.guiPoints.timeId :
 									0,
 								vertice = this.a2v(value, classSettings.overriddenProperties.r(timeId));
-							if (classSettings.compute.config.LOG) console.log('Step:' + timeId + ' Point:' + this.getPositionData(i, timeId).verticeId + '. x=' + vertice.x + ' y=' + vertice.y + ' z=' + vertice.z + ' w=' + vertice.w + ',alt=' + value.altitude + ' lat=' + value.latitude + ' lon=' + value.longitude);
+							if (classSettings.compute && classSettings.compute.config.LOG) console.log('Step:' + timeId + ' Point:' + this.getPositionData(i, timeId).verticeId + '. x=' + vertice.x + ' y=' + vertice.y + ' z=' + vertice.z + ' w=' + vertice.w + ',alt=' + value.altitude + ' lat=' + value.latitude + ' lon=' + value.longitude);
 							if (!classSettings.overriddenProperties.pushMiddleVertice(timeId, value))
 								this.setPositionAttributeFromPoint(i, vertice, timeId);
 							
