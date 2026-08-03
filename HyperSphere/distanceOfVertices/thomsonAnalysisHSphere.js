@@ -219,6 +219,10 @@ export async function timeAnalysis(fThomsonAnalysis, elStep, stepFormat, classSe
 	createController('variance', lang.variance);
 }
 
+/**
+ * Closes the folder with graphs of analysis results
+ * @param {GUI} folder folder with graphs of analysis results.
+ */
 export function graphFolderClose(folder) { graphFolderControllersDislay('none'); }
 
 let isGraphFolderChildCreated = false;
