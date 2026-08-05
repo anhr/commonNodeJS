@@ -197,7 +197,14 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 				
 				const timeIdOld = settings.guiPoints ? settings.guiPoints.timeId : undefined;
 				if (settings.guiPoints) settings.guiPoints.timeId = undefined;
-				for (let i = 0; i < angles.length; i++) angles[i] = anglesTemp[i];
+				for (let i = 0; i < angles.length; i++) {
+					angles[i] = anglesTemp[i];
+					if (settings.debug && settings.debug.log) {
+						const pointAngles = anglesTemp[i];//utils.cartesianToPolar(pointCur);
+						const pointCur = utils.polarToCartesian(pointAngles);//new THREE.Vector4().fromBufferAttribute(position, i);
+						console.log('Step:' + data.timeId + ' Point:' + (data.timeId * angles.length + i) + '. x=' + pointCur.x + ' y=' + pointCur.y + ' z=' + pointCur.z + ' w=' + pointCur.w + ',alt=' + pointAngles.altitude + ' lat=' + pointAngles.latitude + ' lon=' + pointAngles.longitude);
+					}
+				}
 				if (settings.guiPoints) settings.guiPoints.timeId = timeIdOld;
 
 				_this.bufferGeometry.attributes.position.needsUpdate = true
