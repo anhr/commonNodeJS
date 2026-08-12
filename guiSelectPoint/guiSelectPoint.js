@@ -485,7 +485,7 @@ class GuiSelectPoint {
 
 					function isWObject() { return (typeof func.w === 'object') && (func.w instanceof THREE.Color === false); }
 					const mesh = getMesh(), verticeColor = mesh.userData.myObject ?
-						mesh.userData.myObject.verticeColor(intersectionSelectedIndex) :
+						mesh.userData.myObject.verticeColor(intersectionSelectedIndex, undefined, mesh.userData.myObject.guiPoints.timeId) :
 						undefined;
 					var color = (func === undefined) || (!attributes.color && !attributes.ca) ?
 						undefined :
@@ -1862,12 +1862,14 @@ class GuiSelectPoint {
 			function axesGui( axisName ) {
 
 				var scale, controller;
+				let name;
 				if ( axisName === 'w' ) {
 
 					//W axis
 
 					options.scales.setW();
 					scale = options.scales.w;
+					name = scale.name;
 					function onChange( value ) {
 
 						const attributes = intersection.object.geometry.attributes,
@@ -1898,6 +1900,7 @@ class GuiSelectPoint {
 
 							controller.domElement.querySelector( '.slider-fg' ).style.height = '40%';
 							const elSlider = controller.domElement.querySelector( '.slider' );
+							name = lang.color;
 							ColorPicker.create( elSlider, {
 
 								palette: options.palette,
@@ -1921,6 +1924,7 @@ class GuiSelectPoint {
 
 					scale = ( options.axesHelper === undefined ) || ( options.axesHelper === false ) ? options.scales[axisName] : //если я буду использовать эту строку то экстремумы шкал буду устанавливатся по умолчанию а не текущие
 						options.axesHelper.options ? options.axesHelper.options.scales[axisName] : undefined;
+					name = scale.name;
 					if ( scale.isAxis() )
 						controller = fPoint.add( { value: scale.min, }, 'value', scale.min, scale.max, ( scale.max - scale.min ) / 1000 ).onChange( function ( value ) {
 
@@ -1941,7 +1945,7 @@ class GuiSelectPoint {
 
 				}
 				if ( controller )
-					dat.controllerNameAndTitle( controller, scale.name );
+					dat.controllerNameAndTitle( controller, name );
 				return controller;
 
 			}
