@@ -1332,19 +1332,6 @@ class Three {
 		}
 		this.ConvexHull = new ConvexHull().ConvexHull;
 
-/*
-		import { Vector3 } from '../math/Vector3.js';
-		import { Vector2 } from '../math/Vector2.js';
-		import { Box3 } from '../math/Box3.js';
-		import { EventDispatcher } from './EventDispatcher.js';
-		import { BufferAttribute, Float32BufferAttribute, Uint16BufferAttribute, Uint32BufferAttribute } from './BufferAttribute.js';
-		import { Sphere } from '../math/Sphere.js';
-		import { Object3D } from './Object3D.js';
-		import { Matrix4 } from '../math/Matrix4.js';
-		import { Matrix3 } from '../math/Matrix3.js';
-		import * as MathUtils from '../math/MathUtils.js';
-		import { arrayMax } from '../utils.js';
-*/
 		const Vector2 = three.THREE.Vector2,
 			Box3 = three.THREE.Box3,
 
@@ -2630,8 +2617,6 @@ class Three {
 			Quaternion = three.THREE.Quaternion,
 			Spherical = three.THREE.Spherical,
 			TOUCH = three.THREE.TOUCH;
-//			Vector2 = three.THREE.Vector2,
-//			Vector3 = three.THREE.Vector3;
 
 		// This set of controls performs orbiting, dollying (zooming), and panning.
 		// Unlike TrackballControls, it maintains the "up" direction object.up (+Y by default).
@@ -3889,34 +3874,6 @@ class Three {
 
 		}
 		this.OrbitControls = OrbitControls;
-
-/*
-		// This set of controls performs orbiting, dollying (zooming), and panning.
-		// Unlike TrackballControls, it maintains the "up" direction object.up (+Y by default).
-		// This is very similar to OrbitControls, another set of touch behavior
-		//
-		//    Orbit - right mouse, or left mouse + ctrl/meta/shiftKey / touch: two-finger rotate
-		//    Zoom - middle mouse, or mousewheel / touch: two-finger spread or squish
-		//    Pan - left mouse, or arrow keys / touch: one-finger move
-	
-		class MapControls extends OrbitControls {
-	
-			constructor( object, domElement ) {
-	
-				super( object, domElement );
-	
-				this.screenSpacePanning = false; // pan orthogonal to world-space direction camera.up
-	
-				this.mouseButtons.LEFT = MOUSE.PAN;
-				this.mouseButtons.RIGHT = MOUSE.ROTATE;
-	
-				this.touches.ONE = TOUCH.PAN;
-				this.touches.TWO = TOUCH.DOLLY_ROTATE;
-	
-			}
-	
-		}
-*/
 
 	}
 	/**

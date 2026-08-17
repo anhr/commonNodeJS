@@ -77,7 +77,6 @@ class Options {
 
 			//максимальное значение шкалы w по умолчанию беру из THREE.Vector4
 			//потому что в противном случае неверно будет отображаться цвет точки, заданной как THREE.Vector4()
-//			scale.max = scale.max === undefined ? new three.THREE.Vector4().w : scale.max;
 
 		}
 		options.scales = options.scales || {};
@@ -91,17 +90,10 @@ class Options {
 			if ( !options.scales[axisName] )
 				return;
 
-/*
-			options.scales[axisName].name = options.scales[axisName].name || axisName;
-			options.scales[axisName].min = options.scales[axisName].min === undefined ? -1 : options.scales[axisName].min;
-			options.scales[axisName].max = options.scales[axisName].max === undefined ? 1 : options.scales[axisName].max;
-*/			
-
 		}
 		setScale( 'x' );
 		setScale( 'y' );
 		setScale( 'z' );
-//		options.scales.setW = function () { _this.setW(); }
 		options.point = options.point || {};
 		if (options.point.size === undefined) options.point.size = 5.0;
 		options.point.sizePointsMaterial = options.point.sizePointsMaterial || 100.0;
@@ -615,7 +607,6 @@ class Options {
 								constructor( scales, axisName ) {
 
 									let scale = scales[axisName];
-//									scale = scale || {};
 									this.isAxis = function () {
 
 										if ( !scales || ( !scales.x && !scales.y && !scales.z ) || scale ) return true;
@@ -644,14 +635,6 @@ class Options {
 										 * </pre>
 										 **/
 										boScale: { get: function () { return true; }, },
-/*										
-										isChangeColor : {
-											
-											get: () => { return scale ? scale.isChangeColor : undefined; },
-											set: ( isChangeColor ) => { scale.isChangeColor = isChangeColor; },
-										
-										},
-*/										
 										isColor : {
 											
 											get: () => { return scale ? scale.isColor : undefined; },
@@ -1327,14 +1310,6 @@ class Options {
 				get: function () {
 
 					if ( options.eventListeners ) return options.eventListeners;
-/*если я это оставлю, то не смогу определить, используется ли raycaster на этом canvas и нужно ли вызывать addParticle
-для проверки создать MyPoints на пустом canvas
-					return { addParticle: function(){
-
-						console.error( 'Options.eventListeners.addParticle: call new Options.raycaster.EventListeners(...) first.' );
-						
-					}, }
-*/					
 
 				},
 				set: function ( eventListeners ) {
@@ -1863,7 +1838,6 @@ class Raycaster {
 
 			}
 			getIntersects();
-//			intersects.forEach( function ( intersection )
 			for (let i = 0; i < intersects.length; i++){
 
 				const intersection = intersects[i];

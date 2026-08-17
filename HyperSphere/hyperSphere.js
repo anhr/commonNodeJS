@@ -39,7 +39,6 @@ import ColorPicker from '../colorpicker/colorpicker.js';
 import three from '../three.js'
 
 import ProgressBar from '../ProgressBar/ProgressBar.js'
-//import WebGPU from '../../../WebGPU/master/WebGPU.js';
 import PositionController from '../PositionController.js';
 import MyObject from '../myObject.js'
 import anglesRange from './anglesRange.js'
@@ -1012,46 +1011,6 @@ class HyperSphere extends MyObject {
 
 									switch (name) {
 
-/*											
-										case 'middleVertice': return (oppositeVerticesId = vertice.oppositeVerticesId, timeId, boPushMiddleVertice = true, boCloud = false, boCreateHypersphere = true) => {
-
-											//find middle vertice between opposite vertices
-
-											const oppositeVertices = [];
-											oppositeVerticesId.forEach(oppositeAngleId => {
-
-												const oppositeVertice = classSettings.overriddenProperties.oppositeVertice(oppositeAngleId, timeId);
-												oppositeVertices.push(oppositeVertice);
-
-											});
-
-											let middleVertice = _this.vertice2angles(this.middlePosition(oppositeVertices, boCloud, boCreateHypersphere));
-											if (boPushMiddleVertice) classSettings.overriddenProperties.pushMiddleVertice(timeId, middleVertice);
-											if (classSettings.randomMiddleVertice) { middleVertice = new this.RandomVertice({
-												
-												arc: _this.arc,
-												oppositeVertice: middleVertice,
-												classSettings: classSettings,//используется для вычисления случайной точки в RandomVerticeHSphere HyperSphereNavigator.calculateNewPoint
-												
-											}).angles[0]; }
-											
-											if (classSettings.debug && classSettings.debug.middleVertice) {
-
-												console.log('opposite to vertice[' + verticeId + '] vertices:');
-												oppositeVerticesId.forEach(oppositeVerticeId => {
-
-													const verticeAngles = position[oppositeVerticeId].angles;
-													console.log('vertice[' + oppositeVerticeId + '] anlges: ' + JSON.stringify(verticeAngles));
-
-												});
-												console.log('Middle vertice ' + JSON.stringify(_this.angles2Vertice(middleVertice, timeId)) + ' angles: ' + JSON.stringify(middleVertice));
-
-											}
-											
-											return middleVertice;
-
-										}
-*/											
 										//идентификаторы всех вершин, которые связаны с текущей вершиной через ребра
 										case 'oppositeVerticesId': return new Proxy(angles.edges, {
 
@@ -1219,7 +1178,6 @@ class HyperSphere extends MyObject {
 		this.pointLength = () => { return this.dimension > 2 ? this.dimension : 3; }//itemSize of the buiffer.attributes.position должен быть больше 2. Иначе при копировании из буфера в THREE.Vector3 координата z = undefined
 		this.getPoint = (anglesId, timeId) => {
 
-//			const r = classSettings.overriddenProperties.r(timeId),
 			const angles = typeof anglesId === "number" ? classSettings.overriddenProperties.angles(anglesId, timeId) : anglesId;
 			const vertice = this.a2v(angles);//, r);
 			if (this.classSettings.debug && this.classSettings.debug.testVertice){
@@ -2671,9 +2629,7 @@ this.object = () => {
 				classSettings.compute ||= {};
 				const compute = classSettings.compute;
 				if (compute.isUseCPU === undefined) compute.isUseCPU = false;
-				compute.config ||= {
-//					type: 'START_COMPUTE',
-				};
+				compute.config ||= {};
 				const config = compute.config;
 				config.type ||= 'START_COMPUTE';
 				config.pointsPerStep = settings.object.geometry.angles.length;
@@ -2707,26 +2663,26 @@ this.object = () => {
 
 				//Select one:
 				
-		        //Случайная точка не вычисляется. Вместо этого возвращается PSEUDO_RANDOM
-		        if (config.RANDOM_POINTS === undefined) config.RANDOM_POINTS = 0;
+				//Случайная точка не вычисляется. Вместо этого возвращается PSEUDO_RANDOM
+				if (config.RANDOM_POINTS === undefined) config.RANDOM_POINTS = 0;
 		
-		        //Вычисляется случайное число.
-		        //В GPU для получения случайного числа применяется хеширование(Hashing).Простой генератор псевдослучайных чисел(PCG).Permuted Congruential Generator(Перемешанный конгруэнтный генератор).
-		        //Этот метод лучше всего вычисляет случайное число, но требует много времени на вычисления если не оптимизировать Google Chrome.
-		        //Инструкция по оптимизации находится в Technical Guide: Enabling High-Performance GPU for Google Chrome https://github.com/anhr/universe/blob/main/hyperSphere/HUniverseEngine.md#technical-guide-enabling-high-performance-gpu-for-google-chromeИнструкцию по оттимизации смотри в D:\My documents\MyProjects\webgl\three.js\GitHub\universe\main\hyperSphere\webGPUHUniverse.js
-		        if (config.RANDOM_POINTS === undefined) config.RANDOM_POINTS = 1;
+				//Вычисляется случайное число.
+				//В GPU для получения случайного числа применяется хеширование(Hashing).Простой генератор псевдослучайных чисел(PCG).Permuted Congruential Generator(Перемешанный конгруэнтный генератор).
+				//Этот метод лучше всего вычисляет случайное число, но требует много времени на вычисления если не оптимизировать Google Chrome.
+				//Инструкция по оптимизации находится в Technical Guide: Enabling High-Performance GPU for Google Chrome https://github.com/anhr/universe/blob/main/hyperSphere/HUniverseEngine.md#technical-guide-enabling-high-performance-gpu-for-google-chromeИнструкцию по оттимизации смотри в D:\My documents\MyProjects\webgl\three.js\GitHub\universe\main\hyperSphere\webGPUHUniverse.js
+				if (config.RANDOM_POINTS === undefined) config.RANDOM_POINTS = 1;
 		
-		        //Вычисляется случайное число.
+				//Вычисляется случайное число.
 				//ВНИМАНИЕ!!! Сейчас этот метод не применяю потому что он не дает преимуществ перед config.RANDOM_POINTS = 1 после оптимизации Google Chrome.
-		        //Анализ производительности вычислений в GPU показал, что генерация случайного числа внутри WebGPU по методу хеширования(Hashing) (RANDOM_POINTS = 1) крайне затратно.
-		        //Для того, что бы генерация случайного числа внутри WebGPU по методу хеширования(Hashing) (RANDOM_POINTS = 1) проходила быстро на Goole Chrome, браузер надо оптимизировать.
-		        //Инструкция находится в Technical Guide: Enabling High-Performance GPU for Google Chrome https://github.com/anhr/universe/blob/main/hyperSphere/HUniverseEngine.md#technical-guide-enabling-high-performance-gpu-for-google-chrome
-		        //Например при totalSteps = 100; и pointsPerStep = 500; время итерации заняло 14.644 сек.
-		        //по сравненияю со временем итерации без генератора случайного числа RANDOM_POINTS = false 4.733 сек.
-		        //Поэтому для GPU применяю метод Lookup Table (LUT) — таблицу предварительно вычисленных значений.
-		        //Случайные числа вычисляются на JS и затем через буфер передаются на GPU.
-		        //Этот метод работает гораздо быстрее но случайные числа не сосвем случайные.
-		        //config.RANDOM_POINTS = 2;
+				//Анализ производительности вычислений в GPU показал, что генерация случайного числа внутри WebGPU по методу хеширования(Hashing) (RANDOM_POINTS = 1) крайне затратно.
+				//Для того, что бы генерация случайного числа внутри WebGPU по методу хеширования(Hashing) (RANDOM_POINTS = 1) проходила быстро на Goole Chrome, браузер надо оптимизировать.
+				//Инструкция находится в Technical Guide: Enabling High-Performance GPU for Google Chrome https://github.com/anhr/universe/blob/main/hyperSphere/HUniverseEngine.md#technical-guide-enabling-high-performance-gpu-for-google-chrome
+				//Например при totalSteps = 100; и pointsPerStep = 500; время итерации заняло 14.644 сек.
+				//по сравненияю со временем итерации без генератора случайного числа RANDOM_POINTS = false 4.733 сек.
+				//Поэтому для GPU применяю метод Lookup Table (LUT) — таблицу предварительно вычисленных значений.
+				//Случайные числа вычисляются на JS и затем через буфер передаются на GPU.
+				//Этот метод работает гораздо быстрее но случайные числа не сосвем случайные.
+				//config.RANDOM_POINTS = 2;
 				
 				if (config.RANDOM_POINTS === 0) {
 					if (config.PSEUDO_RANDOM === undefined) config.PSEUDO_RANDOM = 0.5;
@@ -2734,24 +2690,6 @@ this.object = () => {
 					if ((config.PSEUDO_RANDOM < min) || (config.PSEUDO_RANDOM > max)) console.error(sHyperSphere + '.project.distanceOfVertices: Invalid config.PSEUDO_RANDOM = ' + config.PSEUDO_RANDOM + '. Available range from ' + min + ' to ' + max + '.');
 					classSettings.debug.random = () => { return config.PSEUDO_RANDOM };
 				}
-/*
-				const config = {
-					type: 'START_COMPUTE',
-					RANDOM_POINTS: RANDOM_POINTS,
-					DAMPING: DAMPING,
-					REPULSION_STRENGTH: REPULSION_STRENGTH,
-					PSEUDO_RANDOM: PSEUDO_RANDOM,
-					p: p,
-
-					//for GPU
-
-					DEBUG_MODE: DEBUG_MODE,
-					baseRadius: baseRadius,
-					radiusMax: radiusMax,
-					totalSteps: totalSteps,
-					pointsPerStep: pointsPerStep
-				};
-*/				
 				const computeCPU = () => {
 					classSettings.distanceOfVertices({
 						timeId: timeId,
@@ -3130,15 +3068,10 @@ this.object = () => {
 	}
 
 	setArc(radius, length) { this.arc = π * (/*radius - */length); }
-	get r() {
-
-/*		
-		const settings = this.classSettings.settings;
-		return this.classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : settings.options.player === false ? 0 : settings.options.player.getTimeId());
-*/		
-		return this.classSettings.overriddenProperties.rTime();
-		
-	}
+	/**
+	 * get radius for for current time
+	 */
+	get r() { return this.classSettings.overriddenProperties.rTime(); }
 	/**
 	 * get default color is 'lime'
 	 */
@@ -3172,7 +3105,9 @@ this.object = () => {
 		})
 
 	}
-
+	/**
+	 * get vertice edges length
+	 */
 	get verticeEdgesLength() { return this._verticeEdgesLength; }
 
 	//base methods

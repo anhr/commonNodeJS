@@ -31,7 +31,6 @@ export function polarToCartesian({ longitude }, r) {
 	const x = r * Math.cos(longitude);
 	const y = r * Math.sin(longitude);
 
-//	return [x, y];
 	return Position([x, y]);
 }
 /**
@@ -46,7 +45,6 @@ export function cartesianToPolar({ x, y }) {
 	// Calculate the angle (theta) in radians, ranging from -PI to PI
 	const longitude = Math.atan2(y, x);
 
-//	return { longitude };
 	return angles([longitude]);
 }
 

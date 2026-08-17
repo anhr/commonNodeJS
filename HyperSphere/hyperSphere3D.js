@@ -19,7 +19,6 @@ import Sphere from './sphere.js';
 import three from '../three.js'
 import FibonacciSphereGeometry from '../FibonacciSphere/FibonacciSphereGeometry.js'
 import anglesRange from './anglesRange.js'
-//import RandomVertice from './RandomVertice/randomVerticeHSphere.js';
 import * as utils from './utilsHSphere.js'
 import Position from './position.js'
 

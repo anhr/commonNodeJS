@@ -89,19 +89,12 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 
 	// Инициализируем скорости
 	if (velocities.length === 0) velocities = new Array(angles.length).fill(null).map(() => (overrides.velocitiesInitValues()));
-//	if (velocities.length === 0) velocities = new Array(angles.length).fill(null).map(() => ({ x: 0, y: 0, z: 0 }));
 
 	
 	// --- Итерационный процесс движения точек ---
 	function iterationStep() {
 
-/*		
-		// Вычисляем силы отталкивания для каждой точки
-		const forces = new Array(angles.length).fill(null).map(() => ({ x: 0, y: 0, z: 0 }));
-*/		
-//		const anglesTemp = new Array(angles.length).fill(null).map(() => ({ x: 0, y: 0, z: 0, w: 0 }));
 		const anglesTemp = new Array(angles.length).fill(null).map(() => (overrides.anglesInitValues));
-//		const newRadius = classSettings.overriddenProperties.r(settings.bufferGeometry.userData.timeId);
 		
 		let timestamp = classSettings.debug ? window.performance.now() : undefined;
 
@@ -114,7 +107,6 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 			const userData = settings.bufferGeometry.userData;
 			const RandomVertice = overrides.RandomVertice;
 			const p1 = settings.overriddenProperties.position(position, i, userData);
-//			const angles1 = utils.cartesianToPolar(p1);
 
 			const force = overrides.force();
 			for (
@@ -202,11 +194,6 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 					if (settings.debug && settings.debug.log) {
 						const pointCur = settings.bufferGeometry.userData.position[i];
 						const pointAngles = utils.cartesianToPolar(pointCur);
-//						const p1 = settings.overriddenProperties.position(position, i, userData);
-/*						
-						const pointAngles = angles[i];//utils.cartesianToPolar(pointCur);
-						const pointCur = utils.polarToCartesian(pointAngles);//new THREE.Vector4().fromBufferAttribute(position, i);
-*/						
 						console.log('Step:' + data.timeId + ' Point:' + (data.timeId * angles.length + i) + '. x=' + pointCur.x + ' y=' + pointCur.y + ' z=' + pointCur.z + ' w=' + pointCur.w + ',alt=' + pointAngles.altitude + ' lat=' + pointAngles.latitude + ' lon=' + pointAngles.longitude);
 					}
 				}

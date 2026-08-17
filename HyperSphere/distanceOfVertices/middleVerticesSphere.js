@@ -103,7 +103,6 @@ middleVertices.middlePosition = (points, boCloud, boCreateHypersphere, _this) =>
 	} else middleVertice = [x / length, y / length, z / length];
  
 	middleVertices.randomVertices(_this.vertice2angles(middleVertice), _this.object3D.parent, boCloud, boCreateHypersphere, _this, RandomVertice);
-//	_this.randomVertices(_this.vertice2angles(middleVertice), _this.object3D.parent, boCloud, boCreateHypersphere);
 	return middleVertice;
 	 
 	}

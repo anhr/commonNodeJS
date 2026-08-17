@@ -168,21 +168,11 @@ middleVertices.verticeProxy = (vertice, classSettings, _this, verticeId, positio
 
 					});
 
-//					let middleVertice = _this.vertice2angles(_this.middlePosition(oppositeVertices, boCloud, boCreateHypersphere));
 					let middleVertice = _this.vertice2angles(classSettings.distanceOfVertices.middlePosition(oppositeVertices, boCloud, boCreateHypersphere, _this));
 					if (boPushMiddleVertice) classSettings.overriddenProperties.pushMiddleVertice(timeId, middleVertice);
 					if (classSettings.randomMiddleVertice) {
 
 						middleVertice = middleVertices.RandomVertice.get(_this.arc, middleVertice, classSettings, middleVertices.RandomVertice);
-/*						
-						middleVertice = new middleVertices.RandomVertice({
-						
-							arc: _this.arc,
-							oppositeVertice: middleVertice,
-							classSettings: classSettings,//используется для вычисления случайной точки в RandomVerticeHSphere HyperSphereNavigator.calculateNewPoint
-							
-						}).angles[0];
-*/
 						
 					}
 					
@@ -213,7 +203,6 @@ middleVertices.verticeProxy = (vertice, classSettings, _this, verticeId, positio
 }
 middleVertices.randomVertices = (middleVerticeAngles, scene, boCloud = false, boCreateHypersphere = true, _this, RandomVertice) => {
 	
-//	const classSettings = this.classSettings;
 	const classSettings = _this.classSettings;
 	if (!classSettings.randomArc) return;
 

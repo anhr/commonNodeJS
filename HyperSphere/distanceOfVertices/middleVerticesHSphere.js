@@ -82,9 +82,9 @@ middleVertices.middlePosition = (points, boCloud, boCreateHypersphere, _this) =>
 				//https://chat.deepseek.com/a/chat/s/85a1d029-0033-437b-a750-c58f9590bd4c
 				/*
 				Дана сфера. На поверхности сферы заданы три точки в декартовой системе координат. Начало координат находится в центре сферы.
-		Построить плоскость, проходящую через заданные три точки.
-		Построить нормаль к этой плоскости такую, что бы она проходила через центр сферы.
-		Вычислить координаты двух точек, в которых норамль пересекается с данной сферой.
+				Построить плоскость, проходящую через заданные три точки.
+				Построить нормаль к этой плоскости такую, что бы она проходила через центр сферы.
+				Вычислить координаты двух точек, в которых норамль пересекается с данной сферой.
 				*/
 				/*
 				Сделать подобные вычисления для гиперсферы в 4-мерном пространстве (n=4). Теперь уже заданы не три, а черыте точки на гиперсфере. Написать код на javascript.
@@ -325,7 +325,6 @@ middleVertices.middlePosition = (points, boCloud, boCreateHypersphere, _this) =>
 
 			}
 			middleVertices.randomVertices(_this.vertice2angles(middleVertice), _this.object3D.parent, boCloud, boCreateHypersphere, _this, RandomVertice);
-//			_this.randomVertices(_this.vertice2angles(middleVertice), _this.object3D.parent, boCloud, boCreateHypersphere);
 			return middleVertice;
 
 		}

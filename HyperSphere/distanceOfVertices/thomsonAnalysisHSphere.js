@@ -299,7 +299,6 @@ export async function graphFolderChild(folder, classSettings, textController, ti
 		if (createLabel) {
 			const info = aTomsonAnalysisRes[aTomsonAnalysisRes.length - 1][displayProperty];
 			const labelController = createLabel(sTimeID);
-//			labelController.name(displayProperty + ': ' + info.toFixed(4) + (displayProperty === 'totalEnergy' ? getTotalEnergyPercent(info) : ''));
 			const lang = localization(classSettings.settings.options.getLanguageCode());
 			let title;
 			switch(displayProperty) {
@@ -314,7 +313,6 @@ export async function graphFolderChild(folder, classSettings, textController, ti
 		}
 
 		// 1. Создаем пустой контроллер-контейнер (привязываем к пустой функции)
-//		const dummyObj = { totalEnergy: function () { } };
 		const dummyObj = {};
 		dummyObj[displayProperty] = function () { };
 		const canvasController = folder.add(dummyObj, displayProperty);
@@ -523,9 +521,6 @@ export async function evaluateDistribution(stepIndex = 0, paramsNew) {
 	// для более удобного и быстрого доступа к ним в циклах.
 	let points = [];
 
-	// Временный массив для хранения декартовых 4D координат текущего шага
-//	const currentStepPoints = [];
-
 	if (params.angles) {
 		if (params.position) console.warn(sThomsonAnalysisHSphere + ': params.position is not using if params.angles is defined');
 		// 1. Конвертация 4D полярных координат из объектов в 4D Декартовы координаты
@@ -643,10 +638,6 @@ function drawAnalysisGraph(aAnalysis, propertyKey, canvas, boText = true) {
 	// Берем реальную ширину из DOM, а высоту берем строго из clientHeight (или 150 по умолчанию),
 	// чтобы она НЕ скакала вслед за пропорциями.	const rect = canvas.getBoundingClientRect();
 	const rect = canvas.getBoundingClientRect();
-/*
-	const targetWidth = Math.floor(rect.width);
-	const targetHeight = Math.floor(canvas.clientHeight || rect.height || 150);
-*/
 
 	// Обновляем внутренний размер буфера холста только при реальном изменении
 	if (canvas.width !== rect.width || canvas.height !== rect.height) {
@@ -690,15 +681,7 @@ function drawAnalysisGraph(aAnalysis, propertyKey, canvas, boText = true) {
 	const displayMin = minVal - padding;
 	const displayMax = maxVal + padding;
 	const displayRange = displayMax - displayMin;
-/*
-	// Сетка (смещаем линию чуть ниже, чтобы текст сверху не перекрывался)
-	ctx.strokeStyle = '#222';
-	ctx.lineWidth = 1;
-	ctx.beginPath();
-	ctx.moveTo(0, height * 0.6);
-	ctx.lineTo(width, height * 0.6);
-	ctx.stroke();
-*/
+
 	// Построение линии графика
 	ctx.beginPath();
 	ctx.strokeStyle = propertyKey === 'totalEnergy' ? '#00ffcc' : '#ffcc00';
@@ -954,15 +937,5 @@ export class AnalysisSteps{
 				drawAnalysisGraph(aAnalysis, displayProperty);
 			}
 		}
-/*		
-		Object.defineProperty(this, 'size', {
-			get: function () {
-				const rect = document.getElementById(analysisGraphWidgetId).getBoundingClientRect();
-				return { width:rect.width, height: rect.height};
-			},
-//			enumerable: true,      // Свойство будет видно при переборе (например, в for...in)
-//			configurable: true     // Свойство можно будет удалить или изменить позже
-		});
-*/		
 	}
 }

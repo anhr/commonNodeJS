@@ -101,7 +101,6 @@ export function cartesianToPolar(vertice) {
 	// Обработка случая, когда точка находится в центре сферы (r = 0)
 	if (r === 0) {
 		console.error(sSartesianToAngles + ': Under constraction');
-//		return { r: 0, latitude: 0, longitude: 0 };
 		return angles([0, 0]);
 	}
 
@@ -114,7 +113,6 @@ export function cartesianToPolar(vertice) {
 	// Используем Math.atan2(y, x). Результат в радианах (-PI, PI].
 	const longitude = Math.atan2(y, x);
 
-//	return { r, latitude, longitude };
 	return angles([latitude, longitude]);
 
 }

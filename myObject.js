@@ -211,109 +211,6 @@ class MyObject {
 			
 			setDrawRangeTypes();
 
-			//Хватит ли памяти для position and color attributes
-			//Public https://share.google/aimode/3xU4hIbnGhEjUDBA7
-			//Private https://www.google.com/search?sourceid=chrome&ie=UTF-8&amc=1&udm=50&cud=1&qsubts=1781489067364&source=chrome.crn.rb&atvm=1&mstk=AUtExfBYMPQYWGkxSB6QfDuDOBMkgGUmSH38xtjvxaTRGwW0aEU0go3VfmNM4TH7ZH3deJddk46Oy0uQ-2Rjrkk6nyzoRpR9A9UOSpAsuH4b9dG7VY45Kt634vejzi5aUwrVjoGjp_Aa2vmkTblACUngxZ9ULUWIm2aJa6w--yoJYsw5bBiD9GbwRucTfa15ERGJHQnLSaYz2dKTjeyAHXAet68_zjoVS8NKDYvS70rG4FKof3McS-xkJ2vpqFMCJhOJvVAajKqwPeBgNKw0W2KgCaTYLxDjJHnm0zA&mtid=KX4raq2yKI7KwPAPyKegkAU&csuir=1&aep=26&q=%D0%9C%D0%BE%D0%B6%D0%BD%D0%BE+%D0%BB%D0%B8+%D0%B2+javascript+%D1%83%D0%B7%D0%BD%D0%B0%D1%82%D1%8C+%D1%81%D0%BA%D0%BE%D0%BB%D1%8C%D0%BA%D0%BE+%D0%BC%D0%BE%D0%B6%D0%BD%D0%BE+%D0%B2%D1%8B%D0%B4%D0%B5%D0%BB%D0%B8%D1%82%D1%8C+%D0%BF%D0%B0%D0%BC%D1%8F%D1%82%D0%B8+%D0%B2+%D0%B1%D1%83%D1%84%D0%B5%D1%80%D0%B5+%D0%B5%D1%81%D0%BB%D0%B8+%D1%8F+%D0%BF%D0%BE%D0%BB%D1%83%D1%87%D0%B0%D1%8E+%D0%BE%D1%88%D0%B8%D0%B1%D0%BA%D1%83+RangeError%3A+Array+buffer+allocation+failed+%D0%BF%D1%80%D0%B8%D0%B2%D1%8B%D0%B4%D0%B5%D0%BB%D0%B5%D0%BD%D0%B8%D0%B8+%D0%BC%D0%B5%D1%81%D1%82%D0%B0+%D0%B4%D0%BB%D1%8F+%D0%B1%D1%83%D1%84%D0%B5%D1%80%D0%B0%3F&ved=0CAgQ2_wOahcKEwjA_of5k4iVAxUAAAAAHQAAAAAQGg
-/*
-			function getMaxFloat32Space() {
-				const PAGE_SIZE_BYTES = 64 * 1024; // 1 страница WebAssembly = 64 КБ
-				const BYTES_PER_FLOAT = 4;         // 1 элемент Float32 = 4 байта
-
-				let lowPages = 1;
-				// ~4 ГБ в страницах WebAssembly (максимум для 32-битного адресного пространства WASM)
-				let highPages = Math.floor((4 * 1024 * 1024 * 1024) / PAGE_SIZE_BYTES);
-				let maxValidPages = 0;
-
-				// Создаем начальный минимальный объект памяти (1 страница)
-				const memory = new WebAssembly.Memory({ initial: 1 });
-
-				while (lowPages <= highPages) {
-					let midPages = Math.floor((lowPages + highPages) / 2);
-
-					// Считаем, сколько страниц нужно ДОБАВИТЬ к уже имеющейся 1 странице
-					let pagesToGrow = midPages - memory.buffer.byteLength / PAGE_SIZE_BYTES;
-
-					if (pagesToGrow <= 0) {
-						// Если текущий буфер уже равен или больше нужного, проверка пройдена
-						maxValidPages = midPages;
-						lowPages = midPages + 1;
-						continue;
-					}
-
-					// grow() возвращает СТАРОЕ количество страниц при успехе, или -1 при ошибке
-					// Отладчик Chrome НЕ будет останавливаться здесь!
-					let res = memory.grow(pagesToGrow);
-
-					if (res !== -1) {
-						maxValidPages = midPages;
-						lowPages = midPages + 1; // Ищем больший размер
-					} else {
-						highPages = midPages - 1; // Памяти не хватило, уменьшаем рамки
-					}
-				}
-
-				// Считаем финальный доступный объем
-				const totalBytes = maxValidPages * PAGE_SIZE_BYTES;
-				const maxFloats = Math.floor(totalBytes / BYTES_PER_FLOAT);
-
-				return {
-					bytes: totalBytes,
-					float32Length: maxFloats,
-					// Экспортируем готовый буфер для создания вашего Float32Array
-//					buffer: memory.buffer
-				};
-			}
-			const memInfo = getMaxFloat32Space();
-
-const a = new Float32Array(parseInt(memInfo.float32Length * 0.1));
-			const bufferCount = 2;//необходимый объем памяти умножаем на 2 потому что выделяется два attributes для position and color приусловии, что itemSize у обоих буферов одинаковый
-			if (memInfo.float32Length < (bufferCount * MAX_POINTS)) showMemoryWarningToUser()
-*/
-/*
-			console.log(`Максимум элементов Float32Array: ${memInfo.float32Length}`);
-			console.log(`Максимум в Мегабайтах: ${(memInfo.bytes / 1024 / 1024).toFixed(2)} MB`);
-
-			// Теперь вы можете создать Float32Array прямо поверх этого буфера:
-			const mySafeArray = new Float32Array(memInfo.buffer, 0, memInfo.float32Length);
-			console.log(`Успешно выделен Float32Array с длиной: ${mySafeArray.length}`);
-*/
-/*
-			try {
-				const a = new Float32Array(2 * MAX_POINTS);//Умножаем на 2 потому что выделяется два attributes для position and color
-			} catch (error) {
-				if (error instanceof RangeError) {
-					console.error("Memory allocation failed:", error.message);
-
-					// Передаем запрошенный размер для расчета лимитов
-					showMemoryWarningToUser();
-				} else {
-					console.error("An unexpected error occurred:", error);
-				}
-			}
-			function getMaxBufferLength() {
-				let low = 0;
-				// Максимальный теоретический предел для 64-битных систем (обычно около 4 ГБ)
-				let high = 4 * 1024 * 1024 * 1024;
-				let maxValid = 0;
-
-				while (low <= high) {
-					let mid = Math.floor((low + high) / 2);
-					try {
-						// Пробуем выделить память
-						let buf = new Float32Array(mid);
-						maxValid = mid; // Запоминаем успешный размер
-						low = mid + 1;  // Ищем больше
-					} catch (e) {
-						if (e instanceof RangeError) {
-							high = mid - 1; // Уменьшаем границы поиска
-						} else {
-							throw e; // Другая ошибка
-						}
-					}
-				}
-				return maxValid / 2;//Делим на 2 потому что выделяется два буфера для розиции точки и ее цвета
-			}
-*/
 			class EnvironmentLimits {
 				static #maxFloat32Elements = null;
 
@@ -362,13 +259,6 @@ const a = new Float32Array(parseInt(memInfo.float32Length * 0.1));
 					return this.#maxFloat32Elements;
 				}
 			}
-/*
-			// === ИСПОЛЬЗОВАНИЕ ===
-			const MAX_SINGLE_ARRAY_ELEMENTS = EnvironmentLimits.getMaxFloat32Elements();
-
-			console.log(`[Система] Макс. элементов: ${MAX_SINGLE_ARRAY_ELEMENTS.toLocaleString()}`);
-			console.log(`[Система] Макс. размер одного массива: ${(MAX_SINGLE_ARRAY_ELEMENTS * 4 / 1024 / 1024 / 1024).toFixed(2)} ГБ`);
-*/
 			function getMaxPairsFloat32Length() {
 				const BYTES_PER_FLOAT = 4; // 1 элемент Float32 = 4 байта
 
@@ -409,43 +299,14 @@ const a = new Float32Array(parseInt(memInfo.float32Length * 0.1));
 			}
 			// 1. Вызываем функцию. Она возвращает чистое число (безопасную длину)
 			const safeLength = getMaxPairsFloat32Length();
-/*			
-//console.log(`Максимально безопасная длина для каждого массива: ${safeLength} элементов`);
-
-// 2. Теперь спокойно создаем два ваших массива. 
-// Ошибки RangeError НЕ БУДЕТ, так как проверочные массивы из функции t1 и t2 
-// уже удалены, и вся свободная память отдана под ваши финальные переменные.
-const positions2 = new Float32Array(safeLength);
-const colors2 = new Float32Array(safeLength);
-
-//console.log("Массивы успешно созданы!");
-*/
 			if (safeLength < MAX_POINTS) {
 				function showMemoryWarningToUser() {
 					const availableBytes = safeLength;
 					//				const availableBytes = memInfo.bytes;
 					const bytesPerElement = Float32Array.BYTES_PER_ELEMENT; // 4 bytes
-					/*					
-					
-									// Технический предел V8/Chrome на один ArrayBuffer составляет 4 ГБ (4,294,967,296 байт)
-									let availableBytes = 4 * 1024 * 1024 * 1024;
-					
-									// Корректируем лимит, если у браузера осталось меньше свободной памяти в куче
-									if (window.performance && window.performance.memory) {
-										const heapLimit = window.performance.memory.jsHeapSizeLimit;
-										const usedHeap = window.performance.memory.usedJSHeapSize;
-										const freeHeap = heapLimit - usedHeap;
-										// Берем 85% от свободной памяти для стабильности
-										availableBytes = Math.min(availableBytes, freeHeap * 0.85);
-									}
-					*/
 
 					// Вычисляем максимальные объемы
-//					const maxElements = Math.floor((availableBytes / bytesPerElement) / bufferCount);
 					const maxElements = availableBytes;
-					//					const maxMB = Math.floor(availableBytes / (1024 * 1024));
-					//				const MAX_POINTS = pointLength * pointsLength * settings.object.geometry.rCount;
-					//					const multipleLimit = (maxElements / pointLength), 
 					const rCount = settings.object.geometry.rCount;
 					const maxVertices = maxElements / pointLength;
 
@@ -465,15 +326,8 @@ const colors2 = new Float32Array(safeLength);
 				}
 				showMemoryWarningToUser();
 
-//				setDrawRangeTypes();
 				return false;
 			}
-/*
-			// Памяти хватило, работаем с массивами напрямую
-			const positions = allocation.positions;
-			const colors = allocation.colors;
-*/
-
 			
 			if (MAX_POINTS != undefined) this.setVerticesRange(0, isRCount ?
 				pointLength * pointsLength * getPlayerTimesLength()://зарезервировано место для вершин вселенной с разным радиусом

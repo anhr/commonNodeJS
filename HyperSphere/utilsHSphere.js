@@ -59,29 +59,8 @@ export function polarToCartesian(angles, r=1, debug) {
 	
 	if(debug && (isNaN(x) || isNaN(y) || isNaN(z) || isNaN(w))) console.error(sAnglesToCartesian + ': Invalid cartesian: x = ' + x + ', y = ' + y + ', z = ' + z + ', w = ' + w);
 
-//	return { x, y, z, w };
 	return Position([x, y, z, w]);
 }
-/*
-// --- Пример ---
-const params = {
-	latitude: Math.PI / 6,   // 30 градусов
-	longitude: Math.PI / 4,  // 45 градусов
-	altitude: Math.PI / 3    // 60 градусов
-};
-
-const coords4D = hypersphereToCartesian(100, params);
-console.log("4D Coordinates:", coords4D);
-*/
-/*
-Результат будет примерно:
-{
-  x: 61.23,
-  y: 61.23,
-  z: 43.30,
-  w: 50.00
-}
-*/
 /*https://gemini.google.com/app/0d61322aa801d5a5
 Задана точка vertice на сфере в декартовой системе координат. Начало координат находится в центре сферы.
 Положение точки обозначить как
@@ -134,60 +113,6 @@ export function cartesianToPolar(vertice, debug) {
 	return angles([altitude, latitude, longitude]);
 //	return { latitude, longitude, altitude };
 }
-/*
-export function cartesianToPolar(vertice, debug) {
-
-	const x = vertice.x;//, xx = x * x;
-	const y = vertice.y;//, yy = y * y;
-	const z = vertice.z;//, zz = z * z;
-	const w = vertice.w;//, ww = w * w;
-	const xyz = x * x + y * y + z * z;
-
-	// 1. Полный радиус гиперсферы
-	const R = Math.sqrt(xyz + w * w);
-
-	if (R < 1e-10) {
-		console.error(sCartesianToAngles + ': Under constraction');
-//		return { r: 0, altitude: 0, latitude: 0, longitude: 0 };
-		return angles([0, 0, 0]);
-	}
-
-	// 2. Вычисление Altitude (относительно оси W)
-	// Диапазон [0, PI]
-	const altitude = Math.acos(w / R);
-
-	// Вычисляем радиус проекции в 3D пространстве (xyz)
-	const rXYZ = Math.sqrt(xyz);
-
-	// Если rXYZ близок к 0, значит точка лежит на оси W, 
-	// и широта с долготой не определены (принимаем за 0)
-	if (rXYZ < 1e-10) {
-		return angles([altitude, 0, 0]);
-	}
-
-	// 3. Вычисление Latitude (аналогично 3D сфере)
-	// Диапазон [-PI/2, PI/2]
-	const latitude = Math.asin(z / rXYZ);
-
-	// 4. Вычисление Longitude
-	// Диапазон (-PI, PI]
-	const longitude = Math.atan2(y, x);
-	
-	if(debug && (isNaN(altitude) || isNaN(latitude) || isNaN(longitude))) console.error(sCartesianToAngles + ': Invalid angles: altitude = ' + altitude + ', latitude = ' + latitude + ', longitude = ' + longitude);
-	return angles([altitude, latitude, longitude]);
-}
-*/
-
-/*
-// --- Тест ---
-const vertice = [1, 1, 1, 1]; // Точка "в углу" 4D куба
-const result = cartesianToHyperspherical(vertice);
-
-console.log("Результаты (в радианах):", result);
-console.log(`Altitude: ${(result.altitude * 180 / Math.PI).toFixed(2)}°`);
-console.log(`Latitude: ${(result.latitude * 180 / Math.PI).toFixed(2)}°`);
-console.log(`Longitude: ${(result.longitude * 180 / Math.PI).toFixed(2)}°`);
-*/
 /**
  * Adds a longitude, latitude and altitude property to the vertice angles array for the hypersphere.
  * @param {array} vertice array of the vertice angles. Array length is 3. array[0] is altitude. array[1] is latitude. array[2] is longitude.
