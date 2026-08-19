@@ -64,6 +64,27 @@ npm run build
 WARNINGS!!!
 ------------
 
+JS_Parse_Error [SyntaxError]: Unexpected token: operator (=)
+    at JS_Parse_Error.get (eval at <anonymous> (D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\myThree\node_modules\uglify-es\tools\node.js:21:1), <anonymous>:75:23)
+    at getStackString (node:internal/util/inspect:1289:37)
+    at formatError (node:internal/util/inspect:1418:15)
+    at formatRaw (node:internal/util/inspect:1028:14)
+    at formatValue (node:internal/util/inspect:883:10)
+    at inspect (node:internal/util/inspect:386:10)
+    at formatWithOptionsInternal (node:internal/util/inspect:2349:40)
+    at formatWithOptions (node:internal/util/inspect:2211:10)
+    at console.value (node:internal/console/constructor:329:14)
+    at console.log (node:internal/console/constructor:374:61) {
+  filename: '0',
+  line: 14618,
+  col: 21,
+  pos: 449327
+}
+
+Причина ошибки в использовании пакета uglify-es, который уже устарел и не поддерживает современный синтаксис JavaScript (ES6+)
+Смотри "Обновление myThree.module.min.js" в https://gemini.google.com/app/b8179eef3e7c1d24
+-----------------------------------------------------
+
 (!) Unresolved dependencies
 https://github.com/rollup/rollup/wiki/Troubleshooting#treating-module-as-external-dependency
 http://localhost/threejs/three.js/build/three.module.js (imported by index.js)

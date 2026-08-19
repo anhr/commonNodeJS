@@ -29,7 +29,9 @@
   },
   "homepage": "https://github.com/anhr/commonNodeJS/tree/master/myThree",
   "devDependencies": {
-    "rollup": "^2.77.2"
+    "@rollup/plugin-terser": "^1.0.0",
+    "rollup": "^2.77.2",
+    "terser": "^5.50.0"
   },
   "jspm": {
     "files": [
@@ -41,8 +43,5 @@
       "build/myThree.module.js"
     ],
     "directories": {}
-  },
-  "dependencies": {
-    "uglify-es": "^3.3.10"
   }
 }
