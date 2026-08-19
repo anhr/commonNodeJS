@@ -1,6 +1,6 @@
 {
   "name": "Common",
-  "version": "1.4",
+  "version": "1.6",
   "description": "The node.js version of my common functions.",
   "main": "build/common.js",
   "repository": {

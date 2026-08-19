@@ -3972,19 +3972,6 @@ class Three {
 		}
 		this.ConvexHull = new ConvexHull().ConvexHull;
 
-/*
-		import { Vector3 } from '../math/Vector3.js';
-		import { Vector2 } from '../math/Vector2.js';
-		import { Box3 } from '../math/Box3.js';
-		import { EventDispatcher } from './EventDispatcher.js';
-		import { BufferAttribute, Float32BufferAttribute, Uint16BufferAttribute, Uint32BufferAttribute } from './BufferAttribute.js';
-		import { Sphere } from '../math/Sphere.js';
-		import { Object3D } from './Object3D.js';
-		import { Matrix4 } from '../math/Matrix4.js';
-		import { Matrix3 } from '../math/Matrix3.js';
-		import * as MathUtils from '../math/MathUtils.js';
-		import { arrayMax } from '../utils.js';
-*/
 		const Vector2 = three.THREE.Vector2,
 			Box3 = three.THREE.Box3,
 
@@ -5270,8 +5257,6 @@ class Three {
 			Quaternion = three.THREE.Quaternion,
 			Spherical = three.THREE.Spherical,
 			TOUCH = three.THREE.TOUCH;
-//			Vector2 = three.THREE.Vector2,
-//			Vector3 = three.THREE.Vector3;
 
 		// This set of controls performs orbiting, dollying (zooming), and panning.
 		// Unlike TrackballControls, it maintains the "up" direction object.up (+Y by default).
@@ -6513,34 +6498,6 @@ class Three {
 
 		}
 		this.OrbitControls = OrbitControls;
-
-/*
-		// This set of controls performs orbiting, dollying (zooming), and panning.
-		// Unlike TrackballControls, it maintains the "up" direction object.up (+Y by default).
-		// This is very similar to OrbitControls, another set of touch behavior
-		//
-		//    Orbit - right mouse, or left mouse + ctrl/meta/shiftKey / touch: two-finger rotate
-		//    Zoom - middle mouse, or mousewheel / touch: two-finger spread or squish
-		//    Pan - left mouse, or arrow keys / touch: one-finger move
-	
-		class MapControls extends OrbitControls {
-	
-			constructor( object, domElement ) {
-	
-				super( object, domElement );
-	
-				this.screenSpacePanning = false; // pan orthogonal to world-space direction camera.up
-	
-				this.mouseButtons.LEFT = MOUSE.PAN;
-				this.mouseButtons.RIGHT = MOUSE.ROTATE;
-	
-				this.touches.ONE = TOUCH.PAN;
-				this.touches.TWO = TOUCH.DOLLY_ROTATE;
-	
-			}
-	
-		}
-*/
 
 	}
 	/**
@@ -13183,7 +13140,6 @@ class Options {
 
 			//максимальное значение шкалы w по умолчанию беру из THREE.Vector4
 			//потому что в противном случае неверно будет отображаться цвет точки, заданной как THREE.Vector4()
-//			scale.max = scale.max === undefined ? new three.THREE.Vector4().w : scale.max;
 
 		};
 		options.scales = options.scales || {};
@@ -13197,17 +13153,10 @@ class Options {
 			if ( !options.scales[axisName] )
 				return;
 
-/*
-			options.scales[axisName].name = options.scales[axisName].name || axisName;
-			options.scales[axisName].min = options.scales[axisName].min === undefined ? -1 : options.scales[axisName].min;
-			options.scales[axisName].max = options.scales[axisName].max === undefined ? 1 : options.scales[axisName].max;
-*/			
-
 		}
 		setScale( 'x' );
 		setScale( 'y' );
 		setScale( 'z' );
-//		options.scales.setW = function () { _this.setW(); }
 		options.point = options.point || {};
 		if (options.point.size === undefined) options.point.size = 5.0;
 		options.point.sizePointsMaterial = options.point.sizePointsMaterial || 100.0;
@@ -13721,7 +13670,6 @@ class Options {
 								constructor( scales, axisName ) {
 
 									let scale = scales[axisName];
-//									scale = scale || {};
 									this.isAxis = function () {
 
 										if ( !scales || ( !scales.x && !scales.y && !scales.z ) || scale ) return true;
@@ -13750,14 +13698,6 @@ class Options {
 										 * </pre>
 										 **/
 										boScale: { get: function () { return true; }, },
-/*										
-										isChangeColor : {
-											
-											get: () => { return scale ? scale.isChangeColor : undefined; },
-											set: ( isChangeColor ) => { scale.isChangeColor = isChangeColor; },
-										
-										},
-*/										
 										isColor : {
 											
 											get: () => { return scale ? scale.isColor : undefined; },
@@ -14433,14 +14373,6 @@ class Options {
 				get: function () {
 
 					if ( options.eventListeners ) return options.eventListeners;
-/*если я это оставлю, то не смогу определить, используется ли raycaster на этом canvas и нужно ли вызывать addParticle
-для проверки создать MyPoints на пустом canvas
-					return { addParticle: function(){
-
-						console.error( 'Options.eventListeners.addParticle: call new Options.raycaster.EventListeners(...) first.' );
-						
-					}, }
-*/					
 
 				},
 				set: function ( eventListeners ) {
@@ -14967,7 +14899,6 @@ class Raycaster {
 
 			}
 			getIntersects();
-//			intersects.forEach( function ( intersection )
 			for (let i = 0; i < intersects.length; i++){
 
 				const intersection = intersects[i];
@@ -15458,7 +15389,7 @@ class Player$1 {
 		this.selectScene = function ( index ) {
 
 			//Пользователь передвинул slider проигрывателя, когда сцена вычисляется асинхронно.
-			//Смотри пример http://localhost/anhr/universe/main/hyperSphere/Examples/ когда выполняется hyperSphere.middleVertices
+			//Смотри пример http://localhost/anhr/universe/main/hyperSphere/Examples/ когда выполняется hyperSphere.distanceOfVertices
 			//В этом случает в aSelectSceneIndex добавляются новые идексы сцен. И дальше начинается путаница, в которой я не разобрался.
 			if ( aSelectSceneIndex.length != 0 ) return;
 
@@ -15624,7 +15555,7 @@ class Player$1 {
 			if (d > 0) while (timestamp > timeNext)
 				timeNext += d;
 			playNext();
-
+			if (_this.onStep) _this.onStep();
 		}
 
 		/**
@@ -15689,6 +15620,11 @@ class Player$1 {
 		 * @returns selected scene index.
 		 */
 		this.getSelectSceneIndex = function () { return selectSceneIndex; };
+		/**
+		 * sets selected scene index.
+		 * @param {number} selectSceneIndexNew New selected scene index.
+		 */
+		this.setSelectSceneIndex = function (selectSceneIndexNew) { selectSceneIndex = selectSceneIndexNew; };
 
 		/**@namespace
 		 * @descriptionUser has pressed the <b>Repeat</b> button of the <a href="../../player/jsdoc/module-Player-Player_PlayController_PlayController.html" target="_blank">Player.PlayController</a>.
@@ -18524,6 +18460,8 @@ class MyObject {
 		if (!settings.overriddenProperties.setDrawRange) settings.overriddenProperties.setDrawRange = (start, count) => { };
 		settings.overriddenProperties.getPlayerTimesLength = () => { return 1; };
 		if (!settings.overriddenProperties.positionOffsetId) settings.overriddenProperties.positionOffsetId = (positionId) => { return positionId; };
+		settings.overriddenProperties.position = (position, i) => { return position[i]; };
+		settings.overriddenProperties.editVertice = (timeId, vertice, angles, i) => { angles[i] = vertice; };
 		
 		if (settings.guiPoints) this.guiPoints = settings.guiPoints;
 
@@ -18678,15 +18616,80 @@ class MyObject {
 		};
 
 		const createPositionAttribute = (pointLength, pointsLength) => {
-
 			//https://stackoverflow.com/questions/31399856/drawing-a-line-with-three-js-dynamically/31411794#31411794
 			const isRCount = settings.object.geometry.rCount != undefined, MAX_POINTS = isRCount ?
 				//резервирую место для вершин, которые появятся по мере проигрывания player.
 				//Это случается когда во вселенной вычисляется очередной шаг по времени. Тоесть пользователь нажал ► или →
 				pointLength * pointsLength * settings.object.geometry.rCount :
 				settings.object.geometry.MAX_POINTS;
-
+			
 			setDrawRangeTypes();
+			function getMaxPairsFloat32Length() {
+
+				// 1. Определяем абсолютный потолок для одного Float32Array в Chrome (~2 ГБ)
+				// Выше этого значения Chrome физически не позволит создать один массив
+				const MAX_SINGLE_ARRAY_ELEMENTS = 500_000_000;
+				
+				//Если использовать эту строку, то в режиме отладки появится много остановов с выводом сообщения Paused before potential out-of-memory crash
+				//const MAX_SINGLE_ARRAY_ELEMENTS = EnvironmentLimits.getMaxFloat32Elements();
+
+				let low = 0;
+				let high = MAX_SINGLE_ARRAY_ELEMENTS;
+				let maxValidLength = 0;
+
+				while (low <= high) {
+					let mid = Math.floor((low + high) / 2);
+
+					try {
+						// Проверяем: можно ли выделить ДВА массива размера mid прямо СЕЙЧАС?
+						let t1 = new Float32Array(mid);
+						let t2 = new Float32Array(mid);
+
+						// УСПЕХ: Память есть. Запоминаем эту длину.
+						maxValidLength = mid;
+						low = mid + 1; // Пробуем найти больший размер
+
+						// КРИТИЧЕСКИЙ ШАГ: Немедленно освобождаем память проверочных массивов!
+						// Без этого они останутся в памяти, и отладчик выдаст OOM Crash.
+						t1 = null;
+						t2 = null;
+					} catch (e) {
+						// НЕХВАТКА ПАМЯТИ: Уменьшаем рамки поиска
+						high = mid - 1;
+					}
+				}
+
+				return maxValidLength;
+			}
+			// 1. Вызываем функцию. Она возвращает чистое число (безопасную длину)
+			const safeLength = getMaxPairsFloat32Length();
+			if (safeLength < MAX_POINTS) {
+				function showMemoryWarningToUser() {
+					const availableBytes = safeLength;
+
+					// Вычисляем максимальные объемы
+					const maxElements = availableBytes;
+					const rCount = settings.object.geometry.rCount;
+					const maxVertices = maxElements / pointLength;
+
+					// Англоязычное уведомление с указанием лимитов
+					alert(
+						`Not enough memory! The browser cannot allocate array.\n\n` +
+						`Multiplication classSettings.settings.object.geometry.angles.length * myThreeOptions.playerOptions.marks is limited to ~${Math.floor(maxVertices).toLocaleString()}\n\n` +
+						`Current values:\n` +
+						`classSettings.settings.object.geometry.angles.length = ${Math.floor(pointsLength).toLocaleString()}\n` +
+						`myThreeOptions.playerOptions.marks = ${Math.floor(rCount).toLocaleString()}\n` +
+						`angles.length * marks = ${Math.floor(pointsLength * rCount).toLocaleString()}\n\n` +
+						`For example you can limit:\n` +
+						`classSettings.settings.object.geometry.angles.length to ~${Math.floor(maxVertices / rCount).toLocaleString()}\n` +
+						`or\n` +
+						`myThreeOptions.playerOptions.marks to ~${Math.floor(maxVertices / pointsLength).toLocaleString()}\n`
+					);
+				}
+				showMemoryWarningToUser();
+
+				return false;
+			}
 			
 			if (MAX_POINTS != undefined) this.setVerticesRange(0, isRCount ?
 				pointLength * pointsLength * getPlayerTimesLength()://зарезервировано место для вершин вселенной с разным радиусом
@@ -18695,7 +18698,7 @@ class MyObject {
 				Infinity//pointsLength * 2 - 1
 				);
 			if (isRCount) settings.bufferGeometry.userData.drawRange = () => { return settings.bufferGeometry.drawRange; };
-			const positions = new Float32Array((MAX_POINTS != undefined ? MAX_POINTS : pointsLength) * pointLength);
+			const positions = new Float32Array(MAX_POINTS != undefined ? MAX_POINTS : pointsLength * pointLength);
 			settings.bufferGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, pointLength));
 			settings.bufferGeometry.userData.positionOffsetId = (positionId) => { return this.positionOffsetId(positionId) };
 			settings.bufferGeometry.userData.position = new Proxy(settings.bufferGeometry.attributes.position, {
@@ -18825,7 +18828,7 @@ class MyObject {
 
 			//color
 			if (_this.setW) _this.setW();
-			const itemSize = settings.object.geometry.opacity ? 4 : 3, colors = new Float32Array((MAX_POINTS != undefined ? MAX_POINTS : pointsLength) * itemSize);
+			const itemSize = settings.object.geometry.opacity ? 4 : 3, colors = new Float32Array(MAX_POINTS != undefined ? MAX_POINTS : pointsLength * itemSize);
 			if (itemSize === 4){
 
 				let colorId = itemSize - 1;
@@ -18864,11 +18867,8 @@ class MyObject {
 			}
 			if (boCreatePositionAttribute) delete bufferGeometry.attributes.position;
 			if (!bufferGeometry.attributes.position) {
-				
-				createPositionAttribute(
-					this.pointLength ? this.pointLength() :
-						points[0].w === undefined ? 3 : 4,
-					points.length);
+				const pointLength = this.pointLength ? this.pointLength() : points[0].w === undefined ? 3 : 4, pointsLength = points.length;
+				createPositionAttribute( pointLength, pointsLength);
 				const boLog = this.classSettings && (this.classSettings.debug != undefined) && (this.classSettings.debug != false) && (this.classSettings.debug.log != false);
 				for (let timeId = 0; timeId < getPlayerTimesLength(); timeId++) {
 					
@@ -18963,49 +18963,17 @@ class MyObject {
 			
 		};
 		/**
-		 * Sets the [BufferGeometry]{@link https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry} position attribute from <b>vertice</b>.
+		 * Sets the [BufferGeometry]{@link https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry} color attribute from <b>vertice</b>.
 		 * @param {number} i Vertice identifier for <b>timeId</b> = 0.
 		 * @param {Array} [vertice] Vertice axis array for current <b>timeId</b>.
 		 * @param {number} timeId Time identifier of the <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">player</a> that determines current vertice.
 		 */
-		this.setPositionAttributeFromPoint = (i, vertice, timeId) => {
-
-			//Position attribute
-			
-			vertice = vertice || _this.getPoint(i, timeId);
-			const attributes = settings.bufferGeometry.attributes, positionData = this.getPositionData(i, timeId),
-				positionBlockLength = positionData.positionBlockLength;
-			let itemSize = positionData.itemSize, positionId = positionData.positionId, array = attributes.position.array;
-							  array [positionId] = vertice.x != undefined ? vertice.x : vertice[0] != undefined ? vertice[0] : 0;
-			if (itemSize > 1) array [++positionId] = vertice.y != undefined ? vertice.y : vertice[1] != undefined ? vertice[1] : 0;
-			if (itemSize > 2) array [++positionId] = vertice.z != undefined ? vertice.z : vertice[2] != undefined ? vertice[2] : 0;
-			const w = vertice.w != undefined ? vertice.w : vertice[3];
-			if (itemSize > 3) array [++positionId] = w;
-			if (this.onSetPositionAttributeFromPoint) this.onSetPositionAttributeFromPoint(i);
-
-			const drawRange = settings.bufferGeometry.drawRange;
-			if ((drawRange.count === Infinity) || (((drawRange.start + drawRange.count) * ((settings.bufferGeometry.index === null) ? itemSize : 1)) < positionId)){
-
-				this.setVerticesRange(drawRange.start, (positionId + 1) / itemSize - drawRange.start);
-				if (!Number.isInteger(drawRange.count) && (drawRange.count != Infinity)) console.error(sMyObject + '.setPositionAttributeFromPoint failed. Invalid drawRange.count = ' + drawRange.count);
-
-			}
-
-			//gui
-			const guiSelectPoint = settings.options.guiSelectPoint,
-				object3D = this.object3D;
-			if (guiSelectPoint && (guiSelectPoint.getSelectedPointIndexShort() === i) && guiSelectPoint.isSelectedMesh(object3D)) {
-				
-				guiSelectPoint.setPosition( { index: i, nearestEdgeVerticeId: i, object: object3D });
-				if (object3D && object3D.userData.gui) object3D.userData.gui.reset();//в hyperSphere обновить выделенные ребра, среднюю вершину и плоскости вращения углов
-
-			}
-
-			//Color attribute
-
-			itemSize = attributes.color.itemSize;
+		this.setColorAttributeFromPoint = (i, vertice, timeId, positionData) => {
+			positionData ||= this.getPositionData(i, timeId);
+			const positionBlockLength = positionData.positionBlockLength,
+				attributes = settings.bufferGeometry.attributes, itemSize = attributes.color.itemSize;
 			let colorId = i * itemSize + (timeId === undefined ? 0 : positionBlockLength * timeId * itemSize);
-			array = attributes.color.array;
+			const array = attributes.color.array;
 			const verticeColor = this.verticeColor(i, vertice, timeId);
 			if (typeof verticeColor === 'number'){
 
@@ -19034,7 +19002,45 @@ class MyObject {
 			//Внимание. Иногда эта функция работает и без удаления boundingSphere
 			delete settings.bufferGeometry.boundingSphere;
 			settings.bufferGeometry.boundingSphere = null;
+		};
+		/**
+		 * Sets the [BufferGeometry]{@link https://threejs.org/docs/index.html?q=BufferGeometry#api/en/core/BufferGeometry} position attribute from <b>vertice</b>.
+		 * @param {number} i Vertice identifier for <b>timeId</b> = 0.
+		 * @param {Array} [vertice] Vertice axis array for current <b>timeId</b>.
+		 * @param {number} timeId Time identifier of the <a href="../../player/jsdoc/module-Player-Player.html" target="_blank">player</a> that determines current vertice.
+		 */
+		this.setPositionAttributeFromPoint = (i, vertice, timeId) => {
 
+			//Position attribute
+			
+			vertice = vertice || _this.getPoint(i, timeId);
+			const attributes = settings.bufferGeometry.attributes, positionData = this.getPositionData(i, timeId);
+				positionData.positionBlockLength;
+			let itemSize = positionData.itemSize, positionId = positionData.positionId, array = attributes.position.array;
+							  array [positionId] = vertice.x != undefined ? vertice.x : vertice[0] != undefined ? vertice[0] : 0;
+			if (itemSize > 1) array [++positionId] = vertice.y != undefined ? vertice.y : vertice[1] != undefined ? vertice[1] : 0;
+			if (itemSize > 2) array [++positionId] = vertice.z != undefined ? vertice.z : vertice[2] != undefined ? vertice[2] : 0;
+			const w = vertice.w != undefined ? vertice.w : vertice[3];
+			if (itemSize > 3) array [++positionId] = w;
+			if (this.onSetPositionAttributeFromPoint) this.onSetPositionAttributeFromPoint(i);
+
+			const drawRange = settings.bufferGeometry.drawRange;
+			if ((drawRange.count === Infinity) || (((drawRange.start + drawRange.count) * ((settings.bufferGeometry.index === null) ? itemSize : 1)) < positionId)){
+
+				this.setVerticesRange(drawRange.start, (positionId + 1) / itemSize - drawRange.start);
+				if (!Number.isInteger(drawRange.count) && (drawRange.count != Infinity)) console.error(sMyObject + '.setPositionAttributeFromPoint failed. Invalid drawRange.count = ' + drawRange.count);
+
+			}
+
+			//gui
+			const guiSelectPoint = settings.options.guiSelectPoint, object3D = this.object3D;
+			if (guiSelectPoint && (guiSelectPoint.getSelectedPointIndexShort() === i) && guiSelectPoint.isSelectedMesh(object3D)) {
+				
+				guiSelectPoint.setPosition( { index: i, nearestEdgeVerticeId: i, object: object3D });
+				if (object3D && object3D.userData.gui) object3D.userData.gui.reset();//в hyperSphere обновить выделенные ребра, среднюю вершину и плоскости вращения углов
+
+			}
+			this.setColorAttributeFromPoint(i, vertice, timeId, positionData);
 			return vertice;
 			
 		};
@@ -20506,9 +20512,9 @@ class CanvasMenu {
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  */
-function clearThree$1( obj ) {
+function clearThree( obj ) {
 	while ( obj.children.length > 0 ) {
-		clearThree$1( obj.children[0] );
+		clearThree( obj.children[0] );
 		obj.remove( obj.children[0] );
 	}
 	if ( obj.geometry ) {
@@ -20937,7 +20943,7 @@ class AxesHelper {
 				//	In the Windows open Resource Monitor
 				//		Open the Memory tab
 				//		The Commit(KB) for chrome.exe do not increasing about 20 minutes.
-				clearThree$1( groupDotLines );
+				clearThree( groupDotLines );
 
 				scene.remove( groupDotLines );
 				groupDotLines = undefined;
@@ -22348,9 +22354,12 @@ function dat() { }if ( typeof dat !== 'undefined' ) {
 
 	function elNameAndTitle( el, name, title ) {
 
+/*		
 		if ( name === undefined )
 			console.warn( 'elNameAndTitle: name = ' + name );
-		el.innerHTML = name;
+*/			
+		if ( name !== undefined )
+			el.innerHTML = name;
 		if ( title !== undefined )
 			el.title = title;
 
@@ -23275,7 +23284,7 @@ class GuiSelectPoint {
 
 					function isWObject() { return (typeof func.w === 'object') && (func.w instanceof THREE.Color === false); }
 					const mesh = getMesh(), verticeColor = mesh.userData.myObject ?
-						mesh.userData.myObject.verticeColor(intersectionSelectedIndex) :
+						mesh.userData.myObject.verticeColor(intersectionSelectedIndex, undefined, mesh.userData.myObject.guiPoints.timeId) :
 						undefined;
 					var color = (func === undefined) || (!attributes.color && !attributes.ca) ?
 						undefined :
@@ -24359,10 +24368,6 @@ class GuiSelectPoint {
 						const point = userData.position[pointId];
 						pointId = userData.positionOffsetId(pointId);
 						userData.timeId = oldTimeId;
-	/*					
-	const attributesPosition = mesh.geometry.attributes.position;
-		point = new THREE.Vector3().fromBufferAttribute(attributesPosition, pointId);
-	*/	
 						intersection = {
 							
 							object: mesh,
@@ -24647,12 +24652,14 @@ class GuiSelectPoint {
 			function axesGui( axisName ) {
 
 				var scale, controller;
+				let name;
 				if ( axisName === 'w' ) {
 
 					//W axis
 
 					options.scales.setW();
 					scale = options.scales.w;
+					name = scale.name;
 					function onChange( value ) {
 
 						const attributes = intersection.object.geometry.attributes,
@@ -24683,6 +24690,7 @@ class GuiSelectPoint {
 
 							controller.domElement.querySelector( '.slider-fg' ).style.height = '40%';
 							const elSlider = controller.domElement.querySelector( '.slider' );
+							name = lang.color;
 							ColorPicker$1.create( elSlider, {
 
 								palette: options.palette,
@@ -24706,6 +24714,7 @@ class GuiSelectPoint {
 
 					scale = ( options.axesHelper === undefined ) || ( options.axesHelper === false ) ? options.scales[axisName] : //если я буду использовать эту строку то экстремумы шкал буду устанавливатся по умолчанию а не текущие
 						options.axesHelper.options ? options.axesHelper.options.scales[axisName] : undefined;
+					name = scale.name;
 					if ( scale.isAxis() )
 						controller = fPoint.add( { value: scale.min, }, 'value', scale.min, scale.max, ( scale.max - scale.min ) / 1000 ).onChange( function ( value ) {
 
@@ -24726,7 +24735,7 @@ class GuiSelectPoint {
 
 				}
 				if ( controller )
-					dat.controllerNameAndTitle( controller, scale.name );
+					dat.controllerNameAndTitle( controller, name );
 				return controller;
 
 			}
@@ -26676,7 +26685,7 @@ class FrustumPoints
 
 				group.remove( _points );
 				renderer.renderLists.dispose();
-				clearThree$1( _points );
+				clearThree( _points );
 				_points = undefined;
 
 			}
@@ -29458,7 +29467,7 @@ class MyThree {
 				},
 
 			});
-			if (options.player) new options.player.PlayController();// gui );//, getLanguageCode );
+			if (options.player && (typeof options.player.PlayController === 'function')) new options.player.PlayController();// gui );//, getLanguageCode );
 
 			if (options.dat.gui) {
 
@@ -29892,7 +29901,7 @@ class MyThree {
 
 }
 
-MyThree.release = 'v1.5';
+MyThree.release = 'v1.6';
 
 //Localization
 

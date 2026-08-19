@@ -1,6 +1,6 @@
 {
   "name": "dropdownMenu",
-  "version": "1.4",
+  "version": "1.6",
   "description": "node.js version of the DropdownMenu.",
   "main": "build/dropdownMenu.js",
   "repository": {

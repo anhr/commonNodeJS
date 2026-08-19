@@ -1,6 +1,6 @@
 {
   "name": "cookie",
-  "version": "1.4",
+  "version": "1.6",
   "description": "The node.js version of the cookie.",
   "main": "build/cookie.js",
   "repository": {

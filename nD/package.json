@@ -1,6 +1,6 @@
 {
   "name": "ND",
-  "version": "1.4",
+  "version": "1.6",
   "description": "N-dimensional graphics.",
   "main": "build/nD.js",
   "scripts": {

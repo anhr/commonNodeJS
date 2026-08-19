@@ -1,6 +1,6 @@
 {
   "name": "Player",
-  "version": "1.4",
+  "version": "1.6",
   "description": "3D objects animation.",
   "main": "build/player.js",
   "repository": {

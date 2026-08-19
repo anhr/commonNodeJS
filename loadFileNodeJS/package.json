@@ -1,6 +1,6 @@
 {
   "name": "loadFile",
-  "version": "1.4",
+  "version": "1.6",
   "description": "node.js version of the download of the file.",
   "main": "build/loadFile.js",
   "repository": {
