@@ -58,7 +58,8 @@ Open "Node.js command prompt"
 d:
 cd "D:\My documents\MyProjects\webgl\three.js\GitHub\commonNodeJS\master\myThree"
 npm install
-//npm install uglify-es не используется//for build/player.module.min.js
+//npm install uglify-es устарело и не используется//for build/player.module.min.js
+npm install terser --save-dev //for build/player.module.min.js
 npm run build
 
 WARNINGS!!!
