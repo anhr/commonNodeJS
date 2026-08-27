@@ -2586,25 +2586,27 @@ this.object = () => {
 							classSettings.settings.options.setPalette(new ColorPicker.palette({ palette: [{ percent: 0, r: color.r * 255, g: color.g * 255, b: color.b * 255, },] }));
 
 						}
-						new MyPoints(points, scene, {
+						const pointsOptions = {
 
-							pointsOptions: {
+							name: settings.object.name,
+							color: this.color(),
+							colors: settings.object.geometry.colors,
+							opacity: settings.object.geometry.opacity,
+							onReady: (points) => {
 
-								name: settings.object.name,
-								color: this.color(),
-								colors: settings.object.geometry.colors,
-								opacity: settings.object.geometry.opacity,
-								onReady: (points) => {
-
-									myPoints = points;
-									myPoints.userData.raycaster = raycaster;
-									gui(myPoints);
-									intersection(points);
-
-								},
-								guiPoints: settings.guiPoints,
+								myPoints = points;
+								myPoints.userData.raycaster = raycaster;
+								gui(myPoints);
+								intersection(points);
 
 							},
+							guiPoints: settings.guiPoints,
+
+						}
+					 	if (settings.object.type) pointsOptions.type = settings.object.type;
+						new MyPoints(points, scene, {
+
+							pointsOptions: pointsOptions,
 							options: settings.options,
 							object: settings.object,
 							bufferGeometry: settings.bufferGeometry,

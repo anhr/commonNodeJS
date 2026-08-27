@@ -8,6 +8,18 @@
 	<!--for mobile devices-->
 	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 
+	<style>
+		/* Отступы сверху и снизу */
+		.indent-top-and-bottom {
+			margin-top: 15px;
+			margin-bottom: 15px;
+		}
+
+		/* Сдвиг вправо */
+		.indent-right {
+			margin-left: 20px;
+		}
+	</style>
 </head>
 <body>
 	cd "D:\My documents\MyProjects\webgl\three.js\GitHub\jsdoc"
@@ -286,6 +298,26 @@
 			</div>
 			<div>
 				<a href="../../../universe/main/hyperSphere/Examples/averageUniverseGPU.html" target="_blank">averageUniverseGPU</a>
+			</div>
+			<li class="indent-top-and-bottom">
+				<a href="../../../universe/main/hyperSphere/Examples/dampingGraph.html" target="_blank">Damping Graph</a>
+				<ul>
+					<li>
+						Выполняется несколько проигрываний Hyperspherical Universe для разных зачений
+						<br>
+						hypersphericalUniverse.hyperSphere.classSettings.compute.config.DAMPING
+						<br>
+						и
+						<br>
+						hypersphericalUniverse.hyperSphere.classSettings.compute.config.REPULSION_STRENGTH.
+					</li>
+					<li>
+						Для каждого проигрывания определяется трек (пройденый путь) для заданной вершины.
+					</li>
+					<li>
+						Далее строится график завичсимости трека от DAMPING или REPULSION_STRENGTH.
+					</li>
+			</ul>
 			</div>
 			<div><a href="../../../universe/main/jsdoc/" target="_blank">Universe jsdoc</a></div>
 			jsdoc -R "..\universe\main\universe.md" "..\universe\main\universe.js" "..\universe\main\circle\circularUniverse.js" "..\universe\main\sphere\sphericalUniverse.js" "..\universe\main\hyperSphere\hyperSphericalUniverse.js" -d "..\universe\main\jsdoc"

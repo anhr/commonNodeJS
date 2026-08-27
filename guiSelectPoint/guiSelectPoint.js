@@ -1339,6 +1339,7 @@ class GuiSelectPoint {
 
 			} );
 			dat.controllerNameAndTitle( cMeshs, lang.select );
+			folder.cMeshs = cMeshs;
 
 			fMesh = f3DObjects.addFolder( lang.mesh );
 			fMesh.domElement.style.display = 'none';
@@ -1608,6 +1609,7 @@ class GuiSelectPoint {
 			} );
 			cPoints.__select[0].selected = true;
 			dat.controllerNameAndTitle( cPoints, lang.select );
+			options.dat.gui.cPoints = cPoints;
 
 			if ( cFrustumPoints !== undefined )
 				cFrustumPoints.create( fPoints, getLanguageCode() );
@@ -2002,6 +2004,7 @@ class GuiSelectPoint {
 			cTrace = fPoint.add( { boTrace: false, }, 'boTrace' ).onChange( function ( value ) { options.trace.onChange( value, cPoints.__select.selectedIndex - 1 ); } );
 			dat.controllerNameAndTitle( cTrace, lang.trace, lang.traceTitle ); //guiParams
 			dislayEl( cTrace, options.player );
+			options.dat.gui.cTrace = cTrace;
 
 			if ( guiParams.pointControls ) guiParams.pointControls( fPoint, dislayEl, getMesh, intersection );
 

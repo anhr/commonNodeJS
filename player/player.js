@@ -308,6 +308,11 @@ class Player {
 					//и цвет точки окажется неверным
 					selectSceneIndex = options.playerOptions.marks - 1;
 
+					if (settings.options.isComputeCPU){
+						const onDataReady = settings.options.onDataReady
+						if(onDataReady) onDataReady();
+					}
+
 					pause();
 					return;
 

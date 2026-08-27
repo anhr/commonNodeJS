@@ -242,7 +242,8 @@ class MyPoints extends MyObject {
 		function Points(points) {
 
 			_this.object3D = points;
-			points.name = pointsOptions.name;//'Wave';
+			points.name = pointsOptions.name;
+			if (pointsOptions.type) points.userData.type = pointsOptions.type;
 			if (pointsOptions.pointIndexes !== undefined)
 				points.userData.pointIndexes = function (pointIndex) { return pointsOptions.pointIndexes(pointIndex); }
 			if (pointsOptions.pointName !== undefined)

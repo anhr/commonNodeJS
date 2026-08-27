@@ -22,6 +22,7 @@ import three from './three.js'
  */
 export function getObjectLocalPosition( object, index ) {
 
+	if (!object) return;
 	const getPositionId = object.userData.myObject ? object.userData.myObject.guiPoints.getPositionId : undefined;
 	if (getPositionId) index = getPositionId(index);
 	const THREE = three.THREE,
