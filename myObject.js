@@ -274,9 +274,8 @@ class MyObject {
 				let maxValidLength = 0;
 
 				while (low <= high) {
-					let mid = Math.floor((low + high) / 2);
-
 					try {
+						let mid = Math.floor((low + high) / 2);
 						// Проверяем: можно ли выделить ДВА массива размера mid прямо СЕЙЧАС?
 						let t1 = new Float32Array(mid);
 						let t2 = new Float32Array(mid);

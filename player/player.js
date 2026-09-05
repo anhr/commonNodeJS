@@ -355,8 +355,9 @@ class Player {
 		/**
 		 * User has clicked the Play ► / Pause ❚❚ button
 		 */
-		this.play3DObject = function () {
+		this.play3DObject = function (selectSceneIndexNew) {
 
+			if (selectSceneIndexNew != undefined) selectSceneIndex = selectSceneIndexNew;
 			if ( playing ) {
 
 				pause();
