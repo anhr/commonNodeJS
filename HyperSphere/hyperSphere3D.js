@@ -21,6 +21,7 @@ import FibonacciSphereGeometry from '../FibonacciSphere/FibonacciSphereGeometry.
 import anglesRange from './anglesRange.js'
 import * as utils from './utilsHSphere.js'
 import Position from './position.js'
+import * as fileHandler from '../fileHandler.js';
 
 const sHyperSphere3D = 'HyperSphere3D',
 	π = Math.PI;
@@ -41,6 +42,84 @@ class HyperSphere3D extends Sphere {
 
 	//base methods
 
+	save(fParent, settings) {
+		if (!settings.object.geometry.positionsFileName) return;
+
+		//Localization
+
+		const lang = {
+			save: 'Save',
+			saveTitle: 'Save vertices to file',
+
+			fileName: 'File name',
+			fileExists: `File %s already exists. Replace it?`,
+		};
+		switch (settings.options.getLanguageCode()) {
+
+			case 'ru'://Russian language
+				lang.save = 'Сохранить';
+				lang.saveTitle = 'Сохранить вершины в файл';
+				
+				lang.fileName = 'Имя файла';
+				lang.fileExists = `Файл %s уже существует. Заменить его?`;
+				break;
+		}
+		const fSave = fParent.addFolder( lang.save );
+		three.dat.folderNameAndTitle( fSave, lang.save, lang.saveTitle );
+		const myData = {
+			fileName: settings.object.geometry.positionsFileName,//fileHandler.fileName,
+/*
+			saveData: () => {
+return;				
+				const bufferGeometry = settings.bufferGeometry, positionBlockLength = bufferGeometry.userData.positionBlockLength;
+				const itemSize = settings.bufferGeometry.attributes.position.itemSize, positionsArray = new Float32Array(positionBlockLength * itemSize);
+				for (let verticeId = 0; verticeId < positionBlockLength; verticeId++)
+					new three.THREE.Vector4().fromBufferAttribute(bufferGeometry.attributes.position, verticeId).toArray(positionsArray, verticeId * itemSize);
+
+				// 3. Сохраняем в файл
+				fileHandler.saveTraceToProjectDir(positionsArray, myData.fileName);
+			}
+*/
+		}
+		const cFileName = fSave.add(myData, 'fileName').name(lang.fileName);
+		
+		const btnSave = document.createElement('div');//'button');
+		btnSave.textContent = '💾 ' + lang.save;
+		btnSave.addEventListener('click', async () => {
+			// 1. ПЕРВАЯ строчка в обработчике — запрос доступа к папке (жест пользователя сохраняется)
+			const connected = await fileHandler.connectProjectDirectory();
+			if (!connected) return;
+
+			const fileName = myData.fileName;//'positions.bin';
+
+			// 2. Проверяем наличие файла (БЕЗ повторного вызова connectProjectDirectory внутри)
+			const isSaved = await fileHandler.fileExists(fileName);
+			if (isSaved) {
+//				console.warn(`Файл "${fileName}" уже существует. Вычисления пропущены.`);
+				if (!confirm(lang.fileExists.replace('%s', fileName)))
+					return;
+			}
+
+			/*
+			// 3. Извлекаем координаты и сохраняем
+			const positions = sourceObject.geometry.attributes.position.array;
+			await fileHandler.saveTraceToProjectDir(positions, fileName);
+			*/
+		});
+		fSave.domElement.appendChild(btnSave);
+/*		
+		const btnSave = fSave.add(myData, 'saveData').name('💾 ' + lang.save);
+		btnSave.domElement.style.pointerEvents = 'none';
+		btnSave.domElement.addEventListener('click', async () => {
+			await fileHandler.connectProjectDirectory();
+		});
+*/		
+/*		
+		btnSave.domElement.childNodes[0].addEventListener('click', async () => {
+			await fileHandler.connectProjectDirectory();
+		});
+*/		
+	}
 	planesGeometry(changedAngleId, aAngleControls, planeGeometry, longitudeId){
 
 		const latitudeId = longitudeId - 1, altitudeId = latitudeId - 1;

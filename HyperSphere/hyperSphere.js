@@ -2997,6 +2997,8 @@ this.object = () => {
 			const addSettingsFolder = classSettings.overriddenProperties.addSettingsFolder;
 			if (addSettingsFolder) addSettingsFolder(fParent, getLanguageCode);
 
+			if (this.save) this.save(fHyperSphere, classSettings.settings);//save vertices to file
+			
 			//vertices
 
 			const fVertices = fHyperSphere.addFolder(lang.vertices);

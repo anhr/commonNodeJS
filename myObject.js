@@ -15,7 +15,7 @@
 
 import three from './three.js'
 import Player from './player/player.js'
-import * as fileHandler from './fileHandler.js';
+//import * as fileHandler from './fileHandler.js';
 
 const sMyObject = 'MyObject';
 
@@ -523,15 +523,9 @@ class MyObject {
 				}
 
 			}
+/*			
 			const positionsFileName = settings.object.geometry.positionsFileName;
 			if (positionsFileName) {
-/*				
-				// 1. Кнопка для подключения папки проекта
-				const connectBtn = document.getElementById('connect-btn');
-				connectBtn.addEventListener('click', async () => {
-					await fileHandler.connectProjectDirectory();
-				});
-*/
 				async function processAndSaveTrace(fileName) {
 					// 1. Проверяем существование файла
 					const isAlreadySaved = await fileHandler.fileExists(fileName);
@@ -548,6 +542,7 @@ class MyObject {
 				}
 				processAndSaveTrace(positionsFileName);
 			}
+*/			
 			return bufferGeometry;
 			
 		}

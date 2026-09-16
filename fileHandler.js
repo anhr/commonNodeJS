@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @module fileHandler.
  *
  * @description Модуль для работы с бинарными файлами координат Three.js
@@ -66,7 +66,22 @@ export async function fileExists(fileName) {
  * 
  * @returns {Promise<boolean>} Успешность подключения папки
  */
-function connectProjectDirectory() {
+export async function connectProjectDirectory() {
+	try {
+		projectDirectoryHandle = await window.showDirectoryPicker({
+			mode: 'readwrite'
+		});
+//		console.log('Папка проекта успешно подключена');
+		return true;
+	} catch (err) {
+		if (err.name === 'AbortError') {
+			console.warn('Выбор папки отменен пользователем.');
+		} else {
+			console.error('Ошибка при выборе папки:', err);
+		}
+		return false;
+	}
+/*	
 	return new Promise((resolve) => {
 		// 1. Создаем элементы временной кнопки
 		const btn = document.createElement('button');
@@ -116,6 +131,7 @@ function connectProjectDirectory() {
 		// 3. Добавляем кнопку на страницу
 		document.body.appendChild(btn);
 	});
+*/
 }
 
 /**
