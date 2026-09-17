@@ -82,59 +82,6 @@ return;
 */
 		}
 		fSave.add(myData, 'fileName').name(lang.fileName);
-
-		// 1. Создаем пустой контроллер-контейнер (привязываем к пустой функции)
-		const dummyObj = { emptyFunction: () => {} };
-//		dummyObj[displayProperty] = function () { };
-		const canvasController = fSave.add(dummyObj, 'emptyFunction');
-		canvasController.name('');
-
-		// Отключаем клики по самой строке GUI, чтобы не триггерить "кнопку"
-		canvasController.domElement.style.pointerEvents = 'none';
-
-		// Скрываем правую часть управления dat.gui
-		const rightPart = canvasController.domElement.querySelector('.c') || canvasController.domElement.querySelector('.widget');
-		if (rightPart) rightPart.style.display = 'none';
-
-		// Растягиваем текстовый блок на 100% ширины папки
-		const labelPart = canvasController.domElement.querySelector('div');
-		if (labelPart) {
-			labelPart.style.width = '100%';
-			labelPart.style.float = 'none';
-		}
-
-		// 2. Создаем кнопку 'Save' и встраиваем его внутрь контроллера
-//		const canvas = document.createElement('canvas');
-		const btnSave = document.createElement('div');//'button');
-		btnSave.textContent = '💾 ' + lang.save;
-		btnSave.addEventListener('click', async () => {
-			// 1. ПЕРВАЯ строчка в обработчике — запрос доступа к папке (жест пользователя сохраняется)
-			const connected = await fileHandler.connectProjectDirectory();
-			if (!connected) return;
-
-			const fileName = myData.fileName;//'positions.bin';
-
-			// 2. Проверяем наличие файла (БЕЗ повторного вызова connectProjectDirectory внутри)
-			const isSaved = await fileHandler.fileExists(fileName);
-			if (isSaved) {
-				//				console.warn(`Файл "${fileName}" уже существует. Вычисления пропущены.`);
-				if (!confirm(lang.fileExists.replace('%s', fileName)))
-					return;
-			}
-
-			// 3. Извлекаем координаты и сохраняем
-			//const positions = sourceObject.geometry.attributes.position.array;
-			//await fileHandler.saveTraceToProjectDir(positions, fileName);
-		});
-
-		// 4. Настраиваем сам контейнер строки, чтобы холст встал ровно по левому краю
-		canvasController.domElement.style.width = '100%';
-		canvasController.domElement.style.padding = '0';
-		canvasController.domElement.style.margin = '0';
-
-		// 5. Вставляем холст напрямую в корневой элемент контроллера (вместо labelPart)
-		canvasController.domElement.appendChild(btnSave);
-/*		
 		const btnSave = document.createElement('div');//'button');
 		btnSave.textContent = '💾 ' + lang.save;
 		btnSave.addEventListener('click', async () => {
@@ -156,8 +103,25 @@ return;
 			//const positions = sourceObject.geometry.attributes.position.array;
 			//await fileHandler.saveTraceToProjectDir(positions, fileName);
 		});
-		fSave.domElement.appendChild(btnSave);
-*/
+//		fSave.domElement.appendChild(btnSave);
+		//находим внутрений список ul папки fSave
+		const folderUl = fSave.domElement.querySelector('ul') || fSave.domElement;
+
+		// Оборачиваем кнопку в элемент списка <li>, чтобы не ломать верстку dat.GUI
+		const li = document.createElement('li');
+		li.className = 'cr function'; // стандартные классы dat.GUI для строчек элементов
+		li.appendChild(btnSave);
+
+		// Стилизуем btnSave, чтобы он занимал всю ширину строки и выглядел красиво
+		Object.assign(btnSave.style, {
+			cursor: 'pointer',
+			width: '100%',
+			height: '100%',
+			padding: '4px 8px',
+			boxSizing: 'border-box'
+		});
+
+		folderUl.appendChild(li);
 /*		
 		const btnSave = fSave.add(myData, 'saveData').name('💾 ' + lang.save);
 		btnSave.domElement.style.pointerEvents = 'none';
