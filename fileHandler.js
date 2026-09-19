@@ -182,11 +182,11 @@ export async function saveTraceToProjectDir(positionsArray, fileName = fileName)
 /**
  * Загружает бинарный файл с координатами с помощью THREE.FileLoader
  * 
- * @param {THREE.FileLoader} fileLoader - Экземпляр THREE.FileLoader
  * @param {string} [url='./positions.bin'] - Путь к файлу
  * @returns {Promise<Float32Array>} Массив координат вершины
  */
-export function loadBinary(fileLoader, url = './' + fileName) {
+export function loadBinary(url = './' + fileName) {
+	const fileLoader = new window.__myThree__.three.THREE.FileLoader();
 	return new Promise((resolve, reject) => {
 		fileLoader.setResponseType('arraybuffer');
 
@@ -196,7 +196,17 @@ export function loadBinary(fileLoader, url = './' + fileName) {
 				try {
 					// Проверка валидности данных (кратность Float32 = 4 байта)
 					if (buffer.byteLength % 4 !== 0) {
-						throw new Error('Файл поврежден: длина буфера не кратна 4 байтам.');
+//						throw new Error('File corrupted: buffer length is not a multiple of 4 bytes.');
+						// Формируем абсолютный URL файла
+						const fullUrl = new URL(url, window.location.href).href;
+						// 1. Указываем полный путь к файлу прямо в сообщении об ошибке
+						const err = new Error(`File corrupted: buffer length is not a multiple of 4 bytes.<br>File: "${fullUrl}"`);
+
+						// 2. Дополнительно записываем полезные свойства в объект ошибки
+						err.fileUrl = fullUrl;
+						err.baseUrl = fullUrl.substring(0, fullUrl.lastIndexOf('/') + 1);
+
+						throw err;
 					}
 
 					const positions = new Float32Array(buffer);
@@ -206,7 +216,40 @@ export function loadBinary(fileLoader, url = './' + fileName) {
 				}
 			},
 			undefined, // Progress callback
-			(error) => reject(error) // Error callback (404, CORS и т.д.)
+			(error) => {
+				// 1. Проверяем, есть ли поле url напрямую в объекте ошибки
+				let fileUrl = error?.url;
+
+				// 2. Если поля url нет, вытаскиваем URL из текста ошибки через регулярное выражение
+				if (!fileUrl && (typeof error === 'string' || error?.message)) {
+					const msg = error.message || error;
+					// Ищем всё, что начинается с http://, https:// или ./ внутри кавычек или кастомного текста
+					const match = msg.match(/https?:\/\/[^\s"]+/);
+					if (match) fileUrl = match[0];
+				}
+
+				// Записываем URL прямо в объект ошибки
+				if (typeof error === 'object' && error !== null) {
+					error.fileUrl = fileUrl || url;
+					// 2. Удаляем имя файла из URL (получаем путь к папки)
+					const baseUrl = error.fileUrl.substring(0, error.fileUrl.lastIndexOf('/') + 1);
+					error.baseUrl = baseUrl;
+				}
+
+				// 1. Пытаемся взять статус из полей объекта (status / statusCode / response.status)
+				const status = error?.status || error?.statusCode || error?.response?.status;
+
+				if (status) {
+					error.code = status; // Явно присваиваем численный код
+				} else if (typeof error === 'string' || error?.message) {
+					// 2. Если объект представляет собой строку или Error с текстом, ищем 3 цифры статуса через Regex
+					const match = (error.message || error).match(/\b(4\d\d|5\d\d)\b/);
+					if (match) {
+						error.code = parseInt(match[1], 10);
+					}
+				}
+				reject(error); // Error callback (404, CORS и т.д.)
+			}
 		);
 	});
 }

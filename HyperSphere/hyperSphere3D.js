@@ -66,22 +66,13 @@ class HyperSphere3D extends Sphere {
 		}
 		const fSave = fParent.addFolder( lang.save );
 		three.dat.folderNameAndTitle( fSave, lang.save, lang.saveTitle );
+/*		
 		const myData = {
 			fileName: settings.object.geometry.positionsFileName,//fileHandler.fileName,
-/*
-			saveData: () => {
-return;				
-				const bufferGeometry = settings.bufferGeometry, positionBlockLength = bufferGeometry.userData.positionBlockLength;
-				const itemSize = settings.bufferGeometry.attributes.position.itemSize, positionsArray = new Float32Array(positionBlockLength * itemSize);
-				for (let verticeId = 0; verticeId < positionBlockLength; verticeId++)
-					new three.THREE.Vector4().fromBufferAttribute(bufferGeometry.attributes.position, verticeId).toArray(positionsArray, verticeId * itemSize);
-
-				// 3. Сохраняем в файл
-				fileHandler.saveTraceToProjectDir(positionsArray, myData.fileName);
-			}
-*/
 		}
 		fSave.add(myData, 'fileName').name(lang.fileName);
+*/		
+		fSave.add(settings.object.geometry, 'positionsFileName').name(lang.fileName);
 		const btnSave = document.createElement('div');//'button');
 		btnSave.textContent = '💾 ' + lang.save;
 		btnSave.addEventListener('click', async () => {
@@ -89,7 +80,7 @@ return;
 			const connected = await fileHandler.connectProjectDirectory();
 			if (!connected) return;
 
-			const fileName = myData.fileName;//'positions.bin';
+			const fileName = settings.object.geometry.positionsFileName;//myData.fileName;//'positions.bin';
 
 			// 2. Проверяем наличие файла (БЕЗ повторного вызова connectProjectDirectory внутри)
 			const isSaved = await fileHandler.fileExists(fileName);
@@ -101,9 +92,12 @@ return;
 
 			// 3. Извлекаем координаты и сохраняем
 			//const positions = sourceObject.geometry.attributes.position.array;
-			//await fileHandler.saveTraceToProjectDir(positions, fileName);
+			const position = settings.bufferGeometry.attributes.position, positionsArray = new Float32Array(position.array.length / settings.options.playerOptions.marks);
+			for (let i = 0; i < positionsArray.length; i++)
+				positionsArray[i] = position.array[i];
+			await fileHandler.saveTraceToProjectDir(positionsArray, fileName);
 		});
-//		fSave.domElement.appendChild(btnSave);
+		
 		//находим внутрений список ul папки fSave
 		const folderUl = fSave.domElement.querySelector('ul') || fSave.domElement;
 
@@ -122,18 +116,6 @@ return;
 		});
 
 		folderUl.appendChild(li);
-/*		
-		const btnSave = fSave.add(myData, 'saveData').name('💾 ' + lang.save);
-		btnSave.domElement.style.pointerEvents = 'none';
-		btnSave.domElement.addEventListener('click', async () => {
-			await fileHandler.connectProjectDirectory();
-		});
-*/		
-/*		
-		btnSave.domElement.childNodes[0].addEventListener('click', async () => {
-			await fileHandler.connectProjectDirectory();
-		});
-*/		
 	}
 	planesGeometry(changedAngleId, aAngleControls, planeGeometry, longitudeId){
 
