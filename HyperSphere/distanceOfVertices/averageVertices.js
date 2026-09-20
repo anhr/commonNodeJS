@@ -119,9 +119,10 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 
 				// Вектор от i к j
 				let d = overrides.d(p1, p2);
-
-				let dist = Math.sqrt(overrides.d2(d));
-
+/*
+				const d2 = overrides.d2(d);
+				let dist = Math.sqrt(d2);
+*/
 				if (config.RANDOM_POINTS != 0) {
 					//вычисляем случайную точку
 					const arc = π - hyperbola((dist / classSettings.overriddenProperties.r(settings.bufferGeometry.userData.timeId - 1) / 2) * π);
@@ -138,10 +139,13 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 	
 					// Вектор от i к j
 					d = overrides.d(p1, noise2);
-	
+/*
 					const d2 = overrides.d2(d);
 					dist = Math.sqrt(d2);
+*/					
 				}
+				const d2 = overrides.d2(d);
+				const dist = Math.sqrt(d2);
 				if (dist === 0) {
 
 					console.error(sAverageVertices + ': step. Invalid dist = ' + dist);
@@ -150,7 +154,7 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 				}
 				
 				// Сила обратно пропорциональна расстоянию
-				const m = config.REPULSION_STRENGTH / (dist * dist);
+				const m = config.REPULSION_STRENGTH / (d2 * dist);
 
 				overrides.setForse(force, d, dist, m);
 

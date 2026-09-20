@@ -42,9 +42,9 @@ const sAnglesToCartesian = 'polarToCartesian';
  * @returns {array} Массив с декартовыми координатами [x, y, z, w].
  */
 export function polarToCartesian(angles, r=1, debug) {
+	const alt = angles.altitude;
 	const lat = angles.latitude;
 	const lon = angles.longitude;
-	const alt = angles.altitude;
 
 	// Вычисляем компоненту, которая проецируется на 3D-подпространство (x, y, z)
 	const r_xyz = r * Math.sin(alt);
