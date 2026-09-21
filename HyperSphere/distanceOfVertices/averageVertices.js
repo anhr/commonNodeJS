@@ -100,6 +100,7 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 
 		// Для каждой пары точек
 		let progressBar, i = 0;
+		const eta = config.ETA_0 != undefined ? config.ETA_0 * Math.pow(_this.r, 3) : undefined;
 		const step = () => {
 			
 			progressBar.value = i;
@@ -118,7 +119,7 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 				const angles2 = utils.cartesianToPolar(p2);
 
 				// Вектор от i к j
-				let d = overrides.d(p1, p2);
+				let d = overrides.d(p1, p2);//{ return {x: p1.x - p2.x, y: p1.y - p2.y, z: p1.z - p2.z, w: p1.w - p2.w} },
 /*
 				const d2 = overrides.d2(d);
 				let dist = Math.sqrt(d2);
@@ -138,13 +139,13 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 					userData.timeId++;
 	
 					// Вектор от i к j
-					d = overrides.d(p1, noise2);
+					d = overrides.d(p1, noise2);//{ return {x: p1.x - p2.x, y: p1.y - p2.y, z: p1.z - p2.z, w: p1.w - p2.w} },
 /*
 					const d2 = overrides.d2(d);
 					dist = Math.sqrt(d2);
 */					
 				}
-				const d2 = overrides.d2(d);
+				const d2 = overrides.d2(d);//{ return d.x * d.x + d.y * d.y + d.z * d.z + d.w * d.w },
 				const dist = Math.sqrt(d2);
 				if (dist === 0) {
 
@@ -156,7 +157,7 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 				// Сила обратно пропорциональна расстоянию
 				const m = config.REPULSION_STRENGTH / (d2 * dist);
 
-				overrides.setForse(force, d, dist, m);
+				overrides.setForse(force, d, eta === undefined ? dist : 1, m);//{ force.x += (d.x / dist) * m; force.y += (d.y / dist) * m; force.z += (d.z / dist) * m; force.w += (d.w / dist) * m; },
 
 			}
 
@@ -171,24 +172,28 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 
 				if (classSettings.debug) classSettings.debug.logTimestamp('Play step. Average vertices. ', timestamp);
 
-/*				
-				// Применяем силы к точкам
-				for (let i = 0; i < angles.length; i++) {
-
-					const pos = settings.overriddenProperties.position(position, i, userData);
-					const velocitie = velocities[i],
-						force = forces[i];
-
-					// Обновляем скорость с учетом силы и демпфирования
-					velocitie.x = velocitie.x * config.DAMPING + force.x;
-					velocitie.y = velocitie.y * config.DAMPING + force.y;
-					velocitie.z = velocitie.z * config.DAMPING + force.z;
-
-					const vertice = utils.cartesianToPolar({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z });
-					settings.overriddenProperties.editVertice(data.timeId, vertice, angles, i);
-
+				if (eta) {
+					// Применяем силы к точкам
+					for (let i = 0; i < angles.length; i++) {
+	
+						const pos = settings.overriddenProperties.position(position, i, userData);
+/*						
+						const velocitie = velocities[i],
+							force = forces[i];
+	
+						// Обновляем скорость с учетом силы и демпфирования
+						velocitie.x = velocitie.x * config.DAMPING + force.x;
+						velocitie.y = velocitie.y * config.DAMPING + force.y;
+						velocitie.z = velocitie.z * config.DAMPING + force.z;
+	
+						const vertice = utils.cartesianToPolar({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z });
+*/							
+						const force = velocities[i];
+						const vertice = utils.cartesianToPolar(overrides.forceVertice(pos, force, eta));
+						settings.overriddenProperties.editVertice(data.timeId, vertice, angles, i);
+	
+					}
 				}
-*/				
 				if (angles.length != anglesTemp.length) console.error(sAverageVertices + ': iterationStep. angles.length != anglesTemp.length');
 				
 				const timeIdOld = settings.guiPoints ? settings.guiPoints.timeId : undefined;

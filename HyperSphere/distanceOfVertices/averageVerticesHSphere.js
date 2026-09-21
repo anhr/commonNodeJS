@@ -43,6 +43,7 @@ const averageVertices = (data) => {
 		d2: (d) => { return d.x * d.x + d.y * d.y + d.z * d.z + d.w * d.w },
 		angles: (angles) => { return [angles[0], angles[1], angles[2]]; },
 		vertice: (p, velociti) => { return { x: p.x + velociti.x, y: p.y + velociti.y, z: p.z + velociti.z, w: p.w + velociti.w } },
+		forceVertice: (p, velociti, eta) => { return { x: p.x + eta * velociti.x, y: p.y + eta * velociti.y, z: p.z + eta * velociti.z, w: p.w + eta * velociti.w } },
 		
 	});
 	
