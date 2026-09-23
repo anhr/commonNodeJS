@@ -37,6 +37,7 @@ class HyperSphere3D extends Sphere {
 	/**
 	 * @param {Options} options See <a href="../../../master/jsdoc/Options/Options.html" target="_blank">Options</a>.
 	 * @param {object} [classSettings] <b>Circle</b> class settings. See <a href="./module-HyperSphere-HyperSphere.html" target="_blank">HyperSphere classSettings</a>.
+	 * @param {string} [classSettings.settings.object.geometry.positionsFileName] The filename where the hypersphere vertex positions are stored. You can create this file by saving the vertex positions of the current hypersphere. Please choice "Settings/Hypersphere/Save" in the top-right corner of the canvas. To save the file, choose the same folder where your web page is located. For example "D:\My documents\MyProjects\webgl\three.js\GitHub\universe\main\hyperSphere\Examples".
 	 **/
 	constructor(options, classSettings) { super(options, classSettings); }
 
