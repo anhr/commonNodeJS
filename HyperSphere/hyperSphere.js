@@ -2693,6 +2693,13 @@ this.object = () => {
 					classSettings.debug.random = () => { return config.PSEUDO_RANDOM };
 				}
 				const computeCPU = () => {
+					
+					//Эта строка нужна для выполнения итерации вычисления гиперсферы с разными параметрами
+					//при условии, что вычислния выполняются на CPU classSettings.compute.isUseCPU = true
+					//Например на странице http://localhost/anhr/universe/main/hyperSphere/Examples/dampingGraph.html
+					//в цикле вычисляются гиперсферы дла разных значений DAMPING
+					classSettings.settings.options.isComputeCPU = true;
+					
 					classSettings.distanceOfVertices({
 						timeId: timeId,
 						this: this,
