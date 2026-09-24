@@ -271,6 +271,8 @@ class ND extends MyObject {
 	 * For example if <b>iAxes</b> is [1,2], then axis 1 interpret as axis 0 and axis 2 interpret as axis 1.
 	 * As result, you can rotate axes around another axis to 90 degrees.
 	 * In example above you have rotated axis 1 and 2 around axis 0 to 90 degrees.
+	 * @param {Boolean} [settings.noGetMaxPairsFloat32Length] undefined or false - Displays an error message if the multiplication of the number of vertices and the number of player steps exceeds the maximum limit available for the current browser.
+	 * You can calulate this by multiplication <b>classSettings.settings.object.geometry.angles.length * myThreeOptions.playerOptions.marks</b>.
 	 * @param {Boolean} [settings.plane=false] true - create <b>vectorPlane</b>. See <b>settings.vectorPlane</b> below.
 	 * @param {Array} [settings.vectorPlane] n-dimensional position of the panel
 	 * intersecting with the <b>settings.object.geometry</b> n-dimensional graphical object. Available only if <b>settings.plane</b> is true.
