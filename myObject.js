@@ -298,36 +298,38 @@ class MyObject {
 
 				return maxValidLength;
 			}
-			// 1. Вызываем функцию. Она возвращает чистое число (безопасную длину)
-			const safeLength = getMaxPairsFloat32Length();
-			if (safeLength < MAX_POINTS) {
-				function showMemoryWarningToUser() {
-					const availableBytes = safeLength;
-					//				const availableBytes = memInfo.bytes;
-					const bytesPerElement = Float32Array.BYTES_PER_ELEMENT; // 4 bytes
-
-					// Вычисляем максимальные объемы
-					const maxElements = availableBytes;
-					const rCount = settings.object.geometry.rCount;
-					const maxVertices = maxElements / pointLength;
-
-					// Англоязычное уведомление с указанием лимитов
-					alert(
-						`Not enough memory! The browser cannot allocate array.\n\n` +
-						`Multiplication classSettings.settings.object.geometry.angles.length * myThreeOptions.playerOptions.marks is limited to ~${Math.floor(maxVertices).toLocaleString()}\n\n` +
-						`Current values:\n` +
-						`classSettings.settings.object.geometry.angles.length = ${Math.floor(pointsLength).toLocaleString()}\n` +
-						`myThreeOptions.playerOptions.marks = ${Math.floor(rCount).toLocaleString()}\n` +
-						`angles.length * marks = ${Math.floor(pointsLength * rCount).toLocaleString()}\n\n` +
-						`For example you can limit:\n` +
-						`classSettings.settings.object.geometry.angles.length to ~${Math.floor(maxVertices / rCount).toLocaleString()}\n` +
-						`or\n` +
-						`myThreeOptions.playerOptions.marks to ~${Math.floor(maxVertices / pointsLength).toLocaleString()}\n`
-					);
+			if(!settings.noGetMaxPairsFloat32Length) {
+				// 1. Вызываем функцию. Она возвращает безопасную длину
+				const safeLength = getMaxPairsFloat32Length();
+				if (safeLength < MAX_POINTS) {
+					function showMemoryWarningToUser() {
+						const availableBytes = safeLength;
+						//				const availableBytes = memInfo.bytes;
+						const bytesPerElement = Float32Array.BYTES_PER_ELEMENT; // 4 bytes
+	
+						// Вычисляем максимальные объемы
+						const maxElements = availableBytes;
+						const rCount = settings.object.geometry.rCount;
+						const maxVertices = maxElements / pointLength;
+	
+						// Англоязычное уведомление с указанием лимитов
+						alert(
+							`Not enough memory! The browser cannot allocate array.\n\n` +
+							`Multiplication classSettings.settings.object.geometry.angles.length * myThreeOptions.playerOptions.marks is limited to ~${Math.floor(maxVertices).toLocaleString()}\n\n` +
+							`Current values:\n` +
+							`classSettings.settings.object.geometry.angles.length = ${Math.floor(pointsLength).toLocaleString()}\n` +
+							`myThreeOptions.playerOptions.marks = ${Math.floor(rCount).toLocaleString()}\n` +
+							`angles.length * marks = ${Math.floor(pointsLength * rCount).toLocaleString()}\n\n` +
+							`For example you can limit:\n` +
+							`classSettings.settings.object.geometry.angles.length to ~${Math.floor(maxVertices / rCount).toLocaleString()}\n` +
+							`or\n` +
+							`myThreeOptions.playerOptions.marks to ~${Math.floor(maxVertices / pointsLength).toLocaleString()}\n`
+						);
+					}
+					showMemoryWarningToUser();
+	
+					return false;
 				}
-				showMemoryWarningToUser();
-
-				return false;
 			}
 			
 			if (MAX_POINTS != undefined) this.setVerticesRange(0, isRCount ?
