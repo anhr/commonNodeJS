@@ -288,6 +288,7 @@ export async function graphFolderChild(folder, classSettings, textController, ti
 			elStep: textController,//.domElement,
 			stepFormat: 'Step: %step / ' + anglesLength,
 			tomsonAnalysisRes: aTomsonAnalysisRes[timeId],
+			r: classSettings.overriddenProperties.rTime(timeId),
 		});
 		if (timeIdController) timeIdController.name(sTimeID + timeId + ' / ' + marks);
 	}
@@ -573,6 +574,9 @@ export async function evaluateDistribution(stepIndex = 0, paramsNew) {
 
 			// d: Евклидово расстояние (длина хорды) между i-й и j-й точками в пространстве
 			let d = Math.sqrt(dx * dx + dy * dy + dz * dz + dw * dw);
+
+			//Приводим расстояние к гиперсфере с радиусом r = 1
+			d /= paramsNew.r;
 
 			// Добавляем вычисленное расстояние в список расстояний для i-й точки
 			distancesForPointI.push(d);
