@@ -101,12 +101,12 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 		// Для каждой пары точек
 		let progressBar, i = 0;
 		const eta = config.ETA_0 != undefined ? config.ETA_0 * Math.pow(_this.r, 3) : undefined;
+		const utils = overrides.utils;
+		const userData = settings.bufferGeometry.userData;
+		const RandomVertice = overrides.RandomVertice;
 		const step = () => {
 			
 			progressBar.value = i;
-			const utils = overrides.utils;
-			const userData = settings.bufferGeometry.userData;
-			const RandomVertice = overrides.RandomVertice;
 			const p1 = settings.overriddenProperties.position(position, i, userData);
 
 			const force = overrides.force();
@@ -170,30 +170,18 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 
 				progressBar.remove();
 
-				if (classSettings.debug) classSettings.debug.logTimestamp('Play step. Average vertices. ', timestamp);
-
 				if (eta) {
 					// Применяем силы к точкам
 					for (let i = 0; i < angles.length; i++) {
 	
 						const pos = settings.overriddenProperties.position(position, i, userData);
-/*						
-						const velocitie = velocities[i],
-							force = forces[i];
-	
-						// Обновляем скорость с учетом силы и демпфирования
-						velocitie.x = velocitie.x * config.DAMPING + force.x;
-						velocitie.y = velocitie.y * config.DAMPING + force.y;
-						velocitie.z = velocitie.z * config.DAMPING + force.z;
-	
-						const vertice = utils.cartesianToPolar({ x: pos.x + velocitie.x, y: pos.y + velocitie.y, z: pos.z + velocitie.z });
-*/							
 						const force = velocities[i];
 						const vertice = utils.cartesianToPolar(overrides.forceVertice(pos, force, eta));
 						settings.overriddenProperties.editVertice(data.timeId, vertice, angles, i);
 	
 					}
 				}
+				if (classSettings.debug) classSettings.debug.logTimestamp('Play step. Average vertices. ', timestamp);
 				if (angles.length != anglesTemp.length) console.error(sAverageVertices + ': iterationStep. angles.length != anglesTemp.length');
 				
 				const timeIdOld = settings.guiPoints ? settings.guiPoints.timeId : undefined;
