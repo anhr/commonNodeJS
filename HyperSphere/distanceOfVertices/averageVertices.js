@@ -94,7 +94,7 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 	// --- Итерационный процесс движения точек ---
 	function iterationStep() {
 
-		const anglesTemp = new Array(angles.length).fill(null).map(() => (overrides.anglesInitValues));
+//		const anglesTemp = new Array(angles.length).fill(null).map(() => (overrides.anglesInitValues));
 		
 		let timestamp = classSettings.debug ? window.performance.now() : undefined;
 
@@ -163,7 +163,7 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 
 			overrides.setVelocities(velocities[i], config.DAMPING, force);
 			
-			anglesTemp[i] = utils.cartesianToPolar(overrides.vertice(p1, velocities[i]));
+//			anglesTemp[i] = utils.cartesianToPolar(overrides.vertice(p1, velocities[i]));
 			
 			i += 1;
 			if (i >= angles.length) {
@@ -182,10 +182,18 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 					}
 				}
 				if (classSettings.debug) classSettings.debug.logTimestamp('Play step. Average vertices. ', timestamp);
-				if (angles.length != anglesTemp.length) console.error(sAverageVertices + ': iterationStep. angles.length != anglesTemp.length');
+//				if (angles.length != anglesTemp.length) console.error(sAverageVertices + ': iterationStep. angles.length != anglesTemp.length');
 				
 				const timeIdOld = settings.guiPoints ? settings.guiPoints.timeId : undefined;
 				if (settings.guiPoints) settings.guiPoints.timeId = undefined;
+				if (settings.debug && settings.debug.log) {
+					for (let i = 0; i < angles.length; i++) {
+						const pointCur = settings.bufferGeometry.userData.position[i];
+						const pointAngles = utils.cartesianToPolar(pointCur);
+						console.log('Step:' + data.timeId + ' Point:' + (data.timeId * angles.length + i) + '. x=' + pointCur.x + ' y=' + pointCur.y + ' z=' + pointCur.z + ' w=' + pointCur.w + ',alt=' + pointAngles.altitude + ' lat=' + pointAngles.latitude + ' lon=' + pointAngles.longitude);
+					}
+				}
+/*
 				for (let i = 0; i < angles.length; i++) {
 					angles[i] = anglesTemp[i];
 					if (settings.debug && settings.debug.log) {
@@ -194,6 +202,7 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 						console.log('Step:' + data.timeId + ' Point:' + (data.timeId * angles.length + i) + '. x=' + pointCur.x + ' y=' + pointCur.y + ' z=' + pointCur.z + ' w=' + pointCur.w + ',alt=' + pointAngles.altitude + ' lat=' + pointAngles.latitude + ' lon=' + pointAngles.longitude);
 					}
 				}
+*/
 				if (settings.guiPoints) settings.guiPoints.timeId = timeIdOld;
 
 				_this.bufferGeometry.attributes.position.needsUpdate = true
