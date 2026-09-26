@@ -21,8 +21,8 @@ import ProgressBar from '../../ProgressBar/ProgressBar.js'
 
 const sAverageVertices = 'averageVertices', π = Math.PI;
 
-// Скорости точек (для инерции)
-let velocities = [];
+//силы отталкивания
+let forces = [];
 
 /**
  * Base function for an iterative process in which, at each step, all vertices gradually move toward a position in which the vertices are at the maximum distance from each other.
@@ -87,8 +87,8 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 //	const DAMPING = 0.95; // Демпфирование движения
 	data.this.r; // Радиус сферы. Нужно что бы во вселенной в classSettings.settings.object.geometry.times был добавлен новый time. Это нужно что бы пользователь мышкой мог выбрать вершину в вселенной
 
-	// Инициализируем скорости
-	if (velocities.length === 0) velocities = new Array(angles.length).fill(null).map(() => (overrides.velocitiesInitValues()));
+	// Инициализируем силы ооталкивания
+	if (forces.length === 0) forces = new Array(angles.length).fill(null).map(() => (overrides.velocitiesInitValues()));
 
 	
 	// --- Итерационный процесс движения точек ---
@@ -109,9 +109,9 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 			progressBar.value = i;
 			const p1 = settings.overriddenProperties.position(position, i, userData);
 
-			const force = overrides.force();
+//			const force = overrides.force();
 			for (
-				let j = 0;//перебитаем все вершины для совместимости алгоритмов итерации на CPU и GPU. Для объяснения найти "во время выполнения шага итерации на CPU цикл" по ссылке https://gemini.google.com/share/94f727cf6035
+				let j = i + 1;//перебитаем все вершины для совместимости алгоритмов итерации на CPU и GPU. Для объяснения найти "во время выполнения шага итерации на CPU цикл" по ссылке https://gemini.google.com/share/94f727cf6035
 				j < angles.length; j++) {
 				
 				if (i === j) continue;
@@ -157,13 +157,17 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 				// Сила обратно пропорциональна расстоянию
 				const m = config.REPULSION_STRENGTH / (d2 * dist);
 
-				overrides.setForse(force, d, eta === undefined ? dist : 1, m);//{ force.x += (d.x / dist) * m; force.y += (d.y / dist) * m; force.z += (d.z / dist) * m; force.w += (d.w / dist) * m; },
+				// Применяем силу к точке i (отталкивание от j)
+				overrides.setForse(forces[i], d, m);//{ force.x += (d.x / dist) * m; force.y += (d.y / dist) * m; force.z += (d.z / dist) * m; force.w += (d.w / dist) * m; },
+				
+				// Применяем протипоположную силу к точке j (3-й закон Ньютона)
+				overrides.setForse(forces[j], d, -m);//{ force.x += (d.x / dist) * m; force.y += (d.y / dist) * m; force.z += (d.z / dist) * m; force.w += (d.w / dist) * m; },
 
 			}
 
-			overrides.setVelocities(velocities[i], config.DAMPING, force);
+//			overrides.setVelocities(forces[i], config.DAMPING, force);
 			
-//			anglesTemp[i] = utils.cartesianToPolar(overrides.vertice(p1, velocities[i]));
+//			anglesTemp[i] = utils.cartesianToPolar(overrides.vertice(p1, forces[i]));
 			
 			i += 1;
 			if (i >= angles.length) {
@@ -175,7 +179,7 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 					for (let i = 0; i < angles.length; i++) {
 	
 						const pos = settings.overriddenProperties.position(position, i, userData);
-						const force = velocities[i];
+						const force = forces[i];
 						const vertice = utils.cartesianToPolar(overrides.forceVertice(pos, force, eta));
 						settings.overriddenProperties.editVertice(data.timeId, vertice, angles, i);
 	

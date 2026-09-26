@@ -38,12 +38,34 @@ const averageVertices = (data) => {
 		RandomVertice: RandomVertice,
 
 		force: () => { return {x: 0, y: 0, z: 0, w: 0 }; },
-		setForse: (force, d, dist, m) => { force.x += (d.x / dist) * m; force.y += (d.y / dist) * m; force.z += (d.z / dist) * m; force.w += (d.w / dist) * m; },
+		setForse: (force, d, m) => { force.x += d.x * m; force.y += d.y * m; force.z += d.z * m; force.w += d.w * m; },
 		d: (p1, p2) => { return {x: p1.x - p2.x, y: p1.y - p2.y, z: p1.z - p2.z, w: p1.w - p2.w} },
 		d2: (d) => { return d.x * d.x + d.y * d.y + d.z * d.z + d.w * d.w },
 		angles: (angles) => { return [angles[0], angles[1], angles[2]]; },
 		vertice: (p, velociti) => { return { x: p.x + velociti.x, y: p.y + velociti.y, z: p.z + velociti.z, w: p.w + velociti.w } },
-		forceVertice: (p, velociti, eta) => { return { x: p.x + eta * velociti.x, y: p.y + eta * velociti.y, z: p.z + eta * velociti.z, w: p.w + eta * velociti.w } },
+		forceVertice: (pt, force, eta) => {
+			const updated = {
+				x: pt.x + eta * force.x,
+				y: pt.y + eta * force.y,
+				z: pt.z + eta * force.z,
+				w: pt.w + eta * force.w
+			};
+
+			// Вычисление длины (модуля) 4D-вектора смещенной точки: mag = sqrt(x² + y² + z² + w²).
+			const mag = Math.hypot(updated.x, updated.y, updated.z, updated.w);
+			// Используется для нормализации вектора и его проекции обратно на гиперсферу радиусом R.
+			//вектор силы F выталкивает точку по касательной или наружу, в результате чего она сходит с поверхности гиперсферы.
+			//Ее расстояние от центра координат перестает быть равным радиусу R.
+			//Без этой операции точки при каждом шаге итерации постепенно «разлетались» бы от центра, увеличивая свой радиус и нарушая геометрию задачи.
+			//Ту же самую работу можно выполнить, сделав преобразование в полярную систему координат и обратно, но это займет больше времени и уменьшается точность на полюсах.
+			const r = data.this.classSettings.overriddenProperties.rTime();
+			return {
+				x: (updated.x / mag) * r,
+				y: (updated.y / mag) * r,
+				z: (updated.z / mag) * r,
+				w: (updated.w / mag) * r
+			};
+		},
 		
 	});
 	
