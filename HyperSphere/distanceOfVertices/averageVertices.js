@@ -177,12 +177,16 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 				if (eta) {
 					// Применяем силы к точкам
 					for (let i = 0; i < angles.length; i++) {
-	
+
+						//устанавливаем новую позицию вершины без преобразования ее в полярную систему коодинат.
+						//Это не вызывает накопление погрешности, потому что в overrides.forceVertice используется нормализация вектора и его проекции обратно на гиперсферу радиусом R.
+						data.this.setPositionAttributeFromPoint(i, overrides.forceVertice(settings.overriddenProperties.position(position, i, userData), forces[i], eta), data.timeId);
+/*
 						const pos = settings.overriddenProperties.position(position, i, userData);
 						const force = forces[i];
 						const vertice = utils.cartesianToPolar(overrides.forceVertice(pos, force, eta));
 						settings.overriddenProperties.editVertice(data.timeId, vertice, angles, i);
-	
+*/	
 					}
 				}
 				if (classSettings.debug) classSettings.debug.logTimestamp('Play step. Average vertices. ', timestamp);
