@@ -73,7 +73,7 @@
 				        //RANDOM_POINTS: 1,
 						
 						PSEUDO_RANDOM: 1,//Have effect only if RANDOM_POINTS: 0. Available range from 0 to 1. Default 0.5
-	
+
 						//Damping is a velocity reduction factor applied at each iteration step.
 						//It simulates friction or energy dissipation in the system.
 						//Without damping, particles would oscillate indefinitely around equilibrium positions, never stabilizing.
@@ -83,9 +83,10 @@
 						//Default 0.95.
 						//See https://chat.deepseek.com/share/azo3y7zgc6hov7mlfp for details.
 						//DAMPING: 0.95,
-	
+
 						//Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
-						REPULSION_STRENGTH: 0.03,//По умолчанию не определено и зависит от количества вершин REPULSION_STRENGTH = config.a / classSettings.settings.object.geometry.angles.length.
+//deprecated
+//REPULSION_STRENGTH: 0.03,//По умолчанию не определено и зависит от количества вершин REPULSION_STRENGTH = config.a / classSettings.settings.object.geometry.angles.length.
 						//a: 50,//имеет эффект только если не определен REPULSION_STRENGTH. Default 50
 						
 	

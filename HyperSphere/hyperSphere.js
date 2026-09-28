@@ -98,18 +98,6 @@ class HyperSphere extends MyObject {
 	 *   1 - No damping. Not recommended for production
 	 * [What is DAMPING and why is it needed?]{@link https://chat.deepseek.com/share/azo3y7zgc6hov7mlfp}
 	 * </pre>
-	 * @param {float} [classSettings.compute.config.REPULSION_STRENGTH]
-	 * <pre>
-	 * A force scaling factor that determines how strongly particles repel each other.
-	 * It's the coefficient that multiplies the inverse-square force law between every pair of vertices.
-	 * The smaller the value, the weaker the repulsive forces between the vertices, and the slower they move.
-	 * Available range from 0 to ∞.
-	 *   0 - No repulsion, particles don't interact. Static positions, no movement
-	 *   ∞ - No upper bound (but practically limited by numerical stability).
-	 * default vaue is <b>config.a / classSettings.settings.object.geometry.angles.length</b>. See below.
-	 * [What is REPULSION_STRENGTH and why is it needed?]{@link https://chat.deepseek.com/share/slysikbmgruyb8owpi}
-	 * </pre>
-	 * @param {float} [classSettings.compute.config.a=50] See above. Have effect if <b>REPULSION_STRENGTH</b> is not defined.
 	 * @param {float} [classSettings.compute.config.p=0]
 	 * <pre>
 	 * Hyperbola parametr. See [RandomVertice.calculateHyperbola]{@link https://raw.githack.com/anhr/commonNodeJS/master/HyperSphere/RandomVertice/jsdoc/module-RandomVertice-RandomVertice.html#.calculateHyperbola}.
@@ -2636,11 +2624,12 @@ this.object = () => {
 				const config = compute.config;
 				config.type ||= 'START_COMPUTE';
 				config.pointsPerStep = settings.object.geometry.angles.length;
-
+/*deprecated
 				if (config.REPULSION_STRENGTH === undefined) {
 					const a = (config.a != undefined) ? config.a : 50;
 					config.REPULSION_STRENGTH = a / config.pointsPerStep;// Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются				
 				}
+*/
 				
 				if (config.DAMPING === undefined) config.DAMPING = 0.95; // Демпфирование движения
 				

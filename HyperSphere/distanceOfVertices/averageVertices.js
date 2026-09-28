@@ -22,7 +22,7 @@ import ProgressBar from '../../ProgressBar/ProgressBar.js'
 const sAverageVertices = 'averageVertices', π = Math.PI;
 
 //силы отталкивания
-let forces = [];
+//let forces = [];
 
 /**
  * Base function for an iterative process in which, at each step, all vertices gradually move toward a position in which the vertices are at the maximum distance from each other.
@@ -88,8 +88,10 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 	data.this.r; // Радиус сферы. Нужно что бы во вселенной в classSettings.settings.object.geometry.times был добавлен новый time. Это нужно что бы пользователь мышкой мог выбрать вершину в вселенной
 
 	// Инициализируем силы ооталкивания
-	if (forces.length === 0) forces = new Array(angles.length).fill(null).map(() => (overrides.velocitiesInitValues()));
+	//if (forces.length === 0) forces = new Array(angles.length).fill(null).map(() => (overrides.velocitiesInitValues()));
 
+	const N = angles.length;	
+	const velocities = Array.from({ length: N }, () => (overrides.velocitiesInitValues()));//{x: 0, y: 0, z: 0, w: 0 }
 	
 	// --- Итерационный процесс движения точек ---
 	function iterationStep() {
@@ -100,9 +102,30 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 
 		// Для каждой пары точек
 		let progressBar, i = 0;
-		const eta = config.ETA_0 != undefined ? config.ETA_0 * Math.pow(_this.r, 3) : undefined;
-		const utils = overrides.utils;
 		const userData = settings.bufferGeometry.userData;
+		
+		// 1. Вычисляем новый радиус на текущем шаге (от 0.1 до 1.0)
+/*		
+		const nextR = 0.1 + (1.0 - 0.1) * (step / totalSteps);
+		const rRatio = nextR / currentR; // Коэффициент масштабирования пространства
+*/
+		const currentR = classSettings.overriddenProperties.rTime(data.timeId - 1);
+		const nextR = classSettings.overriddenProperties.rTime();
+		const rRatio = nextR / currentR; // Коэффициент масштабирования пространства
+
+		// Масштабируем прошлую скорость под новый размер пространства
+		for (let i = 0; i < N; i++) {
+			velocities[i].x *= rRatio;
+			velocities[i].y *= rRatio;
+			velocities[i].z *= rRatio;
+			velocities[i].w *= rRatio;
+		}
+
+		// Динамический шаг ETA
+		const eta = config.ETA_0 != undefined ? config.ETA_0 * 
+			Math.pow(_this.classSettings.overriddenProperties.rTime(_this.classSettings.settings.bufferGeometry.userData.timeId - 1), 3) : undefined;
+		const forces = Array.from({ length: N }, () => (overrides.velocitiesInitValues()));//{x: 0, y: 0, z: 0, w: 0 }
+		const utils = overrides.utils;
 		const RandomVertice = overrides.RandomVertice;
 		const step = () => {
 			
@@ -111,8 +134,8 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 
 //			const force = overrides.force();
 			for (
-				let j = i + 1;//перебитаем все вершины для совместимости алгоритмов итерации на CPU и GPU. Для объяснения найти "во время выполнения шага итерации на CPU цикл" по ссылке https://gemini.google.com/share/94f727cf6035
-				j < angles.length; j++) {
+				let j = i + 1;
+				j < N; j++) {
 				
 				if (i === j) continue;
 				const p2 = settings.overriddenProperties.position(position, j, userData);
@@ -155,7 +178,8 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 				}
 				
 				// Сила обратно пропорциональна расстоянию
-				const m = config.REPULSION_STRENGTH / (d2 * dist);
+//				const m = config.REPULSION_STRENGTH / (d2 * dist);
+				const m = 1 / (d2 * dist);
 
 				// Применяем силу к точке i (отталкивание от j)
 				overrides.setForse(forces[i], d, m);//{ force.x += (d.x / dist) * m; force.y += (d.y / dist) * m; force.z += (d.z / dist) * m; force.w += (d.w / dist) * m; },
@@ -180,7 +204,10 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 
 						//устанавливаем новую позицию вершины без преобразования ее в полярную систему коодинат.
 						//Это не вызывает накопление погрешности, потому что в overrides.forceVertice используется нормализация вектора и его проекции обратно на гиперсферу радиусом R.
-						data.this.setPositionAttributeFromPoint(i, overrides.forceVertice(settings.overriddenProperties.position(position, i, userData), forces[i], eta), data.timeId);
+						data.this.setPositionAttributeFromPoint(i, 
+							overrides.forceVertice(settings.overriddenProperties.position(position, i, userData), forces, eta, velocities, classSettings.compute.config.BETA, i),
+							data.timeId
+						);
 /*
 						const pos = settings.overriddenProperties.position(position, i, userData);
 						const force = forces[i];

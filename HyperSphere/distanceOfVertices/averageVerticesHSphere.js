@@ -42,8 +42,17 @@ const averageVertices = (data) => {
 		d: (p1, p2) => { return {x: p1.x - p2.x, y: p1.y - p2.y, z: p1.z - p2.z, w: p1.w - p2.w} },
 		d2: (d) => { return d.x * d.x + d.y * d.y + d.z * d.z + d.w * d.w },
 		angles: (angles) => { return [angles[0], angles[1], angles[2]]; },
-		vertice: (p, velociti) => { return { x: p.x + velociti.x, y: p.y + velociti.y, z: p.z + velociti.z, w: p.w + velociti.w } },
-		forceVertice: (pt, force, eta) => {
+		vertice: (p, velocity) => { return { x: p.x + velocity.x, y: p.y + velocity.y, z: p.z + velocity.z, w: p.w + velocity.w } },
+		forceVertice: (pt, forces, eta, velocities, BETA = 0.85, i) => {
+			// Обновляем скорость v = BETA * v + eta * F
+			velocities[i].x = BETA * velocities[i].x + eta * forces[i].x;
+			velocities[i].y = BETA * velocities[i].y + eta * forces[i].y;
+			velocities[i].z = BETA * velocities[i].z + eta * forces[i].z;
+			velocities[i].w = BETA * velocities[i].w + eta * forces[i].w;
+
+			data.this.getPoint(1, 2)
+//			new window.__myThree__.three.THREE.Vector4() data.this.classSettings.settings
+			
 			const updated = {
 				x: pt.x + eta * force.x,
 				y: pt.y + eta * force.y,
