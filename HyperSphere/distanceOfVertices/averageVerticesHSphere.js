@@ -50,8 +50,7 @@ const averageVertices = (data) => {
 			velocities[i].z = BETA * velocities[i].z + eta * forces[i].z;
 			velocities[i].w = BETA * velocities[i].w + eta * forces[i].w;
 
-			data.this.getPoint(1, 2)
-//			new window.__myThree__.three.THREE.Vector4() data.this.classSettings.settings
+			const cartesian = data.this.classSettings.overriddenProperties.getVerticePosition(i, data.timeId);
 			
 			const updated = {
 				x: pt.x + eta * force.x,
