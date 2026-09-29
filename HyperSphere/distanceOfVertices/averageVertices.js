@@ -13,11 +13,9 @@
  *
  * http://www.apache.org/licenses/LICENSE-2.0
 */
-/*
-import * as utils from '../utilsSphere.js'
-import { RandomVerticeSphere as RandomVertice } from '../RandomVertice/randomVerticeSphere.js';
-*/
+
 import ProgressBar from '../../ProgressBar/ProgressBar.js'
+import Player from '../../player/player.js'
 
 const sAverageVertices = 'averageVertices', π = Math.PI;
 
@@ -92,7 +90,13 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 
 	const N = angles.length;	
 	const velocities = Array.from({ length: N }, () => (overrides.velocitiesInitValues()));//{x: 0, y: 0, z: 0, w: 0 }
+	const colors = [];
 	
+	for (let timeId = 1; timeId < options.playerOptions.marks; timeId++) {
+		const verticeColor = settings.object.color(timeId), wScale = settings.options.scales.w;
+		colors.push(settings.options.palette.toColor(verticeColor, wScale.min, wScale.max));
+	}
+
 	// --- Итерационный процесс движения точек ---
 	function iterationStep() {
 
@@ -199,15 +203,23 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 				progressBar.remove();
 
 				if (eta) {
+					
 					// Применяем силы к точкам
-					for (let i = 0; i < angles.length; i++) {
+					const positionBlockLength = angles.length
+					const color = colors[data.timeId - 1];
+					//console.log('timeId = ' + data.timeId + ', ', color);
+					for (let i = 0; i < positionBlockLength; i++) {
 
 						//устанавливаем новую позицию вершины без преобразования ее в полярную систему коодинат.
 						//Это не вызывает накопление погрешности, потому что в overrides.forceVertice используется нормализация вектора и его проекции обратно на гиперсферу радиусом R.
-						data.this.setPositionAttributeFromPoint(i, 
-							overrides.forceVertice(settings.overriddenProperties.position(position, i, userData), forces, eta, velocities, classSettings.compute.config.BETA, i),
-							data.timeId
-						);
+						overrides.forceVertice(settings.overriddenProperties.position(position, i, userData), forces[i], eta, velocities[i], classSettings.compute.config.BETA, i);
+						Player.setColorAttribute(settings.bufferGeometry.attributes, i + positionBlockLength * data.timeId, color);
+/*						
+data.this.setPositionAttributeFromPoint(i, 
+	overrides.forceVertice(settings.overriddenProperties.position(position, i, userData), forces[i], eta, velocities[i], classSettings.compute.config.BETA, i),
+	data.timeId
+);
+*/
 /*
 						const pos = settings.overriddenProperties.position(position, i, userData);
 						const force = forces[i];
@@ -215,6 +227,18 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 						settings.overriddenProperties.editVertice(data.timeId, vertice, angles, i);
 */	
 					}
+					const attributePosition = settings.bufferGeometry.attributes.position;
+					attributePosition.needsUpdate = true;
+					const drawRange = settings.bufferGeometry.drawRange;
+					data.this.setVerticesRange(drawRange.start, attributePosition.count - drawRange.start);
+/*					
+					if ((drawRange.count === Infinity) || (((drawRange.start + drawRange.count) * ((settings.bufferGeometry.index === null) ? itemSize : 1)) < positionId)){
+		
+						this.setVerticesRange(drawRange.start, (positionId + 1) / itemSize - drawRange.start);
+						if (!Number.isInteger(drawRange.count) && (drawRange.count != Infinity)) console.error(sMyObject + '.setPositionAttributeFromPoint failed. Invalid drawRange.count = ' + drawRange.count);
+		
+					}
+*/					
 				}
 				if (classSettings.debug) classSettings.debug.logTimestamp('Play step. Average vertices. ', timestamp);
 //				if (angles.length != anglesTemp.length) console.error(sAverageVertices + ': iterationStep. angles.length != anglesTemp.length');

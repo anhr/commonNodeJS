@@ -43,20 +43,18 @@ const averageVertices = (data) => {
 		d2: (d) => { return d.x * d.x + d.y * d.y + d.z * d.z + d.w * d.w },
 		angles: (angles) => { return [angles[0], angles[1], angles[2]]; },
 		vertice: (p, velocity) => { return { x: p.x + velocity.x, y: p.y + velocity.y, z: p.z + velocity.z, w: p.w + velocity.w } },
-		forceVertice: (pt, forces, eta, velocities, BETA = 0.85, i) => {
+		forceVertice: (pt, force, eta, velocity, BETA = 0.85, i) => {
 			// Обновляем скорость v = BETA * v + eta * F
-			velocities[i].x = BETA * velocities[i].x + eta * forces[i].x;
-			velocities[i].y = BETA * velocities[i].y + eta * forces[i].y;
-			velocities[i].z = BETA * velocities[i].z + eta * forces[i].z;
-			velocities[i].w = BETA * velocities[i].w + eta * forces[i].w;
-
-			const cartesian = data.this.classSettings.overriddenProperties.getVerticePosition(i, data.timeId);
+			velocity.x = BETA * velocity.x + eta * force.x;
+			velocity.y = BETA * velocity.y + eta * force.y;
+			velocity.z = BETA * velocity.z + eta * force.z;
+			velocity.w = BETA * velocity.w + eta * force.w;
 			
 			const updated = {
-				x: pt.x + eta * force.x,
-				y: pt.y + eta * force.y,
-				z: pt.z + eta * force.z,
-				w: pt.w + eta * force.w
+				x: pt.x + velocity.x,
+				y: pt.y + velocity.y,
+				z: pt.z + velocity.z,
+				w: pt.w + velocity.w
 			};
 
 			// Вычисление длины (модуля) 4D-вектора смещенной точки: mag = sqrt(x² + y² + z² + w²).
@@ -66,13 +64,22 @@ const averageVertices = (data) => {
 			//Ее расстояние от центра координат перестает быть равным радиусу R.
 			//Без этой операции точки при каждом шаге итерации постепенно «разлетались» бы от центра, увеличивая свой радиус и нарушая геометрию задачи.
 			//Ту же самую работу можно выполнить, сделав преобразование в полярную систему координат и обратно, но это займет больше времени и уменьшается точность на полюсах.
-			const r = data.this.classSettings.overriddenProperties.rTime();
+			const nextR = data.this.classSettings.overriddenProperties.rTime();
+
+//data.this.getPoint(1, 2)
+			const cartesian = data.this.classSettings.overriddenProperties.getVerticePosition(i, data.timeId);
+			cartesian.x = (updated.x / mag) * nextR;
+			cartesian.y = (updated.y / mag) * nextR;
+			cartesian.z = (updated.z / mag) * nextR;
+			cartesian.w = (updated.w / mag) * nextR;
+/*			
 			return {
-				x: (updated.x / mag) * r,
-				y: (updated.y / mag) * r,
-				z: (updated.z / mag) * r,
-				w: (updated.w / mag) * r
+				x: (updated.x / mag) * nextR,
+				y: (updated.y / mag) * nextR,
+				z: (updated.z / mag) * nextR,
+				w: (updated.w / mag) * nextR
 			};
+*/			
 		},
 		
 	});

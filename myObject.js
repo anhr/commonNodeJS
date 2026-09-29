@@ -641,6 +641,7 @@ class MyObject {
 				if (settings.options) {
 					
 					const wScale = settings.options.scales.w;
+//console.log('timeId = ' + timeId + ', ', settings.options.palette.toColor(verticeColor, wScale.min, wScale.max));
 					Player.setColorAttribute(attributes, i + (timeId === undefined ? 0 : positionBlockLength * timeId), settings.options.palette.toColor(verticeColor, wScale.min, wScale.max));
 
 				}
