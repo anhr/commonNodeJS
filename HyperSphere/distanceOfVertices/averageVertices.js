@@ -96,6 +96,8 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 		const verticeColor = settings.object.color(timeId), wScale = settings.options.scales.w;
 		colors.push(settings.options.palette.toColor(verticeColor, wScale.min, wScale.max));
 	}
+
+	//Делаем строку, которую удобно будет использовать для создания массива цветоа в зависимости от текущего времени на странице http://localhost/anhr/universe/main/hyperSphere/Examples/tomsonExample.html
 	const sColors = '[' + colors.map(color => {
 		const properties = Object.entries(color).map(([key, value]) => `${key}: ${value}`).join(', ');
 //		return `Color {${properties}}`;
