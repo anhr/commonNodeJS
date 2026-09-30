@@ -88,14 +88,28 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 	// Инициализируем силы ооталкивания
 	//if (forces.length === 0) forces = new Array(angles.length).fill(null).map(() => (overrides.velocitiesInitValues()));
 
-	const N = angles.length;	
-	const velocities = Array.from({ length: N }, () => (overrides.velocitiesInitValues()));//{x: 0, y: 0, z: 0, w: 0 }
+	const positionBlockLength = angles.length;	
+	const velocities = Array.from({ length: positionBlockLength }, () => (overrides.velocitiesInitValues()));//{x: 0, y: 0, z: 0, w: 0 }
 	const colors = [];
 	
 	for (let timeId = 1; timeId < options.playerOptions.marks; timeId++) {
 		const verticeColor = settings.object.color(timeId), wScale = settings.options.scales.w;
 		colors.push(settings.options.palette.toColor(verticeColor, wScale.min, wScale.max));
 	}
+	const sColors = '[' + colors.map(color => {
+		const properties = Object.entries(color).map(([key, value]) => `${key}: ${value}`).join(', ');
+//		return `Color {${properties}}`;
+		return `{${properties}},`;
+	}).join('\n') + ']'; // Соединяем объекты через перенос строки для читаемости
+	console.log(sColors);
+/*
+	// Код в первой программе:
+	const THREE = window.__myThree__.three.THREE;
+	const colorsArray = [new THREE.Color(0.99, 0.72, 0.16), new THREE.Color(0, 1, 1)];
+	// Превращаем массив в строку формата JSON
+	const resultString2 = JSON.stringify(colorsArray);
+	console.log(resultString2);	
+*/	
 
 	// --- Итерационный процесс движения точек ---
 	function iterationStep() {
@@ -118,7 +132,7 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 		const rRatio = nextR / currentR; // Коэффициент масштабирования пространства
 
 		// Масштабируем прошлую скорость под новый размер пространства
-		for (let i = 0; i < N; i++) {
+		for (let i = 0; i < positionBlockLength; i++) {
 			velocities[i].x *= rRatio;
 			velocities[i].y *= rRatio;
 			velocities[i].z *= rRatio;
@@ -128,7 +142,7 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 		// Динамический шаг ETA
 		const eta = config.ETA_0 != undefined ? config.ETA_0 * 
 			Math.pow(_this.classSettings.overriddenProperties.rTime(_this.classSettings.settings.bufferGeometry.userData.timeId - 1), 3) : undefined;
-		const forces = Array.from({ length: N }, () => (overrides.velocitiesInitValues()));//{x: 0, y: 0, z: 0, w: 0 }
+		const forces = Array.from({ length: positionBlockLength }, () => (overrides.velocitiesInitValues()));//{x: 0, y: 0, z: 0, w: 0 }
 		const utils = overrides.utils;
 		const RandomVertice = overrides.RandomVertice;
 		const step = () => {
@@ -139,7 +153,7 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 //			const force = overrides.force();
 			for (
 				let j = i + 1;
-				j < N; j++) {
+				j < positionBlockLength; j++) {
 				
 				if (i === j) continue;
 				const p2 = settings.overriddenProperties.position(position, j, userData);
