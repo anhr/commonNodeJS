@@ -97,21 +97,31 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 		colors.push(settings.options.palette.toColor(verticeColor, wScale.min, wScale.max));
 	}
 
-	//Делаем строку, которую удобно будет использовать для создания массива цветоа в зависимости от текущего времени на странице http://localhost/anhr/universe/main/hyperSphere/Examples/tomsonExample.html
-	const sColors = '[' + colors.map(color => {
-		const properties = Object.entries(color).map(([key, value]) => `${key}: ${value}`).join(', ');
-//		return `Color {${properties}}`;
-		return `{${properties}},`;
-	}).join('\n') + ']'; // Соединяем объекты через перенос строки для читаемости
-	console.log(sColors);
-/*
-	// Код в первой программе:
 	const THREE = window.__myThree__.three.THREE;
-	const colorsArray = [new THREE.Color(0.99, 0.72, 0.16), new THREE.Color(0, 1, 1)];
-	// Превращаем массив в строку формата JSON
-	const resultString2 = JSON.stringify(colorsArray);
-	console.log(resultString2);	
-*/	
+
+	/*
+	{
+		//Делаем строку, которую удобно будет использовать для создания массива цветов в зависимости от текущего времени на странице http://localhost/anhr/universe/main/hyperSphere/Examples/tomsonExample.html
+		const sColors = '[' + colors.map(color => {
+			const properties = Object.entries(color).map(([key, value]) => `${key}: ${value}`).join(', ');
+			return `{${properties}},`;
+		}).join('\n') + ']'; // Соединяем объекты через перенос строки для читаемости
+		console.log('sColors: ' + sColors);
+	
+		//Делаем строку, которую удобно будет использовать для создания массива розиций на странице http://localhost/anhr/universe/main/hyperSphere/Examples/tomsonExample.html
+		const positionArray = settings.bufferGeometry.attributes.position.array;
+		let sPositionArray = '[\n';
+		for (let i = 0, line = 0; i < positionArray.length; i++, line++) {
+			sPositionArray += positionArray[i] + ',';
+			if (line >= 3) {
+				line = -1;
+				sPositionArray += '\n';
+			}
+		}
+		sPositionArray += '\n]';
+		console.log('sPositionArray: ' + sPositionArray);
+	}
+	*/
 
 	// --- Итерационный процесс движения точек ---
 	function iterationStep() {
