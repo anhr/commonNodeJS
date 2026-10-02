@@ -21,10 +21,35 @@ import RandomVertice from '../RandomVertice/randomVerticeHSphere.js';
  * @param {Object} data See <b>data</b> parameter of the base <a href="./module-averageVertices.html" target="_blank">averageVertices</a>
  */
 const averageVertices = (data) => {
-
+	let velocities;
 	averageVerticesBase(data, {
 
+//		setVelocities: (velocitiesNew) => { velocities = velocitiesNew; },
+		/**
+		 * Извлечение одной точки из массива по её индексу
+		 * @param {number} index интекс точки
+		 * @param {array} массив с точками
+		 * @returns точка в формате {x, y, z, w}
+		 */
+		getPoint(index, array) {
+			const offset = index * this.itemSize;
+			return {
+				get x() { return array[offset + 0]; },
+				set x(value) { array[offset + 0] = value; },
+
+				get y() { return array[offset + 1]; },
+				set y(value) { array[offset + 1] = value; },
+
+				get z() { return array[offset + 2]; },
+				set z(value) { array[offset + 2] = value; },
+
+				get w() { return array[offset + 3]; },
+				set w(value) { array[offset + 3] = value; },
+			};
+		},
+		get itemSize() { return 4; },
 		velocitiesInitValues: () => { return {x: 0, y: 0, z: 0, w: 0 }; },
+/*		
 		setVelocities: (velociti, DAMPING, force) => {
 			
 			velociti.x = velociti.x * DAMPING + force.x;
@@ -33,12 +58,19 @@ const averageVertices = (data) => {
 			velociti.w = velociti.w * DAMPING + force.w;
 			
 		},
+*/		
 		anglesInitValues: [0, 0, 0],
 		utils: utils,
 		RandomVertice: RandomVertice,
 
 		force: () => { return {x: 0, y: 0, z: 0, w: 0 }; },
-		setForse: (force, d, m) => { force.x += d.x * m; force.y += d.y * m; force.z += d.z * m; force.w += d.w * m; },
+		setForse: (forces, d, m, iStride) => {
+//			force.x += d.x * m; force.y += d.y * m; force.z += d.z * m; force.w += d.w * m;
+			forces[iStride] += d.x * m;
+			forces[iStride + 1] += d.y * m;
+			forces[iStride + 2] += d.z * m;
+			forces[iStride + 3] += d.w * m;
+		},
 		d: (p1, p2) => { return {x: p1.x - p2.x, y: p1.y - p2.y, z: p1.z - p2.z, w: p1.w - p2.w} },
 		d2: (d) => { return d.x * d.x + d.y * d.y + d.z * d.z + d.w * d.w },
 		angles: (angles) => { return [angles[0], angles[1], angles[2]]; },
@@ -50,12 +82,14 @@ const averageVertices = (data) => {
 			velocity.z = BETA * velocity.z + eta * force.z;
 			velocity.w = BETA * velocity.w + eta * force.w;
 			
+			// Смещение координаты
 			const updated = {
 				x: pt.x + velocity.x,
 				y: pt.y + velocity.y,
 				z: pt.z + velocity.z,
 				w: pt.w + velocity.w
 			};
+			const nextR = data.this.classSettings.overriddenProperties.rTime();
 
 			// Вычисление длины (модуля) 4D-вектора смещенной точки: mag = sqrt(x² + y² + z² + w²).
 			const mag = Math.hypot(updated.x, updated.y, updated.z, updated.w);
@@ -64,22 +98,12 @@ const averageVertices = (data) => {
 			//Ее расстояние от центра координат перестает быть равным радиусу R.
 			//Без этой операции точки при каждом шаге итерации постепенно «разлетались» бы от центра, увеличивая свой радиус и нарушая геометрию задачи.
 			//Ту же самую работу можно выполнить, сделав преобразование в полярную систему координат и обратно, но это займет больше времени и уменьшается точность на полюсах.
-			const nextR = data.this.classSettings.overriddenProperties.rTime();
-
 //data.this.getPoint(1, 2)
 			const cartesian = data.this.classSettings.overriddenProperties.getVerticePosition(i, data.timeId);
 			cartesian.x = (updated.x / mag) * nextR;
 			cartesian.y = (updated.y / mag) * nextR;
 			cartesian.z = (updated.z / mag) * nextR;
 			cartesian.w = (updated.w / mag) * nextR;
-/*			
-			return {
-				x: (updated.x / mag) * nextR,
-				y: (updated.y / mag) * nextR,
-				z: (updated.z / mag) * nextR,
-				w: (updated.w / mag) * nextR
-			};
-*/			
 		},
 		
 	});

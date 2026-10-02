@@ -16,11 +16,10 @@
 
 import ProgressBar from '../../ProgressBar/ProgressBar.js'
 import Player from '../../player/player.js'
+import * as utils from '../../HyperSphere/utilsHSphere.js'
 
 const sAverageVertices = 'averageVertices', π = Math.PI;
-
-//силы отталкивания
-//let forces = [];
+let velocities;
 
 /**
  * Base function for an iterative process in which, at each step, all vertices gradually move toward a position in which the vertices are at the maximum distance from each other.
@@ -41,55 +40,62 @@ const averageVertices = (data, overrides) => {
 		options = data.options,
 		t = data.t,
 		hyperbola = overrides.RandomVertice.calculateHyperbola(config.p);//overrides.p);
-	/*
-Написать функцию на языке javascript.
-Задан массив : const angles = [].
-В этот массив добавить несколько  точек, случайно расположенных на поверхности сферы в полярной системе координат. Начало координат находится в центре сферы.
-Каждая точка имеет вид: const angles = {
-   latitude: latitude,//широта в диапазоне от -π/2 до π/2
-   longitude: longitude//долгота в диапазоне от -π до π
-}
-Количество точек задано параметром функции verticesCount.
-Разработать итерационный процесс, на каждом шаге которого все точки постепенно движутся в положение, при котором точки окажутся на максимальном удалении друг от друга.
-Создать веб страницу, на которой будет визуально отображаться движение точек в процессе итерации.
-На веб странице использовать библиотеку three.js для визуализации движения точек.
-В полярной системе координат latitude - широта  меняется в диапазоне от -π/2 до π/2 и longitude - долгота в диапазоне от -π до π.
-В декартовой системе координат ось z проходит через северный и южный полюс.
-Не вращать сцену во время рендеринга.
-Переименовать массив точек в полярных координатах из vertices в angles
-	*/
-	//https://chat.deepseek.com/a/chat/s/e808c17c-8258-4029-b70c-d65be630df03
-/*
-https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
-Заменить сферу на гиперсферу в 4D простанстве.
-Тогда каждая точка имеет вид: const angles = {
-   latitude: latitude,//широта в диапазоне от -π/2 до π/2
-   longitude: longitude//долгота в диапазоне от -π до π
-   altitude: altitude//в диапазоне от 0 до π
-}
-*/	
-
-/*	
-	//angles.length REPULSION_STRENGTH
-	//3             0.05
-	//1000          0.0001
-//	const a = (0.05 + 0.0001) / (3 + 1000), b = a * 1000 - 0.0001, REPULSION_STRENGTH = a * angles.length + b;//0.0001;//0.05; // Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
-*/
-	//angles.length REPULSION_STRENGTH
-	//20             0.05
-	//1000          0.0001
-	//5000          0.00001
-//	const a = overrides.a;//0.5;
-//	if (config.REPULSION_STRENGTH === undefined) config.REPULSION_STRENGTH = a / angles.length;// Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
-//	const REPULSION_STRENGTH = a / angles.length;//0.05; // Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
-//	const DAMPING = 0.95; // Демпфирование движения
 	data.this.r; // Радиус сферы. Нужно что бы во вселенной в classSettings.settings.object.geometry.times был добавлен новый time. Это нужно что бы пользователь мышкой мог выбрать вершину в вселенной
 
-	// Инициализируем силы ооталкивания
-	//if (forces.length === 0) forces = new Array(angles.length).fill(null).map(() => (overrides.velocitiesInitValues()));
-
 	const positionBlockLength = angles.length;	
-	const velocities = Array.from({ length: positionBlockLength }, () => (overrides.velocitiesInitValues()));//{x: 0, y: 0, z: 0, w: 0 }
+	const itemSize = overrides.itemSize;
+
+	// Выделяем память под скорости и силы на основе длины блока и размера элемента
+	if (!velocities) velocities = new Float32Array(positionBlockLength * itemSize);//{x: 0, y: 0, z: 0, w: 0 }
+	/**
+	 * Извлечение скорости одной точки из velocities по её индексу
+	 * @param {number} index интекс точки
+	 * @returns скорость в формате {x, y, z, w}
+	 */
+	const getVelocity = (index) => {
+		return overrides.getPoint(index, velocities);
+	};
+//	overrides.setVelocities(velocities);
+	
+	// Выделяем память под силы
+	const forces = new Float32Array(positionBlockLength * itemSize);
+	/**
+	 * Извлечение силы одной точки из forces по её индексу
+	 * @param {number} index интекс точки
+	 * @returns скорость в формате {x, y, z, w}
+	 */
+	function getForce(index) {
+		return overrides.getPoint(index, forces);
+/*		
+		const offset = index * itemSize;
+		return {
+			x: forces[offset],
+			y: forces[offset + 1],
+			z: forces[offset + 2],
+			w: forces[offset + 3]
+		};
+*/		
+	}
+
+	const positionArray = position.array;
+	/**
+	 * Извлечение координат одной точки из positionArray по её индексу
+	 * @param {number} index интекс точки
+	 * @returns скорость в формате {x, y, z, w}
+	 */
+	function getPoint(index) {
+		return overrides.getPoint(index, positionArray);
+/*		
+		const offset = index * itemSize;
+		return {
+			x: positionArray[offset],
+			y: positionArray[offset + 1],
+			z: positionArray[offset + 2],
+			w: positionArray[offset + 3]
+		};
+*/		
+	}
+	
 	const colors = [];
 	
 	for (let timeId = 1; timeId < options.playerOptions.marks; timeId++) {
@@ -143,36 +149,32 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 		const nextR = classSettings.overriddenProperties.rTime();
 		const rRatio = nextR / currentR; // Коэффициент масштабирования пространства
 
-		// Масштабируем прошлую скорость под новый размер пространства
-		for (let i = 0; i < positionBlockLength; i++) {
-			velocities[i].x *= rRatio;
-			velocities[i].y *= rRatio;
-			velocities[i].z *= rRatio;
-			velocities[i].w *= rRatio;
+		// 1. In-place масштабирование скоростей при изменении радиуса пространства
+		for (let k = 0; k < velocities.length; k++) {
+			velocities[k] *= rRatio;
 		}
 
 		// Динамический шаг ETA
 		const eta = config.ETA_0 != undefined ? config.ETA_0 * 
 			Math.pow(_this.classSettings.overriddenProperties.rTime(_this.classSettings.settings.bufferGeometry.userData.timeId - 1), 3) : undefined;
-		const forces = Array.from({ length: positionBlockLength }, () => (overrides.velocitiesInitValues()));//{x: 0, y: 0, z: 0, w: 0 }
-		const utils = overrides.utils;
+//		const forces = Array.from({ length: positionBlockLength }, () => (overrides.velocitiesInitValues()));//{x: 0, y: 0, z: 0, w: 0 }
+		forces.fill(0); // Сброс сил перед новым шагом
+//		const utils = overrides.utils;
 		const RandomVertice = overrides.RandomVertice;
 		const step = () => {
 			
 			progressBar.value = i;
-			const p1 = settings.overriddenProperties.position(position, i, userData);
-
-//			const force = overrides.force();
+			const pi = settings.overriddenProperties.position(position, i, userData);
 			for (
 				let j = i + 1;
 				j < positionBlockLength; j++) {
 				
 				if (i === j) continue;
-				const p2 = settings.overriddenProperties.position(position, j, userData);
-				const angles2 = utils.cartesianToPolar(p2);
+				const pj = settings.overriddenProperties.position(position, j, userData);
+//				const angles2 = utils.cartesianToPolar(p2);
 
 				// Вектор от i к j
-				let d = overrides.d(p1, p2);//{ return {x: p1.x - p2.x, y: p1.y - p2.y, z: p1.z - p2.z, w: p1.w - p2.w} },
+				let d = overrides.d(pi, pj);//{ return {x: p1.x - p2.x, y: p1.y - p2.y, z: p1.z - p2.z, w: p1.w - p2.w} },
 /*
 				const d2 = overrides.d2(d);
 				let dist = Math.sqrt(d2);
@@ -186,13 +188,13 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 					const r = classSettings.overriddenProperties.rTime();
 						
 					// Случайное направление для точки j (может быть противоположным для лучшего разведения)
-					const noise2 = utils.polarToCartesian(RandomVertice.get(arc, utils.angles(overrides.angles(angles2)), classSettings, RandomVertice), r);
+					const noisej = utils.polarToCartesian(RandomVertice.get(arc, utils.angles(overrides.angles(angles2)), classSettings, RandomVertice), r);
 					
 					if (settings.guiPoints) settings.guiPoints.timeId = timeIdOld;
 					userData.timeId++;
 	
 					// Вектор от i к j
-					d = overrides.d(p1, noise2);//{ return {x: p1.x - p2.x, y: p1.y - p2.y, z: p1.z - p2.z, w: p1.w - p2.w} },
+					d = overrides.d(pi, noisej);//{ return {x: p1.x - p2.x, y: p1.y - p2.y, z: p1.z - p2.z, w: p1.w - p2.w} },
 /*
 					const d2 = overrides.d2(d);
 					dist = Math.sqrt(d2);
@@ -212,10 +214,10 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 				const m = 1 / (d2 * dist);
 
 				// Применяем силу к точке i (отталкивание от j)
-				overrides.setForse(forces[i], d, m);//{ force.x += (d.x / dist) * m; force.y += (d.y / dist) * m; force.z += (d.z / dist) * m; force.w += (d.w / dist) * m; },
+				overrides.setForse(forces, d, m, i * itemSize);//{ force.x += d.x * m; force.y += d.y * m; force.z += d.z * m; force.w += d.w * m; },
 				
 				// Применяем протипоположную силу к точке j (3-й закон Ньютона)
-				overrides.setForse(forces[j], d, -m);//{ force.x += (d.x / dist) * m; force.y += (d.y / dist) * m; force.z += (d.z / dist) * m; force.w += (d.w / dist) * m; },
+				overrides.setForse(forces, d, -m, j * itemSize);//{ force.x += d.x * m; force.y += d.y * m; force.z += d.z * m; force.w += d.w * m; },
 
 			}
 
@@ -231,14 +233,16 @@ https://chat.deepseek.com/share/3c99m2cgtvacj7e5on
 				if (eta) {
 					
 					// Применяем силы к точкам
-					const positionBlockLength = angles.length
+//					const positionBlockLength = angles.length
 					const color = colors[data.timeId - 1];
 					//console.log('timeId = ' + data.timeId + ', ', color);
+					// 3. Обновление скоростей и позиций in-place прямо в глобальном positionArray
 					for (let i = 0; i < positionBlockLength; i++) {
 
 						//устанавливаем новую позицию вершины без преобразования ее в полярную систему коодинат.
 						//Это не вызывает накопление погрешности, потому что в overrides.forceVertice используется нормализация вектора и его проекции обратно на гиперсферу радиусом R.
-						overrides.forceVertice(settings.overriddenProperties.position(position, i, userData), forces[i], eta, velocities[i], classSettings.compute.config.BETA, i);
+						overrides.forceVertice(settings.overriddenProperties.position(position, i, userData), getForce(i), eta, getVelocity(i), classSettings.compute.config.BETA, i);
+//						overrides.forceVertice(settings.overriddenProperties.position(position, i, userData), forces[i], eta, velocities[i], classSettings.compute.config.BETA, i);
 						Player.setColorAttribute(settings.bufferGeometry.attributes, i + positionBlockLength * data.timeId, color);
 /*						
 data.this.setPositionAttributeFromPoint(i, 
@@ -278,16 +282,6 @@ data.this.setPositionAttributeFromPoint(i,
 						console.log('Step:' + data.timeId + ' Point:' + (data.timeId * angles.length + i) + '. x=' + pointCur.x + ' y=' + pointCur.y + ' z=' + pointCur.z + ' w=' + pointCur.w + ',alt=' + pointAngles.altitude + ' lat=' + pointAngles.latitude + ' lon=' + pointAngles.longitude);
 					}
 				}
-/*
-				for (let i = 0; i < angles.length; i++) {
-					angles[i] = anglesTemp[i];
-					if (settings.debug && settings.debug.log) {
-						const pointCur = settings.bufferGeometry.userData.position[i];
-						const pointAngles = utils.cartesianToPolar(pointCur);
-						console.log('Step:' + data.timeId + ' Point:' + (data.timeId * angles.length + i) + '. x=' + pointCur.x + ' y=' + pointCur.y + ' z=' + pointCur.z + ' w=' + pointCur.w + ',alt=' + pointAngles.altitude + ' lat=' + pointAngles.latitude + ' lon=' + pointAngles.longitude);
-					}
-				}
-*/
 				if (settings.guiPoints) settings.guiPoints.timeId = timeIdOld;
 
 				_this.bufferGeometry.attributes.position.needsUpdate = true

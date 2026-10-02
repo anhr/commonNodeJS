@@ -460,7 +460,6 @@ class MyObject {
 						case 'itemSize': return position.itemSize;
 	
 					}
-					console.error(sMyObject + ': get settings.bufferGeometry.userData.position. Invalid name: ' + name);
 					return position[name];
 	
 				}
