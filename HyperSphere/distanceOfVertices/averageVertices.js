@@ -52,10 +52,7 @@ const averageVertices = (data, overrides) => {
 	 * @param {number} index интекс точки
 	 * @returns скорость в формате {x, y, z, w}
 	 */
-	const getVelocity = (index) => {
-		return overrides.getPoint(index, velocities);
-	};
-//	overrides.setVelocities(velocities);
+	const getVelocity = (index) => { return overrides.getPoint(index, velocities); };
 	
 	// Выделяем память под силы
 	const forces = new Float32Array(positionBlockLength * itemSize);
@@ -64,18 +61,7 @@ const averageVertices = (data, overrides) => {
 	 * @param {number} index интекс точки
 	 * @returns скорость в формате {x, y, z, w}
 	 */
-	function getForce(index) {
-		return overrides.getPoint(index, forces);
-/*		
-		const offset = index * itemSize;
-		return {
-			x: forces[offset],
-			y: forces[offset + 1],
-			z: forces[offset + 2],
-			w: forces[offset + 3]
-		};
-*/		
-	}
+	function getForce(index) { return overrides.getPoint(index, forces); }
 
 	const positionArray = position.array;
 	/**
@@ -83,18 +69,26 @@ const averageVertices = (data, overrides) => {
 	 * @param {number} index интекс точки
 	 * @returns скорость в формате {x, y, z, w}
 	 */
-	function getPoint(index) {
-		return overrides.getPoint(index, positionArray);
-/*		
-		const offset = index * itemSize;
-		return {
-			x: positionArray[offset],
-			y: positionArray[offset + 1],
-			z: positionArray[offset + 2],
-			w: positionArray[offset + 3]
-		};
-*/		
+	function getPoint(index) { return overrides.getPoint(index, positionArray); }
+
+	/**
+	 * Проверка принадлежности точек из глобального positionArray гиперсфере заданной с определенной точностью
+	 */
+	function verifyHyperSphere(targetRadius, epsilon = 1e-6) {
+		if (!settings.debug) return;
+		for (let i = 0; i < positionBlockLength; i++) {
+			const pt = getPoint(i);
+			const dist = overrides.dist(pt);
+//			const dist = Math.hypot(pt.x, pt.y, pt.z, pt.w);
+
+			if (Math.abs(dist - targetRadius) > epsilon) {
+				console.warn(`Точка #${i} отклонилась от гиперсферы! R = ${dist}, ожидалось = ${targetRadius}`);
+				return false;
+			}
+		}
+		return true;
 	}
+	verifyHyperSphere(classSettings.overriddenProperties.rTime(data.timeId - 1));
 	
 	const colors = [];
 	
@@ -105,8 +99,8 @@ const averageVertices = (data, overrides) => {
 
 	const THREE = window.__myThree__.three.THREE;
 
-	/*
-	{
+	const isGetSPositionArray = false;
+	if (isGetSPositionArray) {
 		//Делаем строку, которую удобно будет использовать для создания массива цветов в зависимости от текущего времени на странице http://localhost/anhr/universe/main/hyperSphere/Examples/tomsonExample.html
 		const sColors = '[' + colors.map(color => {
 			const properties = Object.entries(color).map(([key, value]) => `${key}: ${value}`).join(', ');
@@ -127,7 +121,6 @@ const averageVertices = (data, overrides) => {
 		sPositionArray += '\n]';
 		console.log('sPositionArray: ' + sPositionArray);
 	}
-	*/
 
 	// --- Итерационный процесс движения точек ---
 	function iterationStep() {
@@ -155,8 +148,8 @@ const averageVertices = (data, overrides) => {
 		}
 
 		// Динамический шаг ETA
-		const eta = config.ETA_0 != undefined ? config.ETA_0 * 
-			Math.pow(_this.classSettings.overriddenProperties.rTime(_this.classSettings.settings.bufferGeometry.userData.timeId - 1), 3) : undefined;
+		const eta = (config.ETA_0 != undefined ? config.ETA_0 : 0.01) * 
+			Math.pow(_this.classSettings.overriddenProperties.rTime(_this.classSettings.settings.bufferGeometry.userData.timeId - 1), 3);
 //		const forces = Array.from({ length: positionBlockLength }, () => (overrides.velocitiesInitValues()));//{x: 0, y: 0, z: 0, w: 0 }
 		forces.fill(0); // Сброс сил перед новым шагом
 //		const utils = overrides.utils;
@@ -230,46 +223,43 @@ const averageVertices = (data, overrides) => {
 
 				progressBar.remove();
 
-				if (eta) {
-					
-					// Применяем силы к точкам
+				// Применяем силы к точкам
 //					const positionBlockLength = angles.length
-					const color = colors[data.timeId - 1];
-					//console.log('timeId = ' + data.timeId + ', ', color);
-					// 3. Обновление скоростей и позиций in-place прямо в глобальном positionArray
-					for (let i = 0; i < positionBlockLength; i++) {
+				const color = colors[data.timeId - 1];
+				//console.log('timeId = ' + data.timeId + ', ', color);
+				// 3. Обновление скоростей и позиций in-place прямо в глобальном positionArray
+				for (let i = 0; i < positionBlockLength; i++) {
 
-						//устанавливаем новую позицию вершины без преобразования ее в полярную систему коодинат.
-						//Это не вызывает накопление погрешности, потому что в overrides.forceVertice используется нормализация вектора и его проекции обратно на гиперсферу радиусом R.
-						overrides.forceVertice(settings.overriddenProperties.position(position, i, userData), getForce(i), eta, getVelocity(i), classSettings.compute.config.BETA, i);
+					//устанавливаем новую позицию вершины без преобразования ее в полярную систему коодинат.
+					//Это не вызывает накопление погрешности, потому что в overrides.forceVertice используется нормализация вектора и его проекции обратно на гиперсферу радиусом R.
+					overrides.forceVertice(settings.overriddenProperties.position(position, i, userData), getForce(i), eta, getVelocity(i), classSettings.compute.config.BETA, i);
 //						overrides.forceVertice(settings.overriddenProperties.position(position, i, userData), forces[i], eta, velocities[i], classSettings.compute.config.BETA, i);
-						Player.setColorAttribute(settings.bufferGeometry.attributes, i + positionBlockLength * data.timeId, color);
+					Player.setColorAttribute(settings.bufferGeometry.attributes, i + positionBlockLength * data.timeId, color);
 /*						
 data.this.setPositionAttributeFromPoint(i, 
-	overrides.forceVertice(settings.overriddenProperties.position(position, i, userData), forces[i], eta, velocities[i], classSettings.compute.config.BETA, i),
-	data.timeId
+overrides.forceVertice(settings.overriddenProperties.position(position, i, userData), forces[i], eta, velocities[i], classSettings.compute.config.BETA, i),
+data.timeId
 );
 */
 /*
-						const pos = settings.overriddenProperties.position(position, i, userData);
-						const force = forces[i];
-						const vertice = utils.cartesianToPolar(overrides.forceVertice(pos, force, eta));
-						settings.overriddenProperties.editVertice(data.timeId, vertice, angles, i);
+					const pos = settings.overriddenProperties.position(position, i, userData);
+					const force = forces[i];
+					const vertice = utils.cartesianToPolar(overrides.forceVertice(pos, force, eta));
+					settings.overriddenProperties.editVertice(data.timeId, vertice, angles, i);
 */	
-					}
-					const attributePosition = settings.bufferGeometry.attributes.position;
-					attributePosition.needsUpdate = true;
-					const drawRange = settings.bufferGeometry.drawRange;
-					data.this.setVerticesRange(drawRange.start, attributePosition.count - drawRange.start);
-/*					
-					if ((drawRange.count === Infinity) || (((drawRange.start + drawRange.count) * ((settings.bufferGeometry.index === null) ? itemSize : 1)) < positionId)){
-		
-						this.setVerticesRange(drawRange.start, (positionId + 1) / itemSize - drawRange.start);
-						if (!Number.isInteger(drawRange.count) && (drawRange.count != Infinity)) console.error(sMyObject + '.setPositionAttributeFromPoint failed. Invalid drawRange.count = ' + drawRange.count);
-		
-					}
-*/					
 				}
+				const attributePosition = settings.bufferGeometry.attributes.position;
+				attributePosition.needsUpdate = true;
+				const drawRange = settings.bufferGeometry.drawRange;
+				data.this.setVerticesRange(drawRange.start, attributePosition.count - drawRange.start);
+/*					
+				if ((drawRange.count === Infinity) || (((drawRange.start + drawRange.count) * ((settings.bufferGeometry.index === null) ? itemSize : 1)) < positionId)){
+	
+					this.setVerticesRange(drawRange.start, (positionId + 1) / itemSize - drawRange.start);
+					if (!Number.isInteger(drawRange.count) && (drawRange.count != Infinity)) console.error(sMyObject + '.setPositionAttributeFromPoint failed. Invalid drawRange.count = ' + drawRange.count);
+	
+				}
+*/					
 				if (classSettings.debug) classSettings.debug.logTimestamp('Play step. Average vertices. ', timestamp);
 //				if (angles.length != anglesTemp.length) console.error(sAverageVertices + ': iterationStep. angles.length != anglesTemp.length');
 				
