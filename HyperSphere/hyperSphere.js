@@ -1125,6 +1125,22 @@ class HyperSphere extends MyObject {
 		}
 		if (!classSettings.overriddenProperties) classSettings.overriddenProperties = {};
 		const overriddenProperties = classSettings.overriddenProperties;
+		if (!overriddenProperties.getPositionTimeId) overriddenProperties.getPositionTimeId = () => { return 0; }//В гиперсфере, не входящей во вселенную, положение вершины не зависить от времени
+		if (!overriddenProperties.getVerticePosition) overriddenProperties.getVerticePosition = (verticeId, timeId) => {
+			const positionData = this.getPositionData(verticeId, timeId);
+			const position = classSettings.settings.bufferGeometry.attributes.position,
+				array = position.array, positionId = positionData.positionId;
+			return {
+				get x() { return array[positionId + 0]; },
+				set x(value) { array[positionId + 0] = value; },
+				get y() { return array[positionId + 1]; },
+				set y(value) { array[positionId + 1] = value; },
+				get z() { return array[positionId + 2]; },
+				set z(value) { array[positionId + 2] = value; },
+				get w() { return array[positionId + 3]; },
+				set w(value) { array[positionId + 3] = value; },
+			}
+		}
 		if (!overriddenProperties.oppositeVertice) overriddenProperties.oppositeVertice = (oppositeAngleId) => { return position[oppositeAngleId]; }
 		if (!overriddenProperties.position) Object.defineProperty(overriddenProperties, 'position', { get: () => { return position; }, });
 		if (!overriddenProperties.position0) Object.defineProperty(overriddenProperties, 'position0', { get: () => { return position; }, });
@@ -2680,7 +2696,7 @@ this.object = () => {
 					if (config.PSEUDO_RANDOM === undefined) config.PSEUDO_RANDOM = 0.5;
 					const min = 0, max = 1;
 					if ((config.PSEUDO_RANDOM < min) || (config.PSEUDO_RANDOM > max)) console.error(sHyperSphere + '.project.distanceOfVertices: Invalid config.PSEUDO_RANDOM = ' + config.PSEUDO_RANDOM + '. Available range from ' + min + ' to ' + max + '.');
-					classSettings.debug.random = () => { return config.PSEUDO_RANDOM };
+					if (classSettings.debug) classSettings.debug.random = () => { return config.PSEUDO_RANDOM };
 				}
 				const computeCPU = () => {
 					

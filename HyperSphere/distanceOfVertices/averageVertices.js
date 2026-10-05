@@ -66,18 +66,36 @@ const averageVertices = (data, overrides) => {
 	const positionArray = position.array;
 	/**
 	 * Извлечение координат одной точки из positionArray по её индексу
-	 * @param {number} index интекс точки
+	 * @param {number} i интекс точки
+	 * @param {number} [timeId = data.timeId] интекс времени или интекс текущей итерации
 	 * @returns скорость в формате {x, y, z, w}
 	 */
-	function getPoint(index) { return overrides.getPoint(index, positionArray); }
+	function getPoint(i, timeId = data.timeId) {
+		const overriddenProperties = data.this.classSettings.overriddenProperties;
+		return overriddenProperties.getVerticePosition(i, overriddenProperties.getPositionTimeId(timeId));
+//		return overrides.getPoint(index, positionArray);
+	}
 
+	function verifyVertice(pt, targetRadius, epsilon = 1e-6) {
+		if (!settings.debug) return;
+		const dist = overrides.dist(pt);
+//			const dist = Math.hypot(pt.x, pt.y, pt.z, pt.w);
+
+		if (Math.abs(dist - targetRadius) > epsilon) {
+			console.warn(`Точка отклонилась от гиперсферы! R = ${dist}, ожидалось = ${targetRadius}`);
+			return false;
+		}
+		return true;
+	}
 	/**
 	 * Проверка принадлежности точек из глобального positionArray гиперсфере заданной с определенной точностью
 	 */
-	function verifyHyperSphere(targetRadius, epsilon = 1e-6) {
+	function verifyHyperSphere(targetRadius) {
 		if (!settings.debug) return;
 		for (let i = 0; i < positionBlockLength; i++) {
-			const pt = getPoint(i);
+			if (!verifyVertice(getPoint(i, data.timeId - 1), targetRadius)) return false;
+/*			
+			const pt = getPoint(i, data.timeId - 1);
 			const dist = overrides.dist(pt);
 //			const dist = Math.hypot(pt.x, pt.y, pt.z, pt.w);
 
@@ -85,6 +103,7 @@ const averageVertices = (data, overrides) => {
 				console.warn(`Точка #${i} отклонилась от гиперсферы! R = ${dist}, ожидалось = ${targetRadius}`);
 				return false;
 			}
+*/			
 		}
 		return true;
 	}
@@ -232,10 +251,12 @@ const averageVertices = (data, overrides) => {
 
 					//устанавливаем новую позицию вершины без преобразования ее в полярную систему коодинат.
 					//Это не вызывает накопление погрешности, потому что в overrides.forceVertice используется нормализация вектора и его проекции обратно на гиперсферу радиусом R.
-					overrides.forceVertice(settings.overriddenProperties.position(position, i, userData), getForce(i), eta, getVelocity(i), classSettings.compute.config.BETA, i);
-//						overrides.forceVertice(settings.overriddenProperties.position(position, i, userData), forces[i], eta, velocities[i], classSettings.compute.config.BETA, i);
+//					overrides.forceVertice(settings.overriddenProperties.position(position, i, userData), getPoint(i), getForce(i), eta, getVelocity(i), classSettings.compute.config.BETA);//, i);
+					overrides.forceVertice(getPoint(i, data.timeId - 1), getPoint(i), getForce(i), eta, getVelocity(i), classSettings.compute.config.BETA, verifyVertice);
+//			if (!verifyVertice(getPoint(i, data.timeId - 1), targetRadius)) return false;
 					Player.setColorAttribute(settings.bufferGeometry.attributes, i + positionBlockLength * data.timeId, color);
-/*						
+/*					
+console.warn('Under constraction')						
 data.this.setPositionAttributeFromPoint(i, 
 overrides.forceVertice(settings.overriddenProperties.position(position, i, userData), forces[i], eta, velocities[i], classSettings.compute.config.BETA, i),
 data.timeId

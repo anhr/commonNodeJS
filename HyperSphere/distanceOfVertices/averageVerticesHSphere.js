@@ -76,7 +76,7 @@ const averageVertices = (data) => {
 		dist: (pt) => { return Math.hypot(pt.x, pt.y, pt.z, pt.w); },
 		angles: (angles) => { return [angles[0], angles[1], angles[2]]; },
 		vertice: (p, velocity) => { return { x: p.x + velocity.x, y: p.y + velocity.y, z: p.z + velocity.z, w: p.w + velocity.w } },
-		forceVertice: (pt, force, eta, velocity, BETA = 0.85, i) => {
+		forceVertice: (pSrc, pDest, force, eta, velocity, BETA = 0.85, verify) => {
 			// Обновляем скорость v = BETA * v + eta * F
 			velocity.x = BETA * velocity.x + eta * force.x;
 			velocity.y = BETA * velocity.y + eta * force.y;
@@ -85,10 +85,10 @@ const averageVertices = (data) => {
 			
 			// Смещение координаты
 			const updated = {
-				x: pt.x + velocity.x,
-				y: pt.y + velocity.y,
-				z: pt.z + velocity.z,
-				w: pt.w + velocity.w
+				x: pSrc.x + velocity.x,
+				y: pSrc.y + velocity.y,
+				z: pSrc.z + velocity.z,
+				w: pSrc.w + velocity.w
 			};
 			const nextR = data.this.classSettings.overriddenProperties.rTime();
 
@@ -100,11 +100,19 @@ const averageVertices = (data) => {
 			//Без этой операции точки при каждом шаге итерации постепенно «разлетались» бы от центра, увеличивая свой радиус и нарушая геометрию задачи.
 			//Ту же самую работу можно выполнить, сделав преобразование в полярную систему координат и обратно, но это займет больше времени и уменьшается точность на полюсах.
 //data.this.getPoint(1, 2)
-			const cartesian = data.this.classSettings.overriddenProperties.getVerticePosition(i, data.timeId);
+			pDest.x = (updated.x / mag) * nextR;
+			pDest.y = (updated.y / mag) * nextR;
+			pDest.z = (updated.z / mag) * nextR;
+			pDest.w = (updated.w / mag) * nextR;
+			verify(pDest, nextR);
+/*			
+			const overriddenProperties = data.this.classSettings.overriddenProperties;
+			const cartesian = overriddenProperties.getVerticePosition(i, overriddenProperties.getPositionTimeId(data.timeId));
 			cartesian.x = (updated.x / mag) * nextR;
 			cartesian.y = (updated.y / mag) * nextR;
 			cartesian.z = (updated.z / mag) * nextR;
 			cartesian.w = (updated.w / mag) * nextR;
+*/			
 		},
 		
 	});
