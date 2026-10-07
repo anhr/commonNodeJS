@@ -108,13 +108,14 @@ const averageVertices = (data, overrides) => {
 		return true;
 	}
 	verifyHyperSphere(classSettings.overriddenProperties.rTime(data.timeId - 1));
-	
+/*сейчас цвета устанавливаются в universe.js
 	const colors = [];
 	
 	for (let timeId = 1; timeId < options.playerOptions.marks; timeId++) {
 		const verticeColor = settings.object.color(timeId), wScale = settings.options.scales.w;
 		colors.push(settings.options.palette.toColor(verticeColor, wScale.min, wScale.max));
 	}
+*/	
 
 	const THREE = window.__myThree__.three.THREE;
 
@@ -243,18 +244,15 @@ const averageVertices = (data, overrides) => {
 				progressBar.remove();
 
 				// Применяем силы к точкам
-//					const positionBlockLength = angles.length
-				const color = colors[data.timeId - 1];
+//				const color = colors[data.timeId - 1];
 				//console.log('timeId = ' + data.timeId + ', ', color);
 				// 3. Обновление скоростей и позиций in-place прямо в глобальном positionArray
 				for (let i = 0; i < positionBlockLength; i++) {
 
 					//устанавливаем новую позицию вершины без преобразования ее в полярную систему коодинат.
 					//Это не вызывает накопление погрешности, потому что в overrides.forceVertice используется нормализация вектора и его проекции обратно на гиперсферу радиусом R.
-//					overrides.forceVertice(settings.overriddenProperties.position(position, i, userData), getPoint(i), getForce(i), eta, getVelocity(i), classSettings.compute.config.BETA);//, i);
 					overrides.forceVertice(getPoint(i, data.timeId - 1), getPoint(i), getForce(i), eta, getVelocity(i), classSettings.compute.config.BETA, verifyVertice);
-//			if (!verifyVertice(getPoint(i, data.timeId - 1), targetRadius)) return false;
-					Player.setColorAttribute(settings.bufferGeometry.attributes, i + positionBlockLength * data.timeId, color);
+//					Player.setColorAttribute(settings.bufferGeometry.attributes, i + positionBlockLength * data.timeId, color);
 /*					
 console.warn('Under constraction')						
 data.this.setPositionAttributeFromPoint(i, 
