@@ -168,11 +168,10 @@ const averageVertices = (data, overrides) => {
 		}
 
 		// Динамический шаг ETA
-		const eta = (config.ETA_0 != undefined ? config.ETA_0 : 0.01) * 
+//		const eta = (config.ETA_0 != undefined ? config.ETA_0 : 0.01) * 
+		const eta = config.ETA_0 * 
 			Math.pow(_this.classSettings.overriddenProperties.rTime(_this.classSettings.settings.bufferGeometry.userData.timeId - 1), 3);
-//		const forces = Array.from({ length: positionBlockLength }, () => (overrides.velocitiesInitValues()));//{x: 0, y: 0, z: 0, w: 0 }
 		forces.fill(0); // Сброс сил перед новым шагом
-//		const utils = overrides.utils;
 		const RandomVertice = overrides.RandomVertice;
 		const step = () => {
 			
