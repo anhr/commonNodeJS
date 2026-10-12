@@ -872,7 +872,7 @@ export async function analysis(newParams){
  * You can see results of Analysis in the console of the web page and on a small graph in the rigth top corner of the canvas.
  * @class
  */
-export class AnalysisSteps{
+export class AnalysisSteps {
 	/**
 	 * 
 	 * @param {object} paramsNew Analysis parameters.

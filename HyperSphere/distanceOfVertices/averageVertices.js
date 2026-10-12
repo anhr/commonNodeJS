@@ -50,7 +50,7 @@ const averageVertices = (data, overrides) => {
 	/**
 	 * Извлечение скорости одной точки из velocities по её индексу
 	 * @param {number} index интекс точки
-	 * @returns скорость в формате {x, y, z, w}
+	 * @returns скорость в формате x, y, z, w
 	 */
 	const getVelocity = (index) => { return overrides.getPoint(index, velocities); };
 	
@@ -59,7 +59,7 @@ const averageVertices = (data, overrides) => {
 	/**
 	 * Извлечение силы одной точки из forces по её индексу
 	 * @param {number} index интекс точки
-	 * @returns скорость в формате {x, y, z, w}
+	 * @returns скорость в формате x, y, z, w
 	 */
 	function getForce(index) { return overrides.getPoint(index, forces); }
 
@@ -68,7 +68,7 @@ const averageVertices = (data, overrides) => {
 	 * Извлечение координат одной точки из positionArray по её индексу
 	 * @param {number} i интекс точки
 	 * @param {number} [timeId = data.timeId] интекс времени или интекс текущей итерации
-	 * @returns скорость в формате {x, y, z, w}
+	 * @returns скорость в формате x, y, z, w
 	 */
 	function getPoint(i, timeId = data.timeId) {
 		const overriddenProperties = data.this.classSettings.overriddenProperties;

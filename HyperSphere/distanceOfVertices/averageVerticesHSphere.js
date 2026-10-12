@@ -29,7 +29,7 @@ const averageVertices = (data) => {
 		 * Извлечение одной точки из массива по её индексу
 		 * @param {number} index интекс точки
 		 * @param {array} массив с точками
-		 * @returns точка в формате {x, y, z, w}
+		 * @returns скорость в формате x, y, z, w
 		 */
 		getPoint(index, array) {
 			const offset = index * this.itemSize;
