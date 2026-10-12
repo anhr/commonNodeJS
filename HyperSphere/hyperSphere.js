@@ -88,16 +88,48 @@ class HyperSphere extends MyObject {
 	 * Vertice position moves to oppozite position of the hypersphere if random value is 1.
 	 * </pre>
 	 * @param {float} [classSettings.compute.config.PSEUDO_RANDOM=0.5] Have effect only if RANDOM_POINTS = 0. Available range from 0 to 1.
-	 * @param {float} [classSettings.compute.config.DAMPING=0.95]
+	 * @param {float} [classSettings.compute.config.ETA_0=0.01]
 	 * <pre>
-	 * Damping is a velocity reduction factor applied at each iteration step.
-	 * It simulates friction or energy dissipation in the system.
-	 * Without damping, particles would oscillate indefinitely around equilibrium positions, never stabilizing.
-	 * Valid DAMPING value range:
-	 *   0 - Heavy damping, quick stopping. Fast stabilization, no oscillations
-	 *   1 - No damping. Not recommended for production
-	 * [What is DAMPING and why is it needed?]{@link https://chat.deepseek.com/share/azo3y7zgc6hov7mlfp}
+	* ETA (Estimated Time Advance / Step Ratio) — a normalized, dimensionless
+	* time-integration step coefficient (Learning Rate). 
+	*
+	* PHYSICAL SIGNIFICANCE AND VISCOSITY:
+	* The model describes the motion of charges in a high-friction regime (Overdamped Dynamics /
+	* Aristotelian mechanics: v = μ * F), where inertia is negligible. 
+	*
+	* ETA_0 is inversely proportional to the medium's viscosity γ (ETA_0 ~ 1/γ):
+	* - Lower ETA_0 -> higher medium viscosity (slow but very stable motion). 
+	* - Higher ETA_0 -> lower medium viscosity (rapid descent, but with a risk of oscillations). 
+	*
+	* RANGES AND ENERGY:
+	* - Valid range for ETA_0: (0.0, 0.05] (for the Euler method).
+	*   • ETA_0 -> 0 : The medium is infinitely viscous; motion comes to a halt.
+	*   • ETA_0 > 0.05 : Friction is insufficient; numerical oscillations
+	*                    and instability (divergence) occur.
+	* - Energy loss: In this numerical model, ALL Coulomb repulsion
+	*   potential energy is fully dissipated (converted into "heat" / viscous friction).
+	* - Numerical lag ("no heat"): Energy does not dissipate only when ETA_0 = 0,
+	*   but in that case, the system is static. If one attempts to add inertia (m * a = F - γ*v)
+	*   without viscous damping, the points will oscillate indefinitely around
+	*   the energy minimum, like a spring-mass system.
+	*
+	* SCALING BASED ON RADIUS (S^3):
+	* To maintain the characteristic relative displacement when R changes:
+	* F ~ 1/R^2 (forces increase as the radius decreases)
+	* ETA(R) = ETA_0 * R^3
 	 * </pre>
+	 * @param {float} [classSettings.compute.config.BETA=0.85]
+	 * <pre>
+	 * Momentum retention coefficient (inertia decay). 
+	 * Determines the fraction of velocity from the previous step retained in the current one. 
+	 *
+	 * Minimum value: 0.0
+	 * - No inertia (classic gradient descent). 
+	 * Maximum value: < 1.0 (typically up to 0.99)
+	 * - The closer to 1.0, the stronger the inertia and the "heavier" the points. 
+	 * - BETA = 0.85–0.90: moderately strong inertia; accelerates traversal of plateaus and helps overcome local minima. 
+	 * - BETA >= 0.99: excessive inertia; points begin to oscillate indefinitely and take a long time to "build up momentum."
+	* </pre>
 	 * @param {float} [classSettings.compute.config.p=0]
 	 * <pre>
 	 * Hyperbola parametr. See [RandomVertice.calculateHyperbola]{@link https://raw.githack.com/anhr/commonNodeJS/master/HyperSphere/RandomVertice/jsdoc/module-RandomVertice-RandomVertice.html#.calculateHyperbola}.

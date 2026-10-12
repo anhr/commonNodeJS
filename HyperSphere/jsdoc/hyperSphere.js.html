@@ -116,28 +116,48 @@ class HyperSphere extends MyObject {
 	 * Vertice position moves to oppozite position of the hypersphere if random value is 1.
 	 * &lt;/pre>
 	 * @param {float} [classSettings.compute.config.PSEUDO_RANDOM=0.5] Have effect only if RANDOM_POINTS = 0. Available range from 0 to 1.
-	 * @param {float} [classSettings.compute.config.DAMPING=0.95]
+	 * @param {float} [classSettings.compute.config.ETA_0=0.01]
 	 * &lt;pre>
-	 * Damping is a velocity reduction factor applied at each iteration step.
-	 * It simulates friction or energy dissipation in the system.
-	 * Without damping, particles would oscillate indefinitely around equilibrium positions, never stabilizing.
-	 * Valid DAMPING value range:
-	 *   0 - Heavy damping, quick stopping. Fast stabilization, no oscillations
-	 *   1 - No damping. Not recommended for production
-	 * [What is DAMPING and why is it needed?]{@link https://chat.deepseek.com/share/azo3y7zgc6hov7mlfp}
+	* ETA (Estimated Time Advance / Step Ratio) — a normalized, dimensionless
+	* time-integration step coefficient (Learning Rate). 
+	*
+	* PHYSICAL SIGNIFICANCE AND VISCOSITY:
+	* The model describes the motion of charges in a high-friction regime (Overdamped Dynamics /
+	* Aristotelian mechanics: v = μ * F), where inertia is negligible. 
+	*
+	* ETA_0 is inversely proportional to the medium's viscosity γ (ETA_0 ~ 1/γ):
+	* - Lower ETA_0 -> higher medium viscosity (slow but very stable motion). 
+	* - Higher ETA_0 -> lower medium viscosity (rapid descent, but with a risk of oscillations). 
+	*
+	* RANGES AND ENERGY:
+	* - Valid range for ETA_0: (0.0, 0.05] (for the Euler method).
+	*   • ETA_0 -> 0 : The medium is infinitely viscous; motion comes to a halt.
+	*   • ETA_0 > 0.05 : Friction is insufficient; numerical oscillations
+	*                    and instability (divergence) occur.
+	* - Energy loss: In this numerical model, ALL Coulomb repulsion
+	*   potential energy is fully dissipated (converted into "heat" / viscous friction).
+	* - Numerical lag ("no heat"): Energy does not dissipate only when ETA_0 = 0,
+	*   but in that case, the system is static. If one attempts to add inertia (m * a = F - γ*v)
+	*   without viscous damping, the points will oscillate indefinitely around
+	*   the energy minimum, like a spring-mass system.
+	*
+	* SCALING BASED ON RADIUS (S^3):
+	* To maintain the characteristic relative displacement when R changes:
+	* F ~ 1/R^2 (forces increase as the radius decreases)
+	* ETA(R) = ETA_0 * R^3
 	 * &lt;/pre>
-	 * @param {float} [classSettings.compute.config.REPULSION_STRENGTH]
+	 * @param {float} [classSettings.compute.config.BETA=0.85]
 	 * &lt;pre>
-	 * A force scaling factor that determines how strongly particles repel each other.
-	 * It's the coefficient that multiplies the inverse-square force law between every pair of vertices.
-	 * The smaller the value, the weaker the repulsive forces between the vertices, and the slower they move.
-	 * Available range from 0 to ∞.
-	 *   0 - No repulsion, particles don't interact. Static positions, no movement
-	 *   ∞ - No upper bound (but practically limited by numerical stability).
-	 * default vaue is &lt;b>config.a / classSettings.settings.object.geometry.angles.length&lt;/b>. See below.
-	 * [What is REPULSION_STRENGTH and why is it needed?]{@link https://chat.deepseek.com/share/slysikbmgruyb8owpi}
-	 * &lt;/pre>
-	 * @param {float} [classSettings.compute.config.a=50] See above. Have effect if &lt;b>REPULSION_STRENGTH&lt;/b> is not defined.
+	 * Momentum retention coefficient (inertia decay). 
+	 * Determines the fraction of velocity from the previous step retained in the current one. 
+	 *
+	 * Minimum value: 0.0
+	 * - No inertia (classic gradient descent). 
+	 * Maximum value: &lt; 1.0 (typically up to 0.99)
+	 * - The closer to 1.0, the stronger the inertia and the "heavier" the points. 
+	 * - BETA = 0.85–0.90: moderately strong inertia; accelerates traversal of plateaus and helps overcome local minima. 
+	 * - BETA >= 0.99: excessive inertia; points begin to oscillate indefinitely and take a long time to "build up momentum."
+	* &lt;/pre>
 	 * @param {float} [classSettings.compute.config.p=0]
 	 * &lt;pre>
 	 * Hyperbola parametr. See [RandomVertice.calculateHyperbola]{@link https://raw.githack.com/anhr/commonNodeJS/master/HyperSphere/RandomVertice/jsdoc/module-RandomVertice-RandomVertice.html#.calculateHyperbola}.
@@ -1165,6 +1185,22 @@ class HyperSphere extends MyObject {
 		}
 		if (!classSettings.overriddenProperties) classSettings.overriddenProperties = {};
 		const overriddenProperties = classSettings.overriddenProperties;
+		if (!overriddenProperties.getPositionTimeId) overriddenProperties.getPositionTimeId = () => { return 0; }//В гиперсфере, не входящей во вселенную, положение вершины не зависить от времени
+		if (!overriddenProperties.getVerticePosition) overriddenProperties.getVerticePosition = (verticeId, timeId) => {
+			const positionData = this.getPositionData(verticeId, timeId);
+			const position = classSettings.settings.bufferGeometry.attributes.position,
+				array = position.array, positionId = positionData.positionId;
+			return {
+				get x() { return array[positionId + 0]; },
+				set x(value) { array[positionId + 0] = value; },
+				get y() { return array[positionId + 1]; },
+				set y(value) { array[positionId + 1] = value; },
+				get z() { return array[positionId + 2]; },
+				set z(value) { array[positionId + 2] = value; },
+				get w() { return array[positionId + 3]; },
+				set w(value) { array[positionId + 3] = value; },
+			}
+		}
 		if (!overriddenProperties.oppositeVertice) overriddenProperties.oppositeVertice = (oppositeAngleId) => { return position[oppositeAngleId]; }
 		if (!overriddenProperties.position) Object.defineProperty(overriddenProperties, 'position', { get: () => { return position; }, });
 		if (!overriddenProperties.position0) Object.defineProperty(overriddenProperties, 'position0', { get: () => { return position; }, });
@@ -1178,18 +1214,19 @@ class HyperSphere extends MyObject {
 		}
 		if (!overriddenProperties.vertices) overriddenProperties.vertices = () => { return []; }
 		if (!overriddenProperties.r) overriddenProperties.r = () => { return classSettings.r; }
-		if (!overriddenProperties.rTime) overriddenProperties.rTime = () => {
+		if (!overriddenProperties.rTime) overriddenProperties.rTime = (timeId) => {
 			
 			const settings = classSettings.settings;
 //			return classSettings.overriddenProperties.r(settings.guiPoints ? settings.guiPoints.timeId : settings.options.player === false ? 0 : settings.options.player.getTimeId());
 			return classSettings.overriddenProperties.r(
-				settings.guiPoints ?
-					settings.guiPoints.timeId === undefined ?
-						settings.options.player.getTimeId():
-						settings.guiPoints.timeId :
-					settings.options.player === false ?
-						0 :
-						settings.options.player.getTimeId());
+				timeId != undefined ? timeId :
+					settings.guiPoints ?
+						settings.guiPoints.timeId === undefined ?
+							settings.options.player.getTimeId():
+							settings.guiPoints.timeId :
+						settings.options.player === false ?
+							0 :
+							settings.options.player.getTimeId());
 		
 		}
 		if (!overriddenProperties.pushMiddleVertice) overriddenProperties.pushMiddleVertice = () => {}
@@ -2663,11 +2700,12 @@ this.object = () => {
 				const config = compute.config;
 				config.type ||= 'START_COMPUTE';
 				config.pointsPerStep = settings.object.geometry.angles.length;
-
+/*deprecated
 				if (config.REPULSION_STRENGTH === undefined) {
 					const a = (config.a != undefined) ? config.a : 50;
 					config.REPULSION_STRENGTH = a / config.pointsPerStep;// Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются				
 				}
+*/
 				
 				if (config.DAMPING === undefined) config.DAMPING = 0.95; // Демпфирование движения
 				
@@ -2718,7 +2756,7 @@ this.object = () => {
 					if (config.PSEUDO_RANDOM === undefined) config.PSEUDO_RANDOM = 0.5;
 					const min = 0, max = 1;
 					if ((config.PSEUDO_RANDOM &lt; min) || (config.PSEUDO_RANDOM > max)) console.error(sHyperSphere + '.project.distanceOfVertices: Invalid config.PSEUDO_RANDOM = ' + config.PSEUDO_RANDOM + '. Available range from ' + min + ' to ' + max + '.');
-					classSettings.debug.random = () => { return config.PSEUDO_RANDOM };
+					if (classSettings.debug) classSettings.debug.random = () => { return config.PSEUDO_RANDOM };
 				}
 				const computeCPU = () => {
 					
@@ -3457,7 +3495,7 @@ const _display = (element, boDisplay) => { element.style.display = boDisplay ===
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Wed Sep 23 2026 08:37:26 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Mon Oct 12 2026 07:37:30 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
