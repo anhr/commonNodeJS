@@ -275,15 +275,18 @@ export async function graphFolderChild(folder, classSettings, textController, ti
 	const anglesLength = classSettings.settings.object.geometry.angles.length,
 		position = classSettings.settings.bufferGeometry.attributes.position,
 		marks = classSettings.settings.options.playerOptions.marks;
-	
+
 	if (totalEnergyMin === undefined) totalEnergyMin = getTheoreticalMinEnergy4D(anglesLength);
 
-	// === WebGPU acceleration: настраиваем резолвер радиуса и считаем весь батч одним вызовом ===
-	ThomsonAnalysisGPU.setRTimeResolver((timeId) => classSettings.overriddenProperties.rTime(timeId));
+	// ==== Решаем: CPU или GPU ====
+	const useCPU = classSettings.compute?.isUseCPU === true;
+	let gpuOK = false;
+	if (!useCPU) {
+		gpuOK = await ThomsonAnalysisGPU.isAvailable();
+	}
+	// ====
 
-	// Определяем, есть ли уже посчитанные timeId. Если да — досчитываем все (батч проще),
-	// либо пересчитываем только недостающие. Ниже — пересчёт всех отсутствующих через батч.
-	// GPU быстрая, поэтому проще и надёжнее пересчитать весь диапазон.
+	// Есть ли вообще что считать?
 	const needBatch = (() => {
 		for (let timeId = 0; timeId < marks; timeId++) {
 			if (aTomsonAnalysisRes[timeId] === undefined) return true;
@@ -292,28 +295,69 @@ export async function graphFolderChild(folder, classSettings, textController, ti
 	})();
 
 	if (needBatch) {
-		await ThomsonAnalysisGPU.evaluateDistributionBatch({
-			marks,
-			pointsPerStep: anglesLength,
-			position,
-			aTomsonAnalysisRes,
-			elStep: textController,
-			timeIdController,
-			cpuFallbackFn: async (timeId) => {
-				return await evaluateDistribution(timeId, {
+		if (useCPU || !gpuOK) {
+			// ============ CPU-путь ============
+			const reason = useCPU ? 'useCPU=true' : 'WebGPU unavailable';
+			console.log(sThomsonAnalysisHSphere + ': CPU evaluation (' + reason + ')');
+
+			for (let timeId = 0; timeId < marks; timeId++) {
+				if (aTomsonAnalysisRes[timeId] != undefined) continue;
+				aTomsonAnalysisRes[timeId] = {};
+				await evaluateDistribution(timeId, {
 					pointsPerStep: anglesLength,
 					position: position,
 					elStep: textController,
 					stepFormat: 'Step: %step / ' + anglesLength,
+					tomsonAnalysisRes: aTomsonAnalysisRes[timeId],
 					r: classSettings.overriddenProperties.rTime(timeId),
 				});
-			},
-		});
+				if (timeIdController) timeIdController.name(sTimeID + timeId + ' / ' + marks);
+			}
+		} else {
+			// ============ GPU-путь ============
+			ThomsonAnalysisGPU.setRTimeResolver((timeId) => classSettings.overriddenProperties.rTime(timeId));
+
+			const gpuResult = await ThomsonAnalysisGPU.evaluateDistributionBatch({
+				marks,
+				pointsPerStep: anglesLength,
+				position,
+				aTomsonAnalysisRes,
+				elStep: textController,
+				timeIdController,
+			});
+
+			// Если GPU-путь по какой-то причине вернул null — падаем в CPU-цикл
+			if (gpuResult === null) {
+				console.log(sThomsonAnalysisHSphere + ': GPU returned null, falling back to CPU');
+				for (let timeId = 0; timeId < marks; timeId++) {
+					if (aTomsonAnalysisRes[timeId] != undefined) continue;
+					aTomsonAnalysisRes[timeId] = {};
+					await evaluateDistribution(timeId, {
+						pointsPerStep: anglesLength,
+						position: position,
+						elStep: textController,
+						stepFormat: 'Step: %step / ' + anglesLength,
+						tomsonAnalysisRes: aTomsonAnalysisRes[timeId],
+						r: classSettings.overriddenProperties.rTime(timeId),
+					});
+					if (timeIdController) timeIdController.name(sTimeID + timeId + ' / ' + marks);
+				}
+			}
+		}
 	}
-	// === end WebGPU acceleration ===
+
+	// ==== Отладочный вывод aTomsonAnalysisRes построчно ====
+	if (classSettings.debug && classSettings.debug.log) {
+		console.log('=== aTomsonAnalysisRes (per timeId) ===');
+		for (let t = 0; t < marks; t++) {
+			console.log(`[timeId=${t}]`, aTomsonAnalysisRes[t]);
+		}
+		console.log('=== end aTomsonAnalysisRes ===');
+	}
+	// ====
 
 	if (textController) dislayEl(textController, 'none');
-	if (timeIdController) dislayEl(timeIdController, 'none');;
+	if (timeIdController) dislayEl(timeIdController, 'none');
 
 	const createGraphController = (displayProperty) => {
 		if (displayProperty === 'totalEnergyPercent') return;//вместо этого используется totalEnergy
@@ -518,7 +562,7 @@ export async function evaluateDistribution(stepIndex = 0, paramsNew) {
 	// pointsCount: Общее количество точек, которые рассчитываются на одной итерации (шаге)
 	const pointsCount = params.pointsPerStep;
 
-//	if (totalEnergyMin === undefined) totalEnergyMin = getTheoreticalMinEnergy4D();
+	//	if (totalEnergyMin === undefined) totalEnergyMin = getTheoreticalMinEnergy4D();
 
 	// offset: Смещение индекса в общем массиве angles, чтобы найти начало данных для текущего шага stepIndex
 	const offset = stepIndex * params.pointsPerStep;

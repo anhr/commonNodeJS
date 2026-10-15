@@ -1,7 +1,6 @@
 /**
  * @module ThomsonAnalysisWebGPU
  * @description GPU (WebGPU) ускорение анализа распределения точек (Thomson problem) на S^3.
- * Заменяет последовательный цикл for (timeId) в graphFolderChild на батч-вычисления на GPU.
  *
  * Архитектура: tiled reduction.
  *  - Каждая воркгруппа из TILE=256 потоков обрабатывает один тайл из TILE точек i
@@ -18,8 +17,6 @@ const sThomsonAnalysisWebGPU = 'ThomsonAnalysisWebGPU';
 // ============================================================================
 // 1. WGSL-ШЕЙДЕР: TILED REDUCTION
 // ============================================================================
-
-//const TILE = 256u; // должно совпадать с workgroupSize в JS
 
 const tiledShaderWGSL = /* wgsl */`
 /**
@@ -67,10 +64,6 @@ fn main(
     let i = tileIdx * TILE + lane;
 
     // НЕ делаем ранний return. Все потоки идут до конца.
-    // Проверка на выход за границы — только при записи.
-
-    // Радиус для этого timeId. t может быть >= marks — защищаем чтение.
-    // Безопасный t для чтения rArray:
     let tSafe = select(t, 0u, t >= params.marks);
 
     if (lane == 0u) {
@@ -81,7 +74,6 @@ fn main(
     let r  = sh_r;
     let r2 = r * r;
 
-    // Безопасные i и t для чтения position
     let iSafe = select(i, 0u, i >= params.N);
     let tPosSafe = select(t, 0u, t >= params.marks);
 
@@ -138,7 +130,6 @@ fn main(
         jChunkStart = jChunkStart + TILE;
     }
 
-    // Запись только для валидных i и t.
     if (i < params.N && t < params.marks) {
         let outIdx = t * params.N + i;
         energyPerPoint[outIdx] = sumInvD;
@@ -222,20 +213,12 @@ class WebGPUThomsonEvaluator {
 
     /**
      * Батч-вычисление метрик для всех timeId.
-     *
-     * @param {object} opts
-     * @param {Float32Array} opts.positionData  — marks*N*4 координат
-     * @param {Float32Array} opts.rArray        — marks радиусов
-     * @param {number}       opts.marks
-     * @param {number}       opts.N
-     * @returns {Promise<Array<object>>}
      */
     async evaluateBatch({ positionData, rArray, marks, N }) {
 
         const device = this.device;
         const WG = this.workgroupSize;
 
-        // ---- Буферы ----
         const posBuffer = device.createBuffer({
             size: positionData.byteLength,
             usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
@@ -268,7 +251,6 @@ class WebGPUThomsonEvaluator {
             device.queue.writeBuffer(uniformBuf, 0, buf);
         }
 
-        // ---- Bind group ----
         const bind = device.createBindGroup({
             layout: this.tiledPipeline.getBindGroupLayout(0),
             entries: [
@@ -280,7 +262,6 @@ class WebGPUThomsonEvaluator {
             ],
         });
 
-        // ---- Команды ----
         const encoder = device.createCommandEncoder();
         {
             const pass = encoder.beginComputePass();
@@ -290,7 +271,6 @@ class WebGPUThomsonEvaluator {
             pass.end();
         }
 
-        // ---- Staging буферы ----
         const readEnergy = device.createBuffer({
             size: perPointCount * 4,
             usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
@@ -313,7 +293,6 @@ class WebGPUThomsonEvaluator {
         readEnergy.unmap();
         readMinD2.unmap();
 
-        // ---- CPU-финализация O(marks*N) ----
         const results = new Array(marks);
 
         for (let t = 0; t < marks; t++) {
@@ -346,7 +325,6 @@ class WebGPUThomsonEvaluator {
             results[t] = { totalEnergy, meanD, variance, stdDev, deviationPercent };
         }
 
-        // ---- Освобождение ----
         [posBuffer, rBuffer, energyBuf, minD2Buf, uniformBuf, readEnergy, readMinD2]
             .forEach(b => b.destroy());
 
@@ -360,6 +338,16 @@ class WebGPUThomsonEvaluator {
 
 const _gpuEvaluator = new WebGPUThomsonEvaluator();
 
+/**
+ * Публичный способ узнать, доступен ли WebGPU.
+ * Возвращает true, если WebGPU доступен и device успешно создан.
+ * Идемпотентно: повторные вызовы не пересоздают device.
+ * @returns {Promise<boolean>}
+ */
+export async function isAvailable() {
+    return await _gpuEvaluator.init();
+}
+
 let rTimeResolver = null;
 
 export function setRTimeResolver(fn) {
@@ -367,8 +355,11 @@ export function setRTimeResolver(fn) {
 }
 
 /**
- * Батч-аналог цикла for (timeId) в graphFolderChild.
- * Все timeId считаются ОДНИМ вызовом GPU. Результаты пишутся в aTomsonAnalysisRes[timeId].
+ * Батч-вычисление метрик для всех timeId на GPU.
+ *
+ * ВАЖНО: эта функция НЕ делает CPU-fallback сама.
+ * Если GPU недоступен или явно указан useCPU=true — возвращает null.
+ * Решение о CPU-вычислениях принимает вызывающий код (TA.js).
  *
  * @param {object} opts
  * @param {number}   opts.marks
@@ -377,14 +368,16 @@ export function setRTimeResolver(fn) {
  * @param {object[]} opts.aTomsonAnalysisRes
  * @param {HTMLElement} [opts.elStep]
  * @param {Function} [opts.timeIdController]
- * @param {Function} [opts.cpuFallbackFn]   — async (timeId) => result
- * @param {number}   [opts.offsetPerStep]   — смещение в position на один timeId
- * @returns {Promise<object[]>}
+ * @param {number}   [opts.offsetPerStep]
+ * @param {boolean}  [opts.useCPU=false] — если true, сразу вернуть null
+ * @returns {Promise<object[]|null>} результаты или null, если GPU-путь не сработал
  */
 export async function evaluateDistributionBatch({
     marks, pointsPerStep, position, aTomsonAnalysisRes,
-    elStep, timeIdController, cpuFallbackFn, offsetPerStep,
+    elStep, timeIdController, offsetPerStep, useCPU = false,
 }) {
+    if (useCPU) return null;
+
     const N = pointsPerStep;
     const stride = offsetPerStep ?? (N * 4);
 
@@ -399,7 +392,7 @@ export async function evaluateDistributionBatch({
         if (len > 0) posArray.set(src.subarray(srcOff, srcOff + len), dstOff);
     }
 
-    // ---- Готовим массив радиусов (индивидуально для каждого timeId) ----
+    // ---- Массив радиусов (индивидуально для каждого timeId) ----
     const rArray = new Float32Array(marks);
     for (let t = 0; t < marks; t++) {
         const r = rTimeResolver ? rTimeResolver(t) : 1;
@@ -408,41 +401,25 @@ export async function evaluateDistributionBatch({
 
     // ---- Пробуем GPU ----
     const ok = await _gpuEvaluator.init();
-
-    let results = null;
-    if (ok) {
-        try {
-            if (elStep) {
-                const msg = 'WebGPU batch evaluation...';
-                elStep instanceof HTMLElement ? elStep.innerText = msg : elStep.name(msg);
-            }
-            results = await _gpuEvaluator.evaluateBatch({
-                positionData: posArray,
-                rArray,
-                marks,
-                N,
-            });
-        } catch (e) {
-            console.error(sThomsonAnalysisWebGPU + ': GPU evaluation failed, fallback to CPU:', e);
-            results = null;
-        }
+    if (!ok) {
+        return null;
     }
 
-    // ---- CPU fallback ----
-    if (!results) {
-        if (!cpuFallbackFn) {
-            console.error(sThomsonAnalysisWebGPU + ': WebGPU unavailable and no cpuFallbackFn provided.');
-            return aTomsonAnalysisRes;
-        }
+    let results = null;
+    try {
         if (elStep) {
-            const msg = 'WebGPU unavailable — CPU fallback...';
+            const msg = 'WebGPU batch evaluation...';
             elStep instanceof HTMLElement ? elStep.innerText = msg : elStep.name(msg);
         }
-        results = [];
-        for (let t = 0; t < marks; t++) {
-            if (timeIdController) timeIdController.name('Time ID: ' + t + ' / ' + marks);
-            results[t] = await cpuFallbackFn(t);
-        }
+        results = await _gpuEvaluator.evaluateBatch({
+            positionData: posArray,
+            rArray,
+            marks,
+            N,
+        });
+    } catch (e) {
+        console.error(sThomsonAnalysisWebGPU + ': GPU evaluation failed:', e);
+        return null;
     }
 
     // ---- Записываем результаты ----
