@@ -12,74 +12,9 @@
  * @license under the Apache License, Version 2.0
  */
 
+import * as Spinner from '../../Spinner.js';
+
 const sThomsonAnalysisWebGPU = 'ThomsonAnalysisWebGPU';
-
-// ============================================================================
-// 0. СПИННЕР (крутящееся колесо)
-// ============================================================================
-
-const SPINNER_ID = 'thomsonAnalysisSpinner';
-const SPINNER_STYLE_ID = 'thomsonAnalysisSpinnerStyle';
-
-function ensureSpinnerStyle() {
-    if (document.getElementById(SPINNER_STYLE_ID)) return;
-    const style = document.createElement('style');
-    style.id = SPINNER_STYLE_ID;
-    style.textContent = `
-        #${SPINNER_ID} {
-            position: fixed;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(0, 0, 0, 0.35);
-            z-index: 2147483647;
-            cursor: wait;
-            pointer-events: all;
-        }
-        #${SPINNER_ID} .spinner-wheel {
-            width: 64px;
-            height: 64px;
-            border: 6px solid rgba(255, 255, 255, 0.25);
-            border-top-color: #fff;
-            border-radius: 50%;
-            animation: thomson-spin 0.9s linear infinite;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.4);
-        }
-        @keyframes thomson-spin {
-            to { transform: rotate(360deg); }
-        }
-    `;
-    document.head.appendChild(style);
-}
-
-/**
- * Показывает оверлей с крутящимся колесом на весь экран.
- * Идемпотентна: повторный вызов ничего не делает.
- */
-export function showSpinner() {
-    if (typeof document === 'undefined') return;
-    if (document.getElementById(SPINNER_ID)) return;
-    ensureSpinnerStyle();
-
-    const overlay = document.createElement('div');
-    overlay.id = SPINNER_ID;
-
-    const wheel = document.createElement('div');
-    wheel.className = 'spinner-wheel';
-
-    overlay.appendChild(wheel);
-    document.body.appendChild(overlay);
-}
-
-/**
- * Скрывает оверлей.
- */
-export function hideSpinner() {
-    if (typeof document === 'undefined') return;
-    const overlay = document.getElementById(SPINNER_ID);
-    if (overlay) overlay.remove();
-}
 
 // ============================================================================
 // 1. WGSL-ШЕЙДЕР: TILED REDUCTION
@@ -470,7 +405,7 @@ export async function evaluateDistributionBatch({
     }
 
     let results = null;
-    if (boShowSpinner) showSpinner();
+    if (boShowSpinner) Spinner.show();
     try {
         if (elStep) {
             const msg = 'WebGPU batch evaluation...';
@@ -486,7 +421,7 @@ export async function evaluateDistributionBatch({
         console.error(sThomsonAnalysisWebGPU + ': GPU evaluation failed:', e);
         return null;
     } finally {
-        if (boShowSpinner) hideSpinner();
+        if (boShowSpinner) Spinner.hide();
     }
 
     // ---- Записываем результаты ----
