@@ -2,7 +2,7 @@
  * @module Spinner
  * @description Универсальный оверлей с крутящимся колесом.
  * Используется для индикации длительных операций (вычисления, загрузка).
- *
+ * <pre>
  * Поддерживает счётчик ссылок: если несколько операций одновременно
  * запросили показ спиннера, он скроется только после последней.
  *
@@ -10,7 +10,7 @@
  *   import * as Spinner from './Spinner.js';
  *   Spinner.show();
  *   try { ... } finally { Spinner.hide(); }
- *
+ * </pre>
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
