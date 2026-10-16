@@ -30,6 +30,8 @@ My JavaScript library of [threejs](https://threejs.org/) extension.
 [github](../../tree/master/FibonacciSphere).
 [FibonacciSphereGeometry API](https://raw.githack.com/anhr/commonNodeJS/master/FibonacciSphere/jsdoc/index.html).
 [Example](https://raw.githack.com/anhr/commonNodeJS/master/FibonacciSphere/Examples/index.html).
+* fileHandler. Модуль для работы с бинарными файлами координат Three.js. [geminu](https://share.gemini.google/0TgSugkZR3K6).
+[fileHandler API](https://raw.githack.com/anhr/commonNodeJS/master/jsdoc/fileHandler/index.html).
 * FrustumPoints. Array of points, statically fixed in front of the camera.
 I use <b>FrustumPoints</b> for displaying of the clouds around points.
 [README.md](../../tree/master/frustumPoints).
