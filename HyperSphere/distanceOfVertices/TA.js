@@ -278,8 +278,12 @@ export async function graphFolderChild(folder, classSettings, textController, ti
 
 	if (totalEnergyMin === undefined) totalEnergyMin = getTheoreticalMinEnergy4D(anglesLength);
 
-	// ==== Решаем: CPU или GPU ====
+	// ==== Флаги ====
 	const useCPU = classSettings.compute?.isUseCPU === true;
+	const debug = classSettings.debug != false; // включено, если debug не false и не undefined
+	// ====
+
+	// ==== Решаем: CPU или GPU ====
 	let gpuOK = false;
 	if (!useCPU) {
 		gpuOK = await ThomsonAnalysisGPU.isAvailable();
@@ -300,6 +304,8 @@ export async function graphFolderChild(folder, classSettings, textController, ti
 			const reason = useCPU ? 'useCPU=true' : 'WebGPU unavailable';
 			console.log(sThomsonAnalysisHSphere + ': CPU evaluation (' + reason + ')');
 
+			if (debug) classSettings.debug.timestamp = window.performance.now();
+
 			for (let timeId = 0; timeId < marks; timeId++) {
 				if (aTomsonAnalysisRes[timeId] != undefined) continue;
 				aTomsonAnalysisRes[timeId] = {};
@@ -313,9 +319,16 @@ export async function graphFolderChild(folder, classSettings, textController, ti
 				});
 				if (timeIdController) timeIdController.name(sTimeID + timeId + ' / ' + marks);
 			}
+
+			if (debug) {
+				const elapsed = window.performance.now() - classSettings.debug.timestamp;
+				console.log(sThomsonAnalysisHSphere + `: CPU elapsed = ${elapsed.toFixed(3)} ms`);
+			}
 		} else {
 			// ============ GPU-путь ============
 			ThomsonAnalysisGPU.setRTimeResolver((timeId) => classSettings.overriddenProperties.rTime(timeId));
+
+			if (debug) classSettings.debug.timestamp = window.performance.now();
 
 			const gpuResult = await ThomsonAnalysisGPU.evaluateDistributionBatch({
 				marks,
@@ -326,9 +339,15 @@ export async function graphFolderChild(folder, classSettings, textController, ti
 				timeIdController,
 			});
 
+			if (debug) {
+				const elapsed = window.performance.now() - classSettings.debug.timestamp;
+				console.log(sThomsonAnalysisHSphere + `: GPU elapsed = ${elapsed.toFixed(3)} ms`);
+			}
+
 			// Если GPU-путь по какой-то причине вернул null — падаем в CPU-цикл
 			if (gpuResult === null) {
 				console.log(sThomsonAnalysisHSphere + ': GPU returned null, falling back to CPU');
+				if (debug) classSettings.debug.timestamp = window.performance.now();
 				for (let timeId = 0; timeId < marks; timeId++) {
 					if (aTomsonAnalysisRes[timeId] != undefined) continue;
 					aTomsonAnalysisRes[timeId] = {};
@@ -341,6 +360,10 @@ export async function graphFolderChild(folder, classSettings, textController, ti
 						r: classSettings.overriddenProperties.rTime(timeId),
 					});
 					if (timeIdController) timeIdController.name(sTimeID + timeId + ' / ' + marks);
+				}
+				if (debug) {
+					const elapsed = window.performance.now() - classSettings.debug.timestamp;
+					console.log(sThomsonAnalysisHSphere + `: CPU elapsed (fallback) = ${elapsed.toFixed(3)} ms`);
 				}
 			}
 		}
