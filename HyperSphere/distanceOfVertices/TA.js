@@ -4,6 +4,7 @@
  * You can see results of Analysis in the console of the web page and on a small graph in the rigth top corner of the canvas.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
+ * @author [Deepseek]{@link https://chat.deepseek.com/share/krcy9s4jd5nd9usoch}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
