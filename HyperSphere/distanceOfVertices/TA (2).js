@@ -17,6 +17,9 @@
 import * as utils from '../utilsHSphere.js'
 import three from '../../three.js'
 import { dat } from '../../dat/dat.module.js';
+// === WebGPU acceleration (added) ===
+import * as ThomsonAnalysisGPU from './TAGPU.js';
+// === end ===
 
 let params, currentStep,
 	totalEnergyMin;//минимум потенциальной энергии. Если реальная энергия totalEnergy существенно выше totalEnergyMin (на 5-10% и более) и график перестал падать — вы гарантированно застряли в локальном минимуме, и итерационный процесс работает неэффективно.
@@ -179,6 +182,7 @@ export async function timeAnalysis(fThomsonAnalysis, elStep, stepFormat, classSe
 			elStep: elStep,
 			stepFormat: stepFormat + anglesLength,
 			tomsonAnalysisRes: aTomsonAnalysisRes[timeId],
+			r: classSettings.overriddenProperties.rTime(timeId),
 		}) :
 		//Результаты анализа уже есть в aTomsonAnalysisRes[timeId]
 		aTomsonAnalysisRes[timeId]);
@@ -186,27 +190,20 @@ export async function timeAnalysis(fThomsonAnalysis, elStep, stepFormat, classSe
 	const createController = (property, title, name) => {
 		if (fThomsonAnalysis.__controllers.find(c => c.property === property)) return;
 
-		// 2. Добавляем свойство в папку и заставляем GUI следить за ним (.listen())
-
 		const controller = fThomsonAnalysis.add(tomsonAnalysisRes, property).listen();
 
-		// 3. БЛОКИРОВКА РЕДАКТИРОВАНИЯ:
-		// Запрещаем любые клики и ввод в область этого контроллера
 		controller.domElement.style.pointerEvents = 'none';
 
-		// Опционально: делаем поле ввода визуально неотличимым от обычного текста
 		const inputField = controller.domElement.querySelector('input');
 		if (inputField) {
 			inputField.style.background = 'transparent';
 			inputField.style.border = 'none';
-			inputField.style.color = '#fff'; // Оставляем белый цвет текста
+			inputField.style.color = '#fff';
 			inputField.style.textShadow = 'none';
 		}
 
-		// Записываем подсказку в атрибут title всего контейнера строки
 		dat.controllerNameAndTitle(controller, name, title);
 
-		// Заставляем браузер правильно обрабатывать переносы строк (\n) внутри всплывающего окна
 		controller.domElement.style.whiteSpace = 'pre-line';
 
 		return controller;
@@ -237,25 +234,25 @@ function getLiEl(controller) {
 
 //dislay element
 
-function dislayEl( controller, displayController ) {
+function dislayEl(controller, displayController) {
 
-	if ( controller === undefined )
+	if (controller === undefined)
 		return;
-	if ( typeof displayController === "boolean" )
+	if (typeof displayController === "boolean")
 		displayController = displayController ? 'block' : 'none';
-	else if ( displayController === undefined )
+	else if (displayController === undefined)
 		displayController = 'none';
-	else if ( typeof displayController !== "string" )
+	else if (typeof displayController !== "string")
 		displayController = 'block';
 	getLiEl(controller).style.display = displayController;
 
 }
 const graphFolderControllers = [],//Этот массив нужен для скрытия и отображения графиков когода пользователь закрывает а затем снова открывает папку Tomson Analysis Graph
-	 graphFolderControllersDislay = (display) => {
+	graphFolderControllersDislay = (display) => {
 		graphFolderControllers.forEach((controller) => {
-			dislayEl( controller, display );
+			dislayEl(controller, display);
 		})
-	 }
+	}
 
 /**
  * Adds to the <b>dat.gui</b> folder the graphs of the analysis of the results of solving the Thomson problem.
@@ -266,34 +263,124 @@ const graphFolderControllers = [],//Этот массив нужен для ск
  * @param {Function} createLabel Creates a controller to display the analysis results.
  */
 export async function graphFolderChild(folder, classSettings, textController, timeIdController, createLabel) {
-	
 	if (isGraphFolderChildCreated) {
 		graphFolderControllersDislay('block');
 		return;
 	}
 	isGraphFolderChildCreated = true;
-	
+
 	const sTimeID = 'Time ID: ';
-	
+
 	//Заполняем массив aTomsonAnalysisRes результатами анализа
 	const anglesLength = classSettings.settings.object.geometry.angles.length,
 		position = classSettings.settings.bufferGeometry.attributes.position,
 		marks = classSettings.settings.options.playerOptions.marks;
-	for (let timeId = 0; timeId < marks; timeId++) {
-		if (aTomsonAnalysisRes[timeId] != undefined) continue;//Этот элемент массива был получен ранее, когда пользователь открыл папку Thomson Analysis
-		aTomsonAnalysisRes[timeId] = {};
-		await evaluateDistribution(timeId, {
-			pointsPerStep: anglesLength,
-			position: position,
-			elStep: textController,//.domElement,
-			stepFormat: 'Step: %step / ' + anglesLength,
-			tomsonAnalysisRes: aTomsonAnalysisRes[timeId],
-			r: classSettings.overriddenProperties.rTime(timeId),
-		});
-		if (timeIdController) timeIdController.name(sTimeID + timeId + ' / ' + marks);
+
+	if (totalEnergyMin === undefined) totalEnergyMin = getTheoreticalMinEnergy4D(anglesLength);
+
+	// ==== Флаги ====
+	const useCPU = classSettings.compute?.isUseCPU === true;
+	const debug = classSettings.debug != false; // включено, если debug не false и не undefined
+	// ====
+
+	// ==== Решаем: CPU или GPU ====
+	let gpuOK = false;
+	if (!useCPU) {
+		gpuOK = await ThomsonAnalysisGPU.isAvailable();
 	}
+	// ====
+
+	// Есть ли вообще что считать?
+	const needBatch = (() => {
+		for (let timeId = 0; timeId < marks; timeId++) {
+			if (aTomsonAnalysisRes[timeId] === undefined) return true;
+		}
+		return false;
+	})();
+
+	if (needBatch) {
+		if (useCPU || !gpuOK) {
+			// ============ CPU-путь ============
+			const reason = useCPU ? 'useCPU=true' : 'WebGPU unavailable';
+			console.log(sThomsonAnalysisHSphere + ': CPU evaluation (' + reason + ')');
+
+			if (debug) classSettings.debug.timestamp = window.performance.now();
+
+			for (let timeId = 0; timeId < marks; timeId++) {
+				if (aTomsonAnalysisRes[timeId] != undefined) continue;
+				aTomsonAnalysisRes[timeId] = {};
+				await evaluateDistribution(timeId, {
+					pointsPerStep: anglesLength,
+					position: position,
+					elStep: textController,
+					stepFormat: 'Step: %step / ' + anglesLength,
+					tomsonAnalysisRes: aTomsonAnalysisRes[timeId],
+					r: classSettings.overriddenProperties.rTime(timeId),
+				});
+				if (timeIdController) timeIdController.name(sTimeID + timeId + ' / ' + marks);
+			}
+
+			if (debug) {
+				const elapsed = window.performance.now() - classSettings.debug.timestamp;
+				console.log(sThomsonAnalysisHSphere + `: CPU elapsed = ${elapsed.toFixed(3)} ms`);
+			}
+		} else {
+			// ============ GPU-путь ============
+			ThomsonAnalysisGPU.setRTimeResolver((timeId) => classSettings.overriddenProperties.rTime(timeId));
+
+			if (debug) classSettings.debug.timestamp = window.performance.now();
+
+			const gpuResult = await ThomsonAnalysisGPU.evaluateDistributionBatch({
+				marks,
+				pointsPerStep: anglesLength,
+				position,
+				aTomsonAnalysisRes,
+				elStep: textController,
+				timeIdController,
+			});
+
+			if (debug) {
+				const elapsed = window.performance.now() - classSettings.debug.timestamp;
+				console.log(sThomsonAnalysisHSphere + `: GPU elapsed = ${elapsed.toFixed(3)} ms`);
+			}
+
+			// Если GPU-путь по какой-то причине вернул null — падаем в CPU-цикл
+			if (gpuResult === null) {
+				console.log(sThomsonAnalysisHSphere + ': GPU returned null, falling back to CPU');
+				if (debug) classSettings.debug.timestamp = window.performance.now();
+				for (let timeId = 0; timeId < marks; timeId++) {
+					if (aTomsonAnalysisRes[timeId] != undefined) continue;
+					aTomsonAnalysisRes[timeId] = {};
+					await evaluateDistribution(timeId, {
+						pointsPerStep: anglesLength,
+						position: position,
+						elStep: textController,
+						stepFormat: 'Step: %step / ' + anglesLength,
+						tomsonAnalysisRes: aTomsonAnalysisRes[timeId],
+						r: classSettings.overriddenProperties.rTime(timeId),
+					});
+					if (timeIdController) timeIdController.name(sTimeID + timeId + ' / ' + marks);
+				}
+				if (debug) {
+					const elapsed = window.performance.now() - classSettings.debug.timestamp;
+					console.log(sThomsonAnalysisHSphere + `: CPU elapsed (fallback) = ${elapsed.toFixed(3)} ms`);
+				}
+			}
+		}
+	}
+
+	// ==== Отладочный вывод aTomsonAnalysisRes построчно ====
+	if (classSettings.debug && classSettings.debug.log) {
+		console.log('=== aTomsonAnalysisRes (per timeId) ===');
+		for (let t = 0; t < marks; t++) {
+			console.log(`[timeId=${t}]`, aTomsonAnalysisRes[t]);
+		}
+		console.log('=== end aTomsonAnalysisRes ===');
+	}
+	// ====
+
 	if (textController) dislayEl(textController, 'none');
-	if (timeIdController) dislayEl(timeIdController, 'none');;
+	if (timeIdController) dislayEl(timeIdController, 'none');
 
 	const createGraphController = (displayProperty) => {
 		if (displayProperty === 'totalEnergyPercent') return;//вместо этого используется totalEnergy
@@ -302,7 +389,7 @@ export async function graphFolderChild(folder, classSettings, textController, ti
 			const labelController = createLabel(sTimeID);
 			const lang = localization(classSettings.settings.options.getLanguageCode());
 			let title;
-			switch(displayProperty) {
+			switch (displayProperty) {
 				case 'totalEnergy': title = lang.totalEnergyPercent; break;
 				case 'deviationPercent': title = lang.deviationPercent; break;
 				case 'meanD': title = lang.meanD; break;
@@ -397,7 +484,7 @@ export async function graphFolderChild(folder, classSettings, textController, ti
 
 			// Формируем текст тултипа
 			let text = `<b>timeId:</b> ${index}`;//<br/><b>${displayProperty}:</b> ${valStr}`;
-			
+
 			Object.keys(itemData).forEach(key => {
 				if (key === 'totalEnergyPercent') return;
 				const val = itemData[key];
@@ -412,8 +499,6 @@ export async function graphFolderChild(folder, classSettings, textController, ti
 			tooltip.style.display = 'block';
 
 			// ПОЗИЦИОНИРОВАНИЕ СЛЕВА ОТ МЫШКИ:
-			// Сначала отображаем тултип, чтобы браузер рассчитал offsetWidth,
-			// затем вычисляем позицию слева от курсора.
 			const tooltipWidth = tooltip.offsetWidth;
 			tooltip.style.left = (e.clientX - tooltipWidth - 12) + 'px';
 			tooltip.style.top = (e.clientY + 12) + 'px';
@@ -425,38 +510,29 @@ export async function graphFolderChild(folder, classSettings, textController, ti
 		// =========================================================================
 
 		// 4. ФУНКЦИЯ ИЗМЕНЕНИЯ ВЫСОТЫ ИЗ ПРОГРАММЫ
-		// Переменная для хранения текущей заданной высоты (чтобы использовать её при ресайзе)
 		let currentTargetHeight = 150;
 
 		function setGraphHeight(newHeightPx) {
-			currentTargetHeight = newHeightPx; // Запоминаем высоту
+			currentTargetHeight = newHeightPx;
 
-			// 1. Сбрасываем ограничения высоты у строки (li)
 			const rowElement = canvasController.domElement.closest('li') || canvasController.domElement;
 			if (rowElement) {
 				rowElement.style.height = 'auto';
 				rowElement.style.lineHeight = 'normal';
 			}
 
-			// 2. Устанавливаем фиксированную высоту для контейнера контроллера
 			canvasController.domElement.style.height = currentTargetHeight + 'px';
-			canvas.style.height = currentTargetHeight + 'px'; // <-- Важно: фиксируем CSS-высоту холста!
+			canvas.style.height = currentTargetHeight + 'px';
 
-			// Перерисовываем график под новую высоту
 			drawAnalysisGraph(aTomsonAnalysisRes, displayProperty, canvas, false);
 		}
 
 		// 6. АВТОПДСТРОЙКА ПРИ РАСТЯГИВАНИИ МЫШКОЙ (ResizeObserver)
-		// Этот объект следит за изменением размеров контейнера строки в реальном времени
 		const resizeObserver = new ResizeObserver((entries) => {
 			for (let entry of entries) {
-				// Получаем новую ширину из параметров изменения
 				const newWidth = entry.contentRect.width;
 
-				// Если ширина изменилась и она больше 0
 				if (newWidth > 0) {
-					// При изменении ширины папки просто перерисовываем 2D-график.
-					// Функция drawAnalysisGraph возьмет актуальную ширину, но сохранит высоту.
 					drawAnalysisGraph(aTomsonAnalysisRes, displayProperty, canvas, false);
 				}
 
@@ -509,17 +585,15 @@ export async function evaluateDistribution(stepIndex = 0, paramsNew) {
 	// pointsCount: Общее количество точек, которые рассчитываются на одной итерации (шаге)
 	const pointsCount = params.pointsPerStep;
 
-	if (totalEnergyMin === undefined) totalEnergyMin = getTheoreticalMinEnergy4D();
+	//	if (totalEnergyMin === undefined) totalEnergyMin = getTheoreticalMinEnergy4D();
 
 	// offset: Смещение индекса в общем массиве angles, чтобы найти начало данных для текущего шага stepIndex
 	const offset = stepIndex * params.pointsPerStep;
 
 	// totalEnergy: Суммарная потенциальная (электростатическая) энергия системы на данном шаге. 
-	// В идеальном случае (минимум энергии) она должна быть минимально возможной.
 	let totalEnergy = 0;
 
 	// points: Вспомогательный массив, куда мы соберем декартовы координаты (x, y, z, w) всех точек текущего шага
-	// для более удобного и быстрого доступа к ним в циклах.
 	let points = [];
 
 	if (params.angles) {
@@ -527,10 +601,10 @@ export async function evaluateDistribution(stepIndex = 0, paramsNew) {
 		// 1. Конвертация 4D полярных координат из объектов в 4D Декартовы координаты
 		for (let i = 0; i < pointsCount; i++) {
 			const pointAngles = params.angles[offset + i];
-	
+
 			// Защита на случай, если данные для этого шага ещё не сгенерированы
 			if (!pointAngles) continue;
-	
+
 			points.push(utils.polarToCartesian(pointAngles));
 		}
 	} else if (params.position) {
@@ -545,53 +619,36 @@ export async function evaluateDistribution(stepIndex = 0, paramsNew) {
 	}
 
 	// allMinDistances: Массив, в который мы сохраним расстояние от каждой точки до её самого близкого соседа.
-	// Если распределение идеальное, все эти расстояния будут практически одинаковыми.
 	let allMinDistances = [];
 
-	// Внешний цикл: перебираем каждую точку системы, чтобы найти расстояния до остальных точек
 	let i = 0,
-		waitCount = 0;//Команда await new Promise(r => requestAnimationFrame(r)); выпоняется медленно. Поэтому вызываем ее только через 500 точек.
+		waitCount = 0;
 	const elStep = params.elStep || document.getElementById('analysisVerticeStep');
-//	for (let i = 0; i < pointsCount; i++)
-	while (i < params.pointsPerStep)
-	{
+	while (i < params.pointsPerStep) {
 		// distancesForPointI: Временный массив для хранения расстояний от текущей i-й точки до абсолютно всех остальных точек
 		let distancesForPointI = [];
 
-		// Внутренний цикл: перебираем все остальные точки (j), чтобы измерить расстояние до них от i-й точки
 		for (let j = 0; j < pointsCount; j++) {
-			// Если индексы совпадают (i == j), это одна и та же точка. Пропускаем, так как расстояние до самой себя равно 0.
 			if (i === j) continue;
 
-			// dx: Разность координат по оси X между i-й и j-й точками
 			let dx = points[i].x - points[j].x;
-			// dy: Разность координат по оси Y между i-й и j-й точками
 			let dy = points[i].y - points[j].y;
-			// dz: Разность координат по оси Z между i-й и j-й точками
 			let dz = points[i].z - points[j].z;
-			// dw: Разность координат по оси Z между i-й и j-й точками
 			let dw = points[i].w - points[j].w;
 
-			// d: Евклидово расстояние (длина хорды) между i-й и j-й точками в пространстве
 			let d = Math.sqrt(dx * dx + dy * dy + dz * dz + dw * dw);
 
 			//Приводим расстояние к гиперсфере с радиусом r = 1
 			d /= paramsNew.r;
 
-			// Добавляем вычисленное расстояние в список расстояний для i-й точки
 			distancesForPointI.push(d);
 
-			// Накапливаем потенциальную энергию взаимодействия между зарядами i и j.
-			// Формула Кулона: E = 1 / d. Если d стремится к 0 (точки слиплись) — энергия уйдет в бесконечность, что укажет на ошибку.
 			if (d === 0) console.error(sThomsonAnalysisHSphere + ': Invalid d = ' + d);
 			totalEnergy += 1.0 / d;
 		}
 
-		// Сортируем массив расстояний для i-й точки по возрастанию.
-		// После сортировки самый близкий сосед окажется на позиции с индексом [0].
 		distancesForPointI.sort((a, b) => a - b);
 
-		// Сохраняем расстояние до 1-го (самого близкого) соседа i-й точки в общий массив минимумов
 		allMinDistances.push(distancesForPointI[0]);
 		waitCount++;
 		if (elStep && (waitCount > 50)) {
@@ -603,27 +660,17 @@ export async function evaluateDistribution(stepIndex = 0, paramsNew) {
 		i++;
 	}
 
-	// Корректируем totalEnergy: делим накопленную энергию на 2, так как в двойном цикле 
-	// расстояние между каждой парой точек (i, j) и (j, i) было посчитано дважды.
 	totalEnergy = totalEnergy / 2;
 
-	// meanD: Среднее арифметическое расстояние до ближайшего соседа по всей системе.
-	// Считается как сумма всех минимальных расстояний, деленная на количество точек.
 	let meanD = allMinDistances.reduce((a, b) => a + b, 0) / pointsCount;
 
-	// variance: Дисперсия (средний квадрат отклонения). Мера того, насколько сильно расстояния 
-	// до соседей у разных точек "разбросаны" относительно вычисленного среднего значения meanD.
 	let variance = allMinDistances.reduce((sum, d) => sum + Math.pow(d - meanD, 2), 0) / pointsCount;
 
-	// stdDev: Среднеквадратичное отклонение (СКО, или сигма). Показывает реальный разброс расстояний в тех же единицах, что и сами координаты.
-	// Если stdDev близко к нулю — все точки находятся в равных условиях (идеальная геометрия).
 	let stdDev = Math.sqrt(variance);
 
-	// deviationPercent: Коэффициент вариации (дисбаланс распределения), выраженный в процентах.
-	// Показывает относительную погрешность: какая доля от среднего расстояния приходится на ошибку (разброс).
 	let deviationPercent = (stdDev / meanD) * 100;
 	currentStep++;
-	// Возвращаем объект с ключевыми метриками, чтобы их можно было использовать для построения графиков сходимости
+	// Возвращаем объект с ключевыми метриками
 	const sourceObj = { totalEnergy, totalEnergyPercent: totalEnergy.toFixed(4) + getTotalEnergyPercent(totalEnergy), meanD, variance, stdDev, deviationPercent };
 	if (params.tomsonAnalysisRes) {
 		Object.assign(params.tomsonAnalysisRes, sourceObj);
@@ -638,12 +685,8 @@ function drawAnalysisGraph(aAnalysis, propertyKey, canvas, boText = true) {
 	if (!canvas) return;
 	const ctx = canvas.getContext('2d');
 
-	// АДАПТИВНОЕ РАЗРЕШЕНИЕ:
-	// Берем реальную ширину из DOM, а высоту берем строго из clientHeight (или 150 по умолчанию),
-	// чтобы она НЕ скакала вслед за пропорциями.	const rect = canvas.getBoundingClientRect();
 	const rect = canvas.getBoundingClientRect();
 
-	// Обновляем внутренний размер буфера холста только при реальном изменении
 	if (canvas.width !== rect.width || canvas.height !== rect.height) {
 		canvas.width = rect.width;
 		canvas.height = rect.height;
@@ -652,26 +695,21 @@ function drawAnalysisGraph(aAnalysis, propertyKey, canvas, boText = true) {
 	const width = canvas.width;
 	const height = canvas.height;
 
-	// Если ширина еще не просчиталась DOM-ом (например, папка свернута)
 	if (width === 0 || height === 0) return;
 
-	// Очищаем холст
 	ctx.clearRect(0, 0, width, height);
 
-	// Вывод текста
 	if (boText) {
 		ctx.fillStyle = '#fff';
 		ctx.font = '11px sans-serif';
 		ctx.fillText(`Шаг: ${aAnalysis.length}` + (params.totalSteps === undefined ? `` : ` / ${params.totalSteps}`), 15, 20);
-	
+
 		const currentVal = aAnalysis[aAnalysis.length - 1][propertyKey];
-	//	ctx.fillStyle = ctx.strokeStyle;
 		ctx.fillText(`${propertyKey}: ${currentVal.toFixed(4)}` + (propertyKey === 'totalEnergy' ? getTotalEnergyPercent(currentVal) : ``), 15, 36);
 	}
-	
+
 	if (aAnalysis.length < 2) return;
 
-	// Нахождение мин/макс значений
 	let minVal = aAnalysis[0][propertyKey];
 	let maxVal = aAnalysis[0][propertyKey];
 	for (let i = 0; i < aAnalysis.length; i++) {
@@ -686,13 +724,11 @@ function drawAnalysisGraph(aAnalysis, propertyKey, canvas, boText = true) {
 	const displayMax = maxVal + padding;
 	const displayRange = displayMax - displayMin;
 
-	// Построение линии графика
 	ctx.beginPath();
 	ctx.strokeStyle = propertyKey === 'totalEnergy' ? '#00ffcc' : '#ffcc00';
 	ctx.lineWidth = 2;
 
 	for (let i = 0; i < aAnalysis.length; i++) {
-		// Оставляем небольшие отступы (padding) по бокам: 15px слева и 25px справа (чтобы не заезжать под крестик)
 		const x = (i / (aAnalysis.length - 1)) * (width - 40) + 15;
 		const val = aAnalysis[i][propertyKey];
 		const y = height - ((val - displayMin) / displayRange) * (height - (boText ? 50 : 10)) - 15;
@@ -707,26 +743,18 @@ function drawAnalysisGraph(aAnalysis, propertyKey, canvas, boText = true) {
 }
 const analysisGraphWidgetId = 'analysisGraphWidget';
 const createGraphWidget = (elSecond) => {
-	// 1. Ищем, существует ли уже контейнер виджета
 	let widget = document.getElementById(analysisGraphWidgetId);
 
 	if (widget) return;
 
-	// Если виджета еще нет на странице, создаем его структуру
-
-	// Создаем главный контейнер виджета
 	widget = document.createElement('div');
 	widget.id = analysisGraphWidgetId;
 
-	// Задаем размеры в процентах от основного холста/экрана (например, 25% ширины, 20% высоты)
 	widget.style.width = '25%';
 	widget.style.height = '20%';
-	// Минимальные размеры, чтобы на маленьких экранах график не сжимался в пиксель
 	widget.style.minWidth = '200px';
 	widget.style.minHeight = '120px';
 
-	
-	// Позиционирование в правом верхнем углу
 	widget.style.position = 'absolute';
 	widget.style.top = '20px';
 	widget.style.right = '20px';
@@ -735,19 +763,15 @@ const createGraphWidget = (elSecond) => {
 	widget.style.borderRadius = '6px';
 	widget.style.zIndex = '100';
 
-	// Создаем внутренний холст для рисования
 	const graphCanvas = document.createElement('canvas');
 	graphCanvas.id = 'analysisGraphCanvas';
-	// Растягиваем холст на 100% от родительского виджета
 	graphCanvas.style.width = '100%';
 	graphCanvas.style.height = '100%';
 	graphCanvas.style.display = 'block';
-	graphCanvas.style.pointerEvents = 'none'; // Чтобы клики для вращения сцены проходили сквозь сам график
+	graphCanvas.style.pointerEvents = 'none';
 
-	// Создаем кнопку-крестик
 	const closeBtn = document.createElement('div');
 	closeBtn.innerText = '×';
-	// Стилизуем крестик
 	closeBtn.style.position = 'absolute';
 	closeBtn.style.top = '5px';
 	closeBtn.style.right = '8px';
@@ -756,53 +780,39 @@ const createGraphWidget = (elSecond) => {
 	closeBtn.style.fontFamily = 'sans-serif';
 	closeBtn.style.fontSize = '18px';
 	closeBtn.style.lineHeight = '1';
-	closeBtn.style.zIndex = '101'; // Поверх холста графика, чтобы нажимался
-	closeBtn.style.pointerEvents = 'auto'; // Включаем клики обратно для этой кнопки
+	closeBtn.style.zIndex = '101';
+	closeBtn.style.pointerEvents = 'auto';
 
-	// Эффект наведения на крестик
 	closeBtn.onmouseover = () => closeBtn.style.color = '#ff4d4d';
 	closeBtn.onmouseout = () => closeBtn.style.color = '#aaa';
 
-	// Логика удаления виджета при нажатии на крестик
 	closeBtn.onclick = () => {
 		widget.remove();
 	};
 
-	// Собираем виджет вместе
 	widget.appendChild(closeBtn);
 	widget.appendChild(graphCanvas);
 	document.body.appendChild(widget);
 
 	if (!elSecond) return;
 
-	//передвигаем elSecond под widget
-	
 	const first = widget;
 	const second = elSecond;
 
-	// Задаем желаемый фиксированный зазор между элементами в пикселях
 	const GAP = 15;
 
 	const resizer = () => {
-		// 1. Получаем координаты и размеры первого элемента относительно родителя
-		// offsetTop — это его начальный отступ сверху (style.top)
-		// offsetHeight — его текущая полная высота
 		const firstTop = first.offsetTop;
 		const firstHeight = first.offsetHeight;
 
-		// 2. Вычисляем новую позицию top для второго элемента:
-		// Позиция верхнего + Высота верхнего + Зазор
 		const newSecondTop = firstTop + firstHeight + GAP;
 
-		// 3. Применяем значение ко второму элементу
 		second.style.top = `${newSecondTop}px`;
 	}
 	resizer();
-	
-	// Создаем наблюдатель, который реагирует на любые изменения размеров первого элемента
+
 	const observer = new ResizeObserver(resizer);
 
-	// Запускаем слежку за первым элементом
 	observer.observe(first);
 
 }
@@ -812,18 +822,13 @@ const createGraphWidget = (elSecond) => {
  * Each group consists of the positions of points at a specific time and corresponds to a specific position of the <a href="../../../player/jsdoc/" target="_blank">Player</a>.
  * @param {object} paramsNew Analysis parameters. See <b>paramsNew</b> paremetr of the <a href="./module-ThomsonAnalysisHSphere.AnalysisSteps.html" target="_blank">AnalysisSteps</a> class.
 */
-export async function analysis(newParams){
+export async function analysis(newParams) {
 	params = newParams;
 	createGraphWidget();
 	const aAnalysis = [];
 
 	currentStep = 0;
 
-	//totalEnergy: Общая энергия системы (E). Если totalEnergy растет от шага к шагу: Ошибка в знаках сил (точки притягиваются вместо отталкивания) либо слишком большой шаг интегрирования (dt). Энергия totalEnergy уходит в бесконечность или NaN: Ошибка в коде вычислений, при которой две точки заняли абсолютно одинаковые координаты (деление на ноль). Проверьте генератор случайных чисел или начальную инициализацию.
-	//meanD: Среднее расстояние до ближайшего соседа. Должно постепенно расти, пока не стабилизируется.
-	//variance: Дисперсия(средний квадрат отклонения).Мера того, насколько сильно расстояния до соседей у разных точек "разбросаны" относительно вычисленного среднего значения meanD.
-	//stdDev: Среднеквадратичное отклонение (СКО): С каждым шагом алгоритма значение stdDev должно стремиться к нулю.
-	//deviationPercent: Коэффициент вариации (дисбаланс). Коэффициент вариации (deviationPercent) высокий (например, > 15-20%): Точки распределены хаотично, решетка не сформировалась. Скорее всего, силам отталкивания не хватает итераций, либо коэффициент затухания скорости (DAMPING) гасит движение слишком рано. deviationPercent стремится к 0% (например, < 2-5%): Алгоритм работает отлично, структура симметрична, точки распределились максимально равномерно.
 	const displayProperty = params.displayProperty || 'deviationPercent';
 
 	const start = performance.now();
@@ -836,17 +841,13 @@ export async function analysis(newParams){
 	document.getElementById('totalVertices').innerText = params.pointsPerStep;
 
 	while (currentStep < params.totalSteps) {
-		// Проверяем в начале каждого шага: если пользователь закрыл виджет,
-		// вычисления могут продолжаться, но график мы больше не рисуем
 		const currentWidget = document.getElementById(analysisGraphWidgetId);
 		if (!currentWidget) {
-			// Если вы хотите полностью остановить анализ при закрытии графика, раскомментируйте строку ниже:
-			// break; 
+			// break;
 		}
 
 		aAnalysis.push(await evaluateDistribution(currentStep));
 
-		// Отрисовываем график (передаем данные только если виджет существует)
 		if (currentWidget) {
 			drawAnalysisGraph(aAnalysis, displayProperty);
 		}
@@ -876,46 +877,16 @@ export class AnalysisSteps {
 	/**
 	 * 
 	 * @param {object} paramsNew Analysis parameters.
-	 * @param {array} [paramsNew.angles] An array of points for analysis on a hypersphere in polar coordinates. Every item of the array is a point as object with three angles:
-	 * <pre>
-	 *    latitude. From -π/2 to π/2.
-	 *    longitude. From -π to π.
-	 *    altitude. Angle in the 4th dimension. From 0 to π.
-	 * </pre>
-	 * @param {Float32BufferAttribute} [paramsNew.position] An array of points for analysis on a hypersphere in cartesian coordinates. See [Float32BufferAttribute]{@link https://threejs.org/docs/#Float32BufferAttribute}.
-	 * Have effect only if <b>paramsNew.angles</b> is not defined.
+	 * @param {array} [paramsNew.angles] An array of points for analysis on a hypersphere in polar coordinates.
+	 * @param {Float32BufferAttribute} [paramsNew.position] An array of points for analysis on a hypersphere in cartesian coordinates.
 	 * @param {number} [paramsNew.pointsPerStep = params.angles.length] The number of points that will be analyzed during one analysis step.
 	 * @param {string} [paramsNew.displayProperty = 'totalEnergy'] analysis result type.
-	 * <pre>
-	 * <b>'totalEnergy'</b> Total energy is the cumulative potential electrostatic energy of a system of interacting charges (points).
-	 * Calculated via Coulomb's law as the sum of reciprocal distances (1/d) between all pairs of vertices,
-	 * it acts as the primary metric for algorithmic convergence, reaching its theoretical minimum when points achieve optimal,
-	 * uniform distribution across the hypersphere.
-	 *   Increasing from step to step:
-	 * 	  Error in the force signs (points attract instead of repel) or the integration step (dt) is too large.
-	 *   TotalEnergy goes to infinity or is NaN:
-	 * 	  Error in the calculation code, causing two points to occupy exactly the same coordinates (division by zero).
-	 * 	  Check the random number generator or initialization.`, 'totalEnergy'
-	 * <b>'deviationPercent'</b> The variation coefficient (deviationPercent) is high (e.g., > 15-20%):
-	 * 	  The points are distributed randomly, and the lattice has not formed.
-	 * 	  Most likely, the repulsive forces are not receiving enough iterations,
-	 * 	  or the velocity damping coefficient (DAMPING) is damping the motion too early.
-	 *   deviationPercent approaches 0% (e.g., < 2-5%):
-	 * 	  The algorithm is working perfectly, the structure is symmetrical, and the points are distributed as evenly as possible.
-	 * <b>'meanD'</b> Average distance to nearest neighbor. Should gradually increase until it stabilizes.
-	 * <b>'stdDev'</b> Standard Deviation (SD): With each step of the algorithm, the stdDev value should tend to zero.
-	 * <b>'variance'</b> Variance (mean squared deviation). A measure of how widely the distances to neighbors
-	 * of different points are "dispersed" relative
-	 * to the calculated mean value (meanD).
-	 * </pre>
 	 * @param {HTMLElement} [paramsNew.elSecond] An element on a web page in front of which a canvas with a graph of the analysis results will be displayed.
 	 * @param {HTMLElement} [paramsNew.elStep=document.getElementById('analysisVerticeStep')] An element on a webpage for displaying of the current point for analysis.
 	 * @param {string} [paramsNew.stepFormat] Format of the text for displaying of current step in the <b>paramsNew.elStep</b> element.
-	 * For example: 'Step: %step / 500'. '%step' will be replaced to current step.
-	 * Have effect only if <b>paramsNew.elStep</b> is defined.
-	 * @param {object} [paramsNew.tomsonAnalysisRes] The object to which the analysis results will be copied. See <b>paramsNew.displayProperty</b> for details.
+	 * @param {object} [paramsNew.tomsonAnalysisRes] The object to which the analysis results will be copied.
 	*/
-	constructor(paramsNew){
+	constructor(paramsNew) {
 		params = paramsNew;
 		if (params.pointsPerStep === undefined) params.pointsPerStep = params.angles.length;
 		if (params.pointsPerStep === undefined) console.error(sThomsonAnalysisHSphere + ' AnalysisSteps: Invalid paramsNew.pointsPerStep = ' + paramsNew.pointsPerStep);
@@ -927,16 +898,12 @@ export class AnalysisSteps {
 		 */
 		this.step = async () => {
 			const currentWidget = document.getElementById(analysisGraphWidgetId);
-			// Проверяем в начале каждого шага: если пользователь закрыл виджет,
-			// вычисления могут продолжаться, но график мы больше не рисуем
 			if (!currentWidget) {
-				// Если вы хотите полностью остановить анализ при закрытии графика, раскомментируйте строку ниже:
-				// break; 
+				// break;
 			}
 
 			aAnalysis.push(await evaluateDistribution());
 
-			// Отрисовываем график (передаем данные только если виджет существует)
 			if (currentWidget) {
 				drawAnalysisGraph(aAnalysis, displayProperty);
 			}
