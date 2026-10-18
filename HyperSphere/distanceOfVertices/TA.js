@@ -19,7 +19,7 @@ import * as utils from '../utilsHSphere.js'
 import three from '../../three.js'
 import { dat } from '../../dat/dat.module.js';
 // === WebGPU acceleration (added) ===
-import * as ThomsonAnalysisGPU from './TAGPU.js';
+import * as ThomsonAnalysisGPU from './TAClient.js';
 // === end ===
 
 let params, currentStep,
@@ -287,7 +287,7 @@ export async function graphFolderChild(folder, classSettings, textController, ti
 	// ==== Решаем: CPU или GPU ====
 	let gpuOK = false;
 	if (!useCPU) {
-		gpuOK = await ThomsonAnalysisGPU.isAvailable();
+		gpuOK = await ThomsonAnalysisGPU.isAvailable(classSettings.compute.config.serverAddress);
 	}
 	// ====
 
@@ -326,6 +326,7 @@ export async function graphFolderChild(folder, classSettings, textController, ti
 				console.log(sThomsonAnalysisHSphere + `: CPU elapsed = ${elapsed.toFixed(3)} ms`);
 			}
 		} else {
+/*			
 			// ============ GPU-путь ============
 			ThomsonAnalysisGPU.setRTimeResolver((timeId) => classSettings.overriddenProperties.rTime(timeId));
 
@@ -367,6 +368,7 @@ export async function graphFolderChild(folder, classSettings, textController, ti
 					console.log(sThomsonAnalysisHSphere + `: CPU elapsed (fallback) = ${elapsed.toFixed(3)} ms`);
 				}
 			}
+*/			
 		}
 	}
 
