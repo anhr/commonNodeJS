@@ -283,7 +283,7 @@ class WebGPUClient {
 							default: this.onmessageString(data, hyperSphere);
 						}
 					} else if (typeof event.data === 'object') {
-						this.onmessageObject();
+						this.onmessageObject(event, config, settings);
 /*						
 						//Vertices positions
 
