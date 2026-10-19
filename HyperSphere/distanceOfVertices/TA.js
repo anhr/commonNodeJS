@@ -18,9 +18,8 @@
 import * as utils from '../utilsHSphere.js'
 import three from '../../three.js'
 import { dat } from '../../dat/dat.module.js';
-// === WebGPU acceleration (added) ===
-import * as ThomsonAnalysisGPU from './TAClient.js';
-// === end ===
+//import * as ThomsonAnalysisGPU from './TAClient.js';
+import WebGPUThomsonEvaluator from './TAClient.js';
 
 let params, currentStep,
 	totalEnergyMin;//минимум потенциальной энергии. Если реальная энергия totalEnergy существенно выше totalEnergyMin (на 5-10% и более) и график перестал падать — вы гарантированно застряли в локальном минимуме, и итерационный процесс работает неэффективно.
@@ -284,6 +283,35 @@ export async function graphFolderChild(folder, classSettings, textController, ti
 	const debug = classSettings.debug != false; // включено, если debug не false и не undefined
 	// ====
 
+	const computeCPU = async () => {
+		// ============ CPU-путь ============
+		const reason = useCPU ? 'useCPU=true' : 'WebGPU unavailable';
+		console.log(sThomsonAnalysisHSphere + ': CPU evaluation (' + reason + ')');
+	
+		if (debug) classSettings.debug.timestamp = window.performance.now();
+	
+		for (let timeId = 0; timeId < marks; timeId++) {
+			if (aTomsonAnalysisRes[timeId] != undefined) continue;
+			aTomsonAnalysisRes[timeId] = {};
+			await evaluateDistribution(timeId, {
+				pointsPerStep: anglesLength,
+				position: position,
+				elStep: textController,
+				stepFormat: 'Step: %step / ' + anglesLength,
+				tomsonAnalysisRes: aTomsonAnalysisRes[timeId],
+				r: classSettings.overriddenProperties.rTime(timeId),
+			});
+			if (timeIdController) timeIdController.name(sTimeID + timeId + ' / ' + marks);
+		}
+	
+		if (debug) {
+			const elapsed = window.performance.now() - classSettings.debug.timestamp;
+			console.log(sThomsonAnalysisHSphere + `: CPU elapsed = ${elapsed.toFixed(3)} ms`);
+		}
+	}
+	new WebGPUThomsonEvaluator().compute(computeCPU, classSettings.compute, classSettings.settings);
+
+/*	
 	// ==== Решаем: CPU или GPU ====
 	let gpuOK = false;
 	if (!useCPU) {
@@ -326,7 +354,7 @@ export async function graphFolderChild(folder, classSettings, textController, ti
 				console.log(sThomsonAnalysisHSphere + `: CPU elapsed = ${elapsed.toFixed(3)} ms`);
 			}
 		} else {
-/*			
+			
 			// ============ GPU-путь ============
 			ThomsonAnalysisGPU.setRTimeResolver((timeId) => classSettings.overriddenProperties.rTime(timeId));
 
@@ -368,10 +396,11 @@ export async function graphFolderChild(folder, classSettings, textController, ti
 					console.log(sThomsonAnalysisHSphere + `: CPU elapsed (fallback) = ${elapsed.toFixed(3)} ms`);
 				}
 			}
-*/			
 		}
 	}
-
+*/
+console.error('Under constraction')
+return;
 	// ==== Отладочный вывод aTomsonAnalysisRes построчно ====
 	if (classSettings.debug && classSettings.debug.log) {
 		console.log('=== aTomsonAnalysisRes (per timeId) ===');

@@ -31,7 +31,8 @@ class WebGPUClient {
 	constructor() {
 
 //		let socket;
-		let elRow;//окно статуса выполнения вычислений на GPU
+		let elRow,//окно статуса выполнения вычислений на GPU
+			stateText;
 //			updateDisplay, setStatus, start, currentStep;
 /*
 		this.isDataReady//true: вычисление точек на GPU успешно завершено.
@@ -136,6 +137,7 @@ class WebGPUClient {
 					const stepCounter = elTitle.querySelector("#stepCounter");
 					const radVal = elTitle.querySelector("#radVal");
 					const timeResult = elTitle.querySelector("#timeResult");
+					stateText = elTitle.querySelector("#stateText");
 					this.start = performance.now();
 
 					elTitle.style.color = 'black';
