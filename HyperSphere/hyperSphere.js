@@ -2679,7 +2679,7 @@ this.object = () => {
 				}
 */
 				
-				if (config.DAMPING === undefined) config.DAMPING = 0.95; // Демпфирование движения
+//				if (config.DAMPING === undefined) config.DAMPING = 0.95; // Демпфирование движения
 				
 				//Hyperbola parametr. See RandomVertice.calculateHyperbola
 				if (config.p === undefined) {
