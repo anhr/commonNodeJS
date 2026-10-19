@@ -31,7 +31,7 @@ class WebGPUClient {
 	constructor() {
 
 //		let socket;
-//			elRow,//окно статуса выполнения вычислений на GPU
+		let elRow;//окно статуса выполнения вычислений на GPU
 //			updateDisplay, setStatus, start, currentStep;
 /*
 		this.isDataReady//true: вычисление точек на GPU успешно завершено.
@@ -49,7 +49,7 @@ class WebGPUClient {
 			//See D:\My documents\MyProjects\webgl\three.js\GitHub\universe\main\hyperSphere\UniverseSocketServer\Program.cs
 			switch (code) {
 				case 0://error
-					socket.close();
+					this.socket.close();
 					break;
 				case 1://Ready to work.
 					color = "black";
@@ -73,8 +73,8 @@ class WebGPUClient {
 			this.isDataReady = false;
 			if (!this.socket) {
 				this.setElRow(config, settings);
-/*				
 				if (!elRow) {
+/*
 					setStatus = (message, code = 1) => {
 						let color = "red", display = '';
 						//See D:\My documents\MyProjects\webgl\three.js\GitHub\universe\main\hyperSphere\UniverseSocketServer\Program.cs
@@ -96,12 +96,14 @@ class WebGPUClient {
 						btnCPU.style.display = display;
 						btnClose.style.display = display;
 					}
+*/
 
 					//progress window
-					let cProgress, elProgress, elTitle, elParent = settings.options.renderer.domElement.parentElement;
+					let //cProgress,
+						elProgress, elTitle, elParent = settings.options.renderer.domElement.parentElement;
 					elProgress = document.createElement('div');
-					cProgress = document.createElement('input'),
-						elProgress.style.backgroundColor = 'white';
+					//cProgress = document.createElement('input');
+					elProgress.style.backgroundColor = 'white';
 					elProgress.style.margin = '2px';
 					elProgress.style.padding = '2px';
 
@@ -133,18 +135,21 @@ class WebGPUClient {
 					const stepCounter = elTitle.querySelector("#stepCounter");
 					const radVal = elTitle.querySelector("#radVal");
 					const timeResult = elTitle.querySelector("#timeResult");
-					start = performance.now();
+					this.start = performance.now();
 
 					elTitle.style.color = 'black';
 					elProgress.appendChild(elTitle);
 
 					if (settings.min === undefined) settings.min = 0;
+					this.createCProgress(elProgress, config);
+/*
 					cProgress.min = 0;
 					cProgress.max = config.totalSteps - 1;
 					cProgress.value = 0;
 					cProgress.type = "range";
 					cProgress.disabled = true;
 					elProgress.appendChild(cProgress);
+*/
 
 					let elcontainer;
 					const containerName = 'ProgressContainer';
@@ -174,18 +179,19 @@ class WebGPUClient {
 					elcontainer.appendChild(elRow);
 
 					//Progress window end
-
-					updateDisplay = () => {
+/*
+					this.updateDisplay = () => {
 						stepCounter.innerText = currentStep;
 						radVal.innerText = radiusPrev.toFixed(2);
 						timeResult.innerText = `${((performance.now() - start) / 1000).toFixed(3)}`;
 						cProgress.value = currentStep;
 					}
+*/					
 				}
 
-				currentStep = 1;
+//				currentStep = 1;
+				this.setCurrentStep(1);
 				let radiusPrev = config.baseRadius;
-*/				
 
 				this.socket = new WebSocket(config.serverAddress);
 				const socket = this.socket;
@@ -193,7 +199,7 @@ class WebGPUClient {
 
 				// 1. Обработка ошибок (неверный адрес, отказ в соединении)
 				socket.onerror = (error) => {
-					setStatus('ERROR: Server unreachable or incorrect address. <a href="https://github.com/anhr/universe/blob/main/hyperSphere/HUniverseEngine.md" target="_blank" style="color: blue;">Help</a>.', 0);
+					this.setStatus('ERROR: Server unreachable or incorrect address. <a href="https://github.com/anhr/universe/blob/main/hyperSphere/HUniverseEngine.md" target="_blank" style="color: blue;">Help</a>.', 0);
 					btnCPU.style.display = "";//сделать кнопку видимой
 					btnClose.style.display = "";//сделать кнопку видимой
 				};
