@@ -69,7 +69,8 @@ class WebGPUClient {
 			btnClose.style.display = display;
 		}
 		
-		this.compute = (computeCPU, config, settings, hyperSphere) => {
+		this.compute = (computeCPU, compute, settings, hyperSphere) => {
+			const config = compute.config;
 			this.isDataReady = false;
 			if (!this.socket) {
 				this.setElRow(config, settings);
@@ -193,7 +194,7 @@ class WebGPUClient {
 				this.setCurrentStep(1);
 				let radiusPrev = config.baseRadius;
 
-				this.socket = new WebSocket(config.serverAddress);
+				this.socket = new WebSocket(compute.serverAddress);
 				const socket = this.socket;
 				socket.binaryType = 'arraybuffer';
 
