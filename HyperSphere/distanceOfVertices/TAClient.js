@@ -26,6 +26,9 @@ class WebGPUThomsonEvaluator extends WebGPUClient {
 
     constructor() {
 		super();
+	this.webGPUPage = () => { return '<a href="../webGPUTA.html" target="_blank" style="color: blue;">Thomson Analysis Engine</a>'; }
+	this.pageType = () => { return 'mainThomsonAnalysis'; }
+    this.name = () => { return ' Thomson Analysis' }
     this.setElRow = () => {}
     this.createCProgress = () => {}
     this.setCurrentStep = () => {}

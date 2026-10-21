@@ -32,7 +32,7 @@ class WebGPUClient {
 
 //		let socket;
 		let elRow,//окно статуса выполнения вычислений на GPU
-			stateText;
+			stateText, btnCPU, btnClose;
 //			updateDisplay, setStatus, start, currentStep;
 /*
 		this.isDataReady//true: вычисление точек на GPU успешно завершено.
@@ -57,7 +57,8 @@ class WebGPUClient {
 					display = 'none';
 					break;
 				case 2://Waiting for Hypersphere Universe Engine...
-					message += ' Please open <a href="../webGPUHUniverse.html" target="_blank" style="color: blue;">Hypersphere Universe Engine</a> page'
+//					message += ' Please open <a href="../webGPUHUniverse.html" target="_blank" style="color: blue;">Hypersphere Universe Engine</a> page'
+					message += ' Please open ' + this.webGPUPage() + ' page'
 					break;
 				case 3://цвет задан в аргметах функции
 					display = btnCPU.style.display;//Не менять стиль btnCPU и btnClose
@@ -110,7 +111,7 @@ class WebGPUClient {
 					elProgress.style.padding = '2px';
 
 					elTitle = document.createElement('div');
-					elTitle.innerHTML = 'GPU<div id="socket-status">'
+					elTitle.innerHTML = 'GPU' + (this.name ? this.name() : '') + '<div id="socket-status">'
 						+ '<strong>Server Address:</strong> <span>' + config.serverAddress + '</span><br>'
 						+ '<strong>Socket Status:</strong> <span id="stateText">Waiting for connection to server...</span><br>'
 						+ '<strong>Step:</strong> <span id="stepCounter">0</span> / <span>' + config.totalSteps + '</span> | R: <span id="radVal">' + config.baseRadius + '</span><br>'
@@ -119,7 +120,7 @@ class WebGPUClient {
 						+ '<button type="button" id="btnClose" title="Close this window" style="display: none;">Close</button>'
 						+ '</div>';
 
-					const btnCPU = elTitle.querySelector("#btnCPU");
+					btnCPU = elTitle.querySelector("#btnCPU");
 					btnCPU.onclick = () => {
 						elcontainer.remove();
 						if (socket.readyState === WebSocket.OPEN) socket.close();
@@ -127,7 +128,7 @@ class WebGPUClient {
 						computeCPU();
 					}
 
-					const btnClose = elTitle.querySelector("#btnClose");
+					btnClose = elTitle.querySelector("#btnClose");
 					btnClose.onclick = () => {
 						elcontainer.remove();
 						if (socket.readyState === WebSocket.OPEN) socket.close();
@@ -196,13 +197,13 @@ class WebGPUClient {
 				this.setCurrentStep(1);
 				let radiusPrev = config.baseRadius;
 
-				this.socket = new WebSocket(compute.serverAddress);
+				this.socket = new WebSocket(compute.serverAddress + '?type=' + this.pageType());
 				const socket = this.socket;
 				socket.binaryType = 'arraybuffer';
 
 				// 1. Обработка ошибок (неверный адрес, отказ в соединении)
 				socket.onerror = (error) => {
-					this.setStatus('ERROR: Server unreachable or incorrect address. <a href="https://github.com/anhr/universe/blob/main/hyperSphere/HUniverseEngine.md" target="_blank" style="color: blue;">Help</a>.', 0);
+					this.setStatus('ERROR: Server unreachable or incorrect <a href="' + error.currentTarget.url + '" target="_blank" style="color: blue;">address</a>. <a href="https://github.com/anhr/universe/blob/main/hyperSphere/HUniverseEngine.md" target="_blank" style="color: blue;">Help</a>.', 0);
 					btnCPU.style.display = "";//сделать кнопку видимой
 					btnClose.style.display = "";//сделать кнопку видимой
 				};
@@ -238,6 +239,7 @@ class WebGPUClient {
 							const sMessage = `The connection was closed.` + error
 
 							this.setStatus(sMessage, 3, "#00ffcc");
+							btnClose.style.display = '';//видимая
 /*							
 							stateText.innerText = sMessage;//"СВЯЗЬ ПРЕРВАНА (Сервер упал или ошибка сети).";
 							stateText.style.color = "#00ffcc";
