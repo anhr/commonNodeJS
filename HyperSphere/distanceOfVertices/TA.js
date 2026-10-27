@@ -310,11 +310,15 @@ export async function graphFolderChild(folder, classSettings, textController, ti
 		}
 	}
 	new WebGPUThomsonEvaluator().compute(computeCPU,// classSettings.compute,
-										 {
-											 N: anglesLength * marks,
-											 marks: marks,
-										 }
-										 classSettings.settings);
+		{
+			config : {
+				pointsPerStep: anglesLength,//Количество точек для шага проигрывателя.
+				totalSteps: marks,//Количество шагов проигрывателя.
+				type: "START_COMPUTE",
+			},
+			serverAddress: classSettings.compute.serverAddress,
+		},
+		classSettings.settings);
 
 /*	
 	// ==== Решаем: CPU или GPU ====
