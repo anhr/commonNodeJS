@@ -309,7 +309,12 @@ export async function graphFolderChild(folder, classSettings, textController, ti
 			console.log(sThomsonAnalysisHSphere + `: CPU elapsed = ${elapsed.toFixed(3)} ms`);
 		}
 	}
-	new WebGPUThomsonEvaluator().compute(computeCPU, classSettings.compute, classSettings.settings);
+	new WebGPUThomsonEvaluator().compute(computeCPU,// classSettings.compute,
+										 {
+											 N: anglesLength * marks,
+											 marks: marks,
+										 }
+										 classSettings.settings);
 
 /*	
 	// ==== Решаем: CPU или GPU ====
