@@ -2670,6 +2670,7 @@ this.object = () => {
 				if (compute.isUseCPU === undefined) compute.isUseCPU = false;
 				compute.config ||= {};
 				const config = compute.config;
+				if (config.ETA_0 === undefined) config.ETA_0 = 0.01;
 				config.type ||= 'START_COMPUTE';
 				config.pointsPerStep = settings.object.geometry.angles.length;
 /*deprecated
@@ -2699,7 +2700,7 @@ this.object = () => {
 				config.radiusMax = playerOptions.max;
 				config.totalSteps = playerOptions.marks;
 				
-				config.pointsPerStep = settings.object.geometry.angles.length;
+//				config.pointsPerStep = settings.object.geometry.angles.length;
 
 				//Select one:
 				

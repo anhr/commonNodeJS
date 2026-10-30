@@ -23,7 +23,6 @@ import RandomVertice from '../RandomVertice/randomVerticeHSphere.js';
 const averageVertices = (data) => {
 	let velocities;
 	averageVerticesBase(data, {
-
 //		setVelocities: (velocitiesNew) => { velocities = velocitiesNew; },
 		/**
 		 * Извлечение одной точки из массива по её индексу
