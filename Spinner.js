@@ -1,18 +1,18 @@
 /**
  * @module Spinner
- * @description Универсальный оверлей с крутящимся колесом.
+ * @description Универсальный оверлей с крутящимся колесом и счётчиком секунд в центре.
  * Используется для индикации длительных операций (вычисления, загрузка).
- * <pre>
+ *
  * Поддерживает счётчик ссылок: если несколько операций одновременно
  * запросили показ спиннера, он скроется только после последней.
+ * Счётчик секунд стартует при первом show() и останавливается при последнем hide().
  *
  * Использование:
  *   import * as Spinner from './Spinner.js';
  *   Spinner.show();
  *   try { ... } finally { Spinner.hide(); }
- * </pre>
+ *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
- * @author [Deepseek]{@link https://chat.deepseek.com/share/krcy9s4jd5nd9usoch}
  *
  * @copyright 2011 Data Arts Team, Google Creative Lab
  *
@@ -25,8 +25,11 @@
 
 const SPINNER_ID = 'appSpinner';
 const SPINNER_STYLE_ID = 'appSpinnerStyle';
+const SPINNER_COUNTER_CLASS = 'spinner-counter';
 
 let refCount = 0;
+let timerId = null;
+let seconds = 0;
 
 function ensureSpinnerStyle() {
     if (document.getElementById(SPINNER_STYLE_ID)) return;
@@ -45,6 +48,7 @@ function ensureSpinnerStyle() {
             pointer-events: all;
         }
         #${SPINNER_ID} .spinner-wheel {
+            position: relative;
             width: 64px;
             height: 64px;
             border: 6px solid rgba(255, 255, 255, 0.25);
@@ -52,16 +56,50 @@ function ensureSpinnerStyle() {
             border-radius: 50%;
             animation: app-spin 0.9s linear infinite;
             box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #${SPINNER_ID} .${SPINNER_COUNTER_CLASS} {
+            /* Компенсируем вращение: счётчик не должен крутиться вместе с колесом */
+            animation: app-counter-anti-spin 0.9s linear infinite;
+            color: #fff;
+            font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 1;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+            pointer-events: none;
+            user-select: none;
         }
         @keyframes app-spin {
             to { transform: rotate(360deg); }
+        }
+        @keyframes app-counter-anti-spin {
+            to { transform: rotate(-360deg); }
         }
     `;
     document.head.appendChild(style);
 }
 
+function startTimer(counterEl) {
+    seconds = 0;
+    counterEl.textContent = '0';
+    timerId = setInterval(() => {
+        seconds++;
+        counterEl.textContent = String(seconds);
+    }, 1000);
+}
+
+function stopTimer() {
+    if (timerId !== null) {
+        clearInterval(timerId);
+        timerId = null;
+    }
+}
+
 /**
- * Показывает оверлей с крутящимся колесом.
+ * Показывает оверлей с крутящимся колесом и счётчиком секунд.
  * Увеличивает внутренний счётчик ссылок.
  */
 export function show() {
@@ -76,8 +114,14 @@ export function show() {
     const wheel = document.createElement('div');
     wheel.className = 'spinner-wheel';
 
+    const counter = document.createElement('span');
+    counter.className = SPINNER_COUNTER_CLASS;
+
+    wheel.appendChild(counter);
     overlay.appendChild(wheel);
     document.body.appendChild(overlay);
+
+    startTimer(counter);
 }
 
 /**
@@ -88,6 +132,8 @@ export function hide() {
     if (typeof document === 'undefined') return;
     refCount = Math.max(0, refCount - 1);
     if (refCount > 0) return;
+
+    stopTimer();
 
     const overlay = document.getElementById(SPINNER_ID);
     if (overlay) overlay.remove();
@@ -100,6 +146,7 @@ export function hide() {
 export function forceHide() {
     if (typeof document === 'undefined') return;
     refCount = 0;
+    stopTimer();
     const overlay = document.getElementById(SPINNER_ID);
     if (overlay) overlay.remove();
 }
