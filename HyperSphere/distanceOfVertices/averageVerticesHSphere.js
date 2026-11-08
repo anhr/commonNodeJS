@@ -23,7 +23,6 @@ import RandomVertice from '../RandomVertice/randomVerticeHSphere.js';
 const averageVertices = (data) => {
 	let velocities;
 	averageVerticesBase(data, {
-//		setVelocities: (velocitiesNew) => { velocities = velocitiesNew; },
 		/**
 		 * Извлечение одной точки из массива по её индексу
 		 * @param {number} index интекс точки
@@ -48,23 +47,12 @@ const averageVertices = (data) => {
 		},
 		get itemSize() { return 4; },
 		velocitiesInitValues: () => { return {x: 0, y: 0, z: 0, w: 0 }; },
-/*		
-		setVelocities: (velociti, DAMPING, force) => {
-			
-			velociti.x = velociti.x * DAMPING + force.x;
-			velociti.y = velociti.y * DAMPING + force.y;
-			velociti.z = velociti.z * DAMPING + force.z;
-			velociti.w = velociti.w * DAMPING + force.w;
-			
-		},
-*/		
 		anglesInitValues: [0, 0, 0],
 		utils: utils,
 		RandomVertice: RandomVertice,
 
 		force: () => { return {x: 0, y: 0, z: 0, w: 0 }; },
 		setForse: (forces, d, m, iStride) => {
-//			force.x += d.x * m; force.y += d.y * m; force.z += d.z * m; force.w += d.w * m;
 			forces[iStride] += d.x * m;
 			forces[iStride + 1] += d.y * m;
 			forces[iStride + 2] += d.z * m;
@@ -98,20 +86,11 @@ const averageVertices = (data) => {
 			//Ее расстояние от центра координат перестает быть равным радиусу R.
 			//Без этой операции точки при каждом шаге итерации постепенно «разлетались» бы от центра, увеличивая свой радиус и нарушая геометрию задачи.
 			//Ту же самую работу можно выполнить, сделав преобразование в полярную систему координат и обратно, но это займет больше времени и уменьшается точность на полюсах.
-//data.this.getPoint(1, 2)
 			pDest.x = (updated.x / mag) * nextR;
 			pDest.y = (updated.y / mag) * nextR;
 			pDest.z = (updated.z / mag) * nextR;
 			pDest.w = (updated.w / mag) * nextR;
 			verify(pDest, nextR);
-/*			
-			const overriddenProperties = data.this.classSettings.overriddenProperties;
-			const cartesian = overriddenProperties.getVerticePosition(i, overriddenProperties.getPositionTimeId(data.timeId));
-			cartesian.x = (updated.x / mag) * nextR;
-			cartesian.y = (updated.y / mag) * nextR;
-			cartesian.z = (updated.z / mag) * nextR;
-			cartesian.w = (updated.w / mag) * nextR;
-*/			
 		},
 		
 	});

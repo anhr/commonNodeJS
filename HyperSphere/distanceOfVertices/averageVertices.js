@@ -73,13 +73,11 @@ const averageVertices = (data, overrides) => {
 	function getPoint(i, timeId = data.timeId) {
 		const overriddenProperties = data.this.classSettings.overriddenProperties;
 		return overriddenProperties.getVerticePosition(i, overriddenProperties.getPositionTimeId(timeId));
-//		return overrides.getPoint(index, positionArray);
 	}
 
 	function verifyVertice(pt, targetRadius, epsilon = 1e-6) {
 		if (!settings.debug) return;
 		const dist = overrides.dist(pt);
-//			const dist = Math.hypot(pt.x, pt.y, pt.z, pt.w);
 
 		if (Math.abs(dist - targetRadius) > epsilon) {
 			console.warn(`Точка отклонилась от гиперсферы! R = ${dist}, ожидалось = ${targetRadius}`);
@@ -94,28 +92,10 @@ const averageVertices = (data, overrides) => {
 		if (!settings.debug) return;
 		for (let i = 0; i < positionBlockLength; i++) {
 			if (!verifyVertice(getPoint(i, data.timeId - 1), targetRadius)) return false;
-/*			
-			const pt = getPoint(i, data.timeId - 1);
-			const dist = overrides.dist(pt);
-//			const dist = Math.hypot(pt.x, pt.y, pt.z, pt.w);
-
-			if (Math.abs(dist - targetRadius) > epsilon) {
-				console.warn(`Точка #${i} отклонилась от гиперсферы! R = ${dist}, ожидалось = ${targetRadius}`);
-				return false;
-			}
-*/			
 		}
 		return true;
 	}
 	verifyHyperSphere(classSettings.overriddenProperties.rTime(data.timeId - 1));
-/*сейчас цвета устанавливаются в universe.js
-	const colors = [];
-	
-	for (let timeId = 1; timeId < options.playerOptions.marks; timeId++) {
-		const verticeColor = settings.object.color(timeId), wScale = settings.options.scales.w;
-		colors.push(settings.options.palette.toColor(verticeColor, wScale.min, wScale.max));
-	}
-*/	
 
 	const THREE = window.__myThree__.three.THREE;
 
@@ -144,9 +124,6 @@ const averageVertices = (data, overrides) => {
 
 	// --- Итерационный процесс движения точек ---
 	function iterationStep() {
-
-//		const anglesTemp = new Array(angles.length).fill(null).map(() => (overrides.anglesInitValues));
-		
 		let timestamp = classSettings.debug ? window.performance.now() : undefined;
 
 		// Для каждой пары точек
@@ -154,10 +131,6 @@ const averageVertices = (data, overrides) => {
 		const userData = settings.bufferGeometry.userData;
 		
 		// 1. Вычисляем новый радиус на текущем шаге (от 0.1 до 1.0)
-/*		
-		const nextR = 0.1 + (1.0 - 0.1) * (step / totalSteps);
-		const rRatio = nextR / currentR; // Коэффициент масштабирования пространства
-*/
 		const currentR = classSettings.overriddenProperties.rTime(data.timeId - 1);
 		const nextR = classSettings.overriddenProperties.rTime();
 		const rRatio = nextR / currentR; // Коэффициент масштабирования пространства
@@ -168,7 +141,6 @@ const averageVertices = (data, overrides) => {
 		}
 
 		// Динамический шаг ETA
-//		const eta = (config.ETA_0 != undefined ? config.ETA_0 : 0.01) * 
 		const eta = config.ETA_0 * 
 			Math.pow(_this.classSettings.overriddenProperties.rTime(_this.classSettings.settings.bufferGeometry.userData.timeId - 1), 3);
 		forces.fill(0); // Сброс сил перед новым шагом
@@ -183,14 +155,9 @@ const averageVertices = (data, overrides) => {
 				
 				if (i === j) continue;
 				const pj = settings.overriddenProperties.position(position, j, userData);
-//				const angles2 = utils.cartesianToPolar(p2);
 
 				// Вектор от i к j
 				let d = overrides.d(pi, pj);//{ return {x: p1.x - p2.x, y: p1.y - p2.y, z: p1.z - p2.z, w: p1.w - p2.w} },
-/*
-				const d2 = overrides.d2(d);
-				let dist = Math.sqrt(d2);
-*/
 				if (config.RANDOM_POINTS != 0) {
 					//вычисляем случайную точку
 					const arc = π - hyperbola((dist / classSettings.overriddenProperties.r(settings.bufferGeometry.userData.timeId - 1) / 2) * π);
@@ -207,10 +174,6 @@ const averageVertices = (data, overrides) => {
 	
 					// Вектор от i к j
 					d = overrides.d(pi, noisej);//{ return {x: p1.x - p2.x, y: p1.y - p2.y, z: p1.z - p2.z, w: p1.w - p2.w} },
-/*
-					const d2 = overrides.d2(d);
-					dist = Math.sqrt(d2);
-*/					
 				}
 				const d2 = overrides.d2(d);//{ return d.x * d.x + d.y * d.y + d.z * d.z + d.w * d.w },
 				const dist = Math.sqrt(d2);
@@ -222,7 +185,6 @@ const averageVertices = (data, overrides) => {
 				}
 				
 				// Сила обратно пропорциональна расстоянию
-//				const m = config.REPULSION_STRENGTH / (d2 * dist);
 				const m = 1 / (d2 * dist);
 
 				// Применяем силу к точке i (отталкивание от j)
@@ -233,17 +195,12 @@ const averageVertices = (data, overrides) => {
 
 			}
 
-//			overrides.setVelocities(forces[i], config.DAMPING, force);
-			
-//			anglesTemp[i] = utils.cartesianToPolar(overrides.vertice(p1, forces[i]));
-			
 			i += 1;
 			if (i >= angles.length) {
 
 				progressBar.remove();
 
 				// Применяем силы к точкам
-//				const color = colors[data.timeId - 1];
 				//console.log('timeId = ' + data.timeId + ', ', color);
 				// 3. Обновление скоростей и позиций in-place прямо в глобальном positionArray
 				for (let i = 0; i < positionBlockLength; i++) {
@@ -251,35 +208,12 @@ const averageVertices = (data, overrides) => {
 					//устанавливаем новую позицию вершины без преобразования ее в полярную систему коодинат.
 					//Это не вызывает накопление погрешности, потому что в overrides.forceVertice используется нормализация вектора и его проекции обратно на гиперсферу радиусом R.
 					overrides.forceVertice(getPoint(i, data.timeId - 1), getPoint(i), getForce(i), eta, getVelocity(i), classSettings.compute.config.BETA, verifyVertice);
-//					Player.setColorAttribute(settings.bufferGeometry.attributes, i + positionBlockLength * data.timeId, color);
-/*					
-console.warn('Under constraction')						
-data.this.setPositionAttributeFromPoint(i, 
-overrides.forceVertice(settings.overriddenProperties.position(position, i, userData), forces[i], eta, velocities[i], classSettings.compute.config.BETA, i),
-data.timeId
-);
-*/
-/*
-					const pos = settings.overriddenProperties.position(position, i, userData);
-					const force = forces[i];
-					const vertice = utils.cartesianToPolar(overrides.forceVertice(pos, force, eta));
-					settings.overriddenProperties.editVertice(data.timeId, vertice, angles, i);
-*/	
 				}
 				const attributePosition = settings.bufferGeometry.attributes.position;
 				attributePosition.needsUpdate = true;
 				const drawRange = settings.bufferGeometry.drawRange;
 				data.this.setVerticesRange(drawRange.start, attributePosition.count - drawRange.start);
-/*					
-				if ((drawRange.count === Infinity) || (((drawRange.start + drawRange.count) * ((settings.bufferGeometry.index === null) ? itemSize : 1)) < positionId)){
-	
-					this.setVerticesRange(drawRange.start, (positionId + 1) / itemSize - drawRange.start);
-					if (!Number.isInteger(drawRange.count) && (drawRange.count != Infinity)) console.error(sMyObject + '.setPositionAttributeFromPoint failed. Invalid drawRange.count = ' + drawRange.count);
-	
-				}
-*/					
 				if (classSettings.debug) classSettings.debug.logTimestamp('Play step. Average vertices. ', timestamp);
-//				if (angles.length != anglesTemp.length) console.error(sAverageVertices + ': iterationStep. angles.length != anglesTemp.length');
 				
 				const timeIdOld = settings.guiPoints ? settings.guiPoints.timeId : undefined;
 				if (settings.guiPoints) settings.guiPoints.timeId = undefined;
@@ -315,6 +249,5 @@ data.timeId
 	iterationStep();
 	
 }
-//const hyperbola = RandomVertice.calculateHyperbola(0.99);
 averageVertices.verticeProxy = (vertice) => { return vertice; }
 export default averageVertices;
