@@ -478,6 +478,45 @@
 
         <tr>
             
+                <td class="name"><code>SIGMA</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">float</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    0
+                
+                </td>
+            
+
+            <td class="description last"><pre>Width of the uncertainty cloud of each vertex, in units of the hypersphere radius R (dimensionless, SIGMA = sigma / R).Each "measurement" of a vertex position returns the stored position plus an independent, isotropic, boundedrandom offset of magnitude up to SIGMA * R. This noise regularizes the 1/r^2 Coulomb singularity of theThomson problem naturally: even if two vertices have exactly equal stored coordinates, their noisy samplesdiffer, so the repulsive force remains finite and the pair separates. At distances much larger thanSIGMA * R the noise becomes negligible and the model reduces to the ideal (deterministic) Thomson problem.Allowed range and behavior:  SIGMA = 0                  Ideal deterministic model. Noise is disabled. Exact coincidences (d = 0) are                             detected and the pair is skipped, because the repulsive force is undefined there.  0 < SIGMA < 1e-7           Below the resolution of Float32Array storage (~1.2e-7 * R). The noise is not                             representable; behavior is effectively identical to SIGMA = 0. Use Float64Array                             to study such small values.  1e-7 <= SIGMA <= 1e-2      "Almost ideal" regime: the singularity is resolved, trajectories are close to the                             ideal ones, and antipodal (N = 2) or Thomson (N > 2) configurations are reached                             essentially deterministically. Recommended for stable convergence.  1e-2 < SIGMA <= 1e-1       Visible noise regime: trajectories "jitter", the stationary state is a distribution                             around the ideal configuration with spread ~ SIGMA * R. Useful for studying the                             transition from a "smeared" point to an ideal point.  1e-1 < SIGMA <= 1           Noise comparable to the inter-vertex distance. Antipodal / Thomson configurations                             are not reached as deterministic states; the system converges to a Boltzmann-like                             distribution instead of the energy minimum.  SIGMA > 1                  Physically meaningless: the uncertainty cloud exceeds the hypersphere radius.</pre></td>
+        </tr>
+
+    
+
+        <tr>
+            
                 <td class="name"><code>p</code></td>
             
 
@@ -3182,7 +3221,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3132">line 3132</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3159">line 3159</a>
     </li></ul></dd>
     
 
@@ -3244,7 +3283,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3142">line 3142</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3169">line 3169</a>
     </li></ul></dd>
     
 
@@ -3306,7 +3345,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3127">line 3127</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3154">line 3154</a>
     </li></ul></dd>
     
 
@@ -3368,7 +3407,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3178">line 3178</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3205">line 3205</a>
     </li></ul></dd>
     
 
@@ -3430,7 +3469,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3123">line 3123</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3150">line 3150</a>
     </li></ul></dd>
     
 
@@ -3492,7 +3531,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3160">line 3160</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3187">line 3187</a>
     </li></ul></dd>
     
 
@@ -3554,7 +3593,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3449">line 3449</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3476">line 3476</a>
     </li></ul></dd>
     
 
@@ -3616,7 +3655,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3444">line 3444</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3471">line 3471</a>
     </li></ul></dd>
     
 
@@ -3696,7 +3735,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3262">line 3262</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3289">line 3289</a>
     </li></ul></dd>
     
 
@@ -3856,7 +3895,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3278">line 3278</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3305">line 3305</a>
     </li></ul></dd>
     
 
@@ -4019,7 +4058,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3299">line 3299</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3326">line 3326</a>
     </li></ul></dd>
     
 
@@ -4117,7 +4156,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line1567">line 1567</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line1593">line 1593</a>
     </li></ul></dd>
     
 
@@ -4215,7 +4254,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3195">line 3195</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3222">line 3222</a>
     </li></ul></dd>
     
 
@@ -4303,7 +4342,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3183">line 3183</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3210">line 3210</a>
     </li></ul></dd>
     
 
@@ -4721,7 +4760,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line1553">line 1553</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line1579">line 1579</a>
     </li></ul></dd>
     
 
@@ -4858,7 +4897,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3168">line 3168</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3195">line 3195</a>
     </li></ul></dd>
     
 
@@ -4995,7 +5034,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3348">line 3348</a>
+        <a href="hyperSphere.js.html">hyperSphere.js</a>, <a href="hyperSphere.js.html#line3375">line 3375</a>
     </li></ul></dd>
     
 
@@ -5057,7 +5096,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Mon Oct 12 2026 07:37:31 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sun Nov 08 2026 10:10:49 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>

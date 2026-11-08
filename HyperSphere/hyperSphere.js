@@ -130,7 +130,33 @@ class HyperSphere extends MyObject {
 	 * - BETA = 0.85–0.90: moderately strong inertia; accelerates traversal of plateaus and helps overcome local minima. 
 	 * - BETA >= 0.99: excessive inertia; points begin to oscillate indefinitely and take a long time to "build up momentum."
 	* </pre>
-	 * @param {float} [classSettings.compute.config.p=0]
+	 * @param {float} [classSettings.compute.config.SIGMA=0]
+	 * <pre>
+	 * Width of the uncertainty cloud of each vertex, in units of the hypersphere radius R (dimensionless, SIGMA = sigma / R).
+	 * Each "measurement" of a vertex position returns the stored position plus an independent, isotropic, bounded
+	 * random offset of magnitude up to SIGMA * R. This noise regularizes the 1/r^2 Coulomb singularity of the
+	 * Thomson problem naturally: even if two vertices have exactly equal stored coordinates, their noisy samples
+	 * differ, so the repulsive force remains finite and the pair separates. At distances much larger than
+	 * SIGMA * R the noise becomes negligible and the model reduces to the ideal (deterministic) Thomson problem.
+	 *
+	 * Allowed range and behavior:
+	 *   SIGMA = 0                  Ideal deterministic model. Noise is disabled. Exact coincidences (d = 0) are
+	 *                              detected and the pair is skipped, because the repulsive force is undefined there.
+	 *   0 < SIGMA < 1e-7           Below the resolution of Float32Array storage (~1.2e-7 * R). The noise is not
+	 *                              representable; behavior is effectively identical to SIGMA = 0. Use Float64Array
+	 *                              to study such small values.
+	 *   1e-7 <= SIGMA <= 1e-2      "Almost ideal" regime: the singularity is resolved, trajectories are close to the
+	 *                              ideal ones, and antipodal (N = 2) or Thomson (N > 2) configurations are reached
+	 *                              essentially deterministically. Recommended for stable convergence.
+	 *   1e-2 < SIGMA <= 1e-1       Visible noise regime: trajectories "jitter", the stationary state is a distribution
+	 *                              around the ideal configuration with spread ~ SIGMA * R. Useful for studying the
+	 *                              transition from a "smeared" point to an ideal point.
+	 *   1e-1 < SIGMA <= 1           Noise comparable to the inter-vertex distance. Antipodal / Thomson configurations
+	 *                              are not reached as deterministic states; the system converges to a Boltzmann-like
+	 *                              distribution instead of the energy minimum.
+	 *   SIGMA > 1                  Physically meaningless: the uncertainty cloud exceeds the hypersphere radius.
+	 * </pre>
+	* @param { float } [classSettings.compute.config.p = 0]
 	 * <pre>
 	 * Hyperbola parametr. See [RandomVertice.calculateHyperbola]{@link https://raw.githack.com/anhr/commonNodeJS/master/HyperSphere/RandomVertice/jsdoc/module-RandomVertice-RandomVertice.html#.calculateHyperbola}.
 	 * At each iteration step, a random offset is added after the vertex position is calculated.
