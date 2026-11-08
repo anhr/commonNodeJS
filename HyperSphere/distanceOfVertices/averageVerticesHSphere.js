@@ -1,34 +1,62 @@
 /**
  * @module averageVerticesHSphere
- * @description An iterative process known as [Thomson problem]{@link https://en.wikipedia.org/wiki/Thomson_problem} in which, at each step, all vertices gradually move toward a position in which the vertices are at the maximum distance from each other on the hypersphere.
+ * @description Thomson problem on the hypersphere with noise regularization.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
- *
  * @copyright 2011 Data Arts Team, Google Creative Lab
- *
- * @license under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
-*/
+ * @license under the Apache License, Version 2.0
+ */
 import averageVerticesBase from './averageVertices.js'
 import * as utils from '../utilsHSphere.js'
 import RandomVertice from '../RandomVertice/randomVerticeHSphere.js';
 
 /**
- * Child function to override some base functions for hypersphere. See <b>overrides</b> parameter of the base <a href="./module-averageVertices.html" target="_blank">averageVertices</a> function.
- * @param {Object} data See <b>data</b> parameter of the base <a href="./module-averageVertices.html" target="_blank">averageVertices</a>
+ * Sample a uniformly random point inside a 4D ball of radius sigma.
+ * Isotropic, bounded, independent per call. Does NOT mutate the input.
+ * @param {{x:number,y:number,z:number,w:number}} p
+ * @param {number} sigma
+ * @returns {{x:number,y:number,z:number,w:number}}
+ */
+function addNoise4D(p, sigma) {
+	if (!(sigma > 0)) return { x: p.x, y: p.y, z: p.z, w: p.w };
+
+	// Uniform in 4D ball: direction uniform on S^3, radius r = sigma * U^(1/4), U ~ U(0,1)
+	// Direction on S^3 via normalized 4D Gaussian (Box-Muller is not needed; use rejection on S^3? No—use Gaussian).
+	// Simple and robust: 4 independent standard normals, normalize.
+	const g = () => {
+		// Marsaglia polar method for standard normal (no Math.log(0) issues)
+		let u, v, s;
+		do {
+			u = 2 * Math.random() - 1;
+			v = 2 * Math.random() - 1;
+			s = u * u + v * v;
+		} while (s >= 1 || s === 0);
+		const mul = Math.sqrt(-2 * Math.log(s) / s);
+		return u * mul; // one normal; caller pairs with v*mul for another if needed
+	};
+	const nx = g(), ny = g(), nz = g(), nw = g();
+	const len = Math.hypot(nx, ny, nz, nw);
+	if (len === 0) return { x: p.x, y: p.y, z: p.z, w: p.w }; // extremely unlikely
+	const dir = { x: nx / len, y: ny / len, z: nz / len, w: nw / len };
+
+	// radius with density ∝ r^{d-1}, d=4 => r = sigma * U^{1/4}
+	const U = Math.random();
+	const r = sigma * Math.pow(U, 1 / 4);
+
+	return {
+		x: p.x + dir.x * r,
+		y: p.y + dir.y * r,
+		z: p.z + dir.z * r,
+		w: p.w + dir.w * r,
+	};
+}
+
+/**
+ * Child function to override some base functions for hypersphere.
+ * @param {Object} data See <b>data</b> parameter of the base averageVertices.
  */
 const averageVertices = (data) => {
-	let velocities;
 	averageVerticesBase(data, {
-		/**
-		 * Извлечение одной точки из массива по её индексу
-		 * @param {number} index интекс точки
-		 * @param {array} массив с точками
-		 * @returns скорость в формате x, y, z, w
-		 */
 		getPoint(index, array) {
 			const offset = index * this.itemSize;
 			return {
@@ -46,56 +74,46 @@ const averageVertices = (data) => {
 			};
 		},
 		get itemSize() { return 4; },
-		velocitiesInitValues: () => { return {x: 0, y: 0, z: 0, w: 0 }; },
+		velocitiesInitValues: () => ({ x: 0, y: 0, z: 0, w: 0 }),
 		anglesInitValues: [0, 0, 0],
 		utils: utils,
 		RandomVertice: RandomVertice,
 
-		force: () => { return {x: 0, y: 0, z: 0, w: 0 }; },
+		// NEW: noise regularization hook used by the base
+		addNoise: (p, sigma) => addNoise4D(p, sigma),
+
 		setForse: (forces, d, m, iStride) => {
 			forces[iStride] += d.x * m;
 			forces[iStride + 1] += d.y * m;
 			forces[iStride + 2] += d.z * m;
 			forces[iStride + 3] += d.w * m;
 		},
-		d: (p1, p2) => { return {x: p1.x - p2.x, y: p1.y - p2.y, z: p1.z - p2.z, w: p1.w - p2.w} },
-		d2: (d) => { return d.x * d.x + d.y * d.y + d.z * d.z + d.w * d.w },
-		dist: (pt) => { return Math.hypot(pt.x, pt.y, pt.z, pt.w); },
-		angles: (angles) => { return [angles[0], angles[1], angles[2]]; },
-		vertice: (p, velocity) => { return { x: p.x + velocity.x, y: p.y + velocity.y, z: p.z + velocity.z, w: p.w + velocity.w } },
+		d: (p1, p2) => ({ x: p1.x - p2.x, y: p1.y - p2.y, z: p1.z - p2.z, w: p1.w - p2.w }),
+		d2: (d) => d.x * d.x + d.y * d.y + d.z * d.z + d.w * d.w,
+		dist: (pt) => Math.hypot(pt.x, pt.y, pt.z, pt.w),
+		angles: (angles) => [angles[0], angles[1], angles[2]],
 		forceVertice: (pSrc, pDest, force, eta, velocity, BETA = 0.85, verify) => {
-			// Обновляем скорость v = BETA * v + eta * F
 			velocity.x = BETA * velocity.x + eta * force.x;
 			velocity.y = BETA * velocity.y + eta * force.y;
 			velocity.z = BETA * velocity.z + eta * force.z;
 			velocity.w = BETA * velocity.w + eta * force.w;
-			
-			// Смещение координаты
+
 			const updated = {
 				x: pSrc.x + velocity.x,
 				y: pSrc.y + velocity.y,
 				z: pSrc.z + velocity.z,
-				w: pSrc.w + velocity.w
+				w: pSrc.w + velocity.w,
 			};
 			const nextR = data.this.classSettings.overriddenProperties.rTime();
-
-			// Вычисление длины (модуля) 4D-вектора смещенной точки: mag = sqrt(x² + y² + z² + w²).
 			const mag = Math.hypot(updated.x, updated.y, updated.z, updated.w);
-			// Используется для нормализации вектора и его проекции обратно на гиперсферу радиусом R.
-			//вектор силы F выталкивает точку по касательной или наружу, в результате чего она сходит с поверхности гиперсферы.
-			//Ее расстояние от центра координат перестает быть равным радиусу R.
-			//Без этой операции точки при каждом шаге итерации постепенно «разлетались» бы от центра, увеличивая свой радиус и нарушая геометрию задачи.
-			//Ту же самую работу можно выполнить, сделав преобразование в полярную систему координат и обратно, но это займет больше времени и уменьшается точность на полюсах.
 			pDest.x = (updated.x / mag) * nextR;
 			pDest.y = (updated.y / mag) * nextR;
 			pDest.z = (updated.z / mag) * nextR;
 			pDest.w = (updated.w / mag) * nextR;
 			verify(pDest, nextR);
 		},
-		
 	});
-	
 }
 averageVertices.verticeProxy = averageVerticesBase.verticeProxy;
-averageVertices.webGPU = { compute: (compute) => { compute() }};
+averageVertices.webGPU = { compute: (compute) => { compute() } }; // no-op stub
 export default averageVertices;
