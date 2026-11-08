@@ -54,8 +54,12 @@
 			const anglesCount = 1000, angle = Math.PI * 2 / anglesCount, angles = [];
 			for (let angleId = 0; angleId < anglesCount; angleId++) angles.push([angle * angleId, angle * angleId * angleId, angle * angleId * angleId * angleId]);
 			*/
+
+			const classSettings = HSphereParams.classSettings;
+			classSettings.projectParams = classSettings.projectParams || {};
+			classSettings.projectParams.scene = scene;
 			
-			new HyperSphere3D(options, HSphereParams.classSettings);
+			new HyperSphere3D(options, classSettings);
 
 		}, {
 
