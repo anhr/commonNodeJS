@@ -580,12 +580,15 @@ class HyperSphere extends MyObject {
 	
 					const verticeId = parseInt(name);
 					if (!isNaN(verticeId)) {
-	
+						const position = settings.bufferGeometry.userData.position;
 						if (verticeId >= angles.length) {
-	
-							console.error(sHyperSphere + ': get vertice angles failed! verticeId = ' + verticeId + ' is great angles.length = ' + angles.length);
-							return;
-							
+							if (verticeId >= position.length) {
+		
+								console.error(sHyperSphere + ': get vertice angles failed! verticeId = ' + verticeId + ' is great angles.length = ' + position.length);
+								return;
+								
+							}
+							return this.vertice2angles(position[verticeId])//сюда попадаем из вселенной
 						}
 						return new Proxy(angles[verticeId], {
 	
@@ -601,7 +604,7 @@ class HyperSphere extends MyObject {
 								}
 								const angle0 = verticeAngles[0],
 									verticeAnglesFromPosition = isNaN(angle0) ?
-										this.vertice2angles(settings.bufferGeometry.userData.position[verticeId]) ://угол удален из settings.object.geometry.angles. Поэтому угол надо вычислить из позиции вершины.
+										this.vertice2angles(position[verticeId]) ://угол удален из settings.object.geometry.angles. Поэтому угол надо вычислить из позиции вершины.
 										undefined;
 								verticeAngles = new Proxy(verticeAngles, {
 
@@ -1755,6 +1758,7 @@ this.object = () => {
 							debug: classSettings.debug,
 							settings: {
 
+								noGetMaxPairsFloat32Length: true,
 								object: {
 
 									name: settings.object.name,
