@@ -26,7 +26,7 @@ import * as fileHandler from '../fileHandler.js';
 
 const classSettings = {
 	compute: {
-		isUseCPU: true,
+		//isUseCPU: true,
 		//serverAddress: 'ws://localhost:5000/ws',
 		config: {
 
@@ -84,7 +84,7 @@ const classSettings = {
 			 * ETA(R) = ETA_0 * R^3
 			 * default 0.01
 			 */
-			//ETA_0: 0.5,
+			//ETA_0: 0,
 
 			// коэффициент сохранения импульса (затухания инерции).
 			// Определяет, какая доля скорости с прошлого шага сохраняется на текущем.

@@ -57,6 +57,97 @@
 			new Sphere(options,
 			{
 
+				compute: {
+					//isUseCPU: true,//Currently do not have effect for spherical universe
+					config: {
+	
+						//Select one:
+						
+						RANDOM_POINTS: 0,//Случайная точка не вычисляется. Вместо этого возвращается PSEUDO_RANDOM.
+						
+				        //Вычисляется случайное число.
+				        //В GPU для получения случайного числа применяется хеширование(Hashing).Простой генератор псевдослучайных чисел(PCG).Permuted Congruential Generator(Перемешанный конгруэнтный генератор).
+				        //Этот метод лучше всего вычисляет случайное число, но требует много времени на вычисления если не оптимизировать Google Chrome.
+				        //Инструкция по оптимизации находится в Technical Guide: Enabling High-Performance GPU for Google Chrome https://github.com/anhr/universe/blob/main/hyperSphere/HUniverseEngine.md#technical-guide-enabling-high-performance-gpu-for-google-chrome Инструкцию по оттимизации смотри в D:\My documents\MyProjects\webgl\three.js\GitHub\universe\main\hyperSphere\webGPUHUniverse.js
+						//Значение по умолчанию
+				        //RANDOM_POINTS: 1,
+						
+						//PSEUDO_RANDOM: 1,//Have effect only if RANDOM_POINTS: 0. Available range from 0 to 1. Default 0.5
+	
+						//Damping is a velocity reduction factor applied at each iteration step.
+						//It simulates friction or energy dissipation in the system.
+						//Without damping, particles would oscillate indefinitely around equilibrium positions, never stabilizing.
+						//Valid DAMPING value range:
+						//  0 - Heavy damping, quick stopping. Fast stabilization, no oscillations
+						//  1 - No damping. Not recommended for production
+						//Default 0.95.
+						//See https://chat.deepseek.com/share/azo3y7zgc6hov7mlfp for details.
+						//DAMPING: 0.95,
+	
+						//Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
+						//a: 50,//имеет эффект только если не определен REPULSION_STRENGTH. Default 50
+						
+	
+						//Hyperbola parametr. See RandomVertice.calculateHyperbola
+						//p: 0 Прямая линия: y = x (через точки (0,0) и (π,π)).
+						//p: 1 Два отрезка: вертикальный и горизонтальный
+						//0 < p < 1 Гипербола. График гиперболы млжно посмотреть на http://localhost/anhr/commonNodeJS/master/HyperSphere/Examples/hyperbola.html
+						//p: 0.99,//Default 0
+	
+						//LOG: true,//log to console all calculated vertices. Default undefined
+						
+						/**
+						 * ETA (Estimated Time Advance / Step Ratio) — нормализованный безразмерный 
+						 * коэффициент шага интегрирования по времени (Learning Rate).
+						 * 
+						 * ФИЗИЧЕСКИЙ СМЫЛ И ВЯЗКОСТЬ:
+						 * Модель описывает движение зарядов в режиме сильного трения (Overdamped Dynamics / 
+						 * аристотелева механика v = μ * F), где инерция пренебрежимо мала.
+						 * 
+						 * ETA_0 обратно пропорционален вязкости среды γ (ETA_0 ~ 1/γ):
+						 * - Меньше ETA_0 -> выше вязкость среды (медленное, но очень устойчивое движение).
+						 * - Больше ETA_0 -> ниже вязкость среды (быстрый спуск, но риск осцилляций).
+						 *
+						 * ДИАПАЗОНЫ И ЭНЕРГИЯ:
+						 * - Допустимый диапазон ETA_0: (0.0, 0.05] (для метода Euler).
+						 *   • ETA_0 -> 0 : Среда бесконечно вязкая, движение замирает.
+						 *   • ETA_0 > 0.05 : Трение недостаточно, возникают численные осцилляции 
+						 *                    и неустойчивость (расходимость).
+						 * - Потеря энергии: В этой численной модели ВСЯ потенциальная энергия Кулоновского 
+						 *   отталкивания полностью диссипирует (переходит в "тепло" / вязкое трение).
+						 * - Численная задержка ("без тепла"): Энергия не диссипирует только при ETA_0 = 0, 
+						 *   но тогда система статична. При попытке добавить инерцию (m * a = F - γ*v) 
+						 *   без вязкого затухания точки начнут бесконечно колебаться вокруг 
+						 *   минимума энергии, как пружинный маятник.
+						 *
+						 * МАСШТАБИРОВАНИЕ ОТ РАДИУСА РАДИУСА S^3:
+						 * Чтобы сохранить характерное относительное смещение при изменении R:
+						 * F ~ 1/R^2 (силы вырастают при уменьшении радиуса)
+						 * ETA(R) = ETA_0 * R^3
+						 * default 0.01
+						 */
+						ETA_0: 0.0001,
+			
+						// коэффициент сохранения импульса (затухания инерции).
+						// Определяет, какая доля скорости с прошлого шага сохраняется на текущем.
+						//
+						// Минимальное значение: 0.0
+						// - Полное отсутствие инерции (классический градиентный спуск).
+						// Максимальное значение: < 1.0 (обычно до 0.99)
+						// - Чем ближе к 1.0, тем сильнее инерция и «тяжелее» точки.
+						// - BETA = 0.85–0.90: умеренно сильная инерция, ускоряет преодоление плато и помогает проходить локальные минимумы.
+						// - BETA >= 0.99: запредельная инерция, точки начинают бесконечно осциллировать и долго «раскачиваться».
+						// По умолчанию 0.85
+						//BETA: 0.99,
+			
+						//Сила отталкивания. Чем меньше значение, тем слабее силы отталкивания между точками, и тем медленнее они двигаются
+						
+						SIGMA: 0.05,//ширина облака неопределённости в единицах радиуса гиперсферы R (то есть безразмерная, SIGMA = σ/R). По смыслу — это доля радиуса, на которую «размазана» точка.
+						//SIGMA = 0	идеальная (детерминированная) модель. шум отключён; точные совпадения вызывают сообщение об ошибке
+						//~1e-1 ≤ SIGMA ≤ ~1	шум сравним с расстоянием между точками	точки «размазаны» по сфере; антиподы не достигаются как детерминированное состояние; итог — больцмановское распределение, а не минимум энергии
+						//SIGMA > 1	шум больше радиуса	физически бессмысленно: «облако» выходит за пределы сферы; модель теряет смысл
+					},
+				},
 				distanceOfVertices: distanceOfVertices,
 				/*
 				intersection: {
@@ -137,17 +228,6 @@
 								[
 									Math.PI / 2,//Latitude
 									0//Longitude
-								],//
-								[0, Math.PI / 2],//
-							],
-							angles: [
-								[],//[0, 0],//
-								[
-									Math.PI / 2,//Latitude
-									//- Math.PI / 2,//Latitude if Universe.rotateLatitude = 0; then error: universe.js:924 Universe: Angle[0] = -3.141592653589793 of the vertice 1 is out of range from -1.5707963267948966 to 1.5707963267948966
-									//Math.PI,//Latitude out of range
-									//0//Longitude
-									//Math.PI * 2//Longitude out of range
 								],//
 								[0, Math.PI / 2],//
 							],
@@ -265,7 +345,18 @@
 							],
 							//все вершины в одном месте
 							//angles: new Array(444).fill(null).map(() => ([ Math.PI / 4, 1 ]))
-							angles: { count: 444, },
+							angles: [
+								[],//[0, 0],//
+								[
+									Math.PI / 2,//Latitude
+									//- Math.PI / 2,//Latitude if Universe.rotateLatitude = 0; then error: universe.js:924 Universe: Angle[0] = -3.141592653589793 of the vertice 1 is out of range from -1.5707963267948966 to 1.5707963267948966
+									//Math.PI,//Latitude out of range
+									//0//Longitude
+									//Math.PI * 2//Longitude out of range
+								],//
+								[0, Math.PI / 2],//
+							],
+							angles: { count: 500, },
 							//angles: angles,
 							/*
 							colors: [

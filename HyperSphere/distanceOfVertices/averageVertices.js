@@ -9,6 +9,8 @@
  * naturally (no EPS_DIST / softening needed). SIGMA = 0 restores the ideal (deterministic) model.
  *
  * @author [Andrej Hristoliubov]{@link https://github.com/anhr}
+ * @author [deepseek private]{@link https://chat.deepseek.com/a/chat/s/2489a216-f67e-44e1-8d79-3457009fff5c}
+ * @author [deepseek public]{@link https://chat.deepseek.com/share/kmxly0rk7261jjab9u}
  * @copyright 2011 Data Arts Team, Google Creative Lab
  * @license under the Apache License, Version 2.0
  */

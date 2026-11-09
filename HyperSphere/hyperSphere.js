@@ -1183,7 +1183,7 @@ class HyperSphere extends MyObject {
 		}
 		if (!classSettings.overriddenProperties) classSettings.overriddenProperties = {};
 		const overriddenProperties = classSettings.overriddenProperties;
-		if (!overriddenProperties.getPositionTimeId) overriddenProperties.getPositionTimeId = () => { return 0; }//В гиперсфере, не входящей во вселенную, положение вершины не зависить от времени
+		if (!overriddenProperties.getPositionTimeId) overriddenProperties.getPositionTimeId = () => { return 0; }//В гиперсфере, не входящей во вселенную, положение вершины не зависит от времени
 		if (!overriddenProperties.getVerticePosition) overriddenProperties.getVerticePosition = (verticeId, timeId) => {
 			const positionData = this.getPositionData(verticeId, timeId);
 			const position = classSettings.settings.bufferGeometry.attributes.position,
