@@ -1895,7 +1895,17 @@ this.object = () => {
 
 								}
 
-								aAngleControls.verticeId = classSettings.settings.guiPoints && (classSettings.settings.guiPoints.verticeId != undefined) ? classSettings.settings.guiPoints.verticeId : verticeId;
+								aAngleControls.verticeId = settings.guiPoints && (settings.guiPoints.verticeId != undefined) ? classSettings.settings.guiPoints.verticeId : verticeId;
+
+								//Если не выполнить эту операцию, то я не смогу увидеть плоскости во вселенной при timeId > 0
+								//Что бы посмотреть плоскости, надо выбрать точку и затем выбрать "Локальная позиция точки/Дополнительно/Плоскости"
+								const timeId = settings.guiPoints ?
+									settings.guiPoints.timeId === undefined ?
+										settings.options.player.getTimeId() :
+										settings.guiPoints.timeId :
+									0;
+								if(settings.object.geometry.angles === undefined) console.error(sHyperSphere + ': Invalid parameters.');
+								aAngleControls.verticeId -= timeId * settings.object.geometry.angles.length;
 
 								//если оставить эту линию то если угол выходит за пределы допустимого,
 								//то этот угол автоматически возвращается в пределы допустимого с помощью органа управления gui
