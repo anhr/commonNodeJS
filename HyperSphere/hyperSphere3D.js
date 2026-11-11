@@ -282,23 +282,9 @@ class HyperSphere3D extends Sphere {
 	 */
 	vertice2angles(vertice) {
 
-		/*https://chat.deepseek.com/a/chat/s/5c55507d-4660-4e04-8920-0e1c791a9c3c
-		Задана точка vertice на 3D гиперсфере в декартовой системе координат. Начало координат находится в центре сферы.
-		Положение точки обозначить как
-		x = vertice[0]
-		y = vertice[1]
-		z = vertice[2]
-		w = vertice[3]
-		Вычислить координаты точки в полярной системе координат.
-		Углы в полярной системе координат обозначить как:
-		longitude - долгота (азимутальный угол)  в диапазоне от -π до π,
-		latitude - широта (зенитный угол) в диапазоне -π/2 на южном полюсе до π/2 на северном полюсе.,
-		altitude - полярный угол от оси W  в диапазоне от 0 до π.
-		Радиус сферы обозначить как r.
-		Написать код на javascript.
-		*/
 		function cartesianToPolar4D(vertice) {
-
+			return utils.cartesianToPolar(vertice);
+/*
 			const x = vertice.x, y = vertice.y, z = vertice.z, w = vertice.w;
 
 			// Вычисляем радиус сферы
@@ -340,7 +326,7 @@ class HyperSphere3D extends Sphere {
 			}
 
 			return utils.angles([altitude, latitude, longitude]);
-
+*/
 		}
 		return cartesianToPolar4D(Position(vertice));
 
