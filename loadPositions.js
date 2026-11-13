@@ -19,8 +19,10 @@ import * as utils from './HyperSphere/utilsHSphere.js'
 
 /**
  * Loads positions of the Three.js objects
- */
-const loadPositions = async (classSettings, myThreeOptions) => {
+ * @param {object} classSettings See <a href="../../HyperSphere/jsdoc/module-HyperSphere-HyperSphere.html" target="_blank">HyperSphere classSettings</a>.
+ * @param {object} myThreeOptions See <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> <b>options</b> parameter.
+*/
+export default async function loadPositions(classSettings, myThreeOptions) {
 	const geometry = classSettings.settings.object.geometry;
 	if (!geometry.positionsFileName) return;
 	const THREE = window.__myThree__.three.THREE;
@@ -95,4 +97,4 @@ const loadPositions = async (classSettings, myThreeOptions) => {
 		await showAutoWidthModal();
 	}
 }
-export default loadPositions;
+//export default loadPositions;
