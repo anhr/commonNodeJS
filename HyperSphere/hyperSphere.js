@@ -1510,6 +1510,9 @@ class HyperSphere extends MyObject {
 			planes: 'Planes',
 			planesTitle: 'Planes of rotation of angles.',
 
+			randomCloud: 'Random Cloud',
+			randomCloudTitle: 'Cloud of random deviations of vertice coordinates.',
+
 			radius: 'Radius',
 			radiusTitle: 'Hypersphere radius.',
 
@@ -1550,6 +1553,9 @@ class HyperSphere extends MyObject {
 				lang.plane = 'Плоскость';
 				lang.planes = 'Плоскости';
 				lang.planesTitle = 'Плоскости вращения углов.';
+
+				lang.randomCloud = 'Случайное облако';
+				lang.randomCloudTitle = 'Облако случайных отклонений координат вершин.';
 
 				lang.radius = 'Радиус';
 				lang.radiusTitle = 'Радиус гиперсферы.';
@@ -2551,6 +2557,24 @@ this.object = () => {
 
 								});
 								dat.controllerNameAndTitle(aAngleControls.cPlanes, lang.planes, lang.planesTitle);
+
+								//random cloud.
+
+								aAngleControls.fRandomCloud = fAdvansed.addFolder(lang.randomCloud);
+								dat.folderNameAndTitle(aAngleControls.fRandomCloud, lang.randomCloud, lang.randomCloudTitle);
+								// Находим элемент заголовка папки в DOM
+								const folderTitle = aAngleControls.fRandomCloud.domElement.querySelector('.title');
+								folderTitle.addEventListener('click', () => {
+									// Проверяем свойство .closed, чтобы понять, открылась папка или закрылась
+									// Важно: в момент клика состояние .closed меняется не сразу, 
+									// поэтому проверяем инвертированное значение либо ставим минимальный setTimeout
+									setTimeout(() => {
+										if (!aAngleControls.fRandomCloud.closed) {
+											this.addNoise()
+										} else console.log('close')
+									}, 0);
+								});
+						
 
 								if (classSettings.onAddControllers) classSettings.onAddControllers(fAdvansed);
 									

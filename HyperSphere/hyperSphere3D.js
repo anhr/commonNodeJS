@@ -22,6 +22,7 @@ import anglesRange from './anglesRange.js'
 import * as utils from './utilsHSphere.js'
 import Position from './position.js'
 import * as fileHandler from '../fileHandler.js';
+import averageVertices from './distanceOfVertices/averageVerticesHSphere.js';
 
 const sHyperSphere3D = 'HyperSphere3D',
 	π = Math.PI;
@@ -39,7 +40,15 @@ class HyperSphere3D extends Sphere {
 	 * @param {object} [classSettings] <b>Circle</b> class settings. See <a href="./module-HyperSphere-HyperSphere.html" target="_blank">HyperSphere classSettings</a>.
 	 * @param {string} [classSettings.settings.object.geometry.positionsFileName] The filename where the hypersphere vertex positions are stored. You can create this file by saving the vertex positions of the current hypersphere. Please choice "Settings/Hypersphere/Save" in the top-right corner of the canvas. To save the file, choose the same folder where your web page is located. For example "D:\My documents\MyProjects\webgl\three.js\GitHub\universe\main\hyperSphere\Examples".
 	 **/
-	constructor(options, classSettings) { super(options, classSettings); }
+	constructor(options, classSettings) {
+		super(options, classSettings);
+		/**
+		 * For creating a uncertainty cloud around a vertice p
+		 * @param {object} p Cartesian coordinates of the vertex near which a random point will be generated.
+		 * @param {float} [sigma=0] Width of the uncertainty cloud of each vertice. See classSettings.compute.config.SIGMA in <a href="./module-HyperSphere-HyperSphere.html" target="_blank">HyperSphere</a>.
+		 **/
+		this.addNoise = (p, sigma) => averageVertices.addNoise(p, sigma);
+	}
 
 	//base methods
 

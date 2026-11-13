@@ -118,4 +118,5 @@ const averageVertices = (data) => {
 }
 averageVertices.verticeProxy = averageVerticesBase.verticeProxy;
 averageVertices.webGPU = { compute: (compute) => { compute() } }; // no-op stub
+averageVertices.addNoise = (p, sigma) => { addNoise4D(p, sigma); };
 export default averageVertices;
