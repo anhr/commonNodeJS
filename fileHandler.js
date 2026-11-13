@@ -19,26 +19,6 @@ let projectDirectoryHandle = null;
 const fileName = 'positions.bin'
 
 /**
- * Подключает локальную папку проекта (требуется один клик пользователя).
- * @returns {Promise<boolean>} Успешность подключения папки
- */
-/*
-export async function connectProjectDirectory() {
-	try {
-		projectDirectoryHandle = await window.showDirectoryPicker({
-			mode: 'readwrite'
-		});
-		console.log('Папка проекта успешно подключена');
-		return true;
-	} catch (err) {
-		if (err.name !== 'AbortError') {
-			console.error('Ошибка при выборе папки:', err);
-		}
-		return false;
-	}
-}
-*/
-/**
  * Проверяет, существует ли файл в подключенной папке проекта.
  * 
  * @param {string} fileName - Имя файла для проверки
@@ -81,57 +61,6 @@ export async function connectProjectDirectory() {
 		}
 		return false;
 	}
-/*	
-	return new Promise((resolve) => {
-		// 1. Создаем элементы временной кнопки
-		const btn = document.createElement('button');
-		btn.textContent = '📁 Подключить папку проекта';
-
-		// Стилизуем кнопку, чтобы она была заметна поверх WebGL-холста
-		Object.assign(btn.style, {
-			position: 'fixed',
-			top: '20px',
-			left: '20px',
-			zIndex: '9999',
-			padding: '12px 24px',
-			backgroundColor: '#007acc',
-			color: '#ffffff',
-			border: 'none',
-			borderRadius: '6px',
-			fontSize: '16px',
-			fontWeight: 'bold',
-			cursor: 'pointer',
-			boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
-		});
-
-		// 2. Обработчик клика
-		btn.addEventListener('click', async () => {
-			try {
-				projectDirectoryHandle = await window.showDirectoryPicker({
-					mode: 'readwrite'
-				});
-				console.log('Папка проекта успешно подключена');
-
-				// Удаляем кнопку из DOM
-				btn.remove();
-				resolve(true);
-			} catch (err) {
-				if (err.name === 'AbortError') {
-					console.warn('Выбор папки отменен пользователем.');
-				} else {
-					console.error('Ошибка при выборе папки:', err);
-				}
-
-				// Удаляем кнопку даже при ошибке/отмене
-				btn.remove();
-				resolve(false);
-			}
-		});
-
-		// 3. Добавляем кнопку на страницу
-		document.body.appendChild(btn);
-	});
-*/
 }
 
 /**
@@ -147,22 +76,6 @@ export async function saveTraceToProjectDir(positionsArray, fileName = fileName)
 	}
 
 	try {
-/*
-		// 1. Проверяем, существует ли файл
-		let fileExists = false;
-		try {
-			await projectDirectoryHandle.getFileHandle(fileName, { create: false });
-			fileExists = true;
-		} catch (e) {
-			fileExists = false; // Файла нет
-		}
-
-		// 2. Если файл существует — отменяем создание
-		if (fileExists) {
-			console.warn(`Отмена: файл "${fileName}" уже существует в выбранной папке.`);
-			return;
-		}
-*/
 
 		// 3. Создаем новый файл и записываем ArrayBuffer
 		const fileHandle = await projectDirectoryHandle.getFileHandle(fileName, { create: true });
@@ -195,7 +108,6 @@ export function loadBinary(url = './' + fileName) {
 				try {
 					// Проверка валидности данных (кратность Float32 = 4 байта)
 					if (buffer.byteLength % 4 !== 0) {
-//						throw new Error('File corrupted: buffer length is not a multiple of 4 bytes.');
 						// Формируем абсолютный URL файла
 						const fullUrl = new URL(url, window.location.href).href;
 						// 1. Указываем полный путь к файлу прямо в сообщении об ошибке

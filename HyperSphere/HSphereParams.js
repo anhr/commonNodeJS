@@ -22,7 +22,7 @@
 //if ( HypersphericalUniverse.default ) HypersphericalUniverse = HypersphericalUniverse.default;
 
 import * as utils from './utilsHSphere.js'
-import * as fileHandler from '../fileHandler.js';
+//import * as fileHandler from '../fileHandler.js';
 
 const classSettings = {
 	compute: {
@@ -393,6 +393,7 @@ const myThreeOptions = {
 
 	}
 }
+/*
 const loadPositions = async () => {
 	const geometry = classSettings.settings.object.geometry;
 	if (!geometry.positionsFileName) return;
@@ -408,11 +409,6 @@ const loadPositions = async () => {
 			//undefined;
 			//	new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(positionLengt * itemSize).fill(1, 0, itemSize * verticesCount), itemSize));
 			new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(positionLengt * itemSize), itemSize));
-		/*
-		classSettings.settings.bufferGeometry = bufferGeometry;
-		if (classSettings.settings.bufferGeometry && classSettings.settings.bufferGeometry.attributes.position)
-			delete classSettings.settings.object.geometry.angles;
-		*/
 		if (bufferGeometry) {
 			const positionsArray = bufferGeometry.attributes.position.array;
 			for (let i = 0; i < positions.length; i++)
@@ -433,42 +429,6 @@ const loadPositions = async () => {
     <li>Select <b>"`+ error.baseUrl + `"</b> folder.<br>Go to <b>Settings/Hypersphere/Save</b> in the right top corner of the canvas for it.</li>
 </ul>`;
 		}
-/*
-		function showAutoWidthModal() {
-			const dialog = document.createElement('dialog');
-
-			// Базовые стили для аккуратного вида
-			dialog.style.padding = '20px';
-			dialog.style.borderRadius = '8px';
-			dialog.style.border = '1px solid #ccc';
-			dialog.style.boxShadow = '0 4px 20px rgba(0,0,0,0.15)';
-
-			// ВАЖНО: убираем ограничение maxWidth и ставим width: max-content
-			dialog.style.width = 'max-content';
-			dialog.style.maxWidth = '90vw'; // Защита от выхода за границы экрана (90% ширины экрана)
-
-			dialog.innerHTML = `
-<h3 style="margin-top: 0; color: #333;">` + errorMessage + `</h3>
-`+ sHelp + `
-    
-<div style="text-align: right; margin-top: 15px;">
-    <button id="closeModalBtn" style="padding: 6px 12px; cursor: pointer;">Close</button>
-</div>
-`;
-
-			document.body.appendChild(dialog);
-
-			dialog.querySelector('#closeModalBtn').addEventListener('click', () => {
-				dialog.close();
-				dialog.remove();
-			});
-
-			dialog.showModal();
-		}
-
-		// Запуск функции
-		showAutoWidthModal();
-*/
 		// Возвращаем Promise, чтобы await приостанавливал выполнение loadPositions
 		function showAutoWidthModal() {
 			return new Promise((resolve) => {
@@ -508,12 +468,7 @@ const loadPositions = async () => {
 		// Ждем, пока пользователь нажмет "CLOSE"
 		await showAutoWidthModal();
 	}
-	/*	
-		const verticesCount = 5,
-			timesCount = myThreeOptions.playerOptions.marks === undefined ? 10 : myThreeOptions.playerOptions.marks,
-			positionLengt = verticesCount * timesCount,
-			itemSize = 4;
-	*/
-
 }
 export { classSettings, myThreeOptions, loadPositions };
+*/
+export { classSettings, myThreeOptions };
