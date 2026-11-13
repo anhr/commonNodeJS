@@ -2570,7 +2570,16 @@ this.object = () => {
 									// поэтому проверяем инвертированное значение либо ставим минимальный setTimeout
 									setTimeout(() => {
 										if (!aAngleControls.fRandomCloud.closed) {
-											this.addNoise()
+//											const vertice = position.angles[aAngleControls.verticeId];
+/*											
+											const userData = settings.bufferGeometry.userData;
+											const vertice = userData.position[userData.timeId * settings.object.geometry.angles.length + aAngleControls.verticeId];
+*/											
+											const vertice = settings.bufferGeometry.userData.position[aAngleControls.verticeId];
+											const aNoise = [];
+											for(let i = 0; i < 100; i++)
+												aNoise.push(this.addNoise(vertice));
+											console.log('Noise')
 										} else console.log('close')
 									}, 0);
 								});

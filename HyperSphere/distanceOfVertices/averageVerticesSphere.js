@@ -161,4 +161,5 @@ const averageVertices = (data) => {
 	});
 }
 averageVertices.verticeProxy = averageVerticesBase.verticeProxy;
+averageVertices.addNoise = (p, sigma) => { return addNoise3D_geo_vmf(p, sigma); };
 export default averageVertices;
