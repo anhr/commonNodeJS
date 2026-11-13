@@ -20,6 +20,7 @@ import three from '../three.js'
 //import { RandomVerticeSphere as RandomVertice } from './RandomVertice/randomVerticeSphere.js';
 import * as utils from './utilsSphere.js'
 import Position from './position.js'
+import averageVertices from './distanceOfVertices/averageVerticesSphere.js';
 
 const sSphere = 'Sphere',
 	π = Math.PI;
@@ -36,7 +37,15 @@ class Sphere extends Circle {
 	 * @param {Options} options See <a href="../../../master/jsdoc/Options/Options.html" target="_blank">Options</a>.
 	 * @param {object} [classSettings] <b>Circle</b> class settings. See <a href="./module-HyperSphere-HyperSphere.html" target="_blank">HyperSphere classSettings</a>.
 	 **/
-	constructor(options, classSettings) { super(options, classSettings); }
+	constructor(options, classSettings) {
+		super(options, classSettings);
+		/**
+		 * For creating a uncertainty cloud around a vertice <b>p</b>.
+		 * @param {object} p Cartesian coordinates of the vertex near which a random point will be generated.
+		 * @param {float} [sigma=0] Width of the uncertainty cloud of each vertice. See <b>classSettings.compute.config.SIGMA</b> in <a href="./module-HyperSphere-HyperSphere.html" target="_blank">HyperSphere</a>.
+		 **/
+		this.addNoise = (p, sigma = 0) => { return averageVertices.addNoise(p, sigma) };
+	}
 
 	//base methods
 

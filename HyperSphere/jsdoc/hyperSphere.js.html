@@ -608,12 +608,15 @@ class HyperSphere extends MyObject {
 	
 					const verticeId = parseInt(name);
 					if (!isNaN(verticeId)) {
-	
+						const position = settings.bufferGeometry.userData.position;
 						if (verticeId >= angles.length) {
-	
-							console.error(sHyperSphere + ': get vertice angles failed! verticeId = ' + verticeId + ' is great angles.length = ' + angles.length);
-							return;
-							
+							if (verticeId >= position.length) {
+		
+								console.error(sHyperSphere + ': get vertice angles failed! verticeId = ' + verticeId + ' is great angles.length = ' + position.length);
+								return;
+								
+							}
+							return this.vertice2angles(position[verticeId])//сюда попадаем из вселенной
 						}
 						return new Proxy(angles[verticeId], {
 	
@@ -629,7 +632,7 @@ class HyperSphere extends MyObject {
 								}
 								const angle0 = verticeAngles[0],
 									verticeAnglesFromPosition = isNaN(angle0) ?
-										this.vertice2angles(settings.bufferGeometry.userData.position[verticeId]) ://угол удален из settings.object.geometry.angles. Поэтому угол надо вычислить из позиции вершины.
+										this.vertice2angles(position[verticeId]) ://угол удален из settings.object.geometry.angles. Поэтому угол надо вычислить из позиции вершины.
 										undefined;
 								verticeAngles = new Proxy(verticeAngles, {
 
@@ -1211,7 +1214,7 @@ class HyperSphere extends MyObject {
 		}
 		if (!classSettings.overriddenProperties) classSettings.overriddenProperties = {};
 		const overriddenProperties = classSettings.overriddenProperties;
-		if (!overriddenProperties.getPositionTimeId) overriddenProperties.getPositionTimeId = () => { return 0; }//В гиперсфере, не входящей во вселенную, положение вершины не зависить от времени
+		if (!overriddenProperties.getPositionTimeId) overriddenProperties.getPositionTimeId = () => { return 0; }//В гиперсфере, не входящей во вселенную, положение вершины не зависит от времени
 		if (!overriddenProperties.getVerticePosition) overriddenProperties.getVerticePosition = (verticeId, timeId) => {
 			const positionData = this.getPositionData(verticeId, timeId);
 			const position = classSettings.settings.bufferGeometry.attributes.position,
@@ -1535,6 +1538,9 @@ class HyperSphere extends MyObject {
 			planes: 'Planes',
 			planesTitle: 'Planes of rotation of angles.',
 
+			randomCloud: 'Random Cloud',
+			randomCloudTitle: 'Cloud of random deviations of vertice coordinates.',
+
 			radius: 'Radius',
 			radiusTitle: 'Hypersphere radius.',
 
@@ -1575,6 +1581,9 @@ class HyperSphere extends MyObject {
 				lang.plane = 'Плоскость';
 				lang.planes = 'Плоскости';
 				lang.planesTitle = 'Плоскости вращения углов.';
+
+				lang.randomCloud = 'Случайное облако';
+				lang.randomCloudTitle = 'Облако случайных отклонений координат вершин.';
 
 				lang.radius = 'Радиус';
 				lang.radiusTitle = 'Радиус гиперсферы.';
@@ -1783,6 +1792,7 @@ this.object = () => {
 							debug: classSettings.debug,
 							settings: {
 
+								noGetMaxPairsFloat32Length: true,
 								object: {
 
 									name: settings.object.name,
@@ -1915,11 +1925,21 @@ this.object = () => {
 									const boDisplay = verticeAngles.edges.length === 0 ? false : true;
 									_display(aAngleControls.cEdges.domElement.parentElement.parentElement, boDisplay);
 									_display(aAngleControls.cHighlightEdges.domElement.parentElement.parentElement, boDisplay);
-									_display(aAngleControls.cMiddleVertice.domElement.parentElement.parentElement, boDisplay);
+									if (aAngleControls.cMiddleVertice) _display(aAngleControls.cMiddleVertice.domElement.parentElement.parentElement, boDisplay);
 
 								}
 
-								aAngleControls.verticeId = classSettings.settings.guiPoints &amp;&amp; (classSettings.settings.guiPoints.verticeId != undefined) ? classSettings.settings.guiPoints.verticeId : verticeId;
+								aAngleControls.verticeId = settings.guiPoints &amp;&amp; (settings.guiPoints.verticeId != undefined) ? classSettings.settings.guiPoints.verticeId : verticeId;
+
+								//Если не выполнить эту операцию, то я не смогу увидеть плоскости во вселенной при timeId > 0
+								//Что бы посмотреть плоскости, надо выбрать точку и затем выбрать "Локальная позиция точки/Дополнительно/Плоскости"
+								const timeId = settings.guiPoints ?
+									settings.guiPoints.timeId === undefined ?
+										settings.options.player.getTimeId() :
+										settings.guiPoints.timeId :
+									0;
+								if(settings.object.geometry.angles === undefined) console.error(sHyperSphere + ': Invalid parameters.');
+								aAngleControls.verticeId -= timeId * settings.object.geometry.angles.length;
 
 								//если оставить эту линию то если угол выходит за пределы допустимого,
 								//то этот угол автоматически возвращается в пределы допустимого с помощью органа управления gui
@@ -2376,6 +2396,7 @@ this.object = () => {
 								});
 								dat.controllerNameAndTitle(aAngleControls.cHighlightEdges, lang.highlightEdges, lang.highlightEdgesTitle);
 
+								/*
 								//Middle vertice
 
 								const fMiddleVertice = fAdvansed.addFolder(lang.middleVertice)
@@ -2474,6 +2495,7 @@ this.object = () => {
 
 								});
 								dat.controllerNameAndTitle(aAngleControls.cMiddleVertice, lang.middleVertice, lang.middleVerticeTitle);
+								*/
 								if (_this.randomVertice) _display(fMiddleVertice.domElement, false);//Выполнен шаг проигрывателя в ходе которго был создан _this.randomVertice с количеством вершин равным 1. В этом случае облако случайных вершин будет состоять из одной вершины. Пытался исправить но не получилось. Поэтому сейчас нельзя создавать облако случайных вершин после выполения шага проигрывателя.
 
 								//Planes of rotation of angles.
@@ -2563,6 +2585,24 @@ this.object = () => {
 
 								});
 								dat.controllerNameAndTitle(aAngleControls.cPlanes, lang.planes, lang.planesTitle);
+
+								//random cloud.
+
+								aAngleControls.fRandomCloud = fAdvansed.addFolder(lang.randomCloud);
+								dat.folderNameAndTitle(aAngleControls.fRandomCloud, lang.randomCloud, lang.randomCloudTitle);
+								// Находим элемент заголовка папки в DOM
+								const folderTitle = aAngleControls.fRandomCloud.domElement.querySelector('.title');
+								folderTitle.addEventListener('click', () => {
+									// Проверяем свойство .closed, чтобы понять, открылась папка или закрылась
+									// Важно: в момент клика состояние .closed меняется не сразу, 
+									// поэтому проверяем инвертированное значение либо ставим минимальный setTimeout
+									setTimeout(() => {
+										if (!aAngleControls.fRandomCloud.closed) {
+											this.addNoise()
+										} else console.log('close')
+									}, 0);
+								});
+						
 
 								if (classSettings.onAddControllers) classSettings.onAddControllers(fAdvansed);
 									
@@ -2800,7 +2840,7 @@ this.object = () => {
 						t: t,
 					});
 				}
-				if (!classSettings.distanceOfVertices.webGPU || classSettings.compute.isUseCPU) computeCPU();
+				if (!classSettings.distanceOfVertices || !classSettings.distanceOfVertices.webGPU || classSettings.compute.isUseCPU) computeCPU();
 				else classSettings.distanceOfVertices.webGPU.compute(computeCPU, compute, settings, this);
 				return true;//player pause
 
@@ -3522,7 +3562,7 @@ const _display = (element, boDisplay) => { element.style.display = boDisplay ===
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sun Nov 08 2026 10:10:49 GMT+0700 (Красноярск, стандартное время)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri Nov 13 2026 10:56:51 GMT+0700 (Красноярск, стандартное время)
 </footer>
 
 <script> prettyPrint(); </script>
