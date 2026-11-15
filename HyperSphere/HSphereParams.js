@@ -174,7 +174,7 @@ const classSettings = {
 			//color: 0xffffff,
 			geometry: {
 
-				positionsFileName: 'positions500.bin',
+				positionsFileName: 'positions5.bin',
 				//Tesseract https://en.wikipedia.org/wiki/Tesseract
 				//Please set indices.edges for tesseract
 				angles: [

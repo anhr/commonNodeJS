@@ -2565,6 +2565,7 @@ this.object = () => {
 								// Находим элемент заголовка папки в DOM
 								const folderTitle = aAngleControls.fRandomCloud.domElement.querySelector('.title');
 								folderTitle.addEventListener('click', () => {
+									let cloud;
 									// Проверяем свойство .closed, чтобы понять, открылась папка или закрылась
 									// Важно: в момент клика состояние .closed меняется не сразу, 
 									// поэтому проверяем инвертированное значение либо ставим минимальный setTimeout
@@ -2576,10 +2577,72 @@ this.object = () => {
 											const vertice = userData.position[userData.timeId * settings.object.geometry.angles.length + aAngleControls.verticeId];
 */											
 											const vertice = settings.bufferGeometry.userData.position[aAngleControls.verticeId];
-											const aNoise = [];
+											const aNoiseAngles = [];
+											const sigma = classSettings.compute.config.SIGMA;
 											for(let i = 0; i < 100; i++)
-												aNoise.push(this.addNoise(vertice));
+												aNoiseAngles.push(this.addNoiseAngles(vertice, sigma));
 											console.log('Noise')
+											const options = classSettings.settings.options;
+											settings.object.geometry.indices ||= {};
+											settings.object.geometry.indices.edges ||= false;
+											cloud = this.newHyperSphere(
+												//Если не делать копию classSettings.settings.options, то изменится classSettings.settings.options.scales.w.min и max,
+												//что приведет к неправильному цвету вершины в universe при ее ручном изменении
+												{
+						
+													player: options.player,
+													getLanguageCode: options.getLanguageCode,
+													guiSelectPoint: options.guiSelectPoint,
+													renderer: options.renderer,
+													palette: options.palette,
+													setPalette: options.setPalette,
+													scales: options.scales,
+													point: { size: options.point.size, }
+													
+												},
+												{
+						
+													cookieName: 'cloud',
+													boRemove: false,
+													boGui: false,
+/*													
+													edges: settings.edges === undefined ? {
+						
+														project: settings.randomArc ? false : true,//Если линия создается в виде ребер, то отображать ребра на холсте
+														creationMethod: HyperSphere.edgesCreationMethod.Random,
+						
+													} : settings.edges,
+*/													
+													projectParams: { scene: classSettings.projectParams.scene, },
+													r: this.r,//classSettings.overriddenProperties.r(classSettings.settings.guiPoints ? classSettings.settings.guiPoints.timeId : 0),
+													debug: classSettings.debug,
+													edges: false,
+													settings: {
+						
+														noGetMaxPairsFloat32Length: true,
+														object: {
+						
+															name: 'Cloud',
+															color: 'purple',
+															geometry: {
+						
+																angles: aNoiseAngles,
+/*																
+																opacity: settings.object.geometry.opacity,
+																indices: {
+						
+																	edges: settings.object.geometry.indices.edges,
+						
+																}
+*/																
+															}
+						
+														}
+						
+													},
+						
+												});
+																	
 										} else console.log('close')
 									}, 0);
 								});

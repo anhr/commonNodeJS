@@ -17,36 +17,68 @@
 import * as fileHandler from './fileHandler.js';
 import * as utils from './HyperSphere/utilsHSphere.js'
 
+const sLoadPositions = 'loadPositions';
+
 /**
  * Loads positions of the Three.js objects
  * @param {object} classSettings See <a href="../../HyperSphere/jsdoc/module-HyperSphere-HyperSphere.html" target="_blank">HyperSphere classSettings</a>.
  * @param {object} myThreeOptions See <a href="../../myThree/jsdoc/module-MyThree-MyThree.html" target="_blank">MyThree</a> <b>options</b> parameter.
 */
 export default async function loadPositions(classSettings, myThreeOptions) {
-	const geometry = classSettings.settings.object.geometry;
+	const settings = classSettings.settings, geometry = settings.object.geometry;
 	if (!geometry.positionsFileName) return;
 	const THREE = window.__myThree__.three.THREE;
 	try {
 		// Получаем массив координат из файла
-		const positions = await fileHandler.loadBinary('./' + geometry.positionsFileName)
+		let positions = await fileHandler.loadBinary('./' + geometry.positionsFileName);
+		delete geometry.angles;
 		const timesCount = myThreeOptions.playerOptions.marks === undefined ? 10 : myThreeOptions.playerOptions.marks,
 			itemSize = 4,
 			verticesCount = positions.length / itemSize,
 			positionLengt = verticesCount * timesCount;
-		const bufferGeometry =
-			//undefined;
-			//	new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(positionLengt * itemSize).fill(1, 0, itemSize * verticesCount), itemSize));
-			new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(positionLengt * itemSize), itemSize));
-		if (bufferGeometry) {
-			const positionsArray = bufferGeometry.attributes.position.array;
-			for (let i = 0; i < positions.length; i++)
-				positionsArray[i] = positions[i];
-			delete geometry.angles;
-			geometry.angles = [];
-			for (let verticeId = 0; verticeId < verticesCount; verticeId++)
-				geometry.angles.push(utils.cartesianToPolar(new THREE.Vector4().fromBufferAttribute(bufferGeometry.attributes.position, verticeId), true));
-		}
+//			anglesLength = positions.length / itemSize;
+/*		
+//		geometry.positions = positions;
+		if (!Number.isInteger(anglesLength)) console.error(sLoadPositions + ': Invalid angles length = ' + anglesLength);
+		settings.bufferGeometry = new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(positionLengt * itemSize), itemSize));
+		Object.defineProperty(settings.bufferGeometry.userData, 'timeId', {
 
+			get: () => { return 0; },
+			set: (timeIdNew) => { },//ignore timeIdNew
+			configurable: true,//https://stackoverflow.com/a/25518045/5175935
+
+		});
+		const positionsArray = settings.bufferGeometry.attributes.position.array;
+		for (let i = 0; i < positions.length; i++)
+			positionsArray[i] = positions[i];
+		classSettings.settings.object.geometry = new Proxy(geometry, {
+			get(target, name) {
+				switch (name) {
+					case 'angles': return new Proxy([], {
+						get(target, name) {
+							const positionId = parseInt(name);
+							if (!isNaN(positionId)) return ;
+							switch (name) {
+								case 'length': 
+									return anglesLength;
+							}
+							return target[name];
+						}
+					});
+				}
+				return geometry[name];
+			}
+		});
+*/		
+		const bufferGeometry = new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(positionLengt * itemSize), itemSize));
+		const positionsArray = bufferGeometry.attributes.position.array;
+		for (let i = 0; i < positions.length; i++)
+			positionsArray[i] = positions[i];
+		delete geometry.angles;
+		geometry.angles = [];
+		for (let verticeId = 0; verticeId < verticesCount; verticeId++)
+			geometry.angles.push(utils.cartesianToPolar(new THREE.Vector4().fromBufferAttribute(bufferGeometry.attributes.position, verticeId), true));
+		positions = null;
 	} catch (error) {
 		let errorMessage = 'Failed to load: ' + error, sHelp = '';
 		switch (error.code) {

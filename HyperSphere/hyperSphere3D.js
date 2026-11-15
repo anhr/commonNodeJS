@@ -46,8 +46,9 @@ class HyperSphere3D extends Sphere {
 		 * For creating a uncertainty cloud around a vertice <b>p</b>.
 		 * @param {object} p Cartesian coordinates of the vertex near which a random point will be generated.
 		 * @param {float} [sigma=0] Width of the uncertainty cloud of each vertice. See <b>classSettings.compute.config.SIGMA</b> in <a href="./module-HyperSphere-HyperSphere.html" target="_blank">HyperSphere</a>.
+		 * @return An array of a cloud of random points in polar coordinates.
 		 **/
-		this.addNoise = (p, sigma=0) => { return averageVertices.addNoise(p, sigma) };
+		this.addNoiseAngles = (p, sigma=0) => { return utils.cartesianToPolar(averageVertices.addNoise(p, sigma)); };
 	}
 
 	//base methods
