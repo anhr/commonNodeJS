@@ -30,13 +30,15 @@ export default async function loadPositions(classSettings, myThreeOptions) {
 	const THREE = window.__myThree__.three.THREE;
 	try {
 		// Получаем массив координат из файла
-		let positions = await fileHandler.loadBinary('./' + geometry.positionsFileName);
+		geometry.positions = await fileHandler.loadBinary('./' + geometry.positionsFileName);
 		delete geometry.angles;
+/*		
 		const timesCount = myThreeOptions.playerOptions.marks === undefined ? 10 : myThreeOptions.playerOptions.marks,
 			itemSize = 4,
 			verticesCount = positions.length / itemSize,
 			positionLengt = verticesCount * timesCount;
 //			anglesLength = positions.length / itemSize;
+*/
 /*		
 //		geometry.positions = positions;
 		if (!Number.isInteger(anglesLength)) console.error(sLoadPositions + ': Invalid angles length = ' + anglesLength);
@@ -69,7 +71,8 @@ export default async function loadPositions(classSettings, myThreeOptions) {
 				return geometry[name];
 			}
 		});
-*/		
+*/
+/*		
 		const bufferGeometry = new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(positionLengt * itemSize), itemSize));
 		const positionsArray = bufferGeometry.attributes.position.array;
 		for (let i = 0; i < positions.length; i++)
@@ -79,6 +82,7 @@ export default async function loadPositions(classSettings, myThreeOptions) {
 		for (let verticeId = 0; verticeId < verticesCount; verticeId++)
 			geometry.angles.push(utils.cartesianToPolar(new THREE.Vector4().fromBufferAttribute(bufferGeometry.attributes.position, verticeId), true));
 		positions = null;
+*/		
 	} catch (error) {
 		let errorMessage = 'Failed to load: ' + error, sHelp = '';
 		switch (error.code) {

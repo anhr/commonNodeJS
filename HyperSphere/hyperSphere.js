@@ -509,6 +509,7 @@ class HyperSphere extends MyObject {
 		//if (options.scales.w.name === 'w') options.scales.w.name = 't';
 
 		settings.object.geometry = settings.object.geometry || {};
+		const geometry = settings.object.geometry;
 
 		//for debug
 		//для 2D гиперсферы это плотность вероятности распределения вершин по поверхности сферы в зависимости от третьей координаты вершины z = vertice.[2]
@@ -546,35 +547,61 @@ class HyperSphere extends MyObject {
 			if (unverseValue != sectorsValue) console.error(sHyperSphere + ': Unverse value = ' + unverseValue + '. Sectors value = ' + sectorsValue);
 
 		}
-		if (settings.object.geometry.params) {
+		if (geometry.params) {
 
-			if (settings.object.geometry.angles) console.error(sHyperSphere + ': "settings.object.geometry.angles" has not effect if "settings.object.geometry.params" is exists');
-			const params = settings.object.geometry.params;
+			if (geometry.angles) console.error(sHyperSphere + ': "settings.object.geometry.angles" has not effect if "settings.object.geometry.params" is exists');
+			const params = geometry.params;
 			params.oppositeVertice ||= this.ZeroArray();
 			const vertice = [];
 			for (let i = 0; i < params.oppositeVertice.length; i++) vertice.push(0);
-			settings.object.geometry.angles = [vertice, params.oppositeVertice];
+			geometry.angles = [vertice, params.oppositeVertice];
 			
 		}
-		settings.object.geometry.angles = settings.object.geometry.angles || this.defaultAngles();
+		if (geometry.positions) {
+			const itemSize = this.dimension, anglesLength = geometry.positions.length / itemSize;
+			geometry.angles = [];
+			geometry.angles = new Proxy(geometry.angles, {
+				get(target, name) {
+					if(geometry.positions === null) {
+						const verticeId = parseInt(name);
+						if (!isNaN(verticeId)) {
+							let vector;
+							const position = settings.bufferGeometry.attributes.position, itemSize = position.itemSize;
+							switch(itemSize) {
+								case 4: vector = new THREE.Vector4(); break;
+								default: console.error(sHyperSphere + ': get angles. Invalid itemSize = ' + itemSize);
+							}
+							return classSettings.utils.cartesianToPolar(vector.fromArray(position.array, verticeId * itemSize ));
+						}
+					}
+					switch (name) {
+						case 'length': 
+							return anglesLength;
+					}
+//					console.error(sHyperSphere + ': Invalid geometry.angles name: ' + name);
+					return target[name];
+				}
+			});
+				
+		} else geometry.angles = geometry.angles || this.defaultAngles();
 		const anglesObject2Array = () => {
 			
-			const geometryAngles = settings.object.geometry.angles;
+			const geometryAngles = geometry.angles;
 			if (geometryAngles instanceof Array) return;
 			const angles = [];
 			Object.keys(geometryAngles).forEach((key) => angles[key] = geometryAngles[key]);
-			settings.object.geometry.angles = angles;
+			geometry.angles = angles;
 			
 		}
 		(classSettings.anglesObject2Array || anglesObject2Array)();
 
-		if (!classSettings.settings.object.geometry.angles.isAnglesProxy) {
+		if (!geometry.angles.isAnglesProxy) {
 			
 			const length = _this.dimension - 1;
 			const sLongitude = 'longitude', longitudeShift = 1,
 				sLatitude = 'latitude', latitudeShift = 2,
 				sAltitude = 'altitude', altitudeShift = 3;
-			settings.object.geometry.angles = new Proxy(settings.object.geometry.angles || this.defaultAngles(), {
+			geometry.angles = new Proxy(geometry.angles || this.defaultAngles(), {
 	
 				get: (angles, name) => {
 	
@@ -589,6 +616,15 @@ class HyperSphere extends MyObject {
 								
 							}
 							return this.vertice2angles(position[verticeId])//сюда попадаем из вселенной
+						}
+						if (geometry.positions) {
+							let vector;
+							const itemSize = classSettings.settings.bufferGeometry.attributes.position.itemSize;
+							switch(itemSize) {
+								case 4: vector = new THREE.Vector4(); break;
+								default: console.error(sHyperSphere + ': get angles. Invalid itemSize = ' + itemSize);
+							}
+							return classSettings.utils.cartesianToPolar(vector.fromArray( geometry.positions, verticeId * itemSize ));
 						}
 						return new Proxy(angles[verticeId], {
 	

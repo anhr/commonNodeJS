@@ -158,7 +158,7 @@ const classSettings = {
 
 		probabilityDensity: false,
 		middleVertice: false,
-		log: false,//нет значения по умолчанию. Надо явно задавать
+		log: true,//нет значения по умолчанию. Надо явно задавать
 		edges: false,
 		random: () => { return 0.5 },//replacing random vertices with strictly defined vertices.
 
@@ -174,7 +174,19 @@ const classSettings = {
 			//color: 0xffffff,
 			geometry: {
 
-				positionsFileName: 'positions5.bin',
+				//positionsFileName: 'positions5.bin',
+
+				//Coordinates of the vertices in a Cartesian coordinate system.
+				//Each vertex must lie on a hypersphere with a given radius for timeId = 0.
+				//Copy of positionsFileName data
+				positions: [
+					//       x                  y                     z                  w
+					-0.02587701566517353,0.0675637423992157,-0.05302936211228371,0.04419736936688423,//0
+					-0.016921283677220345,-0.054973144084215164,-0.014062980189919472,-0.08058446645736694,//1
+					0.003661202499642968,-0.014033776707947254,-0.051428329199552536,0.08452677726745605,//2
+					-0.03790852054953575,0.0704442486166954,0.04782545194029808,0.03623918071389198,//3
+					0.004120172467082739,0.042841169983148575,0.016064807772636414,-0.08882331103086472//4
+				],
 				//Tesseract https://en.wikipedia.org/wiki/Tesseract
 				//Please set indices.edges for tesseract
 				angles: [
