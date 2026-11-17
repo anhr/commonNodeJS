@@ -251,6 +251,19 @@ class HyperSphere extends MyObject {
 	 * Note: You can define color of the each vertice separately in the <b>classSettings.settings.object.geometry.colors</b> parameter.
 	 * <pre>
 	 * @param {object} [classSettings.settings.object.geometry] HyperSphere geometry.
+	 * @param {string} [classSettings.settings.object.geometry.positionsFileName] Name of the file with Cartesian coordinates of vertices.
+	 * <pre>
+	 * For creating of the file from current vertices please define <b>positionsFileName</b>
+	 * and open the "Settings/Hypersphere/Save" in the right top corner of the canvas for it.
+	 * NOTE: If <b>positionsFileName</b> is provided and exists, the <b>angles</b> and <b>positions</b> parameters are ignored.
+	 * </pre>
+	 * @param {array} [classSettings.settings.object.geometry.positions] Cartesian coordinates of vertices.
+	 * <pre>
+	 * Each item is a sequence of <b>x, y, z, w</b> coordinates for each vertice.
+	 * NOTE: <b>w</b> coordinate exists for hypersphere only.
+	 * NOTE: Have effect if <b>positionsFileName</b> is not defined.
+	 * NOTE: If <b>positions</b> is exists, the <b>angles</b> parameters are ignored.
+	 * </pre>
 	 * @param {array|object} [classSettings.settings.object.geometry.angles] n-dimensional hypersphere vertice angles.
 	 * <pre>
 	 * array - array of vertex angles.
@@ -314,6 +327,7 @@ class HyperSphere extends MyObject {
 	 *			[Math.PI / 2, - Math.PI / 6, - Math.PI * 2 * 1 / 3],
 			]</b>,
 	 * object - see below:
+	 * NOTE: Have effect if <b>positions</b> and <b>positionsFileName</b> is not defined.
 	 * </pre>
 	 * @param {number} [classSettings.settings.object.geometry.angles.count=3|4|5] Count of vertices with random position.
 	 * <pre>

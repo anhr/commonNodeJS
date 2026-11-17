@@ -535,26 +535,6 @@ class MyObject {
 				}
 
 			}
-/*			
-			const positionsFileName = settings.object.geometry.positionsFileName;
-			if (positionsFileName) {
-				async function processAndSaveTrace(fileName) {
-					// 1. Проверяем существование файла
-					const isAlreadySaved = await fileHandler.fileExists(fileName);
-					if (isAlreadySaved) return ;
-//					const positions = [];
-					const itemSize = bufferGeometry.attributes.position.itemSize, positionsArray = new Float32Array(points.length * itemSize);
-					for (let verticeId = 0; verticeId < points.length; verticeId++) {
-//						positions.push(new THREE.Vector4().fromBufferAttribute(bufferGeometry.attributes.position, verticeId).toArray())
-						new THREE.Vector4().fromBufferAttribute(bufferGeometry.attributes.position, verticeId).toArray(positionsArray, verticeId * itemSize);
-					}
-
-					// 3. Сохраняем в файл
-					await fileHandler.saveTraceToProjectDir(positionsArray, fileName);
-				}
-				processAndSaveTrace(positionsFileName);
-			}
-*/			
 			return bufferGeometry;
 			
 		}
