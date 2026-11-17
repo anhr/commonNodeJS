@@ -77,12 +77,6 @@ class HyperSphere3D extends Sphere {
 		}
 		const fSave = fParent.addFolder( lang.save );
 		three.dat.folderNameAndTitle( fSave, lang.save, lang.saveTitle );
-/*		
-		const myData = {
-			fileName: settings.object.geometry.positionsFileName,//fileHandler.fileName,
-		}
-		fSave.add(myData, 'fileName').name(lang.fileName);
-*/		
 		fSave.add(settings.object.geometry, 'positionsFileName').name(lang.fileName);
 		const btnSave = document.createElement('div');//'button');
 		btnSave.textContent = '💾 ' + lang.save;
