@@ -260,6 +260,7 @@ class HyperSphere extends MyObject {
 	 * @param {array} [classSettings.settings.object.geometry.positions] Cartesian coordinates of vertices.
 	 * <pre>
 	 * Each item is a sequence of <b>x, y, z, w</b> coordinates for each vertice.
+	 * Each vertice must lie on a hypersphere with a given radius for timeId = 0.
 	 * NOTE: <b>w</b> coordinate exists for hypersphere only.
 	 * NOTE: Have effect if <b>positionsFileName</b> is not defined.
 	 * NOTE: If <b>positions</b> is exists, the <b>angles</b> parameters are ignored.

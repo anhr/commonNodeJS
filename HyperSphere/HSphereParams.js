@@ -177,7 +177,7 @@ const classSettings = {
 				positionsFileName: 'positions5.bin',
 
 				//Coordinates of the vertices in a Cartesian coordinate system.
-				//Each vertex must lie on a hypersphere with a given radius for timeId = 0.
+				//Each vertice must lie on a hypersphere with a given radius for timeId = 0.
 				//Copy of positionsFileName data
 				positions: [
 					//       x                  y                     z                  w
