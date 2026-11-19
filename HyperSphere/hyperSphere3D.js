@@ -290,49 +290,6 @@ class HyperSphere3D extends Sphere {
 
 		function cartesianToPolar4D(vertice) {
 			return utils.cartesianToPolar(vertice);
-/*
-			const x = vertice.x, y = vertice.y, z = vertice.z, w = vertice.w;
-
-			// Вычисляем радиус сферы
-			const r = Math.sqrt(x * x + y * y + z * z + w * w);
-
-			// Если радиус равен 0, возвращаем нулевые координаты
-			if (r === 0) {
-
-				return utils.angles([0, 0, 0]);
-
-			}
-
-			// Вычисляем altitude (угол от оси W) в диапазоне [0, π]
-			const altitude = Math.acos(w / r);
-
-			// Проекция на 3D пространство (x,y,z)
-			const r_xyz = Math.sqrt(x * x + y * y + z * z);
-
-			// Вычисляем latitude (широта) в диапазоне [-π/2, π/2]
-			let latitude;
-			if (r_xyz === 0) {
-				// Если проекция на (x,y,z) равна 0, точка на полюсе W-оси
-				latitude = (w >= 0) ? Math.PI / 2 : -Math.PI / 2;
-			} else {
-				latitude = Math.asin(z / r_xyz);
-			}
-
-			// Проекция на плоскость (x,y)
-			const r_xy = Math.sqrt(x * x + y * y);
-
-			// Вычисляем longitude (долгота) в диапазоне [-π, π]
-			let longitude;
-			if (r_xy === 0) {
-				// Если проекция на (x,y) равна 0, долгота не определена, устанавливаем 0
-				longitude = 0;
-			} else {
-				longitude = Math.atan2(y, x);
-				// atan2 уже возвращает значение в диапазоне [-π, π]
-			}
-
-			return utils.angles([altitude, latitude, longitude]);
-*/
 		}
 		return cartesianToPolar4D(Position(vertice));
 
