@@ -513,19 +513,24 @@ class MyObject {
 				for (let timeId = 0; timeId < getPlayerTimesLength(); timeId++) {
 					
 					if (boLog) console.log('timeId = ' + timeId);
-					let vector;
+//					let vector;
 					const positions = settings.object.geometry.positions;
 					const itemSize = settings.bufferGeometry.attributes.position.itemSize;
+/*					
 					if ( positions) {
 						switch(itemSize) {
 							case 4: vector = new THREE.Vector4(); break;
 							default: console.error(sHyperSphere + ': get angles. Invalid itemSize = ' + itemSize);
 						}
-//						return classSettings.utils.cartesianToPolar(vector.fromArray( geometry.positions, verticeId * itemSize ));
 					}
+*/					
 					for (let i = 0; i < points.length; i++) {
 
-						const vertice = this.setPositionAttributeFromPoint(i, positions ? vector.fromArray(positions, i * itemSize ) : undefined, timeId);
+						const vertice = this.setPositionAttributeFromPoint(
+							i,
+							positions ? (itemSize === 4 ? new THREE.Vector4() : itemSize === 3 ? new THREE.Vector3() : undefined).fromArray(positions, i * itemSize ) : undefined,
+							timeId
+						);
 						if (boLog) console.log('\tvertice[' + i + '] = ' + JSON.stringify(vertice));
 
 					}

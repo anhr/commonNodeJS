@@ -580,6 +580,8 @@ class HyperSphere extends MyObject {
 					if(geometry.positions === null) {
 						const verticeId = parseInt(name);
 						if (!isNaN(verticeId)) {
+							return _this.getVerticePolar(verticeId, settings.bufferGeometry.attributes.position);
+/*
 							let vector;
 							const position = settings.bufferGeometry.attributes.position, itemSize = position.itemSize;
 							switch(itemSize) {
@@ -587,6 +589,7 @@ class HyperSphere extends MyObject {
 								default: console.error(sHyperSphere + ': get angles. Invalid itemSize = ' + itemSize);
 							}
 							return classSettings.utils.cartesianToPolar(vector.fromArray(position.array, verticeId * itemSize ));
+*/
 						}
 					}
 					switch (name) {
@@ -633,6 +636,8 @@ class HyperSphere extends MyObject {
 							return this.vertice2angles(position[verticeId])//сюда попадаем из вселенной
 						}
 						if (geometry.positions) {
+							return this.getVerticePolar(verticeId, settings.bufferGeometry.attributes.position);
+/*							
 							let vector;
 							const itemSize = classSettings.settings.bufferGeometry.attributes.position.itemSize;
 							switch(itemSize) {
@@ -640,6 +645,7 @@ class HyperSphere extends MyObject {
 								default: console.error(sHyperSphere + ': get angles. Invalid itemSize = ' + itemSize);
 							}
 							return classSettings.utils.cartesianToPolar(vector.fromArray( geometry.positions, verticeId * itemSize ));
+*/							
 						}
 						return new Proxy(angles[verticeId], {
 	

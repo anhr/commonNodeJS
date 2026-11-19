@@ -30,7 +30,7 @@ angles.latitude - широта в диапазоне от -π/2 на южном 
 Тогда в положении точки появится новый угол altitude в диапазоне от 0 до π.
 Также появится новая координата точки w = vertice[3] в декартовой системе координат.
 */
-const sAnglesToCartesian = 'polarToCartesian';
+const sPolarToCartesian = 'polarToCartesian';
 /**
  * Вычисляет 4D декартовы координаты (x, y, z, w) точки на гиперсфере.
  * @param {object} angles - Объект с углами в радианах.
@@ -57,7 +57,7 @@ export function polarToCartesian(angles, r=1, debug) {
 	const y = r_xyz * Math.cos(lat) * Math.sin(lon);
 	const z = r_xyz * Math.sin(lat);
 	
-	if(debug && (isNaN(x) || isNaN(y) || isNaN(z) || isNaN(w))) console.error(sAnglesToCartesian + ': Invalid cartesian: x = ' + x + ', y = ' + y + ', z = ' + z + ', w = ' + w);
+	if (debug && (isNaN(x) || isNaN(y) || isNaN(z) || isNaN(w))) console.error(sPolarToCartesian + ': Invalid cartesian: x = ' + x + ', y = ' + y + ', z = ' + z + ', w = ' + w);
 
 	return Position([x, y, z, w]);
 }
@@ -77,7 +77,7 @@ latitude - широта в диапазоне от -π/2 на южном пол�
 Тогда в положении точки появится новая координата w = vertice[3].
 Также появится новый угол в полярной системе координат altitude в диапазоне от 0 до π.
 */
-const sCartesianToAngles = 'cartesianToPolar';
+const sCartesianToPolar = 'cartesianToPolar';
 /**
  * Преобразует декартовы координаты 4D (x, y, z, w) в гиперсферические.
  * @param {object} vertice - объект x, y, z, w декартовых координат.
@@ -108,8 +108,9 @@ export function cartesianToPolar(vertice, debug) {
 		latitude = Math.atan2(z, rXY);
 		longitude = Math.atan2(y, x);
 	}
+	if (isNaN(latitude)) console.error(sCartesianToPolar + ': invalid latitude = ' + latitude);
 
-	if (debug && (isNaN(altitude) || isNaN(latitude) || isNaN(longitude))) console.error(sCartesianToAngles + ': Invalid angles: altitude = ' + altitude + ', latitude = ' + latitude + ', longitude = ' + longitude);
+	if (debug && (isNaN(altitude) || isNaN(latitude) || isNaN(longitude))) console.error(sCartesianToPolar + ': Invalid angles: altitude = ' + altitude + ', latitude = ' + latitude + ', longitude = ' + longitude);
 	return angles([altitude, latitude, longitude]);
 //	return { latitude, longitude, altitude };
 }

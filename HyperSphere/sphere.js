@@ -50,6 +50,8 @@ class Sphere extends Circle {
 
 	//base methods
 
+	getVerticePolar(verticeId, position){ return utils.cartesianToPolar( new window.__myThree__.three.THREE.Vector3().fromArray(position.array, verticeId * position.itemSize) ); }
+	
 	planesGeometry(changedAngleId, aAngleControls, planeGeometry, longitudeId){
 
 		const latitudeId = longitudeId - 1;

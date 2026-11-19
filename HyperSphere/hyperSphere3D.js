@@ -53,6 +53,8 @@ class HyperSphere3D extends Sphere {
 
 	//base methods
 
+	getVerticePolar(verticeId, position){ return utils.cartesianToPolar( new window.__myThree__.three.THREE.Vector3().fromArray(position.array, verticeId * position.itemSize) ); }
+	
 	save(fParent, settings) {
 		if (!settings.object.geometry.positionsFileName) return;
 
