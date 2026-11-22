@@ -573,7 +573,16 @@ class HyperSphere extends MyObject {
 			
 		}
 		if (geometry.positions) {
-			const itemSize = this.dimension, anglesLength = geometry.positions.length / itemSize;
+			const itemSize = this.dimension, positions = geometry.positions, anglesLength = positions.length / itemSize;
+			if (classSettings.debug) {
+				for (let i = 0; i < positions.length;) {
+					let sum = 0
+					for (let j = 0; j < itemSize; j++) sum += positions[i] * positions[i++];
+					const r = Math.sqrt(sum), sphereR = (classSettings.settings.options.playerOptions.max === null ? classSettings.r : classSettings.settings.options.playerOptions.min);
+					if (Math.abs(r - sphereR) > 3.1e-8)
+						console.error(sHyperSphere + ': Invalid geometry.positions. Radius ' + r + ' of vertice[' + ((i / itemSize) - 1) + '] does not equal ' + sphereR);
+				}
+			}
 			geometry.angles = [];
 			geometry.angles = new Proxy(geometry.angles, {
 				get(target, name) {
