@@ -203,12 +203,24 @@
 				//debug: false,
 				settings: {
 					
+					noGetMaxPairsFloat32Length: true,
 					object: {
 	
 						//name: 'edges',
 						//color: 'white',
 						geometry: {
 
+							//Coordinates of the vertices in a Cartesian coordinate system.
+							//Each vertice must lie on a hypersphere with a given radius for timeId = 0.
+							//Copy of positionsFileName data
+							//r = 1
+							positions: [
+								//       x                  y                     z
+								-0.05762786418199539,-0.2842707931995392,-0.9570105075836182,
+								0.9373098015785217,0.07270641624927521,-0.34082847833633423,
+								-0.9893097281455994,-0.1450728327035904,0.014837904833257198,
+								0.8879321813583374,-0.058063194155693054,0.4562950134277344
+							],
 							/*
 							//5 vertices
 							//debug error: Universe: edges[8]. Duplicate edge[0,3]
@@ -356,7 +368,7 @@
 								],//
 								[0, Math.PI / 2],//
 							],
-							angles: { count: 500, },
+							angles: { count: 4, },
 							//angles: angles,
 							/*
 							colors: [

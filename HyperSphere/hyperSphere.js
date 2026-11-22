@@ -581,15 +581,6 @@ class HyperSphere extends MyObject {
 						const verticeId = parseInt(name);
 						if (!isNaN(verticeId)) {
 							return _this.getVerticePolar(verticeId, settings.bufferGeometry.attributes.position);
-/*
-							let vector;
-							const position = settings.bufferGeometry.attributes.position, itemSize = position.itemSize;
-							switch(itemSize) {
-								case 4: vector = new THREE.Vector4(); break;
-								default: console.error(sHyperSphere + ': get angles. Invalid itemSize = ' + itemSize);
-							}
-							return classSettings.utils.cartesianToPolar(vector.fromArray(position.array, verticeId * itemSize ));
-*/
 						}
 					}
 					switch (name) {
@@ -637,15 +628,6 @@ class HyperSphere extends MyObject {
 						}
 						if (geometry.positions) {
 							return this.getVerticePolar(verticeId, settings.bufferGeometry.attributes.position);
-/*							
-							let vector;
-							const itemSize = classSettings.settings.bufferGeometry.attributes.position.itemSize;
-							switch(itemSize) {
-								case 4: vector = new THREE.Vector4(); break;
-								default: console.error(sHyperSphere + ': get angles. Invalid itemSize = ' + itemSize);
-							}
-							return classSettings.utils.cartesianToPolar(vector.fromArray( geometry.positions, verticeId * itemSize ));
-*/							
 						}
 						return new Proxy(angles[verticeId], {
 	
@@ -753,8 +735,8 @@ class HyperSphere extends MyObject {
 										//если тут обновлять вершину то каждая вершина будет обноляться несколько раз в зависимости от количества углов. Сейчас вершина обновляется после обновления всех углов вершины
 										if(_this.isSetPositionAttributeFromPoint != false) {
 
-											const position = verticeAnglesFromPosition ? this.a2v(verticeAnglesFromPosition/*, classSettings.overriddenProperties.r(classSettings.settings.guiPoints ? classSettings.settings.guiPoints.timeId : 0)*/) : undefined
-											_this.setPositionAttributeFromPoint(verticeId, Position(position));//обновляем только одну ось в декартовой системе координат
+											const position = verticeAnglesFromPosition ? this.a2v(verticeAnglesFromPosition) : undefined
+											_this.setPositionAttributeFromPoint(verticeId, position ? Position(position) : undefined);//обновляем только одну ось в декартовой системе координат
 											_this.bufferGeometry.attributes.position.needsUpdate = true;
 	
 										}

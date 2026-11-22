@@ -59,6 +59,19 @@
 			classSettings.projectParams = classSettings.projectParams || {};
 			classSettings.projectParams.scene = scene;
 			classSettings.distanceOfVertices = distanceOfVertices;
+			if (classSettings.settings.object.geometry.positions)
+				//Coordinates of the vertices in a Cartesian coordinate system.
+				//Each vertice must lie on a hypersphere with a given radius for timeId = 0.
+				//Copy of positionsFileName data
+				//r = 1
+				classSettings.settings.object.geometry.positions = [
+					//       x                  y                     z                  w
+					0.8124057650566101,0.2639666199684143,0.14254309237003326,-0.5,
+					0.9476799964904785,0.27826395630836487,0.15643446147441864,6.123234262925839e-17,
+					5.243647457228392e-17,0.8563526272773743,0.12907439470291138,0.5,
+					4.285709442165432e-17,-0.6999094486236572,0.10063178837299347,0.7071067690849304,
+					-0.5823106169700623,7.13124780703929e-17,0.08003674447536469,0.80901700258255
+				]
 			
 			new HyperSphere3D(options, classSettings);
 

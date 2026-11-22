@@ -53,7 +53,10 @@ class HyperSphere3D extends Sphere {
 
 	//base methods
 
-	getVerticePolar(verticeId, position){ return utils.cartesianToPolar( new window.__myThree__.three.THREE.Vector3().fromArray(position.array, verticeId * position.itemSize) ); }
+	getVerticePolar(verticeId, position){
+//		return utils.angles([NaN, NaN, NaN]);//если передать реальные углы вершины, то пользователю не получится редактировать угды вершины из gui
+		return utils.cartesianToPolar( new window.__myThree__.three.THREE.Vector4().fromArray(position.array, verticeId * position.itemSize) );
+	}
 	
 	save(fParent, settings) {
 		if (!settings.object.geometry.positionsFileName) return;
