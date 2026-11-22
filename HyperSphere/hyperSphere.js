@@ -735,7 +735,8 @@ class HyperSphere extends MyObject {
 										//если тут обновлять вершину то каждая вершина будет обноляться несколько раз в зависимости от количества углов. Сейчас вершина обновляется после обновления всех углов вершины
 										if(_this.isSetPositionAttributeFromPoint != false) {
 
-											const position = verticeAnglesFromPosition ? this.a2v(verticeAnglesFromPosition) : undefined
+//											const position = verticeAnglesFromPosition ? this.a2v(verticeAnglesFromPosition) : undefined
+											const position = this.a2v(verticeAnglesFromPosition ? verticeAnglesFromPosition : verticeAngles);
 											_this.setPositionAttributeFromPoint(verticeId, position ? Position(position) : undefined);//обновляем только одну ось в декартовой системе координат
 											_this.bufferGeometry.attributes.position.needsUpdate = true;
 	
