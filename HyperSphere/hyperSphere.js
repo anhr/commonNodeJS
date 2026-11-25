@@ -1950,7 +1950,7 @@ this.object = () => {
 
 								}
 
-								aAngleControls.verticeId = settings.guiPoints && (settings.guiPoints.verticeId != undefined) ? classSettings.settings.guiPoints.verticeId : verticeId;
+								aAngleControls.verticeIdGlobal = settings.guiPoints && (settings.guiPoints.verticeId != undefined) ? classSettings.settings.guiPoints.verticeId : verticeId;
 
 								//Если не выполнить эту операцию, то я не смогу увидеть плоскости во вселенной при timeId > 0
 								//Что бы посмотреть плоскости, надо выбрать точку и затем выбрать "Локальная позиция точки/Дополнительно/Плоскости"
@@ -1960,7 +1960,8 @@ this.object = () => {
 										settings.guiPoints.timeId :
 									0;
 								if(settings.object.geometry.angles === undefined) console.error(sHyperSphere + ': Invalid parameters.');
-								aAngleControls.verticeId -= timeId * settings.object.geometry.angles.length;
+
+								aAngleControls.verticeId = aAngleControls.verticeIdGlobal - timeId * settings.object.geometry.angles.length;
 
 								//если оставить эту линию то если угол выходит за пределы допустимого,
 								//то этот угол автоматически возвращается в пределы допустимого с помощью органа управления gui
@@ -2067,7 +2068,15 @@ this.object = () => {
 												const verticeAngles = classSettings.overriddenProperties.verticeAngles(guiPoints.timeAngles || angles, aAngleControls.verticeId);
 												if (verticeAngles[angleId] === angle) return;
 												verticeAngles[angleId] = angle;
-												_this.setPositionAttributeFromPoint(aAngleControls.verticeId, undefined, guiPoints.timeId);
+												const verticeId = aAngleControls.verticeId;
+
+												//здесь aAngleControls.verticeId становится отрицательным.
+												//Пробовал не делать aAngleControls.verticeId отрицательным, но тогда положение вершины вообще не меняется
+												_this.setPositionAttributeFromPoint(aAngleControls.verticeId,
+													classSettings.utils ? classSettings.utils.polarToCartesian(verticeAngles) : undefined,
+													guiPoints.timeId);
+												aAngleControls.verticeId = verticeId;
+												
 												_this.boChangeAngle = true;//Не надо удалять облако случайных вершин когда меняется угол противоположной вершины. Вместо этого надо пересчитать облако случайных вершин.
 												_this.update(aAngleControls.verticeId, angleId, guiPoints.timeId);
 												_this.boChangeAngle = undefined;
