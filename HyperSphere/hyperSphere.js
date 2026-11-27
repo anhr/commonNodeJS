@@ -1760,6 +1760,21 @@ this.object = () => {
 				}
 
 			}
+			this.updateCRadius = (r) => {
+				const cRadius = aAngleControls.cRadius;
+				if (!cRadius) return;
+				const input = cRadius.domElement.querySelector( 'input' ), readOnly = input.readOnly;
+				input.readOnly = false;
+				cRadius.object[cRadius.property] = r;
+/*				
+				if ( cRadius.__onChange )
+					cRadius.__onChange.call( cRadius, r );
+*/					
+				cRadius.initialValue = r;
+				cRadius.updateDisplay();
+				input.readOnly = readOnly;
+				
+			}
 			this.projectGeometry = () => {
 				const raycaster = {
 					text: (intersection) => {
@@ -1950,7 +1965,7 @@ this.object = () => {
 
 								}
 
-								aAngleControls.verticeIdGlobal = settings.guiPoints && (settings.guiPoints.verticeId != undefined) ? classSettings.settings.guiPoints.verticeId : verticeId;
+								aAngleControls.verticeId = settings.guiPoints && (settings.guiPoints.verticeId != undefined) ? classSettings.settings.guiPoints.verticeId : verticeId;
 
 								//Если не выполнить эту операцию, то я не смогу увидеть плоскости во вселенной при timeId > 0
 								//Что бы посмотреть плоскости, надо выбрать точку и затем выбрать "Локальная позиция точки/Дополнительно/Плоскости"
@@ -1961,7 +1976,7 @@ this.object = () => {
 									0;
 								if(settings.object.geometry.angles === undefined) console.error(sHyperSphere + ': Invalid parameters.');
 
-								aAngleControls.verticeId = aAngleControls.verticeIdGlobal - timeId * settings.object.geometry.angles.length;
+								aAngleControls.verticeId = aAngleControls.verticeId - timeId * settings.object.geometry.angles.length;
 
 								//если оставить эту линию то если угол выходит за пределы допустимого,
 								//то этот угол автоматически возвращается в пределы допустимого с помощью органа управления gui
@@ -2068,14 +2083,12 @@ this.object = () => {
 												const verticeAngles = classSettings.overriddenProperties.verticeAngles(guiPoints.timeAngles || angles, aAngleControls.verticeId);
 												if (verticeAngles[angleId] === angle) return;
 												verticeAngles[angleId] = angle;
-												const verticeId = aAngleControls.verticeId;
+//												const verticeId = aAngleControls.verticeId;
 
-												//здесь aAngleControls.verticeId становится отрицательным.
-												//Пробовал не делать aAngleControls.verticeId отрицательным, но тогда положение вершины вообще не меняется
 												_this.setPositionAttributeFromPoint(aAngleControls.verticeId,
-													classSettings.utils ? classSettings.utils.polarToCartesian(verticeAngles) : undefined,
+													classSettings.utils ? classSettings.utils.polarToCartesian(verticeAngles, classSettings.overriddenProperties.rTime()) : undefined,
 													guiPoints.timeId);
-												aAngleControls.verticeId = verticeId;
+//												aAngleControls.verticeId = verticeId;
 												
 												_this.boChangeAngle = true;//Не надо удалять облако случайных вершин когда меняется угол противоположной вершины. Вместо этого надо пересчитать облако случайных вершин.
 												_this.update(aAngleControls.verticeId, angleId, guiPoints.timeId);
@@ -2106,12 +2119,13 @@ this.object = () => {
 								}
 								createAnglesControls(fAdvansed, aAngleControls, anglesDefault);
 
-								aAngleControls.cRadius = fAdvansed.add({ verticeRadius: options.player ? options.player.getTime() : 0, }, 'verticeRadius', options.scales.w.min, options.scales.w.max, (options.scales.w.max - options.scales.w.min)/100).onChange((verticeRadius) => {
+								aAngleControls.cRadius = fAdvansed.add({ verticeRadius: options.player ? options.player.getTime() : 0, }, 'verticeRadius', options.scales.w.min, options.scales.w.max, (options.scales.w.max - options.scales.w.min)/100).
+									onChange((verticeRadius) => {
 
-									if (readOnly.isReadOnlyController(aAngleControls.cRadius)) return;
-									console.log('verticeRadius = ' + verticeRadius);
-
-								});
+										if (readOnly.isReadOnlyController(aAngleControls.cRadius)) return;
+										console.log('verticeRadius = ' + verticeRadius);
+	
+									});
 								dat.controllerNameAndTitle(aAngleControls.cRadius, lang.radius, lang.radiusTitle);
 								readOnly.readOnlyEl(aAngleControls.cRadius, true);
 									

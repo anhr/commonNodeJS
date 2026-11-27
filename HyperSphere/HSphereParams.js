@@ -180,6 +180,7 @@ const classSettings = {
 				//Each vertice must lie on a hypersphere with a given radius for timeId = 0.
 				//Copy of positionsFileName data
 				//r = 0.1
+				/*
 				positions: [
 					//       x                  y                     z                  w
 					-0.02587701566517353,0.0675637423992157,-0.05302936211228371,0.04419736936688423,//0
@@ -188,6 +189,7 @@ const classSettings = {
 					-0.03790852054953575,0.0704442486166954,0.04782545194029808,0.03623918071389198,//3
 					0.004120172467082739,0.042841169983148575,0.016064807772636414,-0.08882331103086472//4
 				],
+				*/
 				//Tesseract https://en.wikipedia.org/wiki/Tesseract
 				//Please set indices.edges for tesseract
 				angles: [
